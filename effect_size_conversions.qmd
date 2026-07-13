@@ -1,0 +1,117 @@
+---
+title: "Converting between effect sizes"
+subtitle: "Risky business"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "effect_size_conversions.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("gt")
+library("lubridate")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
+```
+
+# Converting between effect sizes
+
+Effect sizes can be inter-converted between SMD and lnOR and Zr [@borenstein2021]. Recently, Lajeunesse presented methods to convert lnRoM to and from SMD (**NEED TO DIGITIZE**).
+
+![Effect size types](figures/flowcharts_diagrams/conversions.png) These conversions have some numeric assumptions:
+
+| Conversion  | Assumption         |
+|-------------|--------------------|
+| lnOR ↔ SMD  |                    |
+| SMD ↔ Zr    |                    |
+| SMD ↔ lnRoM | Homoscedasticity?? |
+
+**Not sure if assumptions go both ways**
+
+In addition to these assumptions, be careful that the data is truly comparable, especially in terms of sample size. Imagine you're analyzing the effect of an introduced predator on prey. Some studies present abundance correlations of the predator and prey, where N is the number of surveys through time. Other studies present lnOR type presence/absence data across islands with and without the prey and the predator. The sample sizes of these study types are grossly different (n = survey; n = island). It does not seem justifiable to convert between the effect sizes, since the ultimate model will treat the Zr abundance correlations as having more weight than the full-island surveys (which are likely more biologically meaningful).
+
+Converting between effect sizes should be done carefully and with many sensitivity analyses (e.g., running meta-analytic models with and without converted effect sizes).
+
+We have digitized these conversion formulas and they are available in our `convert_effect_sizes()` function.
+
+```{r}
+#| eval: false
+#| echo: true
+source("xxxxxxxx")
+
+convert_effect_sizes()
+
+```
+
+Running the function on its own will return a table with the statistics required for conversion. Here, we'll convert from SMD to Zr:
+
+```{r}
+#| eval: false
+#| echo: true
+convert_effect_sizes(from = "SMD", to = "Zr",
+                     yi = 1.5, vi = .1,
+                     n1 = 10, n2 = 10)
+```
+
+# SMD \<-\> Zr
+
+# SMD \<-\> lnOR
+
+# SMD \<-\> lnRoM
+
+# Zr \<- SMD -\> lnOR

@@ -1,0 +1,166 @@
+---
+title: "Universal extraction challenges"
+subtitle: "XXX"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "universal_challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
+```
+
+# Sample size
+
+One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is core to meta-analysis because it is core to the calculation of sampling variance.
+
+Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. Sample size is far easier with behavioral or physiological data, where the unit of replication is generlaly the number of individuals.
+
+Within the ecology literature, sample size can be devilishly challenging. For example, a meta-analysis that considers vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundances. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view while the spotlight surveys could cover dozens of kilometers.
+
+Another grave issue that haunts vegetation meta-analyses is plot size. Studies with larger scaled plots (e.g., 100 m\^2) will often have a smaller sample size than studies with small plots (e.g., 10 m\^2), yet their inference of large-scale patterns is greater. There is currently no mathematical solution for this. For that reason, we recommend digitizing plot-size (as well as the plant body size, e.g., trees versus herbaceous) when conducting a meta-analysis on vegetation data. These covariates can be used as moderators or for subsetting your dataset.
+
+In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses, choosing alternative formulations of sample size to ensure that your decisions as a meta-analyst are not biasing your model estimates.
+
+Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error.
+
+**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**
+
+# Multiple measurements
+
+One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. Studies also often compare a single control to multiple treatments. These situations of multiple comparisons must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. We do not discuss these issues in this tutorial (though we may allude to them). See above (@sec) for tutorials on how to construct random effects for complex study designs.
+
+# Model estimates
+
+There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.
+
+Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions. Given the special nature of reconstructing data from inferential model statistics, we present this in its own section (@sec).
+
+| Model type    | Usable | Effect size | Statistics required |
+|---------------|--------|-------------|---------------------|
+| GLMM          | No     | none        |                     |
+| t test        | Yes    | SMD         |                     |
+| paired t test | Yes    | ?           |                     |
+| 1-way ANOVA   | Yes?   | ?           |                     |
+| 2-way ANOVA   | Yes?   | ?           |                     |
+| linear model  | Yes    | ?           |                     |
+
+t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.
+
+If a model includes random effects, then it's not usable?
+
+Our function, `eff_size()` can calculate effect size statistics for XYZ models, as can `escalc`. We demonstrate below:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+# BLAH BLAH BLAH
+```
+
+In `escalc`:
+
+```{r}
+
+
+```
+
+## SMD
+
+### From the t statistic
+
+I dont think we actually need formulas here. Just the R code.
+$$\begin{aligned}
+&d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \\
+&g=J*d\\
+\end{aligned}$$
+In `escalc`:
+
+```{r}
+t = -1.5
+n1 = 15
+n2 = 15
+
+escalc(measure = "SMD",
+       ti = t,
+       n1i = n1,
+       n2i = n2)
+```
+
+### From p values:
+
+$$??$$
+
+To calculate SMD from p values, in `escalc`, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the `yi` point estimate afterwards).
+
+```{r}
+p = -0.07
+n1 = 15
+n2 = 15
+
+escalc(measure = "SMD",
+       pi = p,
+       n1i = n1,
+       n2i = n2)
+```
+
+## lnOR:
+
+## Zr:

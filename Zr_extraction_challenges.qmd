@@ -1,0 +1,425 @@
+---
+title: "Zr extraction challenges"
+subtitle: "Continuous outcomes with continuous predictor"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "Zr_extraction_challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("gt")
+library("lubridate")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
+```
+
+Blah blah blah. Reminder about what Zr is.
+
+Cheatsheet:
+
+![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg)
+
+## Simple figures
+
+This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+x <- rnorm(n = 50, mean = 7, sd = 1.2)
+y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
+
+dat <- data.table(x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
+                  n = 10)
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_smooth(method = "lm", color = "black")+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+Then calculate the Zr effect size in escalc:
+
+```{r}
+#| echo: true
+#| eval: true
+
+n = length(x)
+out <- cor.test(x, y)
+out$estimate
+
+escalc(measure = "ZCOR",
+       ri = out$estimate, ni = n)
+
+```
+
+## Overplotting
+
+What if there is an ugly cluster of overlapping points?
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+x <- rnorm(n = 50, mean = 7, sd = 1.2)
+y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
+
+dat <- data.table(x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
+                  n = 10)
+dat.sub <- dat[rep(5, 12), ]
+dat.sub$x <- jitter(dat.sub$x, amount = .05)
+dat.sub$y <- jitter(dat.sub$y, amount = .05)
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_smooth(method = "lm", color = "black")+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_point(data = dat.sub, aes(x = x, y = y), fill = "hotpink",
+             shape = 21, size = 3)+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+
+In these cases, if the total N is known for the study (e.g., the total number of sampling points), then you can duplicate the values for the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use an N that is less than the real N (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
+
+## Single axis error bars
+
+But what do you do if each point is actually a mean±SD?
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_errorbar(width = .25, aes(ymin = y-sd, ymax = y+sd))+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an internal-N, which will need to be gleaned from the methods of the paper. After determining this internal-N, extract the means and SDs for each point, and then draw a distribution of internal-N for each point with an appropriate distribution. Here we'll demonstrate using `rnorm` to draw normally distributed data for each point.
+
+```{r}
+#| echo: true
+#| eval: true
+
+head(dat)
+
+y_expanded <- list()
+
+for(i in 1:nrow(dat)){
+  y_expanded[[i]] <- data.table(y = rnorm(mean = dat$y[i],
+                                          sd = dat$sd[i],
+                                          n = dat$n[i]),
+                                x = dat$x[i])
+}
+y_expanded <- rbindlist(y_expanded)
+
+y_expanded
+
+```
+
+In this example data, each point had an internal N of 10 measurements. Notice that the original dataset went from 50 rows (individual points) to 500 rows (50 \* 10). We then take this expanded dataset and calculate our correlation coefficient and effect size:
+
+```{r}
+# Now calculate 'r':
+out <- cor.test(x, y, data = y_expanded)
+n <- nrow(y_expanded)
+
+escalc(measure = "ZCOR",
+       ri = out$estimate,
+       ni = n)
+```
+
+Pretty neat, right?
+
+If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See @sec where we demonstrate this for negative binomial data.
+
+However, in this example (and the one below) doing this assumes that the internal measurements of each point are at least somewhat independent—at least as independent as the sample N for other studies in your meta-analysis. If the internal measurements of these points are far less independent than in other studies in your meta-analysis then you may want to calculate the correlation just on the point means, and ignore the standard deviation. These decisions require a degree of thoughtfulness and good documentation to ensure consistency, especially when extracting data from a diversity of (messy) ecological studies.
+
+## x and y axis error bars
+
+What do you do if there are also error bars on the x axis? For example, if each point is a mean±SD of two different measurements. This is common in field studies, where researchers may sample vegetation at a site and some other factor (e.g., animal activity or soil nutrients) and then present the means±SD of each site in a correlation.
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+dat[, x_sd := abs(rnorm(50, mean = 0, sd = .25))]
+setnames(dat, "n", "y_n")
+setnames(dat, "sd", "y_sd")
+
+dat[, x_n := 20]
+
+ggplot(data = dat[sample(25)], aes(x = x, y = y))+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_errorbar(width = .25, aes(ymin = y-y_sd, ymax = y+y_sd))+
+  geom_errorbarh(aes(xmin = x-x_sd, xmax = x+x_sd), height = .25)+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the columns of expanded x and y to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable.
+
+```{r}
+#| echo: true
+#| eval: true
+head(dat)
+
+# Choose the n with the lowest sample size:
+dat[, n := min(c(x_n, y_n))]
+
+xy_expanded <- list()
+
+for(i in 1:nrow(dat)){
+  xy_expanded[[i]] <- data.table(y = rnorm(mean = dat$y[i],
+                                           sd = dat$y_sd[i],
+                                           n = dat$n[i]),
+                                 x = rnorm(mean = dat$x[i],
+                                           sd = dat$x_sd[i],
+                                           n = dat$n[i]))
+}
+xy_expanded <- rbindlist(xy_expanded)
+
+cat(md_table(head(xy_expanded)))
+```
+Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.
+
+Now, we calculate the correlation between all of these points and calculate our 'Zr' effect size:
+
+```{r}
+#| echo: true
+#| eval: true
+# Now calculate 'r':
+out <- cor.test(x, y, data = xy_expanded)
+n <- nrow(y_expanded)
+
+escalc(measure = "ZCOR",
+       ri = out$estimate,
+       ni = n)
+
+```
+
+## Mismatched time series
+
+Sometimes the factors of interest that you want to correlate are in separate graphs as time series. In these cases, it's just the tedious task of extracting data from each and aligning the two variables.
+
+However, what do you do if the time series are mismatched?
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+library("lubridate")
+
+x1 <- seq(from = 1995, to = 2005, by = 1)
+x2 <- seq(from = 1995, to = 2005, by = .25)
+# x2
+
+# length(x1)
+y1 <- seq(from = 5, to = 15, by = 1)#m1[sample(11)] * 1.3 + rnorm(n = 11, mean = 0, sd = 1)
+y1 <- y1[1:11] 
+y1 <- y1 + rnorm(n = 11, mean = 0, sd = .5)
+# plot(x1, y1)
+
+#
+y2 <- seq(from = 100, to = 110, by = .1)
+y2 <- y2[1:length(x2)]
+y2 <- y2 + rnorm(n=length(x2), mean = 0, sd = .5)
+# plot(x2, y2)
+
+# slopes2 <- rnorm()
+dt1 <- data.table(x1 = x1,
+                  y1 = y1)
+dt2 <- data.table(x2 = x2,
+                  y2 = rev(y2))
+
+p1 <- ggplot(data = dt1, aes(x = x1, y = y1))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Predictor variable of interest")+
+  theme_bw()+
+  scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2),
+                     labels = as.integer(seq(from = min(dt1$x1), to=max(dt1$x1), by = 2)))+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+# p1
+
+#
+dt2[, date := date_decimal(x2) |> as.Date()]
+p2 <- ggplot(data = dt2, aes(x = date, y = y2))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Response variable of interest")+
+  theme_bw()+
+  # scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2))+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+# p2
+
+p1 + p2
+
+```
+
+While imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend summarizing (e.g., taking the mean) or filtering the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.
+
+## Matrices
+
+Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors.
+
+For example, imagine calculating a correlation between a matrix of grooming behavior:
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+# devtools::install_github("ddsjoberg/bstfun")
+library("gt")
+library("ggplotify")
+
+dat1 <- CJ(person1 = c("Sally", "James", "Bart", "Sergeant Brown"), 
+           person2 = c("Sally", "James", "Bart", "Sergeant Brown"))
+dat1[, val1 := rnorm(n = nrow(dat1), 
+                     mean = .8, sd = .1)]
+dat1[, val2 := rnorm(n = nrow(dat1), 
+                     mean = 1.5, sd = .3)]
+
+dat1[person1 == person2, val1 := NA]
+dat1[person1 == person2, val2 := NA]
+
+mat1 <- dcast(data = dat1,
+              person1 ~ person2, value.var = "val1")
+
+
+mat2 <- dcast(data = dat1,
+              person1 ~ person2, value.var = "val2")
+
+mat1 <- gt(mat1) %>%
+  tab_header(title = "Grooming") #%>%
+
+mat2 <- gt(mat2) %>%
+  tab_header(title = "Defense") #%>%
+  # as.ggplot()
+
+mat1
+
+```
+
+And a matrix of defending each other from adversaries:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+mat2
+```
+
+XXXXX
+
+## Other correlation types
+
+### Point-biserial correlations & biserial correlations
+
+Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).
+
+In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. `escalc` provides a shorthand to directly convert these statistics to Zr:
+
+```{r}
+# For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`
+escalc(measure = "ZPB",
+      m1i = 13.5, m2i = 10.1,
+      sd1i = 1.5, sd2i = 2.1,
+      n1i = 15, n2i = 15)
+
+
+# For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`
+escalc(measure = "ZBIS",
+      m1i = 13.5, m2i = 10.1,
+      sd1i = 1.5, sd2i = 2.1,
+      n1i = 15, n2i = 15)
+
+```

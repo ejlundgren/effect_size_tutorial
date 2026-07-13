@@ -1,0 +1,293 @@
+---
+title: "lnOR extraction challenges"
+subtitle: "Discrete outcomes with discrete predictor"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "lnOR_extraction_challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
+```
+Preamble blah blah blah 
+
+Cheatsheet:
+XXXX
+
+# The easy cases
+
+## Proportion or % data with total population
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+# Simple:
+dt <- data.table(mean = c(15, 31), 
+                 group = c("Control", "Treatment"))
+# dt <- 
+ggplot(data = dt,
+       aes(x = group, y = mean, fill = group))+
+  geom_col()+
+  scale_fill_manual(NULL,
+                    values = c("Control" = "dodgerblue2",
+                               "Treatment" = "indianred"),
+                    labels = c("Control" = "Control (n = 100 individuals)",
+                               "Treatment" = "Treatment (n = 200 individuals)"))+  
+  xlab(NULL)+
+  ylab("Mortality rate (% of population)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+These are also straightforward. Extract the percent and reconstruct the number of individuals in each outcome category based on total n.
+
+## No control group
+
+Some experiments only report the experimental treatment, assuming that the control has a probability of 50%. In these cases, you'll have to assume the same to calculate lnOR, e.g., by populating one of the columns with 50 / 50 values (generally with the same total N as the first row). For example, if a study only reports:
+
+|           | Outcome A | Outcome B |
+|-----------|-----------|-----------|
+| Treatment | 35        | 15        |
+
+Take the row sum ($35 + 15 = 50$) and populate the missing values ($0.5 * 50$) for the control:
+
+|           | Outcome A | Outcome B |
+|-----------|-----------|-----------|
+| Treatment | 35        | 15        |
+| Control   | 25        | 25        |
+
+Observations like this should be flagged for sensitivity analyses.
+
+Now let's look at some other ways this data is displayed.
+
+## Aggregating multiple measurements
+
+Some studies may report a response like survivorship over multiple years before and after some intervention (e.g., eradication of a predator, change in management policy, etc). Since the years before and after this treatment aren't pairable, the best approach is to summarize across years per treatment.
+
+```{r}
+#| eval: true
+#| echo: false
+
+dat <- data.table(year = 1990:1999,
+                  treatment = c(rep("Pre", 4), 
+                                rep("Post", 6)))
+dat
+
+dat[, total_individuals := c(150, 131, 160, 171, 153, 158, 111, 95, 98, 101)]
+dat[, number_deceased := c(5, 8, 4, 7, 11, 13, 12, 18, 15, 17)]
+dat[, mortality_rate := round(number_deceased / total_individuals, 2)]
+
+ggplot(data = dat, aes(x = year, y = mortality_rate, fill = treatment))+
+  geom_col()+
+  scale_fill_manual(NULL,
+                    values = c("Pre" = "dodgerblue2",
+                               "Post" = "indianred"),
+                    labels = c("Pre" = "Pre-treatment",
+                               "Pre" = "Post-treatment"))+ 
+  xlab(NULL)+
+  ylab("Mortality rate")+
+  scale_x_continuous(breaks = 1990:1999)+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "bottom")
+
+
+```
+
+To extract data like this, you would need to determine the total population size for each year (which is hopefully reported) and multiply this by the proportion of that year to derive the number of individuals that lived and died per year to produce a table like this:
+
+```{r}
+#| eval: true
+#| echo: false
+#| output: asis
+
+cat(md_table(dat))
+
+```
+
+Then, take the sum of `total_individuals` and `number_deceased` and calculate the number living:
+
+```{r}
+#| eval: true
+#| echo: true
+#| output: asis
+
+dat.sum <- dat %>% group_by(treatment) %>%
+  summarize(total_individuals = sum(total_individuals),
+            number_deceased = sum(number_deceased)) %>%
+  mutate(number_living = total_individuals - number_deceased)
+
+cat(md_table(dat.sum))
+
+```
+
+The columns `number_deceased` and `number_living` provide you the contingency table necessary to calculate lnOR.
+
+However, what do you do if there is no sample size provided (e.g., total number of individuals)? In this case, your best bet is to calculate the mean ± SD of each year per treatment group and use this to calculate SMD. Since these values are proportions, be sure to arcsin transform these values (see @sec). The resulting effect size and sampling variance can then be converted to lnOR to be comparable to the rest of your dataset.
+
+## Survivorship curves
+
+*I don't know how to directly simulate the underlying data for these...*
+
+```{r}
+#| eval: true
+#| echo: false
+
+# >>> Survivorship --------------------------------------------------------
+
+x <- seq(1:15)
+a <- rweibull(n = 15, shape = 2, scale = 4)
+# plot(x, rev(sort(a)))
+
+c <- rweibull(n = 15, shape = 2, scale = 4)
+# plot(x, rev(sort(b)))
+a <- rev(sort(a))
+c <- rev(sort(c))
+
+a <- a - min(a)
+a <- a/max(a)
+# a
+c <- c - min(c)
+c <- c/max(c)
+# b
+
+ggplot()+
+  geom_path(aes(x = x, y = a),
+            color = "indianred",
+            linewidth = 2)+
+  geom_path(aes(x = x, y = c),
+            color = "dodgerblue",
+            linewidth = 2)+
+  geom_point(aes(x = x, y = a),
+            fill = "indianred",
+            shape = 21,
+            size = 3)+
+  geom_point(aes(x = x, y = c),
+            fill = "dodgerblue",
+            shape = 21,
+            size = 3)+
+  scale_x_continuous(breaks = seq(1, 15, by = 2))+
+  ylab("Survivorship (proportion alive)")+
+  xlab("Time")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+
+In this case, the y axis is the proportion ($p1$ and $p2$) for each group (group 1 and 2). The meta-analyst needs to extract the total number of individuals in groups 1 (blue) and 2 (red) at time point 1, which can then be multipled by the total number of individuals at the beginning of the experiment. This will yield $a$ and $c$ for the two groups. $b$ and $d$ can then be found by subtracting from the total $n$:
+
+|                | time | $p$       | N        | Alive   | Dead   |
+|----------------|------|-----------|----------|---------|--------|
+| Group 1 (blue) | 3    | $p1$=0.71 | $n1$=150 | $a$=107 | $b$=43 |
+| Group 2 (red)  | 3    | $p2$=0.46 | $n2$=150 | $c$=69  | $d$=81 |
+
+As one can see, this type of data also poses a classic time-series challenge, which can face all effect sizes. We recommend extracting the data for each time point and then using random effects to control for temporal autocorrelation in your meta-analytic model (see sec-XXXX). An alternative is to extract the time point with the greatest difference between control and treatment and analyze that.
+
+## LC50?
+
+Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome.
+
+These figures look like this:
+
+```{r}
+#' @Kyle?
+```
+
+LC50 is already its own effect size. There is no known way to convert it to lnOR or lnRR. We're as clueless as you :)
+
+## Matched pairs contingency tables
+
+*Are these essentially paired lnOR?*
+
+Directly from `escalc`:
+
+"The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:"
+
+|                 | trt 2 outcome 1 | trt 2 outcome 2 |
+|-----------------|-----------------|-----------------|
+| trt 1 outcome 1 | ai              | bi              |
+| trt 1 outcome 2 | ci              | di              |
+
+"Note that ‘trt1’ and ‘trt2’ may be applied to a single group of subjects or to matched pairs of subjects. Also, ‘trt1’ and ‘trt2’ might refer to two different time points (e.g., before and after a treatment). In any case, the data from such a study can be rearranged into a marginal table of the form:"
+
+|                 | outcome 1 | outcome 2 |
+|-----------------|-----------|-----------|
+| trt 1 or time 1 | ai + bi   | ci + di   |
+| trt 2 or time 2 | ai + ci   | bi + di   |
+
+*I'm not sure I follow this*
+
+Options in `escalc`: "MPRR" (marginal log-risk ratio); "MPOR" (marginal log odds ratio); "MPRD" (marginal risk difference)
+
+And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional log odds ratio estimated with Peto's method)
+
+The paired versions require $r$, just as with paired SMD/lnRoM. In R:
+
+```{r}
+
+# blah blah blah blah
+
+```
+
+**Are these directly comparable to regular lnOR/lnRR effect sizes?**

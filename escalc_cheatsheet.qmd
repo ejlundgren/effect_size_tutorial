@@ -1,0 +1,95 @@
+---
+title: "`escalc` cheatsheet"
+subtitle: "so many estimators, so little time"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "escalc_cheatsheet.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("gt")
+library("lubridate")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
+```
+
+# SMD and lnRoM options
+
+*I wrote this when i thought these alternative formulations were comparable with SMD. Now that I know they are not, I'm not sure about having this here...Might move to appendix*
+
+The measurement options in `escalc` are "SMCC", "SMCR", and "SMCRP". Two of these have a heteroscedastic version ("SMCRH", "SMCRPH"). Given the diversity of formulations of these effect sizes, we've organized the options available in `escalc` into a table. We discuss these options in further depth below.
+
+So should use a paired formulation that doesn't affect point estimate, just variance. The one we have in eff_size is that and you presumably could use it with BACI (ignoring the post or pre treatment sd)
+
+| class | `escalc` | Heteroscedasticity | Paired designs | Details |
+|----|----|----|----|----|
+| SMD | "SMD" | No | No | The default and most commonly used estimator, formulated as "Hedges' g" (REF). |
+|  | "SMDH" | Yes | No | A formulation of Hedges' g that can account for heteroscedasticity between treatment groups. |
+|  | "SMCC" | No | Yes | Paired group formulation that uses the standard deviation of group 1 and 2. |
+|  | "SMCR" | No | Yes | Paired group formulation that uses standard deviation of group 1 only. |
+|  | "SMCRH" | Yes | Yes | Same as above but for heteroscedastic data. |
+|  | "SMCRP" | No | Yes | An alternative formulation that uses the standard deviations of both group 1 and 2. |
+| lnRoM | "ROM" | No | No | The default log-transformed ratio of means. |
+|  | "ROMC" | No | Yes | Paired formula for lnRoM. |
+
+Note that "Zmu" is only available in our own function `eff_this` (originally published in Nakagawa et al. XXXX) and supplied here. To select a paired formula, set paired_design = TRUE and be sure to provide `r` and `n` as an input.
+
+**Look into this:** "See also Morris and DeShon (2002) for a thorough discussion of the difference between the "SMCC" and "SMCR" change score measures"
+
+**Not sure when you should use SMCC versus SMCRP**
