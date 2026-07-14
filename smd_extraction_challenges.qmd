@@ -849,6 +849,94 @@ You have two options with data like this. One option is to use an SMD-type effec
 
 The other option is to calculate correlation coefficients for this data (Zr). Correlation coefficients require at least 4 observations, which can be simulated if the associated data has mean±error (see @sec). Regardless, these decisions are non-trivial and should be carefully documented.
 
+## Model estimates
+
+There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.
+
+Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions. 
+
+**CAN WE CALCULATE Zmu OR lnRoM from model estimates?**
+
+| Model type    | Usable  | Effect size | Statistics required |
+|---------------|---------|-------------|---------------------|
+| GLMM          | No      | none        |                     |
+| t test        | Yes     | SMD         |                     |
+| paired t test | Yes     | SMD         |                    |
+| 1-way ANOVA   | Yes?    | ?           |                     |
+| 2-way ANOVA   | Yes?    | ?           |                     |
+| linear model  | Yes     | ?           |                     |
+| mixed effect model | No | N/A        | N/A                |
+
+t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.
+
+### From the t statistic
+Calculating SMD from test statistics depends on whether the data come from a paired design (in which case df = n-1) or an independent two-sample design (df = n_1 + n_2 - 2). This is the formula for calculating SMD from a unpaired, two-sample design t test statistic:
+
+$$\begin{aligned}
+&d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \\
+&J= 1 - \frac{3}{4(n_1 + n_2 - 2) - 1} \\
+&g=J*d\\
+&Var(g) = \frac{n_1 + n_2}{n_1 n_2} + \frac{g^2}{2(n_1 + n_2 - 2)}
+\end{aligned}$$
+
+In `escalc` you simply specify t and measure "SMD" and it will return the unpaired SMD estimate.
+
+```{r}
+t = -1.5
+n1 = 15
+n2 = 15
+
+escalc(measure = "SMD",
+       ti = t,
+       n1i = n1,
+       n2i = n2)
+```
+
+
+For a paired design (e.g., paired t test):
+
+$$\begin{aligned}
+&d=\frac{t}{\sqrt{n}} \\
+&J= 1 - \frac{3}{4(n - 1) - 1} \\
+&g=J*d\\
+&Var(g) = \frac{1}{n} + \frac{g^2}{2(n - 1)}
+\end{aligned}$$
+
+We do not know the measure for an SMD paired formula (that is still comparable to the unpaired SMD).
+
+```{r}
+
+# escalc(measure = "SMD",
+#        ti = t,
+#        n1i = n1,
+#        n2i = n2)
+
+```
+
+### From p values:
+
+MATH
+
+To calculate SMD from p values, in `escalc`, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the `yi` point estimate afterwards).
+
+```{r}
+p = -0.07
+n1 = 15
+n2 = 15
+
+escalc(measure = "SMD",
+       pi = p,
+       n1i = n1,
+       n2i = n2)
+```
+
+Paired???
+
+### From F statistic
+
+???
+
+
 # NOTES / To read
 
 https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927

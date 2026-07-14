@@ -552,7 +552,33 @@ cbind(unpaired, paired)
 
 As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to a stronger influence in the meta-analytic models.
 
-For SMD, there is also a paired version that is comparable to non-paired values (e.g., you can include both in the same analysis). However, to the best of our knowledge, these are not available in `escalc`. For that reason, you need to use our function `eff_this`
+For SMD, there is also a paired version that is comparable to non-paired values (e.g., you can include both in the same analysis). However, to the best of our knowledge, these are not available in `escalc`. 
+*NO IDEA WHICH OPTION IN ESCALC IS PAIRED. WHICH IS PRETTY EMBARRASSING!!!*
+```{r}
+#| echo: true
+#| eval: false
+
+
+# First, unpaired:
+unpaired <- escalc(m1i = 7, sd1i = 1.2, 
+                    m2i = 12, sd2i = 0.9,
+                    n1i = 15, n2i = 15,
+                    measure = "SMD",
+                    var.names = c("yi_unpaired", "vi_unpaired"))
+
+
+# Now, the paired version:
+paired <- escalc(m1i = 7, sd1i = 1.2, 
+        m2i = 12, sd2i = 0.9,
+        ni = 15, ri = 0.8,
+        measure = "SMCRP",
+        var.names = c("yi_paired", "vi_paired"))
+
+cbind(unpaired, paired)
+
+```
+
+For that reason, you need to use our function `eff_this`
 
 ```{r}
 #| echo: true
@@ -603,7 +629,9 @@ $$\begin{aligned}
 &p2 = c/n2 \\
 &lnRR = log(p1/p2) \\
 \end{aligned}$$
-\## Assumptions
+
+
+## Assumptions
 
 ## Interpretation
 
@@ -663,18 +691,51 @@ lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we ap
 
 lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
 
+
+## Matched pairs contingency tables
+
+*Are these essentially paired lnOR?*
+
+Directly from `escalc`:
+
+"The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:"
+
+|                 | trt 2 outcome 1 | trt 2 outcome 2 |
+|-----------------|-----------------|-----------------|
+| trt 1 outcome 1 | ai              | bi              |
+| trt 1 outcome 2 | ci              | di              |
+
+"Note that ‘trt1’ and ‘trt2’ may be applied to a single group of subjects or to matched pairs of subjects. Also, ‘trt1’ and ‘trt2’ might refer to two different time points (e.g., before and after a treatment). In any case, the data from such a study can be rearranged into a marginal table of the form:"
+
+|                 | outcome 1 | outcome 2 |
+|-----------------|-----------|-----------|
+| trt 1 or time 1 | ai + bi   | ci + di   |
+| trt 2 or time 2 | ai + ci   | bi + di   |
+
+*I'm not sure I follow this*
+
+Options in `escalc`: "MPRR" (marginal log-risk ratio); "MPOR" (marginal log odds ratio); "MPRD" (marginal risk difference)
+
+And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional log odds ratio estimated with Peto's method)
+
+The paired versions require $r$, just as with paired SMD/lnRoM. In R:
+
+```{r}
+
+# blah blah blah blah
+
+```
+
+
 # Continuous outcomes with continuous predictor (Zr)
 Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1). See Appendix (@sec) for sampling variance formulas.
 
-\$\$
-
+$$
 \begin{aligned}
 &r_{i} \leftarrow \min(1, \max(-1, r_i))\\
-
 &Zr_{i} = atanh(r_{i})\\
 \end{aligned}
-
-\$\$
+$$
 
 In `escalc`, this looks like:
 
@@ -694,3 +755,30 @@ XXXXX
 ## Interpretation
 
 XXXXX
+
+
+## Other correlation types
+
+### Point-biserial correlations & biserial correlations
+
+Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).
+
+In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. `escalc` provides a shorthand to directly convert these statistics to Zr:
+
+```{r}
+# For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`
+escalc(measure = "ZPB",
+      m1i = 13.5, m2i = 10.1,
+      sd1i = 1.5, sd2i = 2.1,
+      n1i = 15, n2i = 15)
+
+
+# For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`
+escalc(measure = "ZBIS",
+      m1i = 13.5, m2i = 10.1,
+      sd1i = 1.5, sd2i = 2.1,
+      n1i = 15, n2i = 15)
+
+```
+
+
