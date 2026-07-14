@@ -1,6 +1,6 @@
 ---
-title: "SMD extraction challenges"
-subtitle: "SMD/lnRoM/Zmu"
+title: "Continuous comparisons between groups"
+subtitle: "SMD / lnRoM / Zmu"
 date: "`r Sys.Date()`"
 format: 
   html:
@@ -67,8 +67,11 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
-Preamble blah blah blah 
+This is one of the most commonly effect size across all of science. This effect size concerns the comparison of two discrete categorical predictors (e.g., Control vs Experiment) and a continuous outcome. By continuous, we mean, a measurement summarized by its central tendency (mean, median) and dispersion (variance, standard deviation, standard error) across replicates. These replicates are the sample size.
 
+The effect sizes that can be calculated with this data are standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and invariant index set (Zmu). Please see @sec for a description of these effect sizes, their assumptions, and their interpretation. In general, the extraction for these effect sizes is similar, though, as you will see, some data types constrain you to only using SMD because of values ≥ 0. 
+ 
+# Extraction
 Cheatsheet:
 **Rough version** **Make it downloadable/printable** ![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){download="SMD_challenges.png"}
 
@@ -778,7 +781,6 @@ setnames(dt, c("y1", "error"), c("mean", "sd"), skip_absent = TRUE)
 dt[, N := 10]
 
 cat(md_table(dt[, .(mean, sd, N, status)]))
-
 ```
 
 Then let's draw the underlying data. In this case, we are going to assume that the data is normally distributed. See @sec for how to draw data for other distributions (e.g., negative binomial or poisson). The object `dt` is our table of extracted means, standard deviations, and author-provided sample sizes.
@@ -815,7 +817,7 @@ cat(md_table(final_dt))
 
 Voila, a dataset that constructs group means that are comparable, with an accurate sample size and pooled standard deviation. If the underlying data generating process is not normal (which is likely the case for ecological data, especially abundance data), then you probably want to use a negative binomial distribution to generate data. See @sec X in the Appendix for a guide.
 
-Unfortunately, if the sample size for each of the points in the above figure is unknown, then your best option if the number of groups is \>= 3, is to ignore the standard deviation and calculate a new mean from each point for the two SMD comparison groups. Or, if the number of groups is \<3, to calculate Zr from the group means per point.
+Unfortunately, if the sample size for each of the points in the above figure is unknown, then your best option if the number of groups is $≥3$, is to ignore the standard deviation and calculate a new mean from each point for the two SMD comparison groups. Or, if the number of groups is $<3$, to calculate Zr from the group means per point.
 
 ## Results reported as an effect size itself
 
@@ -847,6 +849,6 @@ You have two options with data like this. One option is to use an SMD-type effec
 
 The other option is to calculate correlation coefficients for this data (Zr). Correlation coefficients require at least 4 observations, which can be simulated if the associated data has mean±error (see @sec). Regardless, these decisions are non-trivial and should be carefully documented.
 
-#### NOTES / To read
+# NOTES / To read
 
 https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927

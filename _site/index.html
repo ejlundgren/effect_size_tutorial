@@ -111,32 +111,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="styles.css">
+}</script><link rel="stylesheet" href="styles.css">
 </head>
 <body class="nav-sidebar docked quarto-light">
 
@@ -174,6 +149,12 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./overview.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">An overview of effect sizes</span></a>
   </div>
@@ -196,25 +177,25 @@ window.Quarto = {
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./universal_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Universal challenges</span></a>
+ <span class="menu-text">Universal extraction challenges</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./smd_extraction_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">SMD/lnRoM/Zmu challenges</span></a>
+ <span class="menu-text">Continuous comparisons between groups</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./lnOR_extraction_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">lnOR challenges</span></a>
+ <span class="menu-text">lnOR extraction challenges</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./Zr_extraction_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Zr challenges</span></a>
+ <span class="menu-text">Zr extraction challenges</span></a>
   </div>
 </li>
       </ul>
@@ -222,13 +203,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./effect_size_conversions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Effect size conservions</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./escalc_cheatsheet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">escalc cheatsheet</span></a>
+ <span class="menu-text">Converting between effect sizes</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -242,10 +217,22 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Non-Gaussian responses</span></a>
+  <a href="./escalc_cheatsheet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>escalc</code> cheatsheet</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulating non-Gaussian data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">organizing_extractions.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">formulas.qmd</span>
+  </li>
       </ul>
 </li>
     </ul>
@@ -260,14 +247,7 @@ window.Quarto = {
 <a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a>
   <ul>
 <li><a href="#how-to-use-this-tutorial" id="toc-how-to-use-this-tutorial" class="nav-link" data-scroll-target="#how-to-use-this-tutorial">How to use this tutorial</a></li>
-  <li><a href="#other-tutorials-and-resources" id="toc-other-tutorials-and-resources" class="nav-link" data-scroll-target="#other-tutorials-and-resources">Other tutorials and resources</a></li>
-  </ul>
-</li>
-  <li>
-<a href="#data-extraction-planning" id="toc-data-extraction-planning" class="nav-link" data-scroll-target="#data-extraction-planning">Data extraction planning</a>
-  <ul>
-<li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting started</a></li>
-  <li><a href="#tools-for-extracting-data-from-figures" id="toc-tools-for-extracting-data-from-figures" class="nav-link" data-scroll-target="#tools-for-extracting-data-from-figures">Tools for extracting data from figures</a></li>
+  <li><a href="#outline" id="toc-outline" class="nav-link" data-scroll-target="#outline">Outline</a></li>
   </ul>
 </li>
   </ul></nav>
@@ -312,119 +292,15 @@ window.Quarto = {
 
 
 </header><section id="introduction" class="level1"><h1>Introduction</h1>
-<p>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus provide a bridge between empirical questions (e.g., what is) and metascientific questions (what constitutes appropriate evidence, how do the social networks of researchers influence evidence, etc).</p>
+<p>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (e.g., what is) and metascientific questions.</p>
 <p>Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.</p>
 <p>We here present a living tutorial to navigating this methodological tempest, with particular emphasis on extracting and calculating effect sizes from a variety of data formats. This tutorial is maintained by the Collaboration for Open Science and Synthesis in Ecology and Evolution at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. As such, we hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</p>
 <p>We begin by providing an overview of the workflow we use in designing a meta-analysis, with particular attention paid to effect sizes, their assumptions, and to testing the influence of those assumptions with sensitivity analyses. We then describe the 3 most common effect size types used in ecology and evolution and their assumptions and alternative formulations. For each of these effect sizes, we then provide a detailed tutorial on how to extract data from both common and bizarre formats.</p>
-<section id="how-to-use-this-tutorial" class="level3"><h3 class="anchored" data-anchor-id="how-to-use-this-tutorial">How to use this tutorial</h3>
+<section id="how-to-use-this-tutorial" class="level2"><h2 class="anchored" data-anchor-id="how-to-use-this-tutorial">How to use this tutorial</h2>
 <p>This tutorial is viewable as a webpage or you can download the .qmd file and run the code interactively. This tutorial corresponds with the cheatsheets provided here <em>XXXXXX.</em></p>
 <p>This tutorial is based on an <code>R</code> workflow and assumes that the users have a basic understanding of <code>R</code>.</p>
-</section><section id="other-tutorials-and-resources" class="level2"><h2 class="anchored" data-anchor-id="other-tutorials-and-resources">Other tutorials and resources</h2>
-<p>[WORKFLOW FIGURE: Question -&gt; Planning (what study designs, etc) -&gt; Screening -&gt; Pilot extraction -&gt; Decide on extraction criteria -&gt; Extraction -&gt; Test assumptions (overdispersion, heteroscedasticity) -&gt; Calculate effect sizes -&gt; Models -&gt; Sensitivity analyses including publication bias testing] <strong>Flowchart figure with links to other tutorials and sections of this tutorial</strong></p>
-<p>While we wrote this tutorial to be exhaustive on how to extract data for effect sizes—and how to understand effect sizes more generally-there are many other dimensions to conducting a meta-analysis. Here are some of our favorite tutorials and papers, that start with the inception of a meta-analytic project (question formation, scoping, literature search and screening) and proceed through every step of the process:</p>
-<table class="caption-top table">
-<thead><tr class="header">
-<th>Step</th>
-<th>Reference</th>
-<th>URL</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Formulating a question</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Literature search &amp; screening</td>
-<td>Lagisz; Foo</td>
-<td>XXXXX</td>
-</tr>
-<tr class="odd">
-<td>Database design</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Extraction</td>
-<td>Yours truly</td>
-<td>XXXXX</td>
-</tr>
-<tr class="odd">
-<td>Random effects</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Modeling</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Publication bias</td>
-<td>Nakagawa et al.&nbsp;2022</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Reporting guidelines</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table></section></section><section id="data-extraction-planning" class="level1"><h1>Data extraction planning</h1>
-<section id="getting-started" class="level2"><h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
-<p>The first step to doing the data collection for a meta-analysis is to have a solid and clear question, a screened body of literature, and clear decision trees for what data to extract. We recommend doing pilot extractions (of ~10%) of your screened literature to estimate the total number of anticipated effect sizes. Moreover, we recommend categorizing and calculating the distribution of <em>extraction challenges</em> during this stage. By extraction challenges, we mean data that is presented in formats that are difficult to convert to effect sizes-the challenges that this tutorial is designed to help you tackle.</p>
-<p>Some extraction challenges, while solvable, introduce assumptions or potential error. If these extraction challenges (such as model estimates) are a minimal portion of a very large dataset, then you can justifiably decide not to extract them. However, if these difficult cases are common, if your dataset is small, or if you believe these types of data are <em>non-randomly</em> distributed in your dataset (e.g., often occur in papers from certain geographic regions, time periods, etc), then you may want to decide <em>a priori</em> to extract them.</p>
-<p>This can be done after initial extraction as well, if you took record of the studies that were excluded because they were unextractable. For example, if only 5% of your dataset comes from African countries and 50% of that data was not extractable, we think it would be justifiable to expand your extraction criteria to other data types—though this should be done to studies from all geographic regions, not just Africa.</p>
-</section><section id="tools-for-extracting-data-from-figures" class="level2"><h2 class="anchored" data-anchor-id="tools-for-extracting-data-from-figures">Tools for extracting data from figures</h2>
-<p>If you’re lucky, some of the data extraction for a meta-analysis can come directly from summary statistics (mean, sample size, standard deviation, etc) reported in tables or the main text of the papers you’re extracting. However, you’ll find that the majority of data extraction will be directly from figures. In these cases, you’ll employ a variety of tools to extract data from figures.</p>
-<p>We do not here discuss the mechanics of these tools but we will describe them and their advantages, briefly, here.</p>
-<p><strong>Add links to tutorials or the webpages</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-</colgroup>
-<thead><tr class="header">
-<th>Extraction tool</th>
-<th>Environment</th>
-<th>log-axes</th>
-<th>Auto-conversion</th>
-<th>Free-form extraction</th>
-<th>Built-in reproducibility</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>metaDigitise()</code></td>
-<td>R</td>
-<td>yes</td>
-<td>SE/IQR/CIs <span class="math inline">\(\rightarrow\)</span> SD</td>
-<td>No</td>
-<td>Yes</td>
-</tr>
-<tr class="even">
-<td><code>WebPlotDigitizer</code></td>
-<td>Web/Desktop</td>
-<td>yes</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-<tr class="odd">
-<td><code>ImageJ</code></td>
-<td>Desktop</td>
-<td>no</td>
-<td>No</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
-</tbody>
-</table>
-<p>An analysis (Hrobjartsson et al 2007) found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction. This includes saving screenshots of figures, preferably along with extraction points (which is automatically done by <code>metaDigitise()</code>) in folders that link directly to the final dataset.</p>
-<p>We also note that many AI tools, such as NotebookLM, are capable of extracting data from figures. However, utilizing these tools still requires that researchers maintain reproducible and transparent workflows and understand <em>what</em> data to extract.</p>
+</section><section id="outline" class="level2"><h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<p>We begin by giving a brief overview of the steps to conducting a meta-analysis and planning data extraction (XXX). We then present an overview of the main effect size types used in meta-analysis and their assumptions. We then go into detail about how to extract data for these effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to convert between effect size types and provide additional code in the Appendix for other unusual cases.</p>
 
 
 <!-- -->
@@ -983,7 +859,7 @@ window.Quarto = {
 <span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
 <span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus provide a bridge between empirical questions (e.g., what is) and metascientific questions (what constitutes appropriate evidence, how do the social networks of researchers influence evidence, etc).</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (e.g., what is) and metascientific questions.</span>
 <span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.</span>
 <span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
@@ -991,56 +867,15 @@ window.Quarto = {
 <span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>We begin by providing an overview of the workflow we use in designing a meta-analysis, with particular attention paid to effect sizes, their assumptions, and to testing the influence of those assumptions with sensitivity analyses. We then describe the 3 most common effect size types used in ecology and evolution and their assumptions and alternative formulations. For each of these effect sizes, we then provide a detailed tutorial on how to extract data from both common and bizarre formats.</span>
 <span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="fu">### How to use this tutorial</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to use this tutorial</span></span>
 <span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>This tutorial is viewable as a webpage or you can download the .qmd file and run the code interactively. This tutorial corresponds with the cheatsheets provided here *XXXXXX.*</span>
 <span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>This tutorial is based on an <span class="in">`R`</span> workflow and assumes that the users have a basic understanding of <span class="in">`R`</span>.</span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other tutorials and resources</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="fu">## Outline</span></span>
 <span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="sc">\[</span>WORKFLOW FIGURE: Question -<span class="sc">\&gt;</span> Planning (what study designs, etc) -<span class="sc">\&gt;</span> Screening -<span class="sc">\&gt;</span> Pilot extraction -<span class="sc">\&gt;</span> Decide on extraction criteria -<span class="sc">\&gt;</span> Extraction -<span class="sc">\&gt;</span> Test assumptions (overdispersion, heteroscedasticity) -<span class="sc">\&gt;</span> Calculate effect sizes -<span class="sc">\&gt;</span> Models -<span class="sc">\&gt;</span> Sensitivity analyses including publication bias testing<span class="sc">\]</span> **Flowchart figure with links to other tutorials and sections of this tutorial**</span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>While we wrote this tutorial to be exhaustive on how to extract data for effect sizes—and how to understand effect sizes more generally-there are many other dimensions to conducting a meta-analysis. Here are some of our favorite tutorials and papers, that start with the inception of a meta-analytic project (question formation, scoping, literature search and screening) and proceed through every step of the process:</span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Step                          <span class="pp">|</span> Reference            <span class="pp">|</span> URL   <span class="pp">|</span></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------------------------|----------------------|-------|</span></span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Formulating a question        <span class="pp">|</span>                      <span class="pp">|</span>       <span class="pp">|</span></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Literature search &amp; screening <span class="pp">|</span> Lagisz; Foo          <span class="pp">|</span> XXXXX <span class="pp">|</span></span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Database design               <span class="pp">|</span>                      <span class="pp">|</span>       <span class="pp">|</span></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Extraction                    <span class="pp">|</span> Yours truly          <span class="pp">|</span> XXXXX <span class="pp">|</span></span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Random effects                <span class="pp">|</span>                      <span class="pp">|</span>       <span class="pp">|</span></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Modeling                      <span class="pp">|</span>                      <span class="pp">|</span>       <span class="pp">|</span></span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Publication bias              <span class="pp">|</span> Nakagawa et al. 2022 <span class="pp">|</span>       <span class="pp">|</span></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Reporting guidelines          <span class="pp">|</span>                      <span class="pp">|</span>       <span class="pp">|</span></span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="fu"># Data extraction planning</span></span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Getting started</span></span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>The first step to doing the data collection for a meta-analysis is to have a solid and clear question, a screened body of literature, and clear decision trees for what data to extract. We recommend doing pilot extractions (of \~10%) of your screened literature to estimate the total number of anticipated effect sizes. Moreover, we recommend categorizing and calculating the distribution of *extraction challenges* during this stage. By extraction challenges, we mean data that is presented in formats that are difficult to convert to effect sizes-the challenges that this tutorial is designed to help you tackle.</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>Some extraction challenges, while solvable, introduce assumptions or potential error. If these extraction challenges (such as model estimates) are a minimal portion of a very large dataset, then you can justifiably decide not to extract them. However, if these difficult cases are common, if your dataset is small, or if you believe these types of data are *non-randomly* distributed in your dataset (e.g., often occur in papers from certain geographic regions, time periods, etc), then you may want to decide *a priori* to extract them.</span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>This can be done after initial extraction as well, if you took record of the studies that were excluded because they were unextractable. For example, if only 5% of your dataset comes from African countries and 50% of that data was not extractable, we think it would be justifiable to expand your extraction criteria to other data types—though this should be done to studies from all geographic regions, not just Africa.</span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tools for extracting data from figures</span></span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>If you're lucky, some of the data extraction for a meta-analysis can come directly from summary statistics (mean, sample size, standard deviation, etc) reported in tables or the main text of the papers you're extracting. However, you'll find that the majority of data extraction will be directly from figures. In these cases, you'll employ a variety of tools to extract data from figures.</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>We do not here discuss the mechanics of these tools but we will describe them and their advantages, briefly, here.</span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>**Add links to tutorials or the webpages**</span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Extraction tool <span class="pp">|</span> Environment <span class="pp">|</span> log-axes <span class="pp">|</span> Auto-conversion <span class="pp">|</span> Free-form extraction <span class="pp">|</span> Built-in reproducibility <span class="pp">|</span></span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|----|----|----|----|----|----|</span></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`metaDigitise()`</span> <span class="pp">|</span> R <span class="pp">|</span> yes <span class="pp">|</span> SE/IQR/CIs $\rightarrow$ SD <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`WebPlotDigitizer`</span> <span class="pp">|</span> Web/Desktop <span class="pp">|</span> yes <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ImageJ`</span> <span class="pp">|</span> Desktop <span class="pp">|</span> no <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>An analysis (Hrobjartsson et al 2007) found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction. This includes saving screenshots of figures, preferably along with extraction points (which is automatically done by <span class="in">`metaDigitise()`</span>) in folders that link directly to the final dataset.</span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>We also note that many AI tools, such as NotebookLM, are capable of extracting data from figures. However, utilizing these tools still requires that researchers maintain reproducible and transparent workflows and understand *what* data to extract.</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>We begin by giving a brief overview of the steps to conducting a meta-analysis and planning data extraction (XXX). We then present an overview of the main effect size types used in meta-analysis and their assumptions. We then go into detail about how to extract data for these effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to convert between effect size types and provide additional code in the Appendix for other unusual cases.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -120,8 +120,6 @@ dt[var < mean, var := mean]
 
 # Now expand dataset with rnbinom:
 dt_expanded <- list()
-nrow(dt)
-# 10 rows in raw dataset
 
 for(i in 1:nrow(dt)){
   dt_expanded[[i]] <- data.table(y = rnbinom(mu = dt$mean[i],
@@ -132,13 +130,11 @@ for(i in 1:nrow(dt)){
 
 dt_expanded <- rbindlist(dt_expanded)
 
-nrow(dt_expanded)
-
 # Now summarize to calculate our effect size of interest:
 final_dt <- dt_expanded[, .(mean = mean(y),
                             sd = sd(y),
                             total_n = .N),
                         by = .(status)]
 
-cat(md_table(final_dt))
+final_dt
 ```

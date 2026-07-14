@@ -75,6 +75,7 @@ Effect sizes can be inter-converted between SMD and lnOR and Zr [@borenstein2021
 
 ![Effect size types](figures/flowcharts_diagrams/conversions.png) These conversions have some numeric assumptions:
 
+
 | Conversion  | Assumption         |
 |-------------|--------------------|
 | lnOR ↔ SMD  |                    |
@@ -82,6 +83,8 @@ Effect sizes can be inter-converted between SMD and lnOR and Zr [@borenstein2021
 | SMD ↔ lnRoM | Homoscedasticity?? |
 
 **Not sure if assumptions go both ways**
+
+
 
 In addition to these assumptions, be careful that the data is truly comparable, especially in terms of sample size. Imagine you're analyzing the effect of an introduced predator on prey. Some studies present abundance correlations of the predator and prey, where N is the number of surveys through time. Other studies present lnOR type presence/absence data across islands with and without the prey and the predator. The sample sizes of these study types are grossly different (n = survey; n = island). It does not seem justifiable to convert between the effect sizes, since the ultimate model will treat the Zr abundance correlations as having more weight than the full-island surveys (which are likely more biologically meaningful).
 
@@ -92,7 +95,7 @@ We have digitized these conversion formulas and they are available in our `conve
 ```{r}
 #| eval: false
 #| echo: true
-source("xxxxxxxx")
+source("scripts/functions/convert_effect_sizes.R")
 
 convert_effect_sizes()
 
@@ -108,10 +111,10 @@ convert_effect_sizes(from = "SMD", to = "Zr",
                      n1 = 10, n2 = 10)
 ```
 
-# SMD \<-\> Zr
+# SMD ↔ lnRoM
 
-# SMD \<-\> lnOR
+# SMD ↔ Zr
 
-# SMD \<-\> lnRoM
+# SMD ↔ lnOR
 
-# Zr \<- SMD -\> lnOR
+# Zr ← SMD → lnOR

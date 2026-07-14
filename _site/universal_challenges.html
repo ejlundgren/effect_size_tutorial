@@ -245,13 +245,12 @@ window.Quarto = {
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>CONTENTS</strong></h2>
    
   <ul>
-<li>
-<a href="#universal-challenges" id="toc-universal-challenges" class="nav-link active" data-scroll-target="#universal-challenges">Universal challenges</a>
-  <ul>
-<li><a href="#sample-size" id="toc-sample-size" class="nav-link" data-scroll-target="#sample-size">Sample size</a></li>
+<li><a href="#sample-size" id="toc-sample-size" class="nav-link active" data-scroll-target="#sample-size">Sample size</a></li>
   <li><a href="#multiple-measurements" id="toc-multiple-measurements" class="nav-link" data-scroll-target="#multiple-measurements">Multiple measurements</a></li>
-  <li><a href="#model-estimates" id="toc-model-estimates" class="nav-link" data-scroll-target="#model-estimates">Model estimates</a></li>
   <li>
+<a href="#model-estimates" id="toc-model-estimates" class="nav-link" data-scroll-target="#model-estimates">Model estimates</a>
+  <ul>
+<li>
 <a href="#smd" id="toc-smd" class="nav-link" data-scroll-target="#smd">SMD</a>
   <ul>
 <li><a href="#from-the-t-statistic" id="toc-from-the-t-statistic" class="nav-link" data-scroll-target="#from-the-t-statistic">From the t statistic</a></li>
@@ -287,8 +286,7 @@ window.Quarto = {
   
 
 
-</header><section id="universal-challenges" class="level2"><h2 class="anchored" data-anchor-id="universal-challenges">Universal challenges</h2>
-<section id="sample-size" class="level3"><h3 class="anchored" data-anchor-id="sample-size">Sample size</h3>
+</header><section id="sample-size" class="level1"><h1>Sample size</h1>
 <p>One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is core to meta-analysis because it is core to the calculation of sampling variance.</p>
 <p>Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. Sample size is far easier with behavioral or physiological data, where the unit of replication is generlaly the number of individuals.</p>
 <p>Within the ecology literature, sample size can be devilishly challenging. For example, a meta-analysis that considers vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundances. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don’t know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view while the spotlight surveys could cover dozens of kilometers.</p>
@@ -296,9 +294,9 @@ window.Quarto = {
 <p>In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses, choosing alternative formulations of sample size to ensure that your decisions as a meta-analyst are not biasing your model estimates.</p>
 <p>Also note that sample size is necessary to convert author-provided measurements of <em>standard error</em> to <em>standard deviation</em>. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error.</p>
 <p><strong>Let’s imagine that an article presented standard error based on one measure of sample size (let’s say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?</strong></p>
-</section><section id="multiple-measurements" class="level3"><h3 class="anchored" data-anchor-id="multiple-measurements">Multiple measurements</h3>
+</section><section id="multiple-measurements" class="level1"><h1>Multiple measurements</h1>
 <p>One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. Studies also often compare a single control to multiple treatments. These situations of multiple comparisons must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. We do not discuss these issues in this tutorial (though we may allude to them). See above (<span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>) for tutorials on how to construct random effects for complex study designs.</p>
-</section><section id="model-estimates" class="level3"><h3 class="anchored" data-anchor-id="model-estimates">Model estimates</h3>
+</section><section id="model-estimates" class="level1"><h1>Model estimates</h1>
 <p>There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.</p>
 <p>Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions. Given the special nature of reconstructing data from inferential model statistics, we present this in its own section (<span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>).</p>
 <table class="caption-top table">
@@ -351,8 +349,8 @@ window.Quarto = {
 <p>If a model includes random effects, then it’s not usable?</p>
 <p>Our function, <code>eff_size()</code> can calculate effect size statistics for XYZ models, as can <code>escalc</code>. We demonstrate below:</p>
 <p>In <code>escalc</code>:</p>
-</section><section id="smd" class="level3"><h3 class="anchored" data-anchor-id="smd">SMD</h3>
-<section id="from-the-t-statistic" class="level4"><h4 class="anchored" data-anchor-id="from-the-t-statistic">From the t statistic</h4>
+<section id="smd" class="level2"><h2 class="anchored" data-anchor-id="smd">SMD</h2>
+<section id="from-the-t-statistic" class="level3"><h3 class="anchored" data-anchor-id="from-the-t-statistic">From the t statistic</h3>
 <p>I dont think we actually need formulas here. Just the R code. <span class="math display">\[\begin{aligned}
 &amp;d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \\
 &amp;g=J*d\\
@@ -372,7 +370,7 @@ window.Quarto = {
 1 -0.5329 0.1381 </code></pre>
 </div>
 </div>
-</section><section id="from-p-values" class="level4"><h4 class="anchored" data-anchor-id="from-p-values">From p values:</h4>
+</section><section id="from-p-values" class="level3"><h3 class="anchored" data-anchor-id="from-p-values">From p values:</h3>
 <p><span class="math display">\[??\]</span></p>
 <p>To calculate SMD from p values, in <code>escalc</code>, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the <code>yi</code> point estimate afterwards).</p>
 <div class="cell">
@@ -390,8 +388,8 @@ window.Quarto = {
 1 -0.6693 0.1408 </code></pre>
 </div>
 </div>
-</section></section><section id="lnor" class="level3"><h3 class="anchored" data-anchor-id="lnor">lnOR:</h3>
-</section><section id="zr" class="level3"><h3 class="anchored" data-anchor-id="zr">Zr:</h3>
+</section></section><section id="lnor" class="level2"><h2 class="anchored" data-anchor-id="lnor">lnOR:</h2>
+</section><section id="zr" class="level2"><h2 class="anchored" data-anchor-id="zr">Zr:</h2>
 
 
 <!-- -->
@@ -916,103 +914,101 @@ window.Quarto = {
 <span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Universal challenges</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="fu"># Sample size</span></span>
 <span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a><span class="fu">### Sample size</span></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is core to meta-analysis because it is core to the calculation of sampling variance.</span>
 <span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is core to meta-analysis because it is core to the calculation of sampling variance.</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. Sample size is far easier with behavioral or physiological data, where the unit of replication is generlaly the number of individuals.</span>
 <span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. Sample size is far easier with behavioral or physiological data, where the unit of replication is generlaly the number of individuals.</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>Within the ecology literature, sample size can be devilishly challenging. For example, a meta-analysis that considers vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundances. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view while the spotlight surveys could cover dozens of kilometers.</span>
 <span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>Within the ecology literature, sample size can be devilishly challenging. For example, a meta-analysis that considers vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundances. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view while the spotlight surveys could cover dozens of kilometers.</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>Another grave issue that haunts vegetation meta-analyses is plot size. Studies with larger scaled plots (e.g., 100 m\^2) will often have a smaller sample size than studies with small plots (e.g., 10 m\^2), yet their inference of large-scale patterns is greater. There is currently no mathematical solution for this. For that reason, we recommend digitizing plot-size (as well as the plant body size, e.g., trees versus herbaceous) when conducting a meta-analysis on vegetation data. These covariates can be used as moderators or for subsetting your dataset.</span>
 <span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>Another grave issue that haunts vegetation meta-analyses is plot size. Studies with larger scaled plots (e.g., 100 m\^2) will often have a smaller sample size than studies with small plots (e.g., 10 m\^2), yet their inference of large-scale patterns is greater. There is currently no mathematical solution for this. For that reason, we recommend digitizing plot-size (as well as the plant body size, e.g., trees versus herbaceous) when conducting a meta-analysis on vegetation data. These covariates can be used as moderators or for subsetting your dataset.</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses, choosing alternative formulations of sample size to ensure that your decisions as a meta-analyst are not biasing your model estimates.</span>
 <span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses, choosing alternative formulations of sample size to ensure that your decisions as a meta-analyst are not biasing your model estimates.</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error.</span>
 <span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error.</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**</span>
 <span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a><span class="fu"># Multiple measurements</span></span>
 <span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multiple measurements</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a>One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. Studies also often compare a single control to multiple treatments. These situations of multiple comparisons must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. We do not discuss these issues in this tutorial (though we may allude to them). See above (@sec) for tutorials on how to construct random effects for complex study designs.</span>
 <span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. Studies also often compare a single control to multiple treatments. These situations of multiple comparisons must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. We do not discuss these issues in this tutorial (though we may allude to them). See above (@sec) for tutorials on how to construct random effects for complex study designs.</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates</span></span>
 <span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model estimates</span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.</span>
 <span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions. Given the special nature of reconstructing data from inferential model statistics, we present this in its own section (@sec).</span>
 <span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions. Given the special nature of reconstructing data from inferential model statistics, we present this in its own section (@sec).</span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model type    <span class="pp">|</span> Usable <span class="pp">|</span> Effect size <span class="pp">|</span> Statistics required <span class="pp">|</span></span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|--------|-------------|---------------------|</span></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> GLMM          <span class="pp">|</span> No     <span class="pp">|</span> none        <span class="pp">|</span>                     <span class="pp">|</span></span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> t test        <span class="pp">|</span> Yes    <span class="pp">|</span> SMD         <span class="pp">|</span>                     <span class="pp">|</span></span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> paired t test <span class="pp">|</span> Yes    <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1-way ANOVA   <span class="pp">|</span> Yes?   <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2-way ANOVA   <span class="pp">|</span> Yes?   <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> linear model  <span class="pp">|</span> Yes    <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model type    <span class="pp">|</span> Usable <span class="pp">|</span> Effect size <span class="pp">|</span> Statistics required <span class="pp">|</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|--------|-------------|---------------------|</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> GLMM          <span class="pp">|</span> No     <span class="pp">|</span> none        <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> t test        <span class="pp">|</span> Yes    <span class="pp">|</span> SMD         <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> paired t test <span class="pp">|</span> Yes    <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1-way ANOVA   <span class="pp">|</span> Yes?   <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2-way ANOVA   <span class="pp">|</span> Yes?   <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> linear model  <span class="pp">|</span> Yes    <span class="pp">|</span> ?           <span class="pp">|</span>                     <span class="pp">|</span></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.</span>
 <span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.</span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>If a model includes random effects, then it's not usable?</span>
 <span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>If a model includes random effects, then it's not usable?</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_size()`</span> can calculate effect size statistics for XYZ models, as can <span class="in">`escalc`</span>. We demonstrate below:</span>
 <span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_size()`</span> can calculate effect size statistics for XYZ models, as can <span class="in">`escalc`</span>. We demonstrate below:</span>
-<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a><span class="co"># BLAH BLAH BLAH</span></span>
-<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a><span class="co"># BLAH BLAH BLAH</span></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
 <span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
-<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a><span class="fu">## SMD</span></span>
 <span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="fu">### SMD</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="fu">### From the t statistic</span></span>
 <span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a><span class="fu">#### From the t statistic</span></span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>I dont think we actually need formulas here. Just the R code.</span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>&amp;d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} <span class="sc">\\</span></span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>&amp;g=J*d<span class="sc">\\</span></span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>t <span class="ot">=</span> <span class="sc">-</span><span class="fl">1.5</span></span>
-<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">=</span> <span class="dv">15</span></span>
-<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">=</span> <span class="dv">15</span></span>
-<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>       <span class="at">ti =</span> t,</span>
-<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> n1,</span>
-<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>       <span class="at">n2i =</span> n2)</span>
-<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>I dont think we actually need formulas here. Just the R code.</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>&amp;d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} <span class="sc">\\</span></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>&amp;g=J*d<span class="sc">\\</span></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>t <span class="ot">=</span> <span class="sc">-</span><span class="fl">1.5</span></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">=</span> <span class="dv">15</span></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">=</span> <span class="dv">15</span></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>       <span class="at">ti =</span> t,</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> n1,</span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>       <span class="at">n2i =</span> n2)</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="fu">### From p values:</span></span>
 <span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a><span class="fu">#### From p values:</span></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>$$??$$</span>
 <span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>$$??$$</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>To calculate SMD from p values, in <span class="in">`escalc`</span>, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the <span class="in">`yi`</span> point estimate afterwards).</span>
 <span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>To calculate SMD from p values, in <span class="in">`escalc`</span>, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the <span class="in">`yi`</span> point estimate afterwards).</span>
-<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.07</span></span>
-<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">=</span> <span class="dv">15</span></span>
-<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">=</span> <span class="dv">15</span></span>
-<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>       <span class="at">pi =</span> p,</span>
-<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> n1,</span>
-<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>       <span class="at">n2i =</span> n2)</span>
-<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="sc">-</span><span class="fl">0.07</span></span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">=</span> <span class="dv">15</span></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">=</span> <span class="dv">15</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>       <span class="at">pi =</span> p,</span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> n1,</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>       <span class="at">n2i =</span> n2)</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a><span class="fu">## lnOR:</span></span>
 <span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnOR:</span></span>
-<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="fu">### Zr:</span></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Zr:</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
