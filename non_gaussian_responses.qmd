@@ -62,6 +62,8 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
+library("kableExtra")
+
 
 # Source our custom functions:
 source("scripts/functions/eff_size.R")
@@ -78,7 +80,9 @@ The object `dt` here is a dataset extracted from an article with Mean±SD for tw
 ```{r}
 #| eval: true
 #| echo: false
-#| out-width: "70%"
+# #| out-width: "20%"
+# #| tbl-cap: "Custom Width Table"
+#| tbl-colwidths: [10, 10, 10]
 
 dt <- copy(structure(list(x1 = 1:10, mean = c(1.15246506001662, 0.617012258022042, 
 2.92559078415861, 5.44051812652133, 6.57076998232729, 6.95824795972284, 
@@ -92,7 +96,11 @@ dt <- copy(structure(list(x1 = 1:10, mean = c(1.15246506001662, 0.61701225802204
 "data.frame")))
 dt[, sd := sqrt(mean) + .001]
 
-cat(md_table(dt[, .(mean, sd, N, status)]))
+knitr::kable(dt[, .(status, mean, sd, N)], caption = "Raw summary statistics in normal scale."#,
+             #table.attr = 'data-quarto-disable-processing="true"'
+             ) #|>
+   # kable_styling(full_width = FALSE, position = "left") #
+
 ```
 
 Note that the standard deviation has a positive relationship with the mean, which is an indicator that this data is derived from a negative binomial distribution.

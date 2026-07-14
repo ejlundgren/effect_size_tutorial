@@ -67,6 +67,8 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
+We'll here give an overview of the main effect sizes covered in this tutorial. As you may have noticed, there are sometimes several effect size options for the same study designs. These effect sizes differ in their statistical assumptions and in their interpretation. Let's start with the most commonly used category of effect sizes in ecology and conservation: effect sizes for comparing continuous outcomes between two discrete groups.
+
 # Discrete groups with continuous outcomes (SMD/lnRoM/Zmu)
 
 This is among the most common class of effect sizes used in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such an experiment and control group. These effect sizes require the following statistics: 1) means for the treatment and control groups (henceforth `m_1` and `m_2`) 2) standard deviation for the two groups (`sd_1`, `sd_2`); and 3) sample size for each group (`n_1`, `n_2`).
@@ -482,7 +484,7 @@ escalc(m1i = 7, sd1i = 1.2, n1i = 15,
 
 ```
 
-However, SMD values are difficult to interpret We generally use the following rules of thumb: - SMD \> \|0.8\| $\approx$ strong effect - SMD \> \|0.5\| $\approx$ moderate effect - SMD \> 0.2 $\approx$ small effect.
+However, SMD values are difficult to interpret We generally use the following rules of thumb: - $SMD > |0.8| \approx$ strong effect - $SMD > |0.5| \approx$ moderate effect - $SMD > |0.2| \approx$ small effect.
 
 In the case above, an SMD of -4.6 can be considered **strongly negative**
 
@@ -511,7 +513,7 @@ In R:
 
 Therefore an lnRoM of -0.5390 is equivalent to a -41.6% decrease as a result of the treatment. Being able to convert lnRoM to % change is one of the reasons this effect size is so powerful. However, as Table 1 (@sec) above shows, you have to be careful with your assumptions.
 
-Zmu interpretation.........
+*Zmu interpretation.........*
 
 ## Alternative formulations
 
@@ -577,8 +579,6 @@ cbind(unpaired, paired)
 
 There are several options available in `escalc` to account for paired designs. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See appendix (@sec).
 
-**Need to add SMDH paired to our function table**
-
 # Discrete outcomes with categorical predictor (lnOR, lnRR)
 
 The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.
@@ -592,7 +592,9 @@ $$lnOR = log(\frac{a * d}{b * c})$$
 
 ## log Risk Ratio (lnRR)
 
-The risk ratio (or relative risk, lnRR) is similar to lnOR but XYZ *(why use one and not the other?)*.
+The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others.
+
+*@Kyle, can you help with this?*
 
 lnRR is defined as:
 
@@ -604,8 +606,6 @@ $$\begin{aligned}
 \## Assumptions
 
 ## Interpretation
-
-XXXXXXX @Kyle - can you put OR vs RR into plain english?
 
 To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.
 
@@ -627,20 +627,35 @@ escalc(measure = "OR",
 
 ```
 
-and lnRR:
+To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):
+
+$$
+OR = e^{lnOR}
+$$
+```{r}
+exp(1.4069) |> round()
+```
+
+An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.
+
+We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.
 
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
 
-escalc(measure = "RR",
+out <- escalc(measure = "RR",
        ai = 35, bi = 12,
        ci = 15, di = 21)
 
+exp(out$yi[1])
+
 ```
 
-And this means in plain english?
+A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.
+
+*Not sure I am correctly interpreting these*
 
 ## Continuity corrections
 
@@ -649,7 +664,6 @@ lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we ap
 lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
 
 # Continuous outcomes with continuous predictor (Zr)
-
 Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1). See Appendix (@sec) for sampling variance formulas.
 
 \$\$
