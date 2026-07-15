@@ -1,5 +1,5 @@
 ---
-title: "Effect size assumptions & interpretation"
+title: "Effect size assumptions"
 subtitle: "XXXX"
 date: "`r Sys.Date()`"
 format: 
@@ -63,25 +63,26 @@ library("crayon")
 
 # Source our custom functions:
 source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
 We'll here give an overview of the main effect sizes covered in this tutorial. As you may have noticed, there are sometimes several effect size options for the same study designs. These effect sizes differ in their statistical assumptions and in their interpretation. Let's start with the most commonly used category of effect sizes in ecology and conservation: effect sizes for comparing continuous outcomes between two discrete groups.
 
-# Discrete groups with continuous outcomes (SMD / lnRoM / Zmu)
+# Discrete groups with continuous outcomes (SMD/lnRoM/Zmu)
 
-This is among the most common class of effect sizes used in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such an experiment and control group. These effect sizes require the following statistics: 1) means for the treatment and control groups (henceforth $m_1$ and $m_2$) 2) standard deviation for the two groups ($sd_1$, $sd_2$); and 3) sample size for each group ($n_1$, $n_2$).
+This is among the most common class of effect sizes used in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such an experiment and control group. These effect sizes require the following statistics: 1) means for the treatment and control groups (henceforth `m_1` and `m_2`) 2) standard deviation for the two groups (`sd_1`, `sd_2`); and 3) sample size for each group (`n_1`, `n_2`).
 
 ::: callout-important
 ##### Measurements of error/variance
 
-The effect sizes in this section require standard deviation ($sd$) for the treatment and control groups. $sd$ is fundamentally distinct from standard error ($se$). Some meta-analyses have mistaken the two, with egregious results. Be sure to convert all measurements of error to $sd$. Other commonly reported forms of error include 95% confidence intervals (or 90%), variance, and interquartile ranges (e.g., in boxplots). The extraction package `metaDigitise()` automatically converts $se$, interquartile ranges, and 95% CIs to $sd$.
+The effect sizes in this section require standard deviation ($sd$) for the treatment and control groups. $sd$ is fundamentally distinct from standard error ($se$). Some meta-analyses have mistaken the two, with egregious results. Be sure to convert all measurements of error to $sd$. Other commonly reported forms of error include 95% confidence intervals (or 90%), variance, and interquartile ranges (e.g., in boxplots). The extraction package `metaDigitise()` automatically converts $SE$, interquartile ranges, and 95% CIs to $SD$.
 
 Just to remind you, here are the relationships between these measurements of error:
 $$\begin{aligned}
-&sd = se * \sqrt{n}\\
-&sd = sqrt(Var)\\
-&sd = \frac{CI_{upper} - CI_{lower}}{2*1.96} * \sqrt{n}
+&SD = SE * \sqrt{n}\\
+&SD = sqrt(Var)\\
+&SD = \frac{CI_{upper} - CI_{lower}}{2*1.96} * \sqrt{n}
 \end{aligned}$$
 :::
 
@@ -104,17 +105,17 @@ While we want to keep this tutorial light on equations, we'll briefly give some 
 SMD, also known as Hedges' g, is the bias-corrected version of Cohen's d. With $sd$, $m$, and $n$ the standard deviation, mean, and sample size of the extracted data for groups 1 and 2, Cohen's d is defined as:
 
 $$\begin{aligned}
-&d = \frac{m1-m2}{sd_{pooled}}
+&d = \frac{m1-m2}{SD_{pooled}}
 \end{aligned}$$
 
-$sd_{pooled}$ is:
-$$sd_{pooled} = \sqrt{\frac{sd_1^2 (n_1 - 1) + sd_2^2 (n_2 - 1)}{n_1 + n_2 - 2}}\\$$
+$SD_{pooled}$ is:
+$$SD_{pooled} = \sqrt{\frac{sd_1^2 (n_1 - 1) + sd_2^2 (n_2 - 1)}{n_1 + n_2 - 2}}\\$$
 
 Cohen's d is an estimator of SMD and can be biased at low sample size. For that reason, Hedges (REF) did some fancy math to create a small-sample size bias correction ($J$), which approaches 0 as total $n$ increases. This formulation is known as Hedges' g and is the primary estimator of SMD.
 
 $$\begin{aligned}
 &J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}\\
-&d = \frac{m1-m2}{sd_{pooled}}\\
+&d = \frac{m1-m2}{SD_{pooled}}\\
 &g = J * d
 \end{aligned}$$
 The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation. Observations with high standard deviation will have a lower overall point estimate. Because this can reduce power, Hedges and Gurevitch later proposed the log-transformed ratio of means, the most widely used effect size in ecology (ref). This does not have standard deviation in the point estimate:
@@ -732,15 +733,9 @@ Zr is the dominant effect size for describing correlations between two continuou
 $$
 \begin{aligned}
 &r_{i} \leftarrow \min(1, \max(-1, r_i))\\
-&Z_{r_i} = atanh(r_{i})\\
+&Zr_{i} = atanh(r_{i})\\
 \end{aligned}
 $$
-The sampling variance of Zr depends entirely on sample size and is defined as:
-
-$$
-Var(Z_r) = \frac{1}{n-3}
-$$
-As you can see, sampling variance is only calculable if $n>3$. 
 
 In `escalc`, this looks like:
 
@@ -759,7 +754,8 @@ XXXXX
 
 ## Interpretation
 
-Zr effect sizes describe the strength and direction of a relationship between two continuous variables. 
+XXXXX
+
 
 ## Other correlation types
 
@@ -784,5 +780,6 @@ escalc(measure = "ZBIS",
       n1i = 15, n2i = 15)
 
 ```
+
 
 
