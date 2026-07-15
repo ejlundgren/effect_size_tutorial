@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-07-13">
+<meta name="dcterms.date" content="2026-07-15">
 <title>An overview of effect sizes – User’s manual to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -163,12 +163,6 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./getting_started.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Getting started</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./overview.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Overview of effect sizes</span></a>
   </div>
@@ -182,13 +176,19 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Extraction challenges</span></a>
+ <span class="menu-text">Extracting effect sizes</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting_started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./universal_challenges.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Universal challenges</span></a>
@@ -277,6 +277,8 @@ window.Quarto = {
 <a href="#other-formulations" id="toc-other-formulations" class="nav-link" data-scroll-target="#other-formulations">Other formulations</a>
   <ul>
 <li><a href="#paired-design-formulations" id="toc-paired-design-formulations" class="nav-link" data-scroll-target="#paired-design-formulations">Paired design formulations</a></li>
+  <li><a href="#formulations-for-heteroscedastic-data" id="toc-formulations-for-heteroscedastic-data" class="nav-link" data-scroll-target="#formulations-for-heteroscedastic-data">Formulations for heteroscedastic data</a></li>
+  <li><a href="#other-estimators" id="toc-other-estimators" class="nav-link" data-scroll-target="#other-estimators">Other estimators</a></li>
   </ul>
 </li>
   </ul></nav>
@@ -295,7 +297,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 13, 2026</p>
+      <p class="date">July 15, 2026</p>
     </div>
   </div>
   
@@ -416,7 +418,7 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Until recently, almost all effect size estimators used <em>plugin</em> formulas like shown above to calculate point estimates and sampling variance (which is what <code>escalc</code> does). However, growth in computational power has enabled alternative methods for calculating effect sizes and variance. In particular, the <em>SAFE</em> method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.</p>
+<p>Until recently, almost all effect size estimators used <em>plugin</em> formulas like those shown above to calculate point estimates and sampling variance (which is what <code>escalc</code> does). However, growth in computational power has enabled alternative methods for calculating effect sizes and sampling variance. In particular, the <em>SAFE</em> method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.</p>
 <p>SAFE is also essential for calculating point estimates and sampling variance for effect sizes for which differences of 0 (e.g., <span class="math inline">\(m1 - m2\)</span>) lead to <span class="math inline">\(NA\)</span> or <span class="math inline">\(Infinite\)</span> values (Nakagawa et al 2026)—in particular the log magnitude (lnM) effect size, which describes the absolute difference between two groups (REF). For further information, including an interactive tutorial like this one, on the use of the SAFE method, please see Nakagawa et al.&nbsp;2026 and the tutorial at github.com/ejlundgren/SAFE.</p>
 </div>
 </div>
@@ -427,6 +429,10 @@ Tip
 <p>Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.</p>
 <p>However, there are also paired design formulations that are <em>NOT</em> comparable to unpaired formulas. These take into account the pairing in the point estimate formula and produce effect size estimates that need to be analyzed separately.</p>
 <p>We try to clear up this confusion in the Appendix with some charts of compatibility between the different estimators in <code>escalc</code> (<span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>).</p>
+</section><section id="formulations-for-heteroscedastic-data" class="level2"><h2 class="anchored" data-anchor-id="formulations-for-heteroscedastic-data">Formulations for heteroscedastic data</h2>
+<p>XXXX</p>
+</section><section id="other-estimators" class="level2"><h2 class="anchored" data-anchor-id="other-estimators">Other estimators</h2>
+<p>XXXXX</p>
 
 
 <!-- -->
@@ -1038,7 +1044,7 @@ Tip
 <span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas. the <span class="in">`_second`</span> variables are the bias-corrected point estimates. If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased. Note that the function defaults to unpaired designs (see below @sec).</span>
 <span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a>Until recently, almost all effect size estimators used *plugin* formulas like shown above to calculate point estimates and sampling variance (which is what `escalc` does). However, growth in computational power has enabled alternative methods for calculating effect sizes and variance. In particular, the *SAFE* method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.</span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a>Until recently, almost all effect size estimators used *plugin* formulas like those shown above to calculate point estimates and sampling variance (which is what `escalc` does). However, growth in computational power has enabled alternative methods for calculating effect sizes and sampling variance. In particular, the *SAFE* method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.</span>
 <span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a>SAFE is also essential for calculating point estimates and sampling variance for effect sizes for which differences of 0 (e.g., $m1 - m2$) lead to $NA$ or $Infinite$ values (Nakagawa et al 2026)—in particular the log magnitude (lnM) effect size, which describes the absolute difference between two groups (REF). For further information, including an interactive tutorial like this one, on the use of the SAFE method, please see Nakagawa et al. 2026 and the tutorial at github.com/ejlundgren/SAFE.</span>
 <span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>:::</span>
@@ -1055,6 +1061,12 @@ Tip
 <span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a>However, there are also paired design formulations that are *NOT* comparable to unpaired formulas. These take into account the pairing in the point estimate formula and produce effect size estimates that need to be analyzed separately.</span>
 <span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the Appendix with some charts of compatibility between the different estimators in <span class="in">`escalc`</span> (@sec).</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a><span class="fu">## Formulations for heteroscedastic data</span></span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a>XXXX</span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other estimators</span></span>
+<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a>XXXXX</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

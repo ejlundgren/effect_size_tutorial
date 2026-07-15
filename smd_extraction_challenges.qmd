@@ -472,7 +472,7 @@ ggplot()+
 
 What do you do about something like that? Do you just exclude the study?
 
-The best way to deal with this data is to calculate the difference in the means between the before and after groups for each treatment of interest and extract standard deviation from the after treatment groups. Since the treatment groups themselves are not paired, you'd use an unpaired formula. Since your values may be negative, you'll have to use SMD.
+The best way to deal with this data is to calculate the difference between the means of the before and after groups for each treatment of interest and extract the standard deviation from the just *after* treatment groups. Since the treatment groups themselves are not paired, you'd use an unpaired estimator formula. Since your values may be negative, you'll most likely have to use SMD.
 
 ```{r}
 #| echo: true
@@ -537,6 +537,9 @@ In this case, you'd do the same as above. As you can see, when dealing with this
 Sometimes BACI type data is presented directly as percent change, which saves us some of the steps above.
 
 ```{r}
+#| eval: true
+#| echo: false
+
 baci.wide <- dcast(baci,
                    control_impact ~ before_after,
                    value.var = c("m", "sd"))
@@ -614,7 +617,6 @@ ggplot()+
         legend.position = "right")
 
 ```
-
 
 *Out of scope for now* You can either extract one of those treatments as the effect size, and use the other treatment as a moderator in your models, or you can use Shinichi's crazy interaction formulas:
 
@@ -751,7 +753,8 @@ However, what do you do if each of these measurements has associated error?
 #| eval: true
 #| echo: false
 #| out-width: "70%"
-dt[, error := .5]
+
+dt$error <- rnorm(mean = .5, sd = .2, n = nrow(dt))
 
 ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
   geom_path()+
@@ -769,21 +772,23 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-If the sample size associated with each point is known (e.g., reported in text), then you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from figure. This draw should use the underlying data generating process of the response. If the response is normally distributed, then you can use the R base function `rnorm`. This will produce a longer dataset, with a row for every estimated sample. You'd then calculate the group mean, standard deviation, and total sample size for the binary predictor of interest, in this case "Eradicated" versus "Present". You could also do a similar process to calculate Zr (see @sec).
+If the sample size associated with each point is known (e.g., reported in text), then you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from the figure. This should use the underlying data generating process of the response. If the response is normally distributed, then you can use the R base function `rnorm`. This will produce a longer dataset, with a row for every estimated sample. You'd then calculate the group mean, standard deviation, and total sample size for the binary predictor of interest, in this case "Eradicated" versus "Present". You could also do a similar process to calculate Zr, if a correlation includes error bars (see @sec).
 
 To walk you through this, imagine you've extracted the means and standard deviation for each point in the figure above. Each point represents a survey. The authors reported in the text that each survey had a sample size (based on number of plots) of 10. You could produce a table like this:
 
 ```{r}
 #| eval: true
 #| echo: false
-#| out-width: "70%"
+#| out-width: "50%"
+
 setnames(dt, c("y1", "error"), c("mean", "sd"), skip_absent = TRUE)
 dt[, N := 10]
 
-cat(md_table(dt[, .(mean, sd, N, status)]))
+knitr::kable(dt[, .(mean, sd, N, status)])
+# cat(md_table(dt[, .(mean, sd, N, status)]))
 ```
 
-Then let's draw the underlying data. In this case, we are going to assume that the data is normally distributed. See @sec for how to draw data for other distributions (e.g., negative binomial or poisson). The object `dt` is our table of extracted means, standard deviations, and author-provided sample sizes.
+Each row of this dataset is a summary of an internal dataset, which we can reconstruct by drawing from the appropriate statistical distribution. In this case, we are going to assume that the data is normally distributed. See @sec for how to draw data for other distributions (e.g., negative binomial). The object `dt` is our table of extracted means, standard deviations, and author-provided sample sizes. To keep the code readable, we'll do this in a for loop, saving each drawn dataset to an element of our list object `dt_expanded`:
 
 ```{r}
 #| eval: true
@@ -805,19 +810,27 @@ for(i in 1:nrow(dt)){
 dt_expanded <- rbindlist(dt_expanded)
 
 nrow(dt_expanded)
+```
 
+We have now reconstructed the 'original' data across all time points, creating a 100 row dataset. We can now take the mean and standard deviation of this reconstructed data to end up with the summary statistics to calculate our effect size:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+#| 
 # Now summarize:
 final_dt <- dt_expanded[, .(mean = mean(y),
                             sd = sd(y),
                             total_n = .N),
                         by = .(status)]
 
-cat(md_table(final_dt))
+knitr::kable(final_dt)
 ```
 
 Voila, a dataset that constructs group means that are comparable, with an accurate sample size and pooled standard deviation. If the underlying data generating process is not normal (which is likely the case for ecological data, especially abundance data), then you probably want to use a negative binomial distribution to generate data. See @sec X in the Appendix for a guide.
 
-Unfortunately, if the sample size for each of the points in the above figure is unknown, then your best option if the number of groups is $≥3$, is to ignore the standard deviation and calculate a new mean from each point for the two SMD comparison groups. Or, if the number of groups is $<3$, to calculate Zr from the group means per point.
+Unfortunately, if the sample size for each of the points in the above figure is unknown, then your best option if the number of groups is $≥3$, is to ignore the standard deviation and calculate a new mean from each point for the two SMD comparison groups. Or, if the number of groups is $<3$, to calculate Zr from just the group means per point (ignoring the standard deviation).
 
 ## Results reported as an effect size itself
 

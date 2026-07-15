@@ -69,12 +69,10 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
-Blah blah blah. Reminder about what Zr is.
+Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.
 
-Cheatsheet:
 
 ![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg)
-
 ## Simple figures
 
 This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:
@@ -148,7 +146,7 @@ ggplot(data = dat, aes(x = x, y = y))+
 ```
 
 
-In these cases, if the total N is known for the study (e.g., the total number of sampling points), then you can duplicate the values for the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use an N that is less than the real N (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
+In these cases, if the total number of points (N) is reported for the study, then you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use an N that is less than the real N (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
 
 ## Single axis error bars
 
@@ -238,7 +236,7 @@ ggplot(data = dat[sample(25)], aes(x = x, y = y))+
         legend.position = "none")
 ```
 
-In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the columns of expanded x and y to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable.
+In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the rows of the expanded x and y variables to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable.
 
 ```{r}
 #| echo: true
@@ -262,6 +260,7 @@ xy_expanded <- rbindlist(xy_expanded)
 
 cat(md_table(head(xy_expanded)))
 ```
+
 Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.
 
 Now, we calculate the correlation between all of these points and calculate our 'Zr' effect size:
@@ -285,6 +284,8 @@ Sometimes the factors of interest that you want to correlate are in separate gra
 
 However, what do you do if the time series are mismatched?
 
+Below, we'll plot two time series, one for Variable 1 and one for Variable 2:
+
 ```{r}
 #| eval: true
 #| echo: false
@@ -294,10 +295,8 @@ library("lubridate")
 
 x1 <- seq(from = 1995, to = 2005, by = 1)
 x2 <- seq(from = 1995, to = 2005, by = .25)
-# x2
 
-# length(x1)
-y1 <- seq(from = 5, to = 15, by = 1)#m1[sample(11)] * 1.3 + rnorm(n = 11, mean = 0, sd = 1)
+y1 <- seq(from = 5, to = 15, by = 1)
 y1 <- y1[1:11] 
 y1 <- y1 + rnorm(n = 11, mean = 0, sd = .5)
 # plot(x1, y1)
@@ -318,7 +317,7 @@ p1 <- ggplot(data = dt1, aes(x = x1, y = y1))+
   geom_path()+
   geom_point(size = 3)+
   xlab("Year")+
-  ylab("Predictor variable of interest")+
+  ylab("Variable 1")+
   theme_bw()+
   scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2),
                      labels = as.integer(seq(from = min(dt1$x1), to=max(dt1$x1), by = 2)))+
@@ -332,7 +331,7 @@ p2 <- ggplot(data = dt2, aes(x = date, y = y2))+
   geom_path()+
   geom_point(size = 3)+
   xlab("Year")+
-  ylab("Response variable of interest")+
+  ylab("Variable 2")+
   theme_bw()+
   # scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2))+
   theme(panel.grid = element_blank(),
@@ -343,13 +342,13 @@ p1 + p2
 
 ```
 
-While imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend summarizing (e.g., taking the mean) or filtering the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.
+What is the best way to line up variable 1 and variable 2 to calculate their correlation? rWhile imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.
 
 ## Matrices
 
-Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors.
+Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise, activities, such as grooming each other. A long-standing question has concerned whether these behaviors are adaptive and potentially increase the chance that an individual will protect another individual. 
 
-For example, imagine calculating a correlation between a matrix of grooming behavior:
+In this case, you might have a matrix of grooming between individuals:
 
 ```{r}
 #| eval: true
@@ -360,29 +359,15 @@ For example, imagine calculating a correlation between a matrix of grooming beha
 library("gt")
 library("ggplotify")
 
-dat1 <- CJ(person1 = c("Sally", "James", "Bart", "Sergeant Brown"), 
-           person2 = c("Sally", "James", "Bart", "Sergeant Brown"))
-dat1[, val1 := rnorm(n = nrow(dat1), 
-                     mean = .8, sd = .1)]
-dat1[, val2 := rnorm(n = nrow(dat1), 
-                     mean = 1.5, sd = .3)]
+mat1 <- matrix(runif(16, min = 1, max = 100), nrow = 4, ncol = 4)
+mat1[lower.tri(mat1, diag = TRUE)] <- NA
+colnames(mat1) <- c("Sally", "James", "Bart", "Sergeant Brown")
+row.names(mat1) <- c("Sally", "James", "Bart", "Sergeant Brown")
 
-dat1[person1 == person2, val1 := NA]
-dat1[person1 == person2, val2 := NA]
-
-mat1 <- dcast(data = dat1,
-              person1 ~ person2, value.var = "val1")
-
-
-mat2 <- dcast(data = dat1,
-              person1 ~ person2, value.var = "val2")
-
-mat1 <- gt(mat1) %>%
-  tab_header(title = "Grooming") #%>%
-
-mat2 <- gt(mat2) %>%
-  tab_header(title = "Defense") #%>%
-  # as.ggplot()
+mat2 <- matrix(runif(16, min = 1, max = 100), nrow = 4, ncol = 4)
+mat2[lower.tri(mat2, diag = TRUE)] <- NA
+colnames(mat2) <- c("Sally", "James", "Bart", "Sergeant Brown")
+row.names(mat2) <- c("Sally", "James", "Bart", "Sergeant Brown")
 
 mat1
 
@@ -398,8 +383,33 @@ And a matrix of defending each other from adversaries:
 mat2
 ```
 
-XXXXX
+How do you go about analyzing such data? For an example of a meta-analysis on this topic, see Schino (2007) https://doi.org/10.1093/beheco/arl045.
+
+First, you need to melt these matrices into vectors and align the pairs:
+
+```{r}
+mat1 <- reshape2::melt(mat1, na.rm = T)
+mat2 <- reshape2::melt(mat2, na.rm = T)
+
+mat1
+```
+
+Then, calculate Kendall's correlation coefficient:
+
+```{r}
+res <- cor.test(mat1$value, mat2$value, method = "kendall")
+res
+```
+
+And now you're free to calculate ZCOR:
+```{r}
+escalc(measure = "ZCOR", 
+       ri = res$estimate,
+       ni = nrow(mat1))
+``` 
+
+**IS THIS CORRECT???**
 
 ## Model estimates
 
-?????
+....
