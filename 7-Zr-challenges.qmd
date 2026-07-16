@@ -171,6 +171,10 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an internal-N, which will need to be gleaned from the methods of the paper. After determining this internal-N, extract the means and SDs for each point, and then draw a distribution of internal-N for each point with an appropriate distribution. Here we'll demonstrate using `rnorm` to draw normally distributed data for each point.
 
+::: callout-tip
+If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), then you *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See @sec on how to convert from other measures of error to standard deviation.
+:::
+
 ```{r}
 #| echo: true
 #| eval: true
@@ -187,7 +191,7 @@ for(i in 1:nrow(dat)){
 }
 y_expanded <- rbindlist(y_expanded)
 
-y_expanded
+head(y_expanded)
 
 ```
 
@@ -236,7 +240,7 @@ ggplot(data = dat[sample(25)], aes(x = x, y = y))+
         legend.position = "none")
 ```
 
-In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the rows of the expanded x and y variables to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable.
+In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the rows of the expanded x and y variables to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable. In the table below, you'll see the extracted mean values for the x and y variables (`x`, `y`), their standard deviations (`x_sd`, `y_sd`), and their internal sample sizes (`x_n` and `y_n`), which differ. We'll first, choose the small sample size and then we'll draw simulated data.
 
 ```{r}
 #| echo: true
@@ -258,7 +262,7 @@ for(i in 1:nrow(dat)){
 }
 xy_expanded <- rbindlist(xy_expanded)
 
-cat(md_table(head(xy_expanded)))
+head(xy_expanded)
 ```
 
 Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.

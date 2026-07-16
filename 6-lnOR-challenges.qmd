@@ -66,12 +66,37 @@ source("scripts/functions/eff_size.R")
 source("scripts/functions/convert_effect_sizes.R")
 
 ```
-Preamble blah blah blah 
 
-Cheatsheet:
-XXXX
+Discrete outcomes are a common design in ecology and evolution, though perhaps not as common as in medical trials. These types of data are meta-analyzed with lnOR or lnRR effect sizes and require either discrete numbers per group or proportions and total group size. We recommend structuring lnOR/lnRR extraction databases *wide*, with four columns, one for each of these groups.
+
+For example, imagine you are meta-analyzing the influence of introduced predators on the breeding success of birds. You are extracting data from articles that report the proportion of monitored nests that successfully fledged on islands with and without predators. These values correspond to a contigency table that looks like this:
+
+|                  | Fledged | Failed |
+|------------------|---------|------|-
+| Predator present | $a$     | $b$  |
+| Predator absent  | $c$     | $d$  |
+
+Your empty database structure for these values might look like this (ignoring all the other important columns, like latitude, longitude, article id, etc)
+
+```{r}
+#| eval: true
+#| echo: false
+library("kableExtra")
+dat <- data.table(fledged_predators_absent = rep("", 7),
+                  fledged_predators_present = rep("", 7),
+                  failed_predators_absent = rep("", 7),
+                  failed_predators_present = rep("", 7))
+dat
+```
+
+The`fledged_predators_present`, `failed_predators_present`, `fledged_predators_absent`, and `failed_predators_absent` correspond to `a`, `b`, `c`, `d` cells of your contingency table and to the arguments required by `metafor::escalc`.
+
+
+Here is a cheatsheet for extracting lnOR/lnRR type data: [XXXXXXX]
+
 
 # The easy cases
+Let's start with the easy cases.
 
 ## Proportion or % data with total population
 
@@ -116,6 +141,8 @@ Take the row sum ($35 + 15 = 50$) and populate the missing values ($0.5 * 50$) f
 | Treatment | 35        | 15        |
 | Control   | 25        | 25        |
 
+**ANNOYED BY HOW THE TABLES RENDER FULL WIDTH**
+
 Observations like this should be flagged for sensitivity analyses.
 
 Now let's look at some other ways this data is displayed.
@@ -131,7 +158,7 @@ Some studies may report a response like survivorship over multiple years before 
 dat <- data.table(year = 1990:1999,
                   treatment = c(rep("Pre", 4), 
                                 rep("Post", 6)))
-dat
+# dat
 
 dat[, total_individuals := c(150, 131, 160, 171, 153, 158, 111, 95, 98, 101)]
 dat[, number_deceased := c(5, 8, 4, 7, 11, 13, 12, 18, 15, 17)]
@@ -159,9 +186,8 @@ To extract data like this, you would need to determine the total population size
 ```{r}
 #| eval: true
 #| echo: false
-#| output: asis
 
-cat(md_table(dat))
+dat
 
 ```
 
@@ -177,8 +203,7 @@ dat.sum <- dat %>% group_by(treatment) %>%
             number_deceased = sum(number_deceased)) %>%
   mutate(number_living = total_individuals - number_deceased)
 
-cat(md_table(dat.sum))
-
+dat.sum
 ```
 
 The columns `number_deceased` and `number_living` provide you the contingency table necessary to calculate lnOR.
@@ -234,7 +259,6 @@ ggplot()+
         legend.position = "none")
 ```
 
-
 In this case, the y axis is the proportion ($p1$ and $p2$) for each group (group 1 and 2). The meta-analyst needs to extract the total number of individuals in groups 1 (blue) and 2 (red) at time point 1, which can then be multipled by the total number of individuals at the beginning of the experiment. This will yield $a$ and $c$ for the two groups. $b$ and $d$ can then be found by subtracting from the total $n$:
 
 |                | time | $p$       | N        | Alive   | Dead   |
@@ -258,4 +282,6 @@ LC50 is already its own effect size. There is no known way to convert it to lnOR
 
 **Are these directly comparable to regular lnOR/lnRR effect sizes?**
 
-## lnOR???
+## Model estimates
+
+According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.

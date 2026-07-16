@@ -69,11 +69,11 @@ source("scripts/functions/convert_effect_sizes.R")
 
 These are among the most commonly used effect size types in meta-analyses. These effect sizes compare a continuous response variable between two discrete categorical predictors (e.g., Control vs Experiment). By continuous, we mean a measurement summarized by its central tendency (mean, median) and dispersion (variance, standard deviation, standard error) across replicates. These replicates are the sample size.
 
-The effect sizes that can be calculated with this data are standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu. Please see @sec for a description of these effect sizes, their assumptions, and their interpretation. In general, the extraction for these effect sizes is similar, though, as you will see, some data types constrain you to only using SMD because of values ≤ 0, which only SMD can handle. 
- 
+The effect sizes that can be calculated with this data are standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu. Please see @sec for a description of these effect sizes, their assumptions, and their interpretation. In general, the extraction for these effect sizes is similar, though, as you will see, some data types constrain you to only using SMD because of values ≤ 0, which only SMD can handle.
+
 # Extraction
-Cheatsheet:
-**Rough version** **Make it downloadable/printable** ![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){download="SMD_challenges.png"}
+
+Cheatsheet: **Rough version** **Make it downloadable/printable** ![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){download="SMD_challenges.png"}
 
 ## The simple cases
 
@@ -196,7 +196,6 @@ hist1 + hist2
 
 ```
 
-
 `metaDigitise()` luckily has built-in functionality for dealing with histograms. The function will guide you through each step, which requires calibrating the axes and then clicking on the left and right corners of each bar. It'll then convert the extracted distribution into mean±sd.
 
 ## Violin and density plots
@@ -258,7 +257,6 @@ dens
 
 ```
 
-
 **Eye-ball it?** Use a different extraction tool to extract the entire distribution? Then...?
 
 ## Proportion data (0-1) bounded without error
@@ -267,8 +265,7 @@ Sometimes SMD/lnRoM design types will present the total % of a population for a 
 
 Luckily, mean±SD can be extracted from a proportions with the following formulas, where $p$ is the proportion, $M$ is the mean, and $total$ is the population size??.
 
-*I THINK?*
-$$\begin{aligned}
+*I THINK?* $$\begin{aligned}
 &SD = p * (1-p) \\
 &M = p*total?? \\
 \end{aligned}$$
@@ -322,7 +319,6 @@ ggplot()+
         axis.text.x = element_blank())
 
 ```
-
 
 To deal with this data, we'll extract the boxplot with `metaDigitise()`, which will convert the median±interquartile range to mean±SD. We will then consider the control group to have a mean of 0. However, you have only one measurement of error. For this reason, you'll have to pretend that the control error is the same as the treatment error.
 
@@ -774,6 +770,10 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 If the sample size associated with each point is known (e.g., reported in text), then you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from the figure. This should use the underlying data generating process of the response. If the response is normally distributed, then you can use the R base function `rnorm`. This will produce a longer dataset, with a row for every estimated sample. You'd then calculate the group mean, standard deviation, and total sample size for the binary predictor of interest, in this case "Eradicated" versus "Present". You could also do a similar process to calculate Zr, if a correlation includes error bars (see @sec).
 
+::: callout-tip
+If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), then you *must* convert these to standard deviation before attempting to reconstruct the underlying distribution based on author-provided sample size per point.
+:::
+
 To walk you through this, imagine you've extracted the means and standard deviation for each point in the figure above. Each point represents a survey. The authors reported in the text that each survey had a sample size (based on number of plots) of 10. You could produce a table like this:
 
 ```{r}
@@ -866,23 +866,24 @@ The other option is to calculate correlation coefficients for this data (Zr). Co
 
 There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.
 
-Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions. 
+Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions.
 
 **CAN WE CALCULATE Zmu OR lnRoM from model estimates?**
 
-| Model type    | Usable  | Effect size | Statistics required |
-|---------------|---------|-------------|---------------------|
-| GLMM          | No      | none        |                     |
-| t test        | Yes     | SMD         |                     |
-| paired t test | Yes     | SMD         |                    |
-| 1-way ANOVA   | Yes?    | ?           |                     |
-| 2-way ANOVA   | Yes?    | ?           |                     |
-| linear model  | Yes     | ?           |                     |
-| mixed effect model | No | N/A        | N/A                |
+| Model type         | Usable | Effect size | Statistics required |
+|--------------------|--------|-------------|---------------------|
+| GLMM               | No     | none        |                     |
+| t test             | Yes    | SMD         |                     |
+| paired t test      | Yes    | SMD         |                     |
+| 1-way ANOVA        | Yes?   | ?           |                     |
+| 2-way ANOVA        | Yes?   | ?           |                     |
+| linear model       | Yes    | ?           |                     |
+| mixed effect model | No     | N/A         | N/A                 |
 
 t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.
 
 ### From the t statistic
+
 Calculating SMD from test statistics depends on whether the data come from a paired design (in which case df = n-1) or an independent two-sample design (df = n_1 + n_2 - 2). This is the formula for calculating SMD from a unpaired, two-sample design t test statistic:
 
 $$\begin{aligned}
@@ -904,7 +905,6 @@ escalc(measure = "SMD",
        n1i = n1,
        n2i = n2)
 ```
-
 
 For a paired design (e.g., paired t test):
 
@@ -948,7 +948,6 @@ Paired???
 ### From F statistic
 
 ???
-
 
 # NOTES / To read
 

@@ -1,0 +1,325 @@
+---
+title: "Universal extraction challenges"
+subtitle: "XXX"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "universal_challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
+```
+
+There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We'll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect may be more pervasive and widespread.
+
+# Sample size
+
+One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.
+
+Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. While sample size might be conceptually straightforward with behavioral or physiological data, where the unit of replication is generally the number of individuals, it can become incredible complex with plot data or survey data. 
+
+For example, meta-analyzing vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). 
+
+Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).
+
+We recommend recording the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.
+
+## Measurement scale
+Another issue that haunts vegetation meta-analyses is plot size. Studies with larger plots (e.g., 100 m^2^) will  have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects. 
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+# VISUALIZE
+
+```
+
+There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest. 
+
+In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses.
+
+Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error, if that is what they reported.
+
+**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**
+
+# Multiple measurements
+
+One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. 
+
+## Repeated measurements
+Time series random effects are fairly straightforward to implement in the primary frequentist package for meta-analytic models (`metafor` and `rma.mv`, ref). Controlling for them requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable. 
+
+To illustrate, let's imagine we are assessing the influence of temperature on the growth rates of clams. A study reports an experimental trial for two species (zebra mussels and quagga mussels), each through time. The control is ambient conditions while the treatment is increased temperature. These are moderators we are explicitly interested in. Imagine the results of this study look like this:
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dat <- data.table(time = rep(c(1, 2, 3), 4),
+                 treatment = c(rep("15ºC", 6),
+                               rep("19ºC", 6)),
+                 species = c(rep("Dreissena polymorpha", 3),
+                             rep("Dreissena bugensis", 3),
+                             rep("Dreissena polymorpha", 3),
+                             rep("Dreissena bugensis", 3)))
+dat[, row_id := 1:.N]
+dat[, mean := ifelse(treatment == "15ºC",
+                     mean(rnorm(n = 10, mean = 6+time, sd = 2)),
+                     mean(rnorm(n = 10, mean = 7+time, sd = 2))),
+    by = row_id]
+dat[, sd := rnorm(n = .N, mean = .75, sd = .1)]
+
+ggplot(data = dat, aes(x = time, y = mean, ymin = mean-sd, ymax = mean+sd,
+                     color = treatment))+
+  geom_pointrange()+
+  geom_path()+
+  ylab("Growth rate")+
+  xlab("Time")+
+  facet_wrap(~species)+
+  scale_color_manual(NULL,
+                    values = c("15ºC" = "dodgerblue2",
+                               "19ºC" = "indianred"))+  
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "bottom",
+        strip.background = element_blank())
+
+```
+
+In this case, you have two independent species and three dependent time points per species. We would most likely extract all of the data from both panels of this figure, and produce a table like this. Note that we recommend extracting data in a *wide* format, so that each paired value (control and treatment per species and time point) is clearly associated, allowing for easy effect size calculation.
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+setnames(dat, "treatment", "temperature")
+dat[, treatment := ifelse(temperature == "15ºC", "low", "high")]
+
+extracted <- dcast(data = dat,
+                   species + time ~ treatment,
+                   value.var = c("mean", "sd", "temperature"))
+setnames(extracted, c("time"), c("time_sequence"))
+extracted[, article_id := "article_1"]
+extracted[, fig := "fig 1"]
+extracted[, n_low := 15]
+extracted[, n_high := 15]
+extracted[, experiment_id := paste(species, "experiment")]
+
+setcolorder(extracted, c("article_id", "fig", "species", "experiment_id", "time_sequence", 
+                         "temperature_low", "temperature_high",
+                         "mean_low", "sd_low", "n_low", "mean_high", "sd_high", "n_high"))
+
+extracted
+
+```
+
+Note that we have a column for the article (`article_id`), a column describing where in the article the data came from (`fig`), a column recording the species (`species`), an id for the experiment (which was unique to each species) and the time sequence (`time_sequence`) within that experiment. The experiment id might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).
+
+These columns control our non-independence structures within this study. We also have the statistics necessary for our effect size calculations (`mean_*`, `sd_*`, `n_*`) for each temperature treatment. And we have two columns that can be used to construct moderators (`temperature_high` and `temperature_low`).
+
+## Multiple comparisons to same control
+
+Let's imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control, again for two different species (one of which is in the first study). In this case, they do not report repeated measures. Their figure might look like this:
+
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dat <- data.table(temperature = c(rep("12ºC", 2),
+                               rep("18ºC", 2),
+                               rep("23ºC", 2)),
+                 species = c(rep(c("Dreissena polymorpha", "Alasmidonta undulata"), 3)))
+
+dat[, row_id := 1:.N]
+dat[, mean := fcase(temperature == "12ºC", mean(rnorm(n = 10, mean = 4, sd = 2)),
+                    temperature == "18ºC", mean(rnorm(n = 10, mean = 7, sd = 2)),
+                    temperature == "23ºC", mean(rnorm(n = 10, mean = 3, sd = 2))),
+    by = row_id]
+
+dat[, sd := rnorm(n = .N, mean = .75, sd = .1)]
+
+ggplot(data = dat, aes(x = temperature, y = mean, ymin = mean-sd, ymax = mean+sd,
+                     fill = temperature))+
+  geom_col()+
+  geom_errorbar(width = .25)+
+  ylab("Growth rate")+
+  xlab("Temperature")+
+  facet_wrap(~species)+
+  scale_fill_manual(NULL,
+                    values = c("12ºC" = "dodgerblue2",
+                               "18ºC" = "dodgerblue4",
+                               "23ºC" = "indianred"))+  
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "bottom",
+        strip.background = element_blank())
+
+```
+
+Here we have a different looking plot, with two treatment temperature (18ºC and 23ºC) compared to the same control (12ºC). Again, we have two different species and no repeated measures. We would recommend extracting the data to look like this:
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dat[, treatment := ifelse(temperature == "12ºC", "low", "high")]
+dat[, n := 25]
+
+ext.1 <- dat[temperature %in% c("12ºC", "18ºC")]
+ext.1.wide <- dcast(ext.1, species ~ treatment, value.var = c("mean", "sd", "n", "temperature"))
+
+
+ext.2 <- dat[temperature %in% c("12ºC", "23ºC")]
+ext.2.wide <- dcast(ext.2, species ~ treatment, value.var = c("mean", "sd", "n", "temperature"))
+
+extracted2 <- rbind(ext.1.wide, ext.2.wide)
+
+extracted2[, article_id := "article_2"]
+extracted2[, fig := "fig s1"]
+
+extracted2[, control_id := paste0("shared_control_", species)]
+
+extracted2[, experiment_id := paste(species, "experiment")]
+
+setcolorder(extracted2, c("article_id", "fig", "species", "control_id", "experiment_id",
+                         "temperature_low", "temperature_high",
+                         "mean_low", "sd_low", "n_low", "mean_high", "sd_high", "n_high"))
+setorder(extracted2, species, temperature_high)
+extracted2
+
+```
+
+This dataset has a `control_id` which specifies that these data share a control. This can be used in your random effect formulation.
+
+The combined dataset with both studies would look like this. Note that the time_sequence column for the second study is populated with '1', while the control id for the first study is given a unique value per row.
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+extracted[, control_id := paste0("unique_control", 1:.N)]
+extracted2[, time_sequence := 1:.N]
+full_dat <- rbind(extracted, extracted2)
+
+full_dat
+
+```
+
+Tricky business, right?
+
+Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. Messy! Ultimately, we would likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. But let's leave that out for now :) 
+
+Note that the `struct` argument in `rma.mv` specifies the correlation structure to apply to time series.
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+library("metafor")
+
+# First calculate effect size:
+full_dat <- escalc(measure = "SMD",
+                   m1i = mean_low, m2i = mean_high,
+                   sd1i = sd_low, sd2i = sd_high,
+                   n1i = n_low, n2i = n_high, 
+                   data = full_dat) |> setDT()
+
+# Calculate difference in temperature to use as a moderator:
+full_dat[, temperature_diff := as.numeric(gsub("ºC", "", temperature_high)) - as.numeric(gsub("ºC", "", temperature_low))]
+
+# Add a unique ID for each effect size:
+full_dat[, effect_size_id := 1:.N]
+
+# Model
+m <- rma.mv(yi ~ temperature_diff,
+            V = vi,
+            random = list(~1 | article_id / experiment_id / control_id / effect_size_id,
+                          ~1 | species,
+                          ~time_sequence | experiment_id),
+            dfs = "contain",
+            test = "t",
+            method = "ML",
+            struct = "AR",
+            data = full_dat)
+
+summary(m)
+
+
+```
+
+As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from time series (or a single experimental treatment). These can also be filtered after extraction, if your data is tidy and easy to manage.
+
+We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX
+
+# Database design
+As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on. 
+
+We recommend that you do a pilot extraction, and analysis, of ~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.
+
+
