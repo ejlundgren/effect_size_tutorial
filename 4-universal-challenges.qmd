@@ -101,7 +101,10 @@ Also note that sample size is necessary to convert author-provided measurements 
 
 **Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**
 
-# Multiple measurements
+# Non-independence
+
+Also check this: https://royalsocietypublishing.org/rsta/article/384/2321/20240604/481953/A-preliminary-data-analysis-workflow-for-meta
+
 
 One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. 
 
@@ -187,6 +190,7 @@ Let's imagine the next study in this same meta-analysis has two different temper
 #| eval: true
 #| echo: false
 #| out-width: "70%"
+set.seed(33)
 
 dat <- data.table(temperature = c(rep("12ºC", 2),
                                rep("18ºC", 2),
@@ -310,12 +314,17 @@ m <- rma.mv(yi ~ temperature_diff,
 
 summary(m)
 
-
 ```
 
-As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from time series (or a single experimental treatment). These can also be filtered after extraction, if your data is tidy and easy to manage.
+As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
 
 We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX
+
+::: callout-important
+In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have  calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size (see @sec). Alternatively, we could have used a totally different (and more unusual effect size): Q~10~. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and less overall heterogeneity.
+
+For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see Noble et al 2022 and where we discuss this in brief (@sec)
+:::
 
 # Database design
 As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on. 

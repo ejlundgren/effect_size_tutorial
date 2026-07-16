@@ -1,5 +1,5 @@
 ---
-title: "Continuous outcomes with continuous predictor"
+title: "Continuous predictor"
 subtitle: "Zr: the correlation coefficient"
 date: "`r Sys.Date()`"
 format: 
@@ -71,9 +71,7 @@ source("scripts/functions/convert_effect_sizes.R")
 
 Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.
 
-
-![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg)
-## Simple figures
+![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg) \## Simple figures
 
 This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:
 
@@ -145,7 +143,6 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 ```
 
-
 In these cases, if the total number of points (N) is reported for the study, then you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use an N that is less than the real N (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
 
 ## Single axis error bars
@@ -171,7 +168,7 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an internal-N, which will need to be gleaned from the methods of the paper. After determining this internal-N, extract the means and SDs for each point, and then draw a distribution of internal-N for each point with an appropriate distribution. Here we'll demonstrate using `rnorm` to draw normally distributed data for each point.
 
-::: callout-tip
+::: callout-warning
 If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), then you *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See @sec on how to convert from other measures of error to standard deviation.
 :::
 
@@ -350,7 +347,7 @@ What is the best way to line up variable 1 and variable 2 to calculate their cor
 
 ## Matrices
 
-Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise, activities, such as grooming each other. A long-standing question has concerned whether these behaviors are adaptive and potentially increase the chance that an individual will protect another individual. 
+Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise, activities, such as grooming each other. A long-standing question has concerned whether these behaviors are adaptive and potentially increase the chance that an individual will protect another individual.
 
 In this case, you might have a matrix of grooming between individuals:
 
@@ -406,11 +403,12 @@ res
 ```
 
 And now you're free to calculate ZCOR:
+
 ```{r}
 escalc(measure = "ZCOR", 
        ri = res$estimate,
        ni = nrow(mat1))
-``` 
+```
 
 **IS THIS CORRECT???**
 

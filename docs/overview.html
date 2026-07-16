@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2026-07-16">
-<title>An overview of effect sizes – User’s guide to effect sizes</title>
+<title>An overview of effect sizes – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -147,7 +147,7 @@ window.Quarto = {
       <a href="https://cossee.org/" class="sidebar-logo-link">
       <img src="./cossee_logo.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none"><img src="./cossee_logo.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none"></a>
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">User’s guide to effect sizes</a> 
+      <a href="./">A user’s guide to effect sizes</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -211,7 +211,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./Zr_extraction_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Continuous outcome with continuous predictor</span></a>
+ <span class="menu-text">Continuous predictor</span></a>
   </div>
 </li>
       </ul>
@@ -271,6 +271,8 @@ window.Quarto = {
 <li><a href="#alternative-estimators" id="toc-alternative-estimators" class="nav-link" data-scroll-target="#alternative-estimators">Alternative estimators</a></li>
   </ul>
 </li>
+  <li><a href="#less-common-effect-sizes" id="toc-less-common-effect-sizes" class="nav-link" data-scroll-target="#less-common-effect-sizes">Less common effect sizes</a></li>
+  <li><a href="#custom-effect-sizes" id="toc-custom-effect-sizes" class="nav-link" data-scroll-target="#custom-effect-sizes">Custom effect sizes</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -474,12 +476,21 @@ Tip
 <p>One of the most statistically important alternative flavors are paired design formulations. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but many meta-analyses do not take into account paired designs, which may bias results.Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.</p>
 <p>However, there are also paired design formulations that are <em>NOT</em> comparable to unpaired formulas. These take into account the pairing in the <em>point estimate</em> formula and produce effect size estimates that need to be analyzed separately.</p>
 <p>We try to clear up this confusion in the Appendix with some charts of compatibility between the different estimators in <code>escalc</code> (<span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>).</p>
+</section></section><section id="less-common-effect-sizes" class="level1"><h1>Less common effect sizes</h1>
+<p>The effect sizes we’ve thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, ref) or variance between two groups (lnCVR, ref). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the <code>escalc</code> tutorial. Others, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD, lnRoM, and Zmu.</p>
+</section><section id="custom-effect-sizes" class="level1"><h1>Custom effect sizes</h1>
+<p>Some meta-analytic questions may seem to have a simple effect size of choice. For example, if you’re synthesizing the results of experimental studies that compare a physiological response of an organism to two different temperatures, potentially to forecast the effect of climate change on these organisms. This data is presented as means±SD and it would make intuitive sense to calculate SMD or lnRoM for each comparison, treating the difference in temperature between the treatments as a moderator.</p>
+<p>However, if you’re planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the temperature (or both the low and high temperature values, if you think both matter).</p>
+<p>Another way of thinking about these problems is to realize that you can formulate effect sizes that explicitly include the temperature difference. For example, with the problem above, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable, drawing the resulting point cloud estimated by the mean and SD with <code>rnorm</code> (see <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span> where we discuss this method).</p>
+<p>Another, probably preferable option would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference: Q<sub>10</sub>. This is a formula that has existed long before its meta-analytic application. It describes the difference between two groups, while accounting for differences in the temperature treatments. This is a formula that was developed into a meta-analytic effect size by XXXX.</p>
+<p><span class="math display">\[Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}\]</span> Sampling variance can either be estimated from a plugin formula or using the SAFE method (see https://ejlundgren.github.io/SAFE/), which will take into account the standard deviation (<span class="math inline">\(sd_1\)</span>, <span class="math inline">\(sd_2\)</span>) associated with each mean value (<span class="math inline">\(m_1\)</span>, <span class="math inline">\(m_2\)</span>).</p>
+<p>We won’t extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity. See Noble et al 2022 (10.1242/jeb.243225) for a thorough discussion of these matters.</p>
 <p>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</p>
 
 
 <!-- -->
 
-</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -1094,15 +1105,35 @@ Tip
 <span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators based on different numeric properties of the data or the study design. For example, there are estimators for heteroscedastic data (\@sec), estimators for paired study designs (\@sec), for correlation data that has been discretized (e.g., into two groups, high vs low), etc.</span>
 <span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate. </span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate.</span>
 <span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors are paired design formulations.  For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but many meta-analyses do not take into account paired designs, which may bias results.Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.</span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors are paired design formulations. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but many meta-analyses do not take into account paired designs, which may bias results.Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.</span>
 <span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>However, there are also paired design formulations that are *NOT* comparable to unpaired formulas. These take into account the pairing in the *point estimate* formula and produce effect size estimates that need to be analyzed separately.</span>
 <span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the Appendix with some charts of compatibility between the different estimators in <span class="in">`escalc`</span> (@sec).</span>
 <span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a><span class="fu"># Less common effect sizes</span></span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, ref) or variance between two groups (lnCVR, ref). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the <span class="in">`escalc`</span> tutorial. Others, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD, lnRoM, and Zmu. </span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes</span></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>Some meta-analytic questions may seem to have a simple effect size of choice. For example, if you're synthesizing the results of experimental studies that compare a physiological response of an organism to two different temperatures, potentially to forecast the effect of climate change on these organisms. This data is presented as means±SD and it would make intuitive sense to calculate SMD or lnRoM for each comparison, treating the difference in temperature between the treatments as a moderator.</span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the temperature (or both the low and high temperature values, if you think both matter).</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>Another way of thinking about these problems is to realize that you can formulate effect sizes that explicitly include the temperature difference. For example, with the problem above, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable, drawing the resulting point cloud estimated by the mean and SD with <span class="in">`rnorm`</span> (see @sec where we discuss this method).</span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>Another, probably preferable option would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two groups, while accounting for differences in the temperature treatments. This is a formula that was developed into a meta-analytic effect size by XXXX. </span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>$$Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}$$</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>Sampling variance can either be estimated from a plugin formula or using the SAFE method (see https://ejlundgren.github.io/SAFE/), which will take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$).</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity. See Noble et al 2022 (10.1242/jeb.243225) for a thorough discussion of these matters. </span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

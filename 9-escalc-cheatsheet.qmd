@@ -69,29 +69,86 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
+`escalc` contains a bewildering number of effect size estimators. We here provide some information on alternative estimators for the main effect size types so far covered in this tutorial. We conclude by recommending preferred estimators for other designs, including single group effect sizes (e.g., proportions). Note we do not discuss effect size estimators that are not recommended for use in ecology and evolution, such as raw correlation coefficients or unstandardized mean difference.
+
 # SMD and lnRoM options
 
 *I wrote this when i thought these alternative formulations were comparable with SMD. Now that I know they are not, I'm not sure about having this here...Might move to appendix*
 
-The measurement options in `escalc` are "SMCC", "SMCR", and "SMCRP". Two of these have a heteroscedastic version ("SMCRH", "SMCRPH"). Given the diversity of formulations of these effect sizes, we've organized the options available in `escalc` into a table. We discuss these options in further depth below.
+The standard estimators for SMD are "SMD" and "SMDH", the latter of which is for heteroscedastic data. The standard estimators for lnRoM are "ROM". There is no heteroscedastic estimator for lnRoM. This table includes alternative estimators provided by escalc and whether they are comparable to the standard estimator (either SMD, SMDH, or ROM). Note that paired design estimators require an additional input `ri`, an estimate of correlation between groups and take a single sample size (`ni`) instead of a sample size for two groups (`n1i`, `n2i`)
 
-So should use a paired formulation that doesn't affect point estimate, just variance. The one we have in eff_size is that and you presumably could use it with BACI...
 
-| class     | `escalc` | Heteroscedasticity | Paired designs | Details |
-|----------|-----------|----------|----------|-----------------------------------|
-| SMD       | "SMD"     | No      | No | The default and most commonly used estimator, formulated as "Hedges' g" (REF). |
-|  | "SMDH" | Yes | No | A formulation of Hedges' g that can account for heteroscedasticity between treatment groups. |
-|  | "SMCC" | No | Yes | Paired group formulation that uses the standard deviation of group 1 and 2. |
-|  | "SMCR" | No | Yes | Paired group formulation that uses standard deviation of group 1 only. |
-|  | "SMCRH" | Yes | Yes | Same as above but for heteroscedastic data. |
-|  | "SMCRP" | No | Yes | An alternative formulation that uses the standard deviations of both group 1 and 2. |
-| lnRoM | "ROM" | No | No | The default log-transformed ratio of means. |
-|  | "ROMC" | No | Yes | Paired formula for lnRoM. |
+| class | `escalc` | Heteroscedasticity | Paired designs | Comparable to standard? |Details |
+|-------|----------|--------------------|----------------|-------------------------|--------|
+| SMD    | "SMCC"   | No                 | Yes | No  | Paired group formulation that uses the standard deviation of group 1 and 2. |
+|       | "SMCR"   | No                 | Yes | No | Paired group formulation that uses standard deviation of group 1 only. |
+|       | "SMCRH"  | Yes                | Yes | No | Same as above but for heteroscedastic data. |
+|       | "SMCRP"  | No                 | Yes | No | An alternative formulation that uses the standard deviations of both group 1 and 2. |
+| lnRoM | "ROMC"   | No                 | Yes | Yes | Paired formula for lnRoM. |
 
 Note that "Zmu" is only available in our own function `eff_this` (originally published in Nakagawa et al. XXXX) and supplied here. To select a paired formula, set paired_design = TRUE and be sure to provide `r` and `n` as an input.
 
 **Look into this:** "See also Morris and DeShon (2002) for a thorough discussion of the difference between the "SMCC" and "SMCR" change score measures"
 
-**Not sure when you should use SMCC versus SMCRP**
-**I don't think any of them are compatible with SMD unpaired...Gahhh**
+**Not sure when you should use SMCC versus SMCRP** **I don't think any of them are compatible with SMD unpaired...Gahhh**
+
+# lnOR / lnRR options
+
+The standard estimator options in `escalc` are "OR" for lnOR and "RR". The alternative estimators below are for "matched pairs contingency tables". 
+
+| class | `escalc` | Paired designs | Comparable to standard? | Details                    |
+|-------|----------|----------------|-------------------------|----------------------------|
+|lnOR   | "MPOR"    | yes?          | ?                       |"marginal log odds ratio"         |
+|       | "MPORC"   | yes?          | ?                       |"conditional log odds ratio"      |
+|       | "MRPETO"  | yes?          | ?                       |"conditional log odds ratio estimated with Peto's method |
+| lnRR  | "MPRR"    | yes?          | ?                       | "marginal log-risk ratio"|
+|       | "MPRD"    | yes?          | ?                       | "marginal risk difference" |
+
+# Zr options
+
+You can also calculate point biserial correlation coefficient "RPB" and biserial correlation coefficient "RBIS" but these return an estimate of 'r' and should not be analyzed directly in a meta-analytic model
+
+| class | `escalc` | Comparable to standard? | Details                    |
+|-------|----------|-------------------------|----------------------------|
+|Zr   | "ZBP"       | Yes                     | "point biserial correlation coefficient directly to Zr" |
+|     | "ZBIS"   | Yes                        |  "biserial correlation coefficient directly to Zr" |
+
+
+## Partial and semi-partial correlations??
+*NOT SURE IF WE SHOULD INCLUDE THIS...* This seems to be for regression model coefficients but I know that's risky...Takes R2 too?
+
+What do we do about these?
+
+## Coefficients of determination ($R^2$)
+
+??? Is this wise ?? 
+
+# Other effect sizes
+
+## Individual groups in respect to a dichotomous dependent variable
+
+For example, % of a population that is infected? Or percent of diet?
+
+*PLAIN ENGLISH EXAMPLE*
+
+| `escalc` | Input                      | Name  | Recommended |
+|----------|----------------------------|----------|-------------|
+| "PLN"   |ni=sample size; xi=proportion| "log-transformed proportion". | ? |   
+| "PLO"   |ni=sample size; xi=proportion| "logit-transformed proportion". | ? |   
+| "PRZ"   |ni=sample size; xi=proportion| "probit-transformed proportion". | ? |   
+| "PRZ"   |ni=sample size; xi=proportion| "probit-transformed proportion". | ? |   
+
+
+## Individual groups with an event count
+
+For example, % of a population that is infected? Or number of times attacked/affected?
+
+*PLAIN ENGLISH EXAMPLE*
+
+| `escalc` | Input                      | Name  | Recommended |
+|----------|----------------------------|----------|-------------|
+| "IRLN"   |ti=total person-times at risk; xi=n events| "log-transformed incidence rate". | ? |   
+| "IRS"   |ti=total person-times at risk; xi=n events| "square root transformed incidence rate". | ? |   
+| "IRFT"   |ti=total person-times at risk; xi=n events| "Freeman-Tukey transformed incidence rate". | ? |   
+
 

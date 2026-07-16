@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2026-07-16">
-<title>Universal extraction challenges – User’s guide to effect sizes</title>
+<title>Universal extraction challenges – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -122,7 +122,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <a href="https://cossee.org/" class="sidebar-logo-link">
       <img src="./cossee_logo.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none"><img src="./cossee_logo.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none"></a>
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">User’s guide to effect sizes</a> 
+      <a href="./">A user’s guide to effect sizes</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -186,7 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./Zr_extraction_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Continuous outcome with continuous predictor</span></a>
+ <span class="menu-text">Continuous predictor</span></a>
   </div>
 </li>
       </ul>
@@ -237,20 +237,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>CONTENTS</strong></h2>
    
   <ul>
-<li><a href="#database-design" id="toc-database-design" class="nav-link active" data-scroll-target="#database-design">Database design?</a></li>
-  <li>
-<a href="#sample-size" id="toc-sample-size" class="nav-link" data-scroll-target="#sample-size">Sample size</a>
+<li>
+<a href="#sample-size" id="toc-sample-size" class="nav-link active" data-scroll-target="#sample-size">Sample size</a>
   <ul>
 <li><a href="#measurement-scale" id="toc-measurement-scale" class="nav-link" data-scroll-target="#measurement-scale">Measurement scale</a></li>
   </ul>
 </li>
   <li>
-<a href="#multiple-measurements" id="toc-multiple-measurements" class="nav-link" data-scroll-target="#multiple-measurements">Multiple measurements</a>
+<a href="#non-independence" id="toc-non-independence" class="nav-link" data-scroll-target="#non-independence">Non-independence</a>
   <ul>
 <li><a href="#repeated-measurements" id="toc-repeated-measurements" class="nav-link" data-scroll-target="#repeated-measurements">Repeated measurements</a></li>
   <li><a href="#multiple-comparisons-to-same-control" id="toc-multiple-comparisons-to-same-control" class="nav-link" data-scroll-target="#multiple-comparisons-to-same-control">Multiple comparisons to same control</a></li>
   </ul>
 </li>
+  <li><a href="#database-design" id="toc-database-design" class="nav-link" data-scroll-target="#database-design">Database design</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -277,28 +277,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 </header><p>There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We’ll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect may be more pervasive and widespread.</p>
-<section id="database-design" class="level1"><h1>Database design?</h1>
-<p><strong>Should we talk about best practices for database design? E.g., wide vs long, columns for non-independence structures?</strong></p>
-</section><section id="sample-size" class="level1"><h1>Sample size</h1>
+<section id="sample-size" class="level1"><h1>Sample size</h1>
 <p>One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.</p>
 <p>Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. While sample size might be conceptually straightforward with behavioral or physiological data, where the unit of replication is generally the number of individuals, it can become incredible complex with plot data or survey data.</p>
 <p>For example, meta-analyzing vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects).</p>
 <p>Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don’t know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).</p>
 <p>We recommend recording the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.</p>
 <section id="measurement-scale" class="level2"><h2 class="anchored" data-anchor-id="measurement-scale">Measurement scale</h2>
-<p>Another issue that haunts vegetation meta-analyses is plot size. Studies with larger plots (e.g., 100 m<sup>2</sup>) will have a smaller sample size than studies with small plots (e.g., 10 m<sup>2</sup>) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects. There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You’ll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with <em>plant size</em>—a 100 m<sup>2</sup> plot in a grassland is very different than a 100 m<sup>2</sup> plot in an old growth forest.</p>
+<p>Another issue that haunts vegetation meta-analyses is plot size. Studies with larger plots (e.g., 100 m<sup>2</sup>) will have a smaller sample size than studies with small plots (e.g., 10 m<sup>2</sup>) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects.</p>
+<p>There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You’ll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with <em>plant size</em>—a 100 m<sup>2</sup> plot in a grassland is very different than a 100 m<sup>2</sup> plot in an old growth forest.</p>
 <p>In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses.</p>
 <p>Also note that sample size is necessary to convert author-provided measurements of <em>standard error</em> to <em>standard deviation</em>. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error, if that is what they reported.</p>
 <p><strong>Let’s imagine that an article presented standard error based on one measure of sample size (let’s say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?</strong></p>
-</section></section><section id="multiple-measurements" class="level1"><h1>Multiple measurements</h1>
+</section></section><section id="non-independence" class="level1"><h1>Non-independence</h1>
+<p>Also check this: https://royalsocietypublishing.org/rsta/article/384/2321/20240604/481953/A-preliminary-data-analysis-workflow-for-meta</p>
 <p>One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract.</p>
 <section id="repeated-measurements" class="level2"><h2 class="anchored" data-anchor-id="repeated-measurements">Repeated measurements</h2>
-<p>Time series random effects are straightforward to implement in the primary frequentist package for meta-analytic models (<code>metafor</code> and <code>rma.mv</code>, ref). This requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable.</p>
-<p>To illustrate, let’s imagine we are assessing the influence of temperature on the growth rates of clams. A study reports an experimental trial for two species (zebra mussels and quagga mussels), each through time. The control is ambient conditions while the treatment is increased temperature. These are moderators we are explicitly interested in. Imagine their data looks like this:</p>
+<p>Time series random effects are fairly straightforward to implement in the primary frequentist package for meta-analytic models (<code>metafor</code> and <code>rma.mv</code>, ref). Controlling for them requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable.</p>
+<p>To illustrate, let’s imagine we are assessing the influence of temperature on the growth rates of clams. A study reports an experimental trial for two species (zebra mussels and quagga mussels), each through time. The control is ambient conditions while the treatment is increased temperature. These are moderators we are explicitly interested in. Imagine the results of this study look like this:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="4-universal-challenges_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figure class="figure"><p><img src="4-universal-challenges_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
 </figure>
 </div>
 </div>
@@ -347,11 +347,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">6.458903</td>
-<td style="text-align: right;">0.9724727</td>
+<td style="text-align: right;">7.602334</td>
+<td style="text-align: right;">0.7719948</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">6.814738</td>
-<td style="text-align: right;">1.0066827</td>
+<td style="text-align: right;">8.336566</td>
+<td style="text-align: right;">0.5134157</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="even">
@@ -362,11 +362,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">8.370336</td>
-<td style="text-align: right;">0.7471172</td>
+<td style="text-align: right;">8.236072</td>
+<td style="text-align: right;">0.7806644</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">8.924615</td>
-<td style="text-align: right;">0.8895991</td>
+<td style="text-align: right;">9.186162</td>
+<td style="text-align: right;">0.6825333</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="odd">
@@ -377,11 +377,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">8.770110</td>
-<td style="text-align: right;">0.7456211</td>
+<td style="text-align: right;">9.310374</td>
+<td style="text-align: right;">0.6076124</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">10.625325</td>
-<td style="text-align: right;">0.7900525</td>
+<td style="text-align: right;">9.862589</td>
+<td style="text-align: right;">0.7591417</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="even">
@@ -392,11 +392,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">6.479620</td>
-<td style="text-align: right;">0.6520645</td>
+<td style="text-align: right;">6.389553</td>
+<td style="text-align: right;">0.8166456</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">7.687901</td>
-<td style="text-align: right;">0.6810408</td>
+<td style="text-align: right;">6.532496</td>
+<td style="text-align: right;">0.9913039</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="odd">
@@ -407,11 +407,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">7.843137</td>
-<td style="text-align: right;">0.6648464</td>
+<td style="text-align: right;">8.386978</td>
+<td style="text-align: right;">0.9167932</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">8.930931</td>
-<td style="text-align: right;">0.7281154</td>
+<td style="text-align: right;">8.879080</td>
+<td style="text-align: right;">0.7078036</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="even">
@@ -422,11 +422,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">8.400930</td>
-<td style="text-align: right;">0.5910586</td>
+<td style="text-align: right;">8.454982</td>
+<td style="text-align: right;">0.8754113</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">9.498430</td>
-<td style="text-align: right;">0.7851611</td>
+<td style="text-align: right;">10.404218</td>
+<td style="text-align: right;">0.7599609</td>
 <td style="text-align: right;">15</td>
 </tr>
 </tbody>
@@ -434,14 +434,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Note that we have a column for the article (<code>article_id</code>), a column describing where in the article the data came from (<code>fig</code>), a column recording the species (<code>species</code>), an id for the experiment (which was unique to each species) and the time sequence (<code>time_sequence</code>) within that experiment. The experiment id might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, etc).</p>
+<p>Note that we have a column for the article (<code>article_id</code>), a column describing where in the article the data came from (<code>fig</code>), a column recording the species (<code>species</code>), an id for the experiment (which was unique to each species) and the time sequence (<code>time_sequence</code>) within that experiment. The experiment id might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).</p>
 <p>These columns control our non-independence structures within this study. We also have the statistics necessary for our effect size calculations (<code>mean_*</code>, <code>sd_*</code>, <code>n_*</code>) for each temperature treatment. And we have two columns that can be used to construct moderators (<code>temperature_high</code> and <code>temperature_low</code>).</p>
 </section><section id="multiple-comparisons-to-same-control" class="level2"><h2 class="anchored" data-anchor-id="multiple-comparisons-to-same-control">Multiple comparisons to same control</h2>
-<p>Let’s imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control again for two different species. Also imagine that they do not report repeated measures. Their figure might look like this:</p>
+<p>Let’s imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control, again for two different species (one of which is in the first study). In this case, they do not report repeated measures. Their figure might look like this:</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="4-universal-challenges_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figure class="figure"><p><img src="4-universal-challenges_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
 </figure>
 </div>
 </div>
@@ -490,11 +490,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Alasmidonta undulata experiment</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">18ºC</td>
-<td style="text-align: right;">3.081318</td>
-<td style="text-align: right;">0.5648792</td>
+<td style="text-align: right;">4.530116</td>
+<td style="text-align: right;">0.7994341</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">5.462428</td>
-<td style="text-align: right;">0.6100427</td>
+<td style="text-align: right;">5.458801</td>
+<td style="text-align: right;">0.7952347</td>
 <td style="text-align: right;">25</td>
 </tr>
 <tr class="even">
@@ -505,11 +505,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Alasmidonta undulata experiment</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">23ºC</td>
-<td style="text-align: right;">3.081318</td>
-<td style="text-align: right;">0.5648792</td>
+<td style="text-align: right;">4.530116</td>
+<td style="text-align: right;">0.7994341</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">3.337308</td>
-<td style="text-align: right;">0.8571363</td>
+<td style="text-align: right;">4.039803</td>
+<td style="text-align: right;">0.9853909</td>
 <td style="text-align: right;">25</td>
 </tr>
 <tr class="odd">
@@ -520,11 +520,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Dreissena polymorpha experiment</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">18ºC</td>
-<td style="text-align: right;">3.344168</td>
-<td style="text-align: right;">0.7066749</td>
+<td style="text-align: right;">3.739187</td>
+<td style="text-align: right;">1.0186992</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">6.916079</td>
-<td style="text-align: right;">0.8639962</td>
+<td style="text-align: right;">7.469025</td>
+<td style="text-align: right;">0.7433303</td>
 <td style="text-align: right;">25</td>
 </tr>
 <tr class="even">
@@ -535,11 +535,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Dreissena polymorpha experiment</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">23ºC</td>
-<td style="text-align: right;">3.344168</td>
-<td style="text-align: right;">0.7066749</td>
+<td style="text-align: right;">3.739187</td>
+<td style="text-align: right;">1.0186992</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">3.623788</td>
-<td style="text-align: right;">0.8167029</td>
+<td style="text-align: right;">2.866959</td>
+<td style="text-align: right;">0.8087976</td>
 <td style="text-align: right;">25</td>
 </tr>
 </tbody>
@@ -594,11 +594,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">6.458903</td>
-<td style="text-align: right;">0.9724727</td>
+<td style="text-align: right;">7.602334</td>
+<td style="text-align: right;">0.7719948</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">6.814738</td>
-<td style="text-align: right;">1.0066827</td>
+<td style="text-align: right;">8.336566</td>
+<td style="text-align: right;">0.5134157</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">unique_control1</td>
 </tr>
@@ -610,11 +610,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">8.370336</td>
-<td style="text-align: right;">0.7471172</td>
+<td style="text-align: right;">8.236072</td>
+<td style="text-align: right;">0.7806644</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">8.924615</td>
-<td style="text-align: right;">0.8895991</td>
+<td style="text-align: right;">9.186162</td>
+<td style="text-align: right;">0.6825333</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">unique_control2</td>
 </tr>
@@ -626,11 +626,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">8.770110</td>
-<td style="text-align: right;">0.7456211</td>
+<td style="text-align: right;">9.310374</td>
+<td style="text-align: right;">0.6076124</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">10.625325</td>
-<td style="text-align: right;">0.7900525</td>
+<td style="text-align: right;">9.862589</td>
+<td style="text-align: right;">0.7591417</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">unique_control3</td>
 </tr>
@@ -642,11 +642,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">6.479620</td>
-<td style="text-align: right;">0.6520645</td>
+<td style="text-align: right;">6.389553</td>
+<td style="text-align: right;">0.8166456</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">7.687901</td>
-<td style="text-align: right;">0.6810408</td>
+<td style="text-align: right;">6.532496</td>
+<td style="text-align: right;">0.9913039</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">unique_control4</td>
 </tr>
@@ -658,11 +658,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">7.843137</td>
-<td style="text-align: right;">0.6648464</td>
+<td style="text-align: right;">8.386978</td>
+<td style="text-align: right;">0.9167932</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">8.930931</td>
-<td style="text-align: right;">0.7281154</td>
+<td style="text-align: right;">8.879080</td>
+<td style="text-align: right;">0.7078036</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">unique_control5</td>
 </tr>
@@ -674,11 +674,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">15ºC</td>
 <td style="text-align: left;">19ºC</td>
-<td style="text-align: right;">8.400930</td>
-<td style="text-align: right;">0.5910586</td>
+<td style="text-align: right;">8.454982</td>
+<td style="text-align: right;">0.8754113</td>
 <td style="text-align: right;">15</td>
-<td style="text-align: right;">9.498430</td>
-<td style="text-align: right;">0.7851611</td>
+<td style="text-align: right;">10.404218</td>
+<td style="text-align: right;">0.7599609</td>
 <td style="text-align: right;">15</td>
 <td style="text-align: left;">unique_control6</td>
 </tr>
@@ -690,11 +690,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">18ºC</td>
-<td style="text-align: right;">3.081318</td>
-<td style="text-align: right;">0.5648792</td>
+<td style="text-align: right;">4.530116</td>
+<td style="text-align: right;">0.7994341</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">5.462428</td>
-<td style="text-align: right;">0.6100427</td>
+<td style="text-align: right;">5.458801</td>
+<td style="text-align: right;">0.7952347</td>
 <td style="text-align: right;">25</td>
 <td style="text-align: left;">shared_control_Alasmidonta undulata</td>
 </tr>
@@ -706,11 +706,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">23ºC</td>
-<td style="text-align: right;">3.081318</td>
-<td style="text-align: right;">0.5648792</td>
+<td style="text-align: right;">4.530116</td>
+<td style="text-align: right;">0.7994341</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">3.337308</td>
-<td style="text-align: right;">0.8571363</td>
+<td style="text-align: right;">4.039803</td>
+<td style="text-align: right;">0.9853909</td>
 <td style="text-align: right;">25</td>
 <td style="text-align: left;">shared_control_Alasmidonta undulata</td>
 </tr>
@@ -722,11 +722,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">18ºC</td>
-<td style="text-align: right;">3.344168</td>
-<td style="text-align: right;">0.7066749</td>
+<td style="text-align: right;">3.739187</td>
+<td style="text-align: right;">1.0186992</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">6.916079</td>
-<td style="text-align: right;">0.8639962</td>
+<td style="text-align: right;">7.469025</td>
+<td style="text-align: right;">0.7433303</td>
 <td style="text-align: right;">25</td>
 <td style="text-align: left;">shared_control_Dreissena polymorpha</td>
 </tr>
@@ -738,11 +738,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">12ºC</td>
 <td style="text-align: left;">23ºC</td>
-<td style="text-align: right;">3.344168</td>
-<td style="text-align: right;">0.7066749</td>
+<td style="text-align: right;">3.739187</td>
+<td style="text-align: right;">1.0186992</td>
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">3.623788</td>
-<td style="text-align: right;">0.8167029</td>
+<td style="text-align: right;">2.866959</td>
+<td style="text-align: right;">0.8087976</td>
 <td style="text-align: right;">25</td>
 <td style="text-align: left;">shared_control_Dreissena polymorpha</td>
 </tr>
@@ -752,7 +752,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Tricky business, right?</p>
-<p>Now, to demonstrate how we’d control for these non-independence structures, let’s calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control. Messy! Ultimately, we would likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. But let’s leave that out for now :)</p>
+<p>Now, to demonstrate how we’d control for these non-independence structures, let’s calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. Messy! Ultimately, we would likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. But let’s leave that out for now :)</p>
 <p>Note that the <code>struct</code> argument in <code>rma.mv</code> specifies the correlation structure to apply to time series.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://www.metafor-project.org">"metafor"</a></span><span class="op">)</span></span>
@@ -788,16 +788,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 Multivariate Meta-Analysis Model (k = 10; method: ML)
 
   logLik  Deviance       AIC       BIC      AICc   
--12.5626   25.1340   43.1253   45.8485  223.1253   
+-14.3938   30.2226   46.7876   49.5109  226.7876   
 
 Variance Components:
 
             estim    sqrt  nlvls  fixed 
-sigma^2.1  4.5561  2.1345      2     no 
-sigma^2.2  0.0000  0.0000      4     no 
-sigma^2.3  0.2645  0.5143      8     no 
-sigma^2.4  0.0000  0.0000     10     no 
-sigma^2.5  0.0000  0.0000      3     no 
+sigma^2.1  1.2585  1.1218      2     no 
+sigma^2.2  0.0246  0.1567      4     no 
+sigma^2.3  0.0000  0.0005      8     no 
+sigma^2.4  0.0000  0.0004     10     no 
+sigma^2.5  0.0000  0.0002      3     no 
                                                        factor 
 sigma^2.1                                          article_id 
 sigma^2.2                            article_id/experiment_id 
@@ -808,33 +808,50 @@ sigma^2.5                                             species
 outer factor: experiment_id (nlvls = 3)
 inner factor: time_sequence (nlvls = 4)
 
-            estim    sqrt  fixed 
-tau^2      0.0000  0.0000     no 
-rho        0.7210             no 
+             estim    sqrt  fixed 
+tau^2       0.4994  0.7067     no 
+rho        -0.1150             no 
 
 Test for Residual Heterogeneity:
-QE(df = 8) = 87.0787, p-val &lt; .0001
+QE(df = 8) = 68.2195, p-val &lt; .0001
 
 Test of Moderators (coefficient 2):
-F(df1 = 1, df2 = 8) = 85.5955, p-val &lt; .0001
+F(df1 = 1, df2 = 8) = 13.3806, p-val = 0.0064
 
 Model Results:
 
-                  estimate      se     tval  df    pval     ci.lb    ci.ub      
-intrcpt            -6.4685  1.6276  -3.9743   1  0.1569  -27.1488  14.2119      
-temperature_diff    0.7524  0.0813   9.2518   8  &lt;.0001    0.5648   0.9399  *** 
+                  estimate      se     tval  df    pval     ci.lb    ci.ub     
+intrcpt            -4.0944  1.2334  -3.3195   1  0.1863  -19.7664  11.5777     
+temperature_diff    0.5248  0.1435   3.6580   8  0.0064    0.1940   0.8557  ** 
 
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-<p>As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from time series (or a single experimental treatment). These can also be filtered after extraction, if your data is tidy and easy to manage.</p>
+<p>As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.</p>
 <p>We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size (see <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>). Alternatively, we could have used a totally different (and more unusual effect size): Q<sub>10</sub>. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and less overall heterogeneity.</p>
+<p>For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see Noble et al 2022 and where we discuss this in brief (<span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>)</p>
+</div>
+</div>
+</section></section><section id="database-design" class="level1"><h1>Database design</h1>
+<p>As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on.</p>
+<p>We recommend that you do a pilot extraction, and analysis, of ~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.</p>
 
 
 <!-- -->
 
-</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -1356,247 +1373,268 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We'll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect may be more pervasive and widespread.</span>
 <span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="fu"># Database design?</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="fu"># Sample size</span></span>
 <span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>**Should we talk about best practices for database design? E.g., wide vs long, columns for non-independence structures?**</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.</span>
 <span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="fu"># Sample size</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. While sample size might be conceptually straightforward with behavioral or physiological data, where the unit of replication is generally the number of individuals, it can become incredible complex with plot data or survey data. </span>
 <span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>For example, meta-analyzing vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). </span>
 <span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. While sample size might be conceptually straightforward with behavioral or physiological data, where the unit of replication is generally the number of individuals, it can become incredible complex with plot data or survey data. </span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).</span>
 <span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>For example, meta-analyzing vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). </span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>We recommend recording the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.</span>
 <span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).</span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>We recommend recording the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.</span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="fu">## Measurement scale</span></span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>Another issue that haunts vegetation meta-analyses is plot size. Studies with larger plots (e.g., 100 m^2^) will  have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects. There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest. </span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses.</span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error, if that is what they reported.</span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**</span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="fu"># Multiple measurements</span></span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. </span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Repeated measurements</span></span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>Time series random effects are straightforward to implement in the primary frequentist package for meta-analytic models (<span class="in">`metafor`</span> and <span class="in">`rma.mv`</span>, ref). This requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable. </span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## Measurement scale</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>Another issue that haunts vegetation meta-analyses is plot size. Studies with larger plots (e.g., 100 m^2^) will  have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects. </span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="co"># VISUALIZE</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest. </span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses.</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error, if that is what they reported.</span>
 <span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>To illustrate, let's imagine we are assessing the influence of temperature on the growth rates of clams. A study reports an experimental trial for two species (zebra mussels and quagga mussels), each through time. The control is ambient conditions while the treatment is increased temperature. These are moderators we are explicitly interested in. Imagine their data looks like this:</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**</span>
 <span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a><span class="fu"># Non-independence</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>Also check this: https://royalsocietypublishing.org/rsta/article/384/2321/20240604/481953/A-preliminary-data-analysis-workflow-for-meta</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. </span>
 <span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">time =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="dv">4</span>),</span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>                 <span class="at">treatment =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"15ºC"</span>, <span class="dv">6</span>),</span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">rep</span>(<span class="st">"19ºC"</span>, <span class="dv">6</span>)),</span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>                 <span class="at">species =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Dreissena polymorpha"</span>, <span class="dv">3</span>),</span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">"Dreissena bugensis"</span>, <span class="dv">3</span>),</span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">"Dreissena polymorpha"</span>, <span class="dv">3</span>),</span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">"Dreissena bugensis"</span>, <span class="dv">3</span>)))</span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>dat[, row_id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>dat[, mean <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(treatment <span class="sc">==</span> <span class="st">"15ºC"</span>,</span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">6</span><span class="sc">+</span>time, <span class="at">sd =</span> <span class="dv">2</span>)),</span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">7</span><span class="sc">+</span>time, <span class="at">sd =</span> <span class="dv">2</span>))),</span>
-<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>    by <span class="ot">=</span> row_id]</span>
-<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>dat[, sd <span class="sc">:</span><span class="er">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> .N, <span class="at">mean =</span> .<span class="dv">75</span>, <span class="at">sd =</span> .<span class="dv">1</span>)]</span>
-<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> mean, <span class="at">ymin =</span> mean<span class="sc">-</span>sd, <span class="at">ymax =</span> mean<span class="sc">+</span>sd,</span>
-<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> treatment))<span class="sc">+</span></span>
-<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
-<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Growth rate"</span>)<span class="sc">+</span></span>
-<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Time"</span>)<span class="sc">+</span></span>
-<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species)<span class="sc">+</span></span>
-<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="cn">NULL</span>,</span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"15ºC"</span> <span class="ot">=</span> <span class="st">"dodgerblue2"</span>,</span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"19ºC"</span> <span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span>  </span>
-<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>In this case, you have two independent species and three dependent time points per species. We would most likely extract all of the data from both panels of this figure, and produce a table like this. Note that we recommend extracting data in a *wide* format, so that each paired value (control and treatment per species and time point) is clearly associated, allowing for easy effect size calculation.</span>
-<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dat, <span class="st">"treatment"</span>, <span class="st">"temperature"</span>)</span>
-<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>dat[, treatment <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(temperature <span class="sc">==</span> <span class="st">"15ºC"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>)]</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Repeated measurements</span></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>Time series random effects are fairly straightforward to implement in the primary frequentist package for meta-analytic models (<span class="in">`metafor`</span> and <span class="in">`rma.mv`</span>, ref). Controlling for them requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable. </span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>To illustrate, let's imagine we are assessing the influence of temperature on the growth rates of clams. A study reports an experimental trial for two species (zebra mussels and quagga mussels), each through time. The control is ambient conditions while the treatment is increased temperature. These are moderators we are explicitly interested in. Imagine the results of this study look like this:</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">time =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="dv">4</span>),</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>                 <span class="at">treatment =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"15ºC"</span>, <span class="dv">6</span>),</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">rep</span>(<span class="st">"19ºC"</span>, <span class="dv">6</span>)),</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>                 <span class="at">species =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Dreissena polymorpha"</span>, <span class="dv">3</span>),</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">"Dreissena bugensis"</span>, <span class="dv">3</span>),</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">"Dreissena polymorpha"</span>, <span class="dv">3</span>),</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">rep</span>(<span class="st">"Dreissena bugensis"</span>, <span class="dv">3</span>)))</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>dat[, row_id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>dat[, mean <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(treatment <span class="sc">==</span> <span class="st">"15ºC"</span>,</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">6</span><span class="sc">+</span>time, <span class="at">sd =</span> <span class="dv">2</span>)),</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">7</span><span class="sc">+</span>time, <span class="at">sd =</span> <span class="dv">2</span>))),</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>    by <span class="ot">=</span> row_id]</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>dat[, sd <span class="sc">:</span><span class="er">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> .N, <span class="at">mean =</span> .<span class="dv">75</span>, <span class="at">sd =</span> .<span class="dv">1</span>)]</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> mean, <span class="at">ymin =</span> mean<span class="sc">-</span>sd, <span class="at">ymax =</span> mean<span class="sc">+</span>sd,</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>                     <span class="at">color =</span> treatment))<span class="sc">+</span></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Growth rate"</span>)<span class="sc">+</span></span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Time"</span>)<span class="sc">+</span></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species)<span class="sc">+</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="cn">NULL</span>,</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"15ºC"</span> <span class="ot">=</span> <span class="st">"dodgerblue2"</span>,</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"19ºC"</span> <span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span>  </span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>extracted <span class="ot">&lt;-</span> <span class="fu">dcast</span>(<span class="at">data =</span> dat,</span>
-<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>                   species <span class="sc">+</span> time <span class="sc">~</span> treatment,</span>
-<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>                   <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"temperature"</span>))</span>
-<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(extracted, <span class="fu">c</span>(<span class="st">"time"</span>), <span class="fu">c</span>(<span class="st">"time_sequence"</span>))</span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>extracted[, article_id <span class="sc">:</span><span class="er">=</span> <span class="st">"article_1"</span>]</span>
-<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>extracted[, fig <span class="sc">:</span><span class="er">=</span> <span class="st">"fig 1"</span>]</span>
-<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>extracted[, n_low <span class="sc">:</span><span class="er">=</span> <span class="dv">15</span>]</span>
-<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>extracted[, n_high <span class="sc">:</span><span class="er">=</span> <span class="dv">15</span>]</span>
-<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>extracted[, experiment_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste</span>(species, <span class="st">"experiment"</span>)]</span>
-<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(extracted, <span class="fu">c</span>(<span class="st">"article_id"</span>, <span class="st">"fig"</span>, <span class="st">"species"</span>, <span class="st">"experiment_id"</span>, <span class="st">"time_sequence"</span>, </span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"temperature_low"</span>, <span class="st">"temperature_high"</span>,</span>
-<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"mean_low"</span>, <span class="st">"sd_low"</span>, <span class="st">"n_low"</span>, <span class="st">"mean_high"</span>, <span class="st">"sd_high"</span>, <span class="st">"n_high"</span>))</span>
-<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>extracted</span>
-<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>Note that we have a column for the article (<span class="in">`article_id`</span>), a column describing where in the article the data came from (<span class="in">`fig`</span>), a column recording the species (<span class="in">`species`</span>), an id for the experiment (which was unique to each species) and the time sequence (<span class="in">`time_sequence`</span>) within that experiment. The experiment id might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, etc).</span>
-<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>These columns control our non-independence structures within this study. We also have the statistics necessary for our effect size calculations (<span class="in">`mean_*`</span>, <span class="in">`sd_*`</span>, <span class="in">`n_*`</span>) for each temperature treatment. And we have two columns that can be used to construct moderators (<span class="in">`temperature_high`</span> and <span class="in">`temperature_low`</span>).</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>In this case, you have two independent species and three dependent time points per species. We would most likely extract all of the data from both panels of this figure, and produce a table like this. Note that we recommend extracting data in a *wide* format, so that each paired value (control and treatment per species and time point) is clearly associated, allowing for easy effect size calculation.</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dat, <span class="st">"treatment"</span>, <span class="st">"temperature"</span>)</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>dat[, treatment <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(temperature <span class="sc">==</span> <span class="st">"15ºC"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>)]</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>extracted <span class="ot">&lt;-</span> <span class="fu">dcast</span>(<span class="at">data =</span> dat,</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>                   species <span class="sc">+</span> time <span class="sc">~</span> treatment,</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>                   <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"temperature"</span>))</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(extracted, <span class="fu">c</span>(<span class="st">"time"</span>), <span class="fu">c</span>(<span class="st">"time_sequence"</span>))</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>extracted[, article_id <span class="sc">:</span><span class="er">=</span> <span class="st">"article_1"</span>]</span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>extracted[, fig <span class="sc">:</span><span class="er">=</span> <span class="st">"fig 1"</span>]</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>extracted[, n_low <span class="sc">:</span><span class="er">=</span> <span class="dv">15</span>]</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>extracted[, n_high <span class="sc">:</span><span class="er">=</span> <span class="dv">15</span>]</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>extracted[, experiment_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste</span>(species, <span class="st">"experiment"</span>)]</span>
 <span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiple comparisons to same control</span></span>
-<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>Let's imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control again for two different species. Also imagine that they do not report repeated measures. Their figure might look like this:</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(extracted, <span class="fu">c</span>(<span class="st">"article_id"</span>, <span class="st">"fig"</span>, <span class="st">"species"</span>, <span class="st">"experiment_id"</span>, <span class="st">"time_sequence"</span>, </span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"temperature_low"</span>, <span class="st">"temperature_high"</span>,</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"mean_low"</span>, <span class="st">"sd_low"</span>, <span class="st">"n_low"</span>, <span class="st">"mean_high"</span>, <span class="st">"sd_high"</span>, <span class="st">"n_high"</span>))</span>
 <span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>extracted</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>Note that we have a column for the article (<span class="in">`article_id`</span>), a column describing where in the article the data came from (<span class="in">`fig`</span>), a column recording the species (<span class="in">`species`</span>), an id for the experiment (which was unique to each species) and the time sequence (<span class="in">`time_sequence`</span>) within that experiment. The experiment id might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>These columns control our non-independence structures within this study. We also have the statistics necessary for our effect size calculations (<span class="in">`mean_*`</span>, <span class="in">`sd_*`</span>, <span class="in">`n_*`</span>) for each temperature treatment. And we have two columns that can be used to construct moderators (<span class="in">`temperature_high`</span> and <span class="in">`temperature_low`</span>).</span>
 <span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">temperature =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"12ºC"</span>, <span class="dv">2</span>),</span>
-<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">rep</span>(<span class="st">"18ºC"</span>, <span class="dv">2</span>),</span>
-<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">rep</span>(<span class="st">"23ºC"</span>, <span class="dv">2</span>)),</span>
-<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>                 <span class="at">species =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Dreissena polymorpha"</span>, <span class="st">"Alasmidonta undulata"</span>), <span class="dv">3</span>)))</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiple comparisons to same control</span></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>Let's imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control, again for two different species (one of which is in the first study). In this case, they do not report repeated measures. Their figure might look like this:</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>dat[, row_id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
-<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>dat[, mean <span class="sc">:</span><span class="er">=</span> <span class="fu">fcase</span>(temperature <span class="sc">==</span> <span class="st">"12ºC"</span>, <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">4</span>, <span class="at">sd =</span> <span class="dv">2</span>)),</span>
-<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>                    temperature <span class="sc">==</span> <span class="st">"18ºC"</span>, <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="dv">2</span>)),</span>
-<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>                    temperature <span class="sc">==</span> <span class="st">"23ºC"</span>, <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">3</span>, <span class="at">sd =</span> <span class="dv">2</span>))),</span>
-<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>    by <span class="ot">=</span> row_id]</span>
-<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>dat[, sd <span class="sc">:</span><span class="er">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> .N, <span class="at">mean =</span> .<span class="dv">75</span>, <span class="at">sd =</span> .<span class="dv">1</span>)]</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">33</span>)</span>
 <span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> temperature, <span class="at">y =</span> mean, <span class="at">ymin =</span> mean<span class="sc">-</span>sd, <span class="at">ymax =</span> mean<span class="sc">+</span>sd,</span>
-<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fill =</span> temperature))<span class="sc">+</span></span>
-<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
-<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>)<span class="sc">+</span></span>
-<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Growth rate"</span>)<span class="sc">+</span></span>
-<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Temperature"</span>)<span class="sc">+</span></span>
-<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species)<span class="sc">+</span></span>
-<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="cn">NULL</span>,</span>
-<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"12ºC"</span> <span class="ot">=</span> <span class="st">"dodgerblue2"</span>,</span>
-<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"18ºC"</span> <span class="ot">=</span> <span class="st">"dodgerblue4"</span>,</span>
-<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"23ºC"</span> <span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span>  </span>
-<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
-<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>Here we have a different looking plot, with two treatment temperature (18ºC and 23ºC) compared to the same control (12ºC). Again, we have two different species and no repeated measures. We would recommend extracting the data to look like this:</span>
-<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>dat[, treatment <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(temperature <span class="sc">==</span> <span class="st">"12ºC"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>)]</span>
-<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>dat[, n <span class="sc">:</span><span class="er">=</span> <span class="dv">25</span>]</span>
-<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>ext<span class="fl">.1</span> <span class="ot">&lt;-</span> dat[temperature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"12ºC"</span>, <span class="st">"18ºC"</span>)]</span>
-<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>ext.<span class="fl">1.</span>wide <span class="ot">&lt;-</span> <span class="fu">dcast</span>(ext<span class="fl">.1</span>, species <span class="sc">~</span> treatment, <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"n"</span>, <span class="st">"temperature"</span>))</span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">temperature =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"12ºC"</span>, <span class="dv">2</span>),</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">rep</span>(<span class="st">"18ºC"</span>, <span class="dv">2</span>),</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">rep</span>(<span class="st">"23ºC"</span>, <span class="dv">2</span>)),</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>                 <span class="at">species =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Dreissena polymorpha"</span>, <span class="st">"Alasmidonta undulata"</span>), <span class="dv">3</span>)))</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>dat[, row_id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>dat[, mean <span class="sc">:</span><span class="er">=</span> <span class="fu">fcase</span>(temperature <span class="sc">==</span> <span class="st">"12ºC"</span>, <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">4</span>, <span class="at">sd =</span> <span class="dv">2</span>)),</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>                    temperature <span class="sc">==</span> <span class="st">"18ºC"</span>, <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="dv">2</span>)),</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>                    temperature <span class="sc">==</span> <span class="st">"23ºC"</span>, <span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">3</span>, <span class="at">sd =</span> <span class="dv">2</span>))),</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>    by <span class="ot">=</span> row_id]</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>dat[, sd <span class="sc">:</span><span class="er">=</span> <span class="fu">rnorm</span>(<span class="at">n =</span> .N, <span class="at">mean =</span> .<span class="dv">75</span>, <span class="at">sd =</span> .<span class="dv">1</span>)]</span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> temperature, <span class="at">y =</span> mean, <span class="at">ymin =</span> mean<span class="sc">-</span>sd, <span class="at">ymax =</span> mean<span class="sc">+</span>sd,</span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>                     <span class="at">fill =</span> temperature))<span class="sc">+</span></span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>)<span class="sc">+</span></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Growth rate"</span>)<span class="sc">+</span></span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Temperature"</span>)<span class="sc">+</span></span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species)<span class="sc">+</span></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="cn">NULL</span>,</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"12ºC"</span> <span class="ot">=</span> <span class="st">"dodgerblue2"</span>,</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"18ºC"</span> <span class="ot">=</span> <span class="st">"dodgerblue4"</span>,</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"23ºC"</span> <span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span>  </span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>,</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>Here we have a different looking plot, with two treatment temperature (18ºC and 23ºC) compared to the same control (12ºC). Again, we have two different species and no repeated measures. We would recommend extracting the data to look like this:</span>
 <span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>ext<span class="fl">.2</span> <span class="ot">&lt;-</span> dat[temperature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"12ºC"</span>, <span class="st">"23ºC"</span>)]</span>
-<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>ext.<span class="fl">2.</span>wide <span class="ot">&lt;-</span> <span class="fu">dcast</span>(ext<span class="fl">.2</span>, species <span class="sc">~</span> treatment, <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"n"</span>, <span class="st">"temperature"</span>))</span>
-<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>extracted2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ext.<span class="fl">1.</span>wide, ext.<span class="fl">2.</span>wide)</span>
-<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>extracted2[, article_id <span class="sc">:</span><span class="er">=</span> <span class="st">"article_2"</span>]</span>
-<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>extracted2[, fig <span class="sc">:</span><span class="er">=</span> <span class="st">"fig s1"</span>]</span>
-<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>extracted2[, control_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"shared_control_"</span>, species)]</span>
-<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>extracted2[, experiment_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste</span>(species, <span class="st">"experiment"</span>)]</span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>dat[, treatment <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(temperature <span class="sc">==</span> <span class="st">"12ºC"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>)]</span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>dat[, n <span class="sc">:</span><span class="er">=</span> <span class="dv">25</span>]</span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>ext<span class="fl">.1</span> <span class="ot">&lt;-</span> dat[temperature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"12ºC"</span>, <span class="st">"18ºC"</span>)]</span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>ext.<span class="fl">1.</span>wide <span class="ot">&lt;-</span> <span class="fu">dcast</span>(ext<span class="fl">.1</span>, species <span class="sc">~</span> treatment, <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"n"</span>, <span class="st">"temperature"</span>))</span>
 <span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(extracted2, <span class="fu">c</span>(<span class="st">"article_id"</span>, <span class="st">"fig"</span>, <span class="st">"species"</span>, <span class="st">"control_id"</span>, <span class="st">"experiment_id"</span>,</span>
-<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"temperature_low"</span>, <span class="st">"temperature_high"</span>,</span>
-<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"mean_low"</span>, <span class="st">"sd_low"</span>, <span class="st">"n_low"</span>, <span class="st">"mean_high"</span>, <span class="st">"sd_high"</span>, <span class="st">"n_high"</span>))</span>
-<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a><span class="fu">setorder</span>(extracted2, species, temperature_high)</span>
-<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>extracted2</span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>ext<span class="fl">.2</span> <span class="ot">&lt;-</span> dat[temperature <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"12ºC"</span>, <span class="st">"23ºC"</span>)]</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>ext.<span class="fl">2.</span>wide <span class="ot">&lt;-</span> <span class="fu">dcast</span>(ext<span class="fl">.2</span>, species <span class="sc">~</span> treatment, <span class="at">value.var =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"sd"</span>, <span class="st">"n"</span>, <span class="st">"temperature"</span>))</span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>extracted2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ext.<span class="fl">1.</span>wide, ext.<span class="fl">2.</span>wide)</span>
 <span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>This dataset has a <span class="in">`control_id`</span> which specifies that these data share a control. This can be used in your random effect formulation.</span>
-<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>The combined dataset with both studies would look like this. Note that the time_sequence column for the second study is populated with '1', while the control id for the first study is given a unique value per row.</span>
-<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a>extracted2[, article_id <span class="sc">:</span><span class="er">=</span> <span class="st">"article_2"</span>]</span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>extracted2[, fig <span class="sc">:</span><span class="er">=</span> <span class="st">"fig s1"</span>]</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>extracted2[, control_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"shared_control_"</span>, species)]</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>extracted2[, experiment_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste</span>(species, <span class="st">"experiment"</span>)]</span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a><span class="fu">setcolorder</span>(extracted2, <span class="fu">c</span>(<span class="st">"article_id"</span>, <span class="st">"fig"</span>, <span class="st">"species"</span>, <span class="st">"control_id"</span>, <span class="st">"experiment_id"</span>,</span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"temperature_low"</span>, <span class="st">"temperature_high"</span>,</span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"mean_low"</span>, <span class="st">"sd_low"</span>, <span class="st">"n_low"</span>, <span class="st">"mean_high"</span>, <span class="st">"sd_high"</span>, <span class="st">"n_high"</span>))</span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a><span class="fu">setorder</span>(extracted2, species, temperature_high)</span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a>extracted2</span>
 <span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a>extracted[, control_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"unique_control"</span>, <span class="dv">1</span><span class="sc">:</span>.N)]</span>
-<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a>extracted2[, time_sequence <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
-<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>full_dat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(extracted, extracted2)</span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>This dataset has a <span class="in">`control_id`</span> which specifies that these data share a control. This can be used in your random effect formulation.</span>
 <span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>full_dat</span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>The combined dataset with both studies would look like this. Note that the time_sequence column for the second study is populated with '1', while the control id for the first study is given a unique value per row.</span>
 <span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>Tricky business, right?</span>
-<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control. Messy! Ultimately, we would likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. But let's leave that out for now :) </span>
-<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>Note that the <span class="in">`struct`</span> argument in <span class="in">`rma.mv`</span> specifies the correlation structure to apply to time series.</span>
-<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a>extracted[, control_id <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"unique_control"</span>, <span class="dv">1</span><span class="sc">:</span>.N)]</span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a>extracted2[, time_sequence <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>full_dat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(extracted, extracted2)</span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>full_dat</span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a>Tricky business, right?</span>
 <span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a><span class="co"># First calculate effect size:</span></span>
-<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a>full_dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> mean_low, <span class="at">m2i =</span> mean_high,</span>
-<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> sd_low, <span class="at">sd2i =</span> sd_high,</span>
-<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> n_low, <span class="at">n2i =</span> n_high, </span>
-<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> full_dat) <span class="sc">|&gt;</span> <span class="fu">setDT</span>()</span>
-<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate difference in temperature to use as a moderator:</span></span>
-<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a>full_dat[, temperature_diff <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"ºC"</span>, <span class="st">""</span>, temperature_high)) <span class="sc">-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"ºC"</span>, <span class="st">""</span>, temperature_low))]</span>
-<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a unique ID for each effect size:</span></span>
-<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a>full_dat[, effect_size_id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a>Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. Messy! Ultimately, we would likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. But let's leave that out for now :) </span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a>Note that the <span class="in">`struct`</span> argument in <span class="in">`rma.mv`</span> specifies the correlation structure to apply to time series.</span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
 <span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="co"># Model</span></span>
-<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi <span class="sc">~</span> temperature_diff,</span>
-<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a>            <span class="at">V =</span> vi,</span>
-<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> article_id <span class="sc">/</span> experiment_id <span class="sc">/</span> control_id <span class="sc">/</span> effect_size_id,</span>
-<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> species,</span>
-<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span>time_sequence <span class="sc">|</span> experiment_id),</span>
-<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a>            <span class="at">dfs =</span> <span class="st">"contain"</span>,</span>
-<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a>            <span class="at">test =</span> <span class="st">"t"</span>,</span>
-<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="st">"ML"</span>,</span>
-<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a>            <span class="at">struct =</span> <span class="st">"AR"</span>,</span>
-<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> full_dat)</span>
-<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m)</span>
-<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a>As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from time series (or a single experimental treatment). These can also be filtered after extraction, if your data is tidy and easy to manage.</span>
-<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a>We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX</span>
-<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="co"># First calculate effect size:</span></span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a>full_dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> mean_low, <span class="at">m2i =</span> mean_high,</span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> sd_low, <span class="at">sd2i =</span> sd_high,</span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> n_low, <span class="at">n2i =</span> n_high, </span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> full_dat) <span class="sc">|&gt;</span> <span class="fu">setDT</span>()</span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate difference in temperature to use as a moderator:</span></span>
+<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>full_dat[, temperature_diff <span class="sc">:</span><span class="er">=</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"ºC"</span>, <span class="st">""</span>, temperature_high)) <span class="sc">-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"ºC"</span>, <span class="st">""</span>, temperature_low))]</span>
+<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a unique ID for each effect size:</span></span>
+<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a>full_dat[, effect_size_id <span class="sc">:</span><span class="er">=</span> <span class="dv">1</span><span class="sc">:</span>.N]</span>
+<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a><span class="co"># Model</span></span>
+<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi <span class="sc">~</span> temperature_diff,</span>
+<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a>            <span class="at">V =</span> vi,</span>
+<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> article_id <span class="sc">/</span> experiment_id <span class="sc">/</span> control_id <span class="sc">/</span> effect_size_id,</span>
+<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> species,</span>
+<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span>time_sequence <span class="sc">|</span> experiment_id),</span>
+<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a>            <span class="at">dfs =</span> <span class="st">"contain"</span>,</span>
+<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a>            <span class="at">test =</span> <span class="st">"t"</span>,</span>
+<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a>            <span class="at">method =</span> <span class="st">"ML"</span>,</span>
+<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a>            <span class="at">struct =</span> <span class="st">"AR"</span>,</span>
+<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> full_dat)</span>
+<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m)</span>
+<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a>As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.</span>
+<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a>We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX</span>
+<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a>In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have  calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size (see @sec). Alternatively, we could have used a totally different (and more unusual effect size): Q~10~. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and less overall heterogeneity.</span>
+<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see Noble et al 2022 and where we discuss this in brief (@sec)</span>
+<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a><span class="fu"># Database design</span></span>
+<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on. </span>
+<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a>We recommend that you do a pilot extraction, and analysis, of ~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.</span>
+<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
