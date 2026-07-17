@@ -101,10 +101,9 @@ Also note that sample size is necessary to convert author-provided measurements 
 
 **Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**
 
-# Non-independence
+# Complex non-independence structures
 
 Also check this: https://royalsocietypublishing.org/rsta/article/384/2321/20240604/481953/A-preliminary-data-analysis-workflow-for-meta
-
 
 One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. 
 
@@ -173,7 +172,7 @@ setcolorder(extracted, c("article_id", "fig", "species", "experiment_id", "time_
                          "temperature_low", "temperature_high",
                          "mean_low", "sd_low", "n_low", "mean_high", "sd_high", "n_high"))
 
-extracted
+head(extracted)
 
 ```
 
@@ -253,7 +252,7 @@ setcolorder(extracted2, c("article_id", "fig", "species", "control_id", "experim
                          "temperature_low", "temperature_high",
                          "mean_low", "sd_low", "n_low", "mean_high", "sd_high", "n_high"))
 setorder(extracted2, species, temperature_high)
-extracted2
+head(extracted2)
 
 ```
 
@@ -270,7 +269,7 @@ extracted[, control_id := paste0("unique_control", 1:.N)]
 extracted2[, time_sequence := 1:.N]
 full_dat <- rbind(extracted, extracted2)
 
-full_dat
+head(full_dat)
 
 ```
 
@@ -316,12 +315,16 @@ summary(m)
 
 ```
 
+These non-independence structures can be calculated separately as well with the function `metafor::vcalc` (which is preferred, especially if adding a phylogenetic or spatial dissimilarity matrix). See XXXXXX for a tutorial on how to use `vcalc`.
+
 As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
 
 We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX
 
 ::: callout-important
-In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have  calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size (see @sec). Alternatively, we could have used a totally different (and more unusual effect size): Q~10~. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and less overall heterogeneity.
+In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have  calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size (see @sec). 
+
+A third option would have been to use a totally different (and more unusual effect size): Q~10~. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and less overall heterogeneity.
 
 For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see Noble et al 2022 and where we discuss this in brief (@sec)
 :::

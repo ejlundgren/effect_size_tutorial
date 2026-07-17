@@ -204,11 +204,30 @@ dat.sum <- dat %>% group_by(treatment) %>%
   mutate(number_living = total_individuals - number_deceased)
 
 dat.sum
+
 ```
 
 The columns `number_deceased` and `number_living` provide you the contingency table necessary to calculate lnOR.
 
 However, what do you do if there is no sample size provided (e.g., total number of individuals)? In this case, your best bet is to calculate the mean ± SD of each year per treatment group and use this to calculate SMD. Since these values are proportions, be sure to arcsin transform these values (see @sec). The resulting effect size and sampling variance can then be converted to lnOR to be comparable to the rest of your dataset.
+
+## Mean±error outcome for two discrete groups
+
+Sometimes discrete outcomes are summarized into mean±error across trials/sites/islands/etc. This data format lends itself naturally to SMD/lnRoM/Zmu type effect sizes. However, the sample size for these effect sizes are likely to be different than for an lnOR type effect size, which uses the number of individuals as the sample size.
+
+**FIGURE**
+
+In these cases, you can either: 
+
+1) convert the mean±SD to proportion and use that to calculate number of individuals
+
+or
+
+2) use `rbinom` to draw number of individuals? Brain is tired maybe this is stupid and I'm not thinking right. Hmmmm.
+
+```{r}
+# HMMMMM
+```
 
 ## Survivorship curves
 

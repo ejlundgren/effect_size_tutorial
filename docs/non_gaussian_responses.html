@@ -358,7 +358,8 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Binomial</td>
-<td>probability (0-1) across trials</td>
+<td>probability (0-1) across trials; <span class="math inline">\(msd &lt; \sqrt(m)\)</span>
+</td>
 <td>success, survivorship, survival</td>
 </tr>
 <tr class="odd">
@@ -489,14 +490,14 @@ size = \frac{\mu^2}{Variance - \mu}
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Present</td>
-<td style="text-align: right;">5.0875</td>
-<td style="text-align: right;">3.775986</td>
+<td style="text-align: right;">4.9625</td>
+<td style="text-align: right;">3.388154</td>
 <td style="text-align: right;">80</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Eradicated</td>
-<td style="text-align: right;">8.8000</td>
-<td style="text-align: right;">3.488326</td>
+<td style="text-align: right;">10.4000</td>
+<td style="text-align: right;">3.560012</td>
 <td style="text-align: right;">20</td>
 </tr>
 </tbody>
@@ -512,21 +513,22 @@ size = \frac{\mu^2}{Variance - \mu}
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, lambda <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 1 3 1 1 1 0 1 1 1 1</code></pre>
+<pre><code> [1] 3 1 0 0 1 1 1 0 0 0</code></pre>
 </div>
 </div>
 </section><section id="binomial" class="level2"><h2 class="anchored" data-anchor-id="binomial">Binomial</h2>
 <p>The binomial distribution describes the probability of success (<span class="math inline">\(p\)</span>) across <span class="math inline">\(t\)</span> trials per <span class="math inline">\(n\)</span> observation (note that <span class="math inline">\(m\)</span> is usually used for number of trials in binomial formulas but, since we are referring to means as <span class="math inline">\(m\)</span>, we will refer to number of trials as <span class="math inline">\(t\)</span>). <span class="math inline">\(p\)</span> can be calculated from author-provided standard deviation (<span class="math inline">\(sd\)</span>) and means (<span class="math inline">\(m\)</span>) as follows:</p>
 <p><span class="math display">\[
-p=\frac{1-sd^2}{m}
-\]</span></p>
-<p>You can then draw binomial data in R, with size equivalent to the number of trials (<span class="math inline">\(t\)</span>). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we’re simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events:</p>
+p=1-\frac{sd^2}{m}
+\]</span> Note that standard deviation must be less the square root of the mean.</p>
+<p>You can then draw binomial data in R, with size equivalent to the number of trials (<span class="math inline">\(t\)</span>). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we’re simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events. The output describes the number of successful trials per 10 individuals, which can be converted to a proportion by dividing by <code>size</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">rbinom</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, p <span class="op">=</span> <span class="fl">.4</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">rbinom</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, p <span class="op">=</span> <span class="fl">.4</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">/</span> <span class="fl">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 1 3 2 1 2 2 2 1 1 1</code></pre>
+<pre><code> [1] 0.4 0.4 0.4 0.0 0.6 0.6 0.4 0.2 0.6 0.4</code></pre>
 </div>
 </div>
+<p><strong>Am I butchering this? Probably :)</strong></p>
 </section><section id="beta" class="level2"><h2 class="anchored" data-anchor-id="beta">Beta</h2>
 <p>The Beta distribution describes data bounded <em>between</em> 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (<code>shape1</code>=<span class="math inline">\(\alpha\)</span> and <code>shape2</code>=<span class="math inline">\(\beta\)</span>). These can be calculated from mean (<span class="math inline">\(m\)</span>) and standard deviation (<span class="math inline">\(sd\)</span>) as follows:</p>
 <p><span class="math display">\[
@@ -547,8 +549,8 @@ p=\frac{1-sd^2}{m}
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, shape1 <span class="op">=</span> <span class="va">alpha</span>, shape2 <span class="op">=</span> <span class="va">beta</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 0.9170710 0.8329213 0.8483716 0.8673608 0.7743299 0.7398145 0.7784271
- [8] 0.7789703 0.9500851 0.7914940</code></pre>
+<pre><code> [1] 0.8140232 0.8396723 0.7494982 0.6264103 0.7799289 0.7816760 0.6826897
+ [8] 0.7129854 0.8306954 0.8129628</code></pre>
 </div>
 </div>
 
@@ -1171,7 +1173,7 @@ p=\frac{1-sd^2}{m}
 <span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Normal                <span class="pp">|</span> continuous; XXXX; $CV &lt; XXXX$        <span class="pp">|</span> XXXX                 <span class="pp">|</span></span>
 <span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Negative binomial     <span class="pp">|</span> count; Variance &gt; mean               <span class="pp">|</span> Abundance data, XXX <span class="pp">|</span></span>
 <span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Poisson               <span class="pp">|</span> count; Variance ≈ mean               <span class="pp">|</span> Count data, XXX          <span class="pp">|</span></span>
-<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Binomial              <span class="pp">|</span> probability (0-1) across trials      <span class="pp">|</span> success, survivorship, survival <span class="pp">|</span></span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Binomial              <span class="pp">|</span> probability (0-1) across trials; $msd &lt; \sqrt(m)$ <span class="pp">|</span> success, survivorship, survival <span class="pp">|</span></span>
 <span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Beta                  <span class="pp">|</span> proportion bounded *between* 0 and 1 <span class="pp">|</span> Cover data, XXXX <span class="pp">|</span></span>
 <span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a><span class="fu">## Negative binomial</span></span>
@@ -1264,43 +1266,46 @@ p=\frac{1-sd^2}{m}
 <span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>The binomial distribution describes the probability of success ($p$) across $t$ trials per $n$ observation (note that $m$ is usually used for number of trials in binomial formulas but, since we are referring to means as $m$, we will refer to number of trials as $t$). $p$ can be calculated from author-provided standard deviation ($sd$) and means ($m$) as follows: </span>
 <span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>p=\frac{1-sd^2}{m}</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>p=1-\frac{sd^2}{m}</span>
 <span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>You can then draw binomial data in R, with size equivalent to the number of trials ($t$). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we're simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events:</span>
-<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">p =</span> .<span class="dv">4</span>, <span class="at">size =</span> <span class="dv">5</span>)</span>
-<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a><span class="fu">## Beta</span></span>
-<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>The Beta distribution describes data bounded *between* 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (<span class="in">`shape1`</span>=$\alpha$ and <span class="in">`shape2`</span>=$\beta$). These can be calculated from mean ($m$) and standard deviation ($sd$) as follows:</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a>Note that standard deviation must be less the square root of the mean.</span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a>You can then draw binomial data in R, with size equivalent to the number of trials ($t$). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we're simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events. The output describes the number of successful trials per 10 individuals, which can be converted to a proportion by dividing by <span class="in">`size`</span>:</span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">p =</span> .<span class="dv">4</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">/</span> <span class="dv">5</span></span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>**Am I butchering this? Probably :)**</span>
 <span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>&amp; Var = sd^2 <span class="sc">\\</span></span>
-<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>&amp; t = (\frac{m(1-m)}{Var}) - 1<span class="sc">\\</span></span>
-<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>&amp; \alpha = m * t <span class="sc">\\</span></span>
-<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a>&amp; \beta = (1-m) * t <span class="sc">\\</span></span>
-<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a>These parameters can then be used in R. For instance, with a mean of 0.75 (e.g., 75% cover) and a standard deviation of 0.1:</span>
-<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a>sd <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
-<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fl">0.75</span></span>
-<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> sd<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> ((m <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>m)) <span class="sc">/</span> (v)) <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> m <span class="sc">*</span> t</span>
-<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> m) <span class="sc">*</span> t</span>
-<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a><span class="fu">rbeta</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">shape1 =</span> alpha, <span class="at">shape2 =</span> beta)</span>
-<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a><span class="fu">## Beta</span></span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>The Beta distribution describes data bounded *between* 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (<span class="in">`shape1`</span>=$\alpha$ and <span class="in">`shape2`</span>=$\beta$). These can be calculated from mean ($m$) and standard deviation ($sd$) as follows:</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a>&amp; Var = sd^2 <span class="sc">\\</span></span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a>&amp; t = (\frac{m(1-m)}{Var}) - 1<span class="sc">\\</span></span>
+<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a>&amp; \alpha = m * t <span class="sc">\\</span></span>
+<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a>&amp; \beta = (1-m) * t <span class="sc">\\</span></span>
+<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a>These parameters can then be used in R. For instance, with a mean of 0.75 (e.g., 75% cover) and a standard deviation of 0.1:</span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>sd <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fl">0.75</span></span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> sd<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> ((m <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>m)) <span class="sc">/</span> (v)) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> m <span class="sc">*</span> t</span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> m) <span class="sc">*</span> t</span>
 <span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a><span class="fu">rbeta</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">shape1 =</span> alpha, <span class="at">shape2 =</span> beta)</span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

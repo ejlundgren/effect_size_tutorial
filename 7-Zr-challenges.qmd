@@ -349,7 +349,7 @@ p1 + p2
 What is the best way to line up variable 1 and variable 2 to calculate their correlation? rWhile imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.
 
 
-## Discrete responses
+## Discrete responses with a continuous predictor
 
 **This is a pretty rough example...**
 Imagine you are conducting a meta-analysis concerned with factors driving mortality in some organism. Many of the studies use a discrete predictor, e.g., presence or absence of a driver variable. These types of data are naturally suited for the lnOR or lnRR effect sizes (@sec). However, other studies report mortality in relationship to a continuous variable. This is the type of data you would probably analyze with a logistic regression (or binomial GLM)
@@ -372,6 +372,8 @@ ggplot(data = dat, aes(x = temperature, y = living))+
 ```
 
 Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can be converted to lnOR (see @sec) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point and calculate Zr with the responses as a binary variable of 0 or 1.
+
+### Proportion data with a continuous predictor
 
 You can imagine similar challenges where instead of 0 or 1 responses, the authors report % of a population, e.g., similar to a survivorship curve (see @sec):
 
@@ -413,32 +415,37 @@ However, this ignores the number of individuals in the population and can lead t
 
 To deal with this, you likely want to convert this to binary response data for the total number of individuals in each temperature treatment, if this can be reconstructed from author reported summaries. If this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply 15 by the proportion at each temperature level, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature. 
 
+Let's give it a try. `dt` is a data.table with a column for proportion alive and for temperature. We'll calculate the number of living and dead individuals, make the dataset long so that these are in one column, and then expand the dataset to be one row per individual. Finally, we'll create a binary column of 0s and 1s.
+
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-head(dt)
 
 dt[, number_alive := floor(proportion_alive * 15)]
 dt[, number_dead := 15 - number_alive]
+head(dt)
 
 # Now melt dataset:
 dt.mlt <- melt(dt, 
                measure.vars = c("number_alive", "number_dead"),
                variable.name = "status", 
-               value.name = "individuals")
+               value.name = "n_individuals")
+head(dt.mlt)
 
 # Now expand dataset to a binary response dataset:
-dt.expanded <- dt.mlt[rep(seq_len(.N), individuals), ]
+dt.expanded <- dt.mlt[rep(seq_len(.N), n_individuals), ]
+dt.expanded$n_individuals <- NULL
 
 # Add binary column:
 dt.expanded[, living := ifelse(status == "number_alive", 1, 0)]
+dt.expanded$status <- NULL
 
 head(dt.expanded)
 
 ```
 
-We have now expanded this dataset from a single row per point to a single row per individual. We can now calculate a correlation coefficient and our effect size:
+We have now expanded this dataset from a single row per temperature treatment to a single row per individual. We can now calculate a correlation coefficient and our Zr effect size. The sample size used in this calculation will reflect the number of individuals.
 
 ```{r}
 res <- cor.test(dt.expanded$living, dt.expanded$temperature)
@@ -448,13 +455,105 @@ escalc(measure = "ZCOR",
        ri = res$estimate) |> unlist() # only doing this because of the ugly table outputs....
 ```
 
-Remember, the reason we did all of this work was to make this effect size more comparable to other effect sizes where sample size was derived from the number of individuals, which we believe would be the best way to treat data like this.
+Remember, the reason we did all of this work was to make this effect size comparable to other effect sizes where sample size was derived from the number of individuals, which we believe is the best way to treat data like this.
+
+### Mean±SD proportion data with continuous predictor
+
+Now let's look at a similar situation, except the figure is presenting mean±SD mortality across separate trials within each temperature treatment. 
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+x <- 10:30
+a <- rweibull(n = 21, shape = 2, scale = 4)
+a <- rev(sort(a))
+a <- a - min(a)
+a <- a/max(a)
+a <- a-.2
+dt <- data.table(temperature = x, proportion_alive = a)
+dt <- dt[a > 0]
+dt[, sd := abs(rnorm(n = .N, mean = .05, sd = .01))]
+
+ggplot(data = dt)+
+  # geom_path(aes(x = temperature, y = proportion_alive),
+  #           color = "black",
+  #           linewidth = 2)+
+  geom_point(aes(x = temperature, y = proportion_alive),
+            fill = "grey80",
+            shape = 21,
+            size = 3)+
+  geom_errorbar(aes(x = temperature, ymin = proportion_alive-sd, ymax = proportion_alive+sd))+
+  ylab("Survivorship (mean proportion alive ±SD)")+
+  xlab("Temperature")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+If we want our effect size to be based on the number of individuals, we need to try to reconstruct the underlying distributions behind each of these trials and then calculate a correlation across those individuals for the binary response of being alive or dead.
+
+To do this, we will do something similar as in sec-xxx. However, we will convert the author-provided mean±SD to their binomial flavors. The binomial distribution is described by the probability ($p$) of success across $t$ trials (usually denoted $m$). We can convert mean ($m$) and standard deviation ($sd$) to $p$ as follows:
+
+$$
+p=1-\frac{sd^2}{m}
+$$
+**This is confusing because why can't we just treat the mean proportion as p in the binomial call? sd^2/m produces almost equal survivorship in rbinom...I know I'm doing something wrong**
+
+We then also require the number of individuals per trial, which let's imagine was 15 individuals in 5 independent trials. Note: one rule about binomial data is that sd must be less than the square root of the mean. In R we'll expand our dataset using `rbinom`:
+
+
+```{r}
+head(dt)
+
+all(dt$sd < sqrt(dt$proportion_alive)) # Must be TRUE
+
+# Calculate 'p':
+# dt[, p := 1 - (sd^2/proportion_alive)] # I don't think this is correct...Confused. Using proportion_alive for now
+
+# Now draw in a loop:
+y_expanded <- list()
+
+for(i in 1:nrow(dt)){
+  y_expanded[[i]] <- data.table(n_living = rbinom(p = dt$proportion_alive[i],
+                                            size = 15,
+                                            n = 5),
+                                temperature = dt$temperature[i])
+}
+y_expanded <- rbindlist(y_expanded)
+
+head(y_expanded)
+
+```
+
+As with sec-XXX, you can then expand this dataset from a row per trial to become a row per individual.
+
+```{r}
+y_expanded[, n_dead := as.integer(15 - n_living)]
+
+y_expanded.mlt <- melt(y_expanded, 
+                       measure.vars = c("n_living", "n_dead"),
+                       variable.name = "status",
+                       value.name = "n_individuals")
+
+final_dat <- y_expanded.mlt[rep(seq_len(.N), n_individuals), ]
+final_dat[, living := ifelse(status == "n_living", 1, 0)]
+
+final_dat <- final_dat[, .(temperature, living)]
+
+nrow(final_dat)
+head(final_dat)
+
+```
+This final dataset has 1,350 rows, one for individual, and the necessary ingredients for calculating Zr. Calculating Zr directly from the mean survivorship across trials would treat the number of temperature treatments as sample size, instead of the number of individuals across all trials, which would give it considerably higher sampling variance and much lower weight in your meta-analytic models.
 
 ## Matrices
 
-Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise activities, such as grooming each other. Does grooming lead to other adaptive behaviors? Such as defending each other? This is a long-standing question in behavioral ecology.
+Some types of correlations are more complicated because they are based on pairwise matrices that describe relationships between individuals. As such, each value is not independent because the same individuals engaged with other individuals. For instance, correlations between pair-wise behaviors. An example would be the relationship between grooming behavior and defense, which was meta-analyzed by Schino (2007, https://doi.org/10.1093/beheco/arl045). Is grooming adaptive because it leads to mutual defense with grooming partners? 
 
-In this case, you might have a matrix of grooming between individuals:
+With data like this, you might have a matrix of grooming between individuals:
 
 ```{r}
 #| eval: true
@@ -479,7 +578,7 @@ mat1
 
 ```
 
-And a matrix of defending each other from adversaries:
+Associated with a matrix of defending each other from adversaries:
 
 ```{r}
 #| echo: false
@@ -489,18 +588,15 @@ And a matrix of defending each other from adversaries:
 mat2
 ```
 
-How do you go about analyzing such data? For an example of a meta-analysis on this topic, see Schino (2007) https://doi.org/10.1093/beheco/arl045.
-
-First, you need to melt these matrices into vectors and align the pairs:
+First, you need to melt these matrices into vectors:
 
 ```{r}
 mat1 <- reshape2::melt(mat1, na.rm = T)
 mat2 <- reshape2::melt(mat2, na.rm = T)
 
-mat1
 ```
 
-Then, calculate Kendall's correlation coefficient:
+Since the pairs are aligned you can then calculate Kendall's correlation coefficient:
 
 ```{r}
 res <- cor.test(mat1$value, mat2$value, method = "kendall")

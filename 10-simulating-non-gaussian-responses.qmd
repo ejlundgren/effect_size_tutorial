@@ -150,7 +150,7 @@ To understand whether the underlying data can be drawn safely from the normal di
 
 - What is the relationship between the means and reported error?
 
->*In normally distributed data the coefficient of variation ($sd/m$) should be <X.*
+>*In normally distributed data the coefficient of variation ($\frac{sd}{m}$) should be <X.*
 >*The variance ($sd^2$) of Poisson type data should be equal to the mean (which is unusual)*
 >*In negative binomial data, the variance should be greater than the mean.*
 
@@ -163,7 +163,7 @@ Here is a table of the parameters necessary to simulate data in most distributio
 | Normal                | continuous; XXXX; $CV < XXXX$        | XXXX                 |
 | Negative binomial     | count; Variance > mean               | Abundance data, XXX |
 | Poisson               | count; Variance ≈ mean               | Count data, XXX          |
-| Binomial              | probability (0-1) across trials      | success, survivorship, survival |
+| Binomial              | probability (0-1) across trials; $sd < \sqrt(m)$ | success, survivorship, survival |
 | Beta                  | proportion bounded *between* 0 and 1 | Cover data, XXXX |
 
 ## Negative binomial
@@ -253,11 +253,15 @@ rpois(n = 10, lambda = 1)
 ```
 
 ## Binomial
+
+**NOT SURE THIS IS CORRECT**
+
 The binomial distribution describes the probability of success ($p$) across $t$ trials per $n$ observation (note that $m$ is usually used for number of trials in binomial formulas but, since we are referring to means as $m$, we will refer to number of trials as $t$). $p$ can be calculated from author-provided standard deviation ($sd$) and means ($m$) as follows: 
 
 $$
-p=\frac{1-sd^2}{m}
+p=1-\frac{sd^2}{m}
 $$
+Note that standard deviation must be less the square root of the mean.
 
 You can then draw binomial data in R, with size equivalent to the number of trials ($t$). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we're simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events. The output describes the number of successful trials per 10 individuals, which can be converted to a proportion by dividing by `size`:
 
