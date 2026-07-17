@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-07-16">
+<meta name="dcterms.date" content="2026-07-17">
 <title>Simulating non-Gaussian data – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -211,7 +211,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./Zr_extraction_challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Continuous outcome with continuous predictor</span></a>
+ <span class="menu-text">Continuous predictor</span></a>
   </div>
 </li>
       </ul>
@@ -262,10 +262,11 @@ window.Quarto = {
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>CONTENTS</strong></h2>
    
   <ul>
-<li><a href="#negative-binomial" id="toc-negative-binomial" class="nav-link active" data-scroll-target="#negative-binomial">Negative binomial</a></li>
+<li><a href="#determing-the-correct-distribution" id="toc-determing-the-correct-distribution" class="nav-link active" data-scroll-target="#determing-the-correct-distribution">Determing the correct distribution</a></li>
+  <li><a href="#negative-binomial" id="toc-negative-binomial" class="nav-link" data-scroll-target="#negative-binomial">Negative binomial</a></li>
   <li><a href="#poisson" id="toc-poisson" class="nav-link" data-scroll-target="#poisson">Poisson</a></li>
   <li><a href="#binomial" id="toc-binomial" class="nav-link" data-scroll-target="#binomial">Binomial</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">???</a></li>
+  <li><a href="#beta" id="toc-beta" class="nav-link" data-scroll-target="#beta">Beta</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -282,7 +283,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 16, 2026</p>
+      <p class="date">July 17, 2026</p>
     </div>
   </div>
   
@@ -291,8 +292,83 @@ window.Quarto = {
   
 
 
-</header><section id="negative-binomial" class="level2"><h2 class="anchored" data-anchor-id="negative-binomial">Negative binomial</h2>
-<p>If a study reports mean ± SD for a non-Gaussian response, such as negative binomial (overdispersed count data), then you shouldn’t simply reconstruct the underlying data (as in <span class="citation" data-cites="secs">(<a href="#ref-secs" role="doc-biblioref"><strong>secs?</strong></a>)</span> XXX and YYY) with <code>rnorm</code>. Instead, you should use the appropriate data generating process. This requires converting the author provided summary statistics (mean and standard deviation) to the flavors required for these non-Gaussian distributions. We will here cover simply how to do this for negative binomial distribution data.</p>
+</header><p>We have briefly described tricks for recreating data from means±error, which you might encounter in error bars on a scatterplot (see <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>) or in a time series that you’d prefer to analyze as SMD (see <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>). For example, in a figure like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="10-simulating-non-gaussian-responses_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Or, like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="10-simulating-non-gaussian-responses_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>If the data in these figures (underlying each point) is normally distributed you can use <code>rnorm</code> to simulate the original dataset based on the means, standard deviations, and sample sizes (as our code in those sections demonstrated). This allows you to calculate effect sizes on results that may otherwise be unextractable. However, this assumes that data is normally distributed, which may be not be true in the case of ecological or evolutionary data.</p>
+<p><strong>Is this actually ok to do?</strong></p>
+<section id="determing-the-correct-distribution" class="level2"><h2 class="anchored" data-anchor-id="determing-the-correct-distribution">Determing the correct distribution</h2>
+<p>To understand whether the underlying data can be drawn safely from the normal distribution, you need to think carefully about the data generating process.</p>
+<ul>
+<li>Is the data discrete, e.g., count data or abundance data?</li>
+</ul>
+<blockquote class="blockquote">
+<p><em>Abundance data generally follows a negative binomial or Poisson distribution.</em> <em>Data bounded between 0 and 1 (e.g., cover data) follows the Beta distribution.</em></p>
+</blockquote>
+<ul>
+<li>What is the relationship between the means and reported error?</li>
+</ul>
+<blockquote class="blockquote">
+<p><em>In normally distributed data the coefficient of variation (<span class="math inline">\(sd/m\)</span>) should be &lt;X.</em> <em>The variance (<span class="math inline">\(sd^2\)</span>) of Poisson type data should be equal to the mean (which is unusual)</em> <em>In negative binomial data, the variance should be greater than the mean.</em></p>
+</blockquote>
+<p>Use these rules of thumb to help decide what distribution the underlying data is. Once you have a good idea, you then need to use distributionally specific formulas to convert the author-provided summary statistics (mean, standard deviation) to the distribution’s own flavors. For example, negative binomial uses <code>size</code> instead of standard deviation to describe its dispersion. Luckily, as we show below, converting standard deviation to size is quite doable.</p>
+<p>Here is a table of the parameters necessary to simulate data in most distributions you’ll encounter during a meta-analysis, along with the formulas to convert standard deviation to these parameters.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 46%">
+<col style="width: 25%">
+</colgroup>
+<thead><tr class="header">
+<th>distribution</th>
+<th>diagnosis</th>
+<th>common applications</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Normal</td>
+<td>continuous; XXXX; <span class="math inline">\(CV &lt; XXXX\)</span>
+</td>
+<td>XXXX</td>
+</tr>
+<tr class="even">
+<td>Negative binomial</td>
+<td>count; Variance &gt; mean</td>
+<td>Abundance data, XXX</td>
+</tr>
+<tr class="odd">
+<td>Poisson</td>
+<td>count; Variance ≈ mean</td>
+<td>Count data, XXX</td>
+</tr>
+<tr class="even">
+<td>Binomial</td>
+<td>probability (0-1) across trials</td>
+<td>success, survivorship, survival</td>
+</tr>
+<tr class="odd">
+<td>Beta</td>
+<td>proportion bounded <em>between</em> 0 and 1</td>
+<td>Cover data, XXXX</td>
+</tr>
+</tbody>
+</table></section><section id="negative-binomial" class="level2"><h2 class="anchored" data-anchor-id="negative-binomial">Negative binomial</h2>
+<p>We will here simulate the underlying data for negative binomial derived abundance data, as you might encounter in a time series (similar to the figure above).</p>
 <p>The object <code>dt</code> here is a dataset extracted from an article with Mean±SD for two groups in a time series (similar data as in <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>). We want to generate the underlying data for each point, so we can calculate group level mean±SD for the two treatments (“Present” vs “Eradicated”). The data looks like this:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -375,7 +451,7 @@ window.Quarto = {
 Variance = \mu + \frac{\mu^2}{size}
 \end{aligned}\]</span> Solving for <code>size</code> (which is the negative binomial flavor of standard deviation): <span class="math display">\[\begin{aligned}
 size = \frac{\mu^2}{Variance - \mu}
-\end{aligned}\]</span> Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance &lt; our mean, we’ll set Variance equal to the mean.</p>
+\end{aligned}\]</span> Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance &lt; the mean, we’ll set Variance equal to the mean.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># First, calculate the size dispersion parameter:</span></span>
 <span><span class="va">dt</span><span class="op">[</span>, <span class="va">var</span> <span class="op">:=</span> <span class="va">sd</span><span class="op">^</span><span class="fl">2</span><span class="op">]</span></span>
@@ -413,14 +489,14 @@ size = \frac{\mu^2}{Variance - \mu}
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Present</td>
-<td style="text-align: right;">5.1</td>
-<td style="text-align: right;">4.008219</td>
+<td style="text-align: right;">5.0875</td>
+<td style="text-align: right;">3.775986</td>
 <td style="text-align: right;">80</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Eradicated</td>
-<td style="text-align: right;">9.1</td>
-<td style="text-align: right;">3.307090</td>
+<td style="text-align: right;">8.8000</td>
+<td style="text-align: right;">3.488326</td>
 <td style="text-align: right;">20</td>
 </tr>
 </tbody>
@@ -429,9 +505,52 @@ size = \frac{\mu^2}{Variance - \mu}
 </div>
 </div>
 <p>These values can then be used to calculate your SMD / lnRoM / Zmu effect size.</p>
+<p>Is this really ok to do???</p>
 </section><section id="poisson" class="level2"><h2 class="anchored" data-anchor-id="poisson">Poisson</h2>
+<p>The Poisson distribution takes lambda, which is equivalent to the mean. The variance and the mean must be equal to be Poisson data.</p>
+<p>To draw Poisson data, use the R function <code>rpois</code>, as follows:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, lambda <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 1 3 1 1 1 0 1 1 1 1</code></pre>
+</div>
+</div>
 </section><section id="binomial" class="level2"><h2 class="anchored" data-anchor-id="binomial">Binomial</h2>
-</section><section id="section" class="level2"><h2 class="anchored" data-anchor-id="section">???</h2>
+<p>The binomial distribution describes the probability of success (<span class="math inline">\(p\)</span>) across <span class="math inline">\(t\)</span> trials per <span class="math inline">\(n\)</span> observation (note that <span class="math inline">\(m\)</span> is usually used for number of trials in binomial formulas but, since we are referring to means as <span class="math inline">\(m\)</span>, we will refer to number of trials as <span class="math inline">\(t\)</span>). <span class="math inline">\(p\)</span> can be calculated from author-provided standard deviation (<span class="math inline">\(sd\)</span>) and means (<span class="math inline">\(m\)</span>) as follows:</p>
+<p><span class="math display">\[
+p=\frac{1-sd^2}{m}
+\]</span></p>
+<p>You can then draw binomial data in R, with size equivalent to the number of trials (<span class="math inline">\(t\)</span>). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we’re simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html">rbinom</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, p <span class="op">=</span> <span class="fl">.4</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 1 3 2 1 2 2 2 1 1 1</code></pre>
+</div>
+</div>
+</section><section id="beta" class="level2"><h2 class="anchored" data-anchor-id="beta">Beta</h2>
+<p>The Beta distribution describes data bounded <em>between</em> 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (<code>shape1</code>=<span class="math inline">\(\alpha\)</span> and <code>shape2</code>=<span class="math inline">\(\beta\)</span>). These can be calculated from mean (<span class="math inline">\(m\)</span>) and standard deviation (<span class="math inline">\(sd\)</span>) as follows:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; Var = sd^2 \\
+&amp; t = (\frac{m(1-m)}{Var}) - 1\\
+&amp; \alpha = m * t \\
+&amp; \beta = (1-m) * t \\
+\end{aligned}
+\]</span> These parameters can then be used in R. For instance, with a mean of 0.75 (e.g., 75% cover) and a standard deviation of 0.1:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">0.75</span></span>
+<span><span class="va">v</span> <span class="op">&lt;-</span> <span class="va">sd</span><span class="op">^</span><span class="fl">2</span></span>
+<span><span class="va">t</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="op">(</span><span class="va">m</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">m</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">v</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span>
+<span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="va">m</span> <span class="op">*</span> <span class="va">t</span></span>
+<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">m</span><span class="op">)</span> <span class="op">*</span> <span class="va">t</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/Beta.html">rbeta</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, shape1 <span class="op">=</span> <span class="va">alpha</span>, shape2 <span class="op">=</span> <span class="va">beta</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0.9170710 0.8329213 0.8483716 0.8673608 0.7743299 0.7398145 0.7784271
+ [8] 0.7789703 0.9500851 0.7914940</code></pre>
+</div>
+</div>
 
 
 <!-- -->
@@ -887,162 +1006,301 @@ size = \frac{\mu^2}{Variance - \mu}
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Simulating non-Gaussian data"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Additional, homeless helpers"</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "non_gaussian_responses.html"</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"kableExtra"</span>)</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Negative binomial</span></span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>If a study reports mean ± SD for a non-Gaussian response, such as negative binomial (overdispersed count data), then you shouldn't simply reconstruct the underlying data (as in @secs XXX and YYY) with <span class="in">`rnorm`</span>. Instead, you should use the appropriate data generating process. This requires converting the author provided summary statistics (mean and standard deviation) to the flavors required for these non-Gaussian distributions. We will here cover simply how to do this for negative binomial distribution data.</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>The object <span class="in">`dt`</span> here is a dataset extracted from an article with Mean±SD for two groups in a time series (similar data as in @sec). We want to generate the underlying data for each point, so we can calculate group level mean±SD for the two treatments ("Present" vs "Eradicated"). The data looks like this:</span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a><span class="co"># #| out-width: "20%"</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a><span class="co"># #| tbl-cap: "Custom Width Table"</span></span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-colwidths: [10, 10, 10]</span></span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">copy</span>(<span class="fu">structure</span>(<span class="fu">list</span>(<span class="at">x1 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">1.15246506001662</span>, <span class="fl">0.617012258022042</span>, </span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a><span class="fl">2.92559078415861</span>, <span class="fl">5.44051812652133</span>, <span class="fl">6.57076998232729</span>, <span class="fl">6.95824795972284</span>, </span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a><span class="fl">9.00492379537813</span>, <span class="fl">8.94685646989777</span>, <span class="fl">8.32950404584211</span>, <span class="fl">9.56883252898138</span></span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>), <span class="at">status =</span> <span class="fu">c</span>(<span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, </span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a><span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Eradicated"</span>, <span class="st">"Eradicated"</span>), </span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, </span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>), <span class="at">N =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, </span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>    <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>), <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, </span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)), <span class="at">row.names =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="sc">-</span><span class="dv">10</span>L), <span class="at">class =</span> <span class="fu">c</span>(<span class="st">"data.table"</span>, </span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a><span class="st">"data.frame"</span>)))</span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>dt[, sd <span class="sc">:</span><span class="er">=</span> <span class="fu">sqrt</span>(mean) <span class="sc">+</span> .<span class="dv">001</span>]</span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dt[, .(status, mean, sd, N)], <span class="at">caption =</span> <span class="st">"Raw summary statistics in normal scale."</span><span class="co">#,</span></span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>             <span class="co">#table.attr = 'data-quarto-disable-processing="true"'</span></span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>             ) <span class="co">#|&gt;</span></span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>   <span class="co"># kable_styling(full_width = FALSE, position = "left") #</span></span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>Note that the standard deviation has a positive relationship with the mean, which is an indicator that this data is derived from a negative binomial distribution.</span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>Now let's convert the author provided <span class="in">`sd`</span> to <span class="in">`size`</span>, which is the parameter that describes the dispersion of the negative binomial family. This is based on the following relationship:</span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>Variance = \mu + \frac{\mu^2}{size}</span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>Solving for <span class="in">`size`</span> (which is the negative binomial flavor of standard deviation):</span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>size = \frac{\mu^2}{Variance - \mu}</span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance <span class="sc">\&lt;</span> our mean, we'll set Variance equal to the mean.</span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a><span class="co"># First, calculate the size dispersion parameter:</span></span>
-<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>dt[, var <span class="sc">:</span><span class="er">=</span> sd<span class="sc">^</span><span class="dv">2</span>]</span>
-<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>dt[, size <span class="sc">:</span><span class="er">=</span> mean<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (var <span class="sc">-</span> mean)]</span>
-<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>dt[var <span class="sc">&lt;</span> mean, var <span class="sc">:</span><span class="er">=</span> mean]</span>
-<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Now expand dataset with rnbinom:</span></span>
-<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a>dt_expanded <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dt)){</span>
-<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>  dt_expanded[[i]] <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">y =</span> <span class="fu">rnbinom</span>(<span class="at">mu =</span> dt<span class="sc">$</span>mean[i],</span>
-<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">size =</span> dt<span class="sc">$</span>size[i],</span>
-<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">n =</span> dt<span class="sc">$</span>N[i]),</span>
-<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a>                                <span class="at">status =</span> dt<span class="sc">$</span>status[i])</span>
-<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>dt_expanded <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(dt_expanded)</span>
-<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a><span class="co"># Now summarize to calculate our effect size of interest:</span></span>
-<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a>final_dt <span class="ot">&lt;-</span> dt_expanded[, .(<span class="at">mean =</span> <span class="fu">mean</span>(y),</span>
-<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sd =</span> <span class="fu">sd</span>(y),</span>
-<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a>                            <span class="at">total_n =</span> .N),</span>
-<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>                        by <span class="ot">=</span> .(status)]</span>
-<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>final_dt</span>
-<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>These values can then be used to calculate your SMD / lnRoM / Zmu effect size.</span>
-<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a><span class="fu">## Poisson</span></span>
-<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a><span class="fu">## Binomial</span></span>
-<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a><span class="fu">## ???</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Simulating non-Gaussian data"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Additional, homeless helpers"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "non_gaussian_responses.html"</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"kableExtra"</span>)</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>We have briefly described tricks for recreating data from means±error, which you might encounter in error bars on a scatterplot (see @sec) or in a time series that you'd prefer to analyze as SMD (see @sec). For example, in a figure like this:</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="fl">1.3</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">sd =</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)),</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>dat.sub <span class="ot">&lt;-</span> dat[<span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">12</span>), ]</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>dat.sub<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">jitter</span>(dat.sub<span class="sc">$</span>x, <span class="at">amount =</span> .<span class="dv">05</span>)</span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>dat.sub<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">jitter</span>(dat.sub<span class="sc">$</span>y, <span class="at">amount =</span> .<span class="dv">05</span>)</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>, <span class="fu">aes</span>(<span class="at">ymin =</span> y<span class="sc">-</span>sd, <span class="at">ymax =</span> y<span class="sc">+</span>sd))<span class="sc">+</span></span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>Or, like this:</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> x1 <span class="sc">*</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a><span class="co"># length(x1)</span></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>status <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Present"</span>, <span class="dv">8</span>),</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rep</span>(<span class="st">"Eradicated"</span>, <span class="dv">2</span>))</span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">data.table</span>(x1, y1, status)</span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>dt<span class="sc">$</span>group <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>dt<span class="sc">$</span>error <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> .<span class="dv">5</span>, <span class="at">sd =</span> .<span class="dv">2</span>, <span class="at">n =</span> <span class="fu">nrow</span>(dt))</span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dt, <span class="fu">aes</span>(<span class="at">x =</span> x1, <span class="at">y =</span> y1, <span class="at">fill =</span> status, <span class="at">group =</span> group))<span class="sc">+</span></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>)<span class="sc">+</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> y1 <span class="sc">-</span> error, <span class="at">ymax =</span> y1 <span class="sc">+</span> error))<span class="sc">+</span></span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">"Group of interest"</span>,</span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Present"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>,</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Eradicated"</span><span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span></span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1995</span><span class="sc">:</span><span class="dv">2005</span>)<span class="sc">+</span></span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>)<span class="sc">+</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Response of interest (mean±SD)"</span>)<span class="sc">+</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>If the data in these figures (underlying each point) is normally distributed you can use <span class="in">`rnorm`</span> to simulate the original dataset based on the means, standard deviations, and sample sizes (as our code in those sections demonstrated). This allows you to calculate effect sizes on results that may otherwise be unextractable. However, this assumes that data is normally distributed, which may be not be true in the case of ecological or evolutionary data.</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>**Is this actually ok to do?**</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a><span class="fu">## Determing the correct distribution</span></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>To understand whether the underlying data can be drawn safely from the normal distribution, you need to think carefully about the data generating process. </span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Is the data discrete, e.g., count data or abundance data?</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;*Abundance data generally follows a negative binomial or Poisson distribution.* </span></span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;*Data bounded between 0 and 1 (e.g., cover data) follows the Beta distribution.*</span></span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What is the relationship between the means and reported error?</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;*In normally distributed data the coefficient of variation ($sd/m$) should be &lt;X.*</span></span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;*The variance ($sd^2$) of Poisson type data should be equal to the mean (which is unusual)*</span></span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="at">&gt;*In negative binomial data, the variance should be greater than the mean.*</span></span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>Use these rules of thumb to help decide what distribution the underlying data is. Once you have a good idea, you then need to use distributionally specific formulas to convert the author-provided summary statistics (mean, standard deviation) to the distribution's own flavors. For example, negative binomial uses <span class="in">`size`</span> instead of standard deviation to describe its dispersion. Luckily, as we show below, converting standard deviation to size is quite doable.</span>
+<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>Here is a table of the parameters necessary to simulate data in most distributions you'll encounter during a meta-analysis, along with the formulas to convert standard deviation to these parameters.</span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> distribution          <span class="pp">|</span> diagnosis                            <span class="pp">|</span> common applications <span class="pp">|</span></span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------------------|--------------------------------------|---------------------|</span></span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Normal                <span class="pp">|</span> continuous; XXXX; $CV &lt; XXXX$        <span class="pp">|</span> XXXX                 <span class="pp">|</span></span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Negative binomial     <span class="pp">|</span> count; Variance &gt; mean               <span class="pp">|</span> Abundance data, XXX <span class="pp">|</span></span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Poisson               <span class="pp">|</span> count; Variance ≈ mean               <span class="pp">|</span> Count data, XXX          <span class="pp">|</span></span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Binomial              <span class="pp">|</span> probability (0-1) across trials      <span class="pp">|</span> success, survivorship, survival <span class="pp">|</span></span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Beta                  <span class="pp">|</span> proportion bounded *between* 0 and 1 <span class="pp">|</span> Cover data, XXXX <span class="pp">|</span></span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a><span class="fu">## Negative binomial</span></span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>We will here simulate the underlying data for negative binomial derived abundance data, as you might encounter in a time series (similar to the figure above).</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a>The object <span class="in">`dt`</span> here is a dataset extracted from an article with Mean±SD for two groups in a time series (similar data as in @sec). We want to generate the underlying data for each point, so we can calculate group level mean±SD for the two treatments ("Present" vs "Eradicated"). The data looks like this:</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a><span class="co"># #| out-width: "20%"</span></span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a><span class="co"># #| tbl-cap: "Custom Width Table"</span></span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-colwidths: [10, 10, 10]</span></span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">copy</span>(<span class="fu">structure</span>(<span class="fu">list</span>(<span class="at">x1 =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">1.15246506001662</span>, <span class="fl">0.617012258022042</span>, </span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a><span class="fl">2.92559078415861</span>, <span class="fl">5.44051812652133</span>, <span class="fl">6.57076998232729</span>, <span class="fl">6.95824795972284</span>, </span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a><span class="fl">9.00492379537813</span>, <span class="fl">8.94685646989777</span>, <span class="fl">8.32950404584211</span>, <span class="fl">9.56883252898138</span></span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>), <span class="at">status =</span> <span class="fu">c</span>(<span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, </span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a><span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Present"</span>, <span class="st">"Eradicated"</span>, <span class="st">"Eradicated"</span>), </span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, </span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>), <span class="at">N =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, </span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>    <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>), <span class="at">sd =</span> <span class="fu">c</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, </span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)), <span class="at">row.names =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="sc">-</span><span class="dv">10</span>L), <span class="at">class =</span> <span class="fu">c</span>(<span class="st">"data.table"</span>, </span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a><span class="st">"data.frame"</span>)))</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>dt[, sd <span class="sc">:</span><span class="er">=</span> <span class="fu">sqrt</span>(mean) <span class="sc">+</span> .<span class="dv">001</span>]</span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dt[, .(status, mean, sd, N)], <span class="at">caption =</span> <span class="st">"Raw summary statistics in normal scale."</span><span class="co">#,</span></span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>             <span class="co">#table.attr = 'data-quarto-disable-processing="true"'</span></span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>             ) <span class="co">#|&gt;</span></span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>   <span class="co"># kable_styling(full_width = FALSE, position = "left") #</span></span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>Note that the standard deviation has a positive relationship with the mean, which is an indicator that this data is derived from a negative binomial distribution.</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>Now let's convert the author provided <span class="in">`sd`</span> to <span class="in">`size`</span>, which is the parameter that describes the dispersion of the negative binomial family. This is based on the following relationship:</span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>Variance = \mu + \frac{\mu^2}{size}</span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$ Solving for <span class="in">`size`</span> (which is the negative binomial flavor of standard deviation): $$\begin{aligned}</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a>size = \frac{\mu^2}{Variance - \mu}</span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$ Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance <span class="sc">\&lt;</span> the mean, we'll set Variance equal to the mean.</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-226"><a href="#cb8-226" aria-hidden="true" tabindex="-1"></a><span class="co"># First, calculate the size dispersion parameter:</span></span>
+<span id="cb8-227"><a href="#cb8-227" aria-hidden="true" tabindex="-1"></a>dt[, var <span class="sc">:</span><span class="er">=</span> sd<span class="sc">^</span><span class="dv">2</span>]</span>
+<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a>dt[, size <span class="sc">:</span><span class="er">=</span> mean<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (var <span class="sc">-</span> mean)]</span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a>dt[var <span class="sc">&lt;</span> mean, var <span class="sc">:</span><span class="er">=</span> mean]</span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a><span class="co"># Now expand dataset with rnbinom:</span></span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a>dt_expanded <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dt)){</span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>  dt_expanded[[i]] <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">y =</span> <span class="fu">rnbinom</span>(<span class="at">mu =</span> dt<span class="sc">$</span>mean[i],</span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">size =</span> dt<span class="sc">$</span>size[i],</span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">n =</span> dt<span class="sc">$</span>N[i]),</span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a>                                <span class="at">status =</span> dt<span class="sc">$</span>status[i])</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-241"><a href="#cb8-241" aria-hidden="true" tabindex="-1"></a>dt_expanded <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(dt_expanded)</span>
+<span id="cb8-242"><a href="#cb8-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a><span class="co"># Now summarize to calculate our effect size of interest:</span></span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a>final_dt <span class="ot">&lt;-</span> dt_expanded[, .(<span class="at">mean =</span> <span class="fu">mean</span>(y),</span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sd =</span> <span class="fu">sd</span>(y),</span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a>                            <span class="at">total_n =</span> .N),</span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a>                        by <span class="ot">=</span> .(status)]</span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a>final_dt</span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a>These values can then be used to calculate your SMD / lnRoM / Zmu effect size.</span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a>Is this really ok to do???</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Poisson</span></span>
+<span id="cb8-257"><a href="#cb8-257" aria-hidden="true" tabindex="-1"></a>The Poisson distribution takes lambda, which is equivalent to the mean. The variance and the mean must be equal to be Poisson data. </span>
+<span id="cb8-258"><a href="#cb8-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a>To draw Poisson data, use the R function <span class="in">`rpois`</span>, as follows:</span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a><span class="fu">rpois</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">lambda =</span> <span class="dv">1</span>)</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a><span class="fu">## Binomial</span></span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>The binomial distribution describes the probability of success ($p$) across $t$ trials per $n$ observation (note that $m$ is usually used for number of trials in binomial formulas but, since we are referring to means as $m$, we will refer to number of trials as $t$). $p$ can be calculated from author-provided standard deviation ($sd$) and means ($m$) as follows: </span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a>p=\frac{1-sd^2}{m}</span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>You can then draw binomial data in R, with size equivalent to the number of trials ($t$). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we're simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events:</span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a><span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">p =</span> .<span class="dv">4</span>, <span class="at">size =</span> <span class="dv">5</span>)</span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a><span class="fu">## Beta</span></span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>The Beta distribution describes data bounded *between* 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (<span class="in">`shape1`</span>=$\alpha$ and <span class="in">`shape2`</span>=$\beta$). These can be calculated from mean ($m$) and standard deviation ($sd$) as follows:</span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>&amp; Var = sd^2 <span class="sc">\\</span></span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>&amp; t = (\frac{m(1-m)}{Var}) - 1<span class="sc">\\</span></span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>&amp; \alpha = m * t <span class="sc">\\</span></span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a>&amp; \beta = (1-m) * t <span class="sc">\\</span></span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb8-293"><a href="#cb8-293" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb8-294"><a href="#cb8-294" aria-hidden="true" tabindex="-1"></a>These parameters can then be used in R. For instance, with a mean of 0.75 (e.g., 75% cover) and a standard deviation of 0.1:</span>
+<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a>sd <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fl">0.75</span></span>
+<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> sd<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> ((m <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span>m)) <span class="sc">/</span> (v)) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> m <span class="sc">*</span> t</span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> m) <span class="sc">*</span> t</span>
+<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a><span class="fu">rbeta</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">shape1 =</span> alpha, <span class="at">shape2 =</span> beta)</span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

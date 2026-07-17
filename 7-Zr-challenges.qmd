@@ -71,7 +71,10 @@ source("scripts/functions/convert_effect_sizes.R")
 
 Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.
 
-![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg) \## Simple figures
+![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg){width=60%} 
+
+
+## Simple figures
 
 This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:
 
@@ -345,9 +348,111 @@ p1 + p2
 
 What is the best way to line up variable 1 and variable 2 to calculate their correlation? rWhile imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.
 
+
+## Discrete responses
+
+**This is a pretty rough example...**
+Imagine you are conducting a meta-analysis concerned with factors driving mortality in some organism. Many of the studies use a discrete predictor, e.g., presence or absence of a driver variable. These types of data are naturally suited for the lnOR or lnRR effect sizes (@sec). However, other studies report mortality in relationship to a continuous variable. This is the type of data you would probably analyze with a logistic regression (or binomial GLM)
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dat <- data.table(living = rbinom(n = 50, p = 0.75, size = 1),
+                  temperature = rnorm(n = 50, mean = 18, sd = 5))
+
+ggplot(data = dat, aes(x = temperature, y = living))+
+  geom_point(size = 3, alpha = 0.9, shape = 21, fill = "grey50")+
+  scale_y_continuous(breaks = c(0, 1), labels = c("Living", "Dead"))+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can be converted to lnOR (see @sec) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point and calculate Zr with the responses as a binary variable of 0 or 1.
+
+You can imagine similar challenges where instead of 0 or 1 responses, the authors report % of a population, e.g., similar to a survivorship curve (see @sec):
+
+**THIS IS ROUGH**
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+x <- 10:30
+a <- rweibull(n = 21, shape = 2, scale = 4)
+a <- rev(sort(a))
+a <- a - min(a)
+a <- a/max(a)
+a <- a-.2
+dt <- data.table(temperature = x, proportion_alive = a)
+dt <- dt[a > 0]
+
+ggplot(data = dt)+
+  geom_path(aes(x = temperature, y = proportion_alive),
+            color = "black",
+            linewidth = 2)+
+  geom_point(aes(x = temperature, y = proportion_alive),
+            fill = "grey80",
+            shape = 21,
+            size = 3)+
+  ylab("Survivorship (proportion alive)")+
+  xlab("Temperature")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+You can calculate Zr between the temperature and the proportion alive (the y axis), directly. 
+
+However, this ignores the number of individuals in the population and can lead to a mismatch in sample size between this effect size and other effect sizes in your dataset (if those were based on number of individuals, like the figure above @sec or lnOR type data). 
+
+To deal with this, you likely want to convert this to binary response data for the total number of individuals in each temperature treatment, if this can be reconstructed from author reported summaries. If this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply 15 by the proportion at each temperature level, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature. 
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+head(dt)
+
+dt[, number_alive := floor(proportion_alive * 15)]
+dt[, number_dead := 15 - number_alive]
+
+# Now melt dataset:
+dt.mlt <- melt(dt, 
+               measure.vars = c("number_alive", "number_dead"),
+               variable.name = "status", 
+               value.name = "individuals")
+
+# Now expand dataset to a binary response dataset:
+dt.expanded <- dt.mlt[rep(seq_len(.N), individuals), ]
+
+# Add binary column:
+dt.expanded[, living := ifelse(status == "number_alive", 1, 0)]
+
+head(dt.expanded)
+
+```
+
+We have now expanded this dataset from a single row per point to a single row per individual. We can now calculate a correlation coefficient and our effect size:
+
+```{r}
+res <- cor.test(dt.expanded$living, dt.expanded$temperature)
+
+escalc(measure = "ZCOR",
+       ni = nrow(dt.expanded),
+       ri = res$estimate) |> unlist() # only doing this because of the ugly table outputs....
+```
+
+Remember, the reason we did all of this work was to make this effect size more comparable to other effect sizes where sample size was derived from the number of individuals, which we believe would be the best way to treat data like this.
+
 ## Matrices
 
-Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise, activities, such as grooming each other. A long-standing question has concerned whether these behaviors are adaptive and potentially increase the chance that an individual will protect another individual.
+Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise activities, such as grooming each other. Does grooming lead to other adaptive behaviors? Such as defending each other? This is a long-standing question in behavioral ecology.
 
 In this case, you might have a matrix of grooming between individuals:
 
@@ -407,7 +512,7 @@ And now you're free to calculate ZCOR:
 ```{r}
 escalc(measure = "ZCOR", 
        ri = res$estimate,
-       ni = nrow(mat1))
+       ni = nrow(mat1)) |> unlist()
 ```
 
 **IS THIS CORRECT???**

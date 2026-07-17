@@ -73,7 +73,9 @@ The effect sizes that can be calculated with this data are standardized mean dif
 
 # Extraction
 
-Cheatsheet: **Rough version** **Make it downloadable/printable** ![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){download="SMD_challenges.png"}
+Cheatsheet: **Rough version** **Make it downloadable/printable** 
+
+![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){width=60%}
 
 ## The simple cases
 
@@ -673,9 +675,9 @@ p1 +
 
 ```
 
-In this case, you could extract each point for the control group and the treatment group and calculate mean±SD. But then you'd lose the 'continuous variable of interest' (which might be a core moderator in your analysis).
+In this case, you could extract each point for the control group and the treatment group and calculate mean±SD. But then you'd lose the 'continuous variable of interest' (which might be a core moderator of interest in your analysis).
 
-Alternatively, you could calculate two Zr (see below @SEC) effect sizes, one for the 'control group' and one for the 'treatment group', which would then be moderators.
+Alternatively, you could calculate two Zr (see below @SEC) effect sizes, one for the 'control group' and one for the 'treatment group'. The control group and moderator factor would then be a moderator—if this is how the rest of your dataset is designed.
 
 As you can see, there might be no perfect solution. Care and thought are necessary to make this type of data comparable to other effect sizes in your dataset.
 
@@ -709,9 +711,9 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-In the case above, you should extract the response of interest for each group (Present versus Eradicated), calculate mean±SD for each group, and then calculate SMD or lnRoM (or Zmu) with a paired formula. The sample size would be the number of individual points per group.
+In the case above, you should extract the response of interest for each group (Present versus Eradicated), calculate mean±SD for each group, and then calculate SMD or lnRoM (or Zmu) with the *paired* estimator. The sample size would be the number of individual points per group.
 
-However, you'll often see cases like this as well, with \<3 measurements for one of the factor groups (making SMD impossible to calculate):
+However, you'll often see cases like this as well, with $<3$ measurements for one of the factor groups (making SMD impossible to calculate):
 
 ```{r}
 #| eval: true
@@ -768,7 +770,7 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-If the sample size associated with each point is known (e.g., reported in text), then you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from the figure. This should use the underlying data generating process of the response. If the response is normally distributed, then you can use the R base function `rnorm`. This will produce a longer dataset, with a row for every estimated sample. You'd then calculate the group mean, standard deviation, and total sample size for the binary predictor of interest, in this case "Eradicated" versus "Present". You could also do a similar process to calculate Zr, if a correlation includes error bars (see @sec).
+If the sample size associated with each point is known (e.g., reported in text), then you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from the figure. This should use the underlying data generating process of the response. If the response is normally distributed, or close enough, then you can use the R base function `rnorm`. This will produce a longer dataset, with a row for every estimated sample. You'd then calculate the group mean, standard deviation, and total sample size for the binary predictor of interest, in this case "Eradicated" versus "Present". You could also do a similar process to calculate Zr, if a correlation includes error bars (see @sec).
 
 ::: callout-tip
 If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), then you *must* convert these to standard deviation before attempting to reconstruct the underlying distribution based on author-provided sample size per point.
@@ -784,7 +786,7 @@ To walk you through this, imagine you've extracted the means and standard deviat
 setnames(dt, c("y1", "error"), c("mean", "sd"), skip_absent = TRUE)
 dt[, N := 10]
 
-knitr::kable(dt[, .(mean, sd, N, status)])
+dt[, .(mean, sd, N, status)]
 # cat(md_table(dt[, .(mean, sd, N, status)]))
 ```
 
@@ -812,7 +814,7 @@ dt_expanded <- rbindlist(dt_expanded)
 nrow(dt_expanded)
 ```
 
-We have now reconstructed the 'original' data across all time points, creating a 100 row dataset. We can now take the mean and standard deviation of this reconstructed data to end up with the summary statistics to calculate our effect size:
+We have now reconstructed the 'original' data across all time points, creating a 100 row dataset. We can now summarize the mean and standard deviation of the reconstructed data by our treatment group (Present vs Eradicated).
 
 ```{r}
 #| eval: true
@@ -886,14 +888,16 @@ t and z are useful, as they include directionality (with a negative or positive 
 
 Calculating SMD from test statistics depends on whether the data come from a paired design (in which case df = n-1) or an independent two-sample design (df = n_1 + n_2 - 2). This is the formula for calculating SMD from a unpaired, two-sample design t test statistic:
 
-$$\begin{aligned}
+$$
+\begin{aligned}
 &d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \\
 &J= 1 - \frac{3}{4(n_1 + n_2 - 2) - 1} \\
-&g=J*d\\
-&Var(g) = \frac{n_1 + n_2}{n_1 n_2} + \frac{g^2}{2(n_1 + n_2 - 2)}
-\end{aligned}$$
+&g=J*d \\
+&Var(g) = \frac{n_1 + n_2}{n_1 n_2} + \frac{g^2}{2(n_1 + n_2 - 2)} \\
+\end{aligned}
+$$
 
-In `escalc` you simply specify t and measure "SMD" and it will return the unpaired SMD estimate.
+In `escalc` you simply specify the t statistic (with `ti`), as well as sample sizes for each group (`n1`, `n2`) and use measure "SMD", which will return the unpaired SMD estimate.
 
 ```{r}
 t = -1.5
@@ -908,12 +912,14 @@ escalc(measure = "SMD",
 
 For a paired design (e.g., paired t test):
 
-$$\begin{aligned}
+$$
+\begin{aligned}
 &d=\frac{t}{\sqrt{n}} \\
 &J= 1 - \frac{3}{4(n - 1) - 1} \\
 &g=J*d\\
-&Var(g) = \frac{1}{n} + \frac{g^2}{2(n - 1)}
-\end{aligned}$$
+&Var(g) = \frac{1}{n} + \frac{g^2}{2(n - 1)} \\
+\end{aligned}
+$$
 
 We do not know the measure for an SMD paired formula (that is still comparable to the unpaired SMD).
 

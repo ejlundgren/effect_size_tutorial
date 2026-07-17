@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-07-16">
+<meta name="dcterms.date" content="2026-07-17">
 <title>Continuous predictor – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -237,10 +237,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>CONTENTS</strong></h2>
    
   <ul>
-<li><a href="#overplotting" id="toc-overplotting" class="nav-link active" data-scroll-target="#overplotting">Overplotting</a></li>
+<li><a href="#simple-figures" id="toc-simple-figures" class="nav-link active" data-scroll-target="#simple-figures">Simple figures</a></li>
+  <li><a href="#overplotting" id="toc-overplotting" class="nav-link" data-scroll-target="#overplotting">Overplotting</a></li>
   <li><a href="#single-axis-error-bars" id="toc-single-axis-error-bars" class="nav-link" data-scroll-target="#single-axis-error-bars">Single axis error bars</a></li>
   <li><a href="#x-and-y-axis-error-bars" id="toc-x-and-y-axis-error-bars" class="nav-link" data-scroll-target="#x-and-y-axis-error-bars">x and y axis error bars</a></li>
   <li><a href="#mismatched-time-series" id="toc-mismatched-time-series" class="nav-link" data-scroll-target="#mismatched-time-series">Mismatched time series</a></li>
+  <li><a href="#discrete-responses" id="toc-discrete-responses" class="nav-link" data-scroll-target="#discrete-responses">Discrete responses</a></li>
   <li><a href="#matrices" id="toc-matrices" class="nav-link" data-scroll-target="#matrices">Matrices</a></li>
   <li><a href="#model-estimates" id="toc-model-estimates" class="nav-link" data-scroll-target="#model-estimates">Model estimates</a></li>
   </ul></nav>
@@ -259,7 +261,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 16, 2026</p>
+      <p class="date">July 17, 2026</p>
     </div>
   </div>
   
@@ -269,7 +271,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 </header><p>Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We’ll go through these examples in turn, along with solutions and limitations for extracting Zr type data.</p>
-<p><img src="figures/flowcharts_diagrams/Zr.jpg" class="img-fluid" alt="Zr extraction challenges"> ## Simple figures</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="figures/flowcharts_diagrams/Zr.jpg" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Zr extraction challenges</figcaption></figure>
+</div>
+<section id="simple-figures" class="level2"><h2 class="anchored" data-anchor-id="simple-figures">Simple figures</h2>
 <p>This is the simplest type of correlation figure. In this case, you’d calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -286,7 +292,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="va">out</span><span class="op">$</span><span class="va">estimate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      cor 
-0.8650197 </code></pre>
+0.8005378 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZCOR"</span>,</span>
 <span>       ri <span class="op">=</span> <span class="va">out</span><span class="op">$</span><span class="va">estimate</span>, ni <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -298,14 +304,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th style="text-align: right;">vi</th>
 </tr></thead>
 <tbody><tr class="odd">
-<td style="text-align: right;">1.312949</td>
+<td style="text-align: right;">1.100108</td>
 <td style="text-align: right;">0.0212766</td>
 </tr></tbody>
 </table>
 </div>
 </div>
 </div>
-<section id="overplotting" class="level2"><h2 class="anchored" data-anchor-id="overplotting">Overplotting</h2>
+</section><section id="overplotting" class="level2"><h2 class="anchored" data-anchor-id="overplotting">Overplotting</h2>
 <p>What if there is an ugly cluster of overlapping points?</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -353,39 +359,39 @@ Warning
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">7.418172</td>
-<td style="text-align: right;">9.905790</td>
-<td style="text-align: right;">0.2794526</td>
+<td style="text-align: right;">4.478197</td>
+<td style="text-align: right;">5.727609</td>
+<td style="text-align: right;">0.1603537</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.548447</td>
-<td style="text-align: right;">10.744608</td>
-<td style="text-align: right;">0.2266360</td>
+<td style="text-align: right;">6.848196</td>
+<td style="text-align: right;">6.723937</td>
+<td style="text-align: right;">0.4027772</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">8.085435</td>
-<td style="text-align: right;">11.889666</td>
-<td style="text-align: right;">0.6428205</td>
+<td style="text-align: right;">8.001430</td>
+<td style="text-align: right;">11.287542</td>
+<td style="text-align: right;">0.0831896</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.357499</td>
-<td style="text-align: right;">8.714420</td>
-<td style="text-align: right;">0.3544067</td>
+<td style="text-align: right;">7.482755</td>
+<td style="text-align: right;">7.612033</td>
+<td style="text-align: right;">0.6944257</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5.687635</td>
-<td style="text-align: right;">7.764587</td>
-<td style="text-align: right;">0.5397614</td>
+<td style="text-align: right;">6.852230</td>
+<td style="text-align: right;">10.735168</td>
+<td style="text-align: right;">0.3536417</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.015727</td>
-<td style="text-align: right;">9.378471</td>
-<td style="text-align: right;">0.2576762</td>
+<td style="text-align: right;">8.315756</td>
+<td style="text-align: right;">10.609103</td>
+<td style="text-align: right;">0.0506886</td>
 <td style="text-align: right;">10</td>
 </tr>
 </tbody>
@@ -412,28 +418,28 @@ Warning
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">9.471530</td>
-<td style="text-align: right;">7.418172</td>
+<td style="text-align: right;">5.714412</td>
+<td style="text-align: right;">4.478197</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9.868334</td>
-<td style="text-align: right;">7.418172</td>
+<td style="text-align: right;">5.413623</td>
+<td style="text-align: right;">4.478197</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">9.765771</td>
-<td style="text-align: right;">7.418172</td>
+<td style="text-align: right;">5.806644</td>
+<td style="text-align: right;">4.478197</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9.551946</td>
-<td style="text-align: right;">7.418172</td>
+<td style="text-align: right;">5.682374</td>
+<td style="text-align: right;">4.478197</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">10.185578</td>
-<td style="text-align: right;">7.418172</td>
+<td style="text-align: right;">5.928854</td>
+<td style="text-align: right;">4.478197</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">10.144162</td>
-<td style="text-align: right;">7.418172</td>
+<td style="text-align: right;">5.611149</td>
+<td style="text-align: right;">4.478197</td>
 </tr>
 </tbody>
 </table>
@@ -457,7 +463,7 @@ Warning
 <th style="text-align: right;">vi</th>
 </tr></thead>
 <tbody><tr class="odd">
-<td style="text-align: right;">1.226948</td>
+<td style="text-align: right;">1.241154</td>
 <td style="text-align: right;">0.0020121</td>
 </tr></tbody>
 </table>
@@ -493,51 +499,51 @@ Warning
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">7.418172</td>
-<td style="text-align: right;">9.905790</td>
-<td style="text-align: right;">0.2794526</td>
+<td style="text-align: right;">4.478197</td>
+<td style="text-align: right;">5.727609</td>
+<td style="text-align: right;">0.1603537</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2205313</td>
+<td style="text-align: right;">0.2612240</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.548447</td>
-<td style="text-align: right;">10.744608</td>
-<td style="text-align: right;">0.2266360</td>
+<td style="text-align: right;">6.848196</td>
+<td style="text-align: right;">6.723937</td>
+<td style="text-align: right;">0.4027772</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.3686050</td>
+<td style="text-align: right;">0.1813988</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">8.085435</td>
-<td style="text-align: right;">11.889666</td>
-<td style="text-align: right;">0.6428205</td>
+<td style="text-align: right;">8.001430</td>
+<td style="text-align: right;">11.287542</td>
+<td style="text-align: right;">0.0831896</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2914643</td>
+<td style="text-align: right;">0.1088616</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.357499</td>
-<td style="text-align: right;">8.714420</td>
-<td style="text-align: right;">0.3544067</td>
+<td style="text-align: right;">7.482755</td>
+<td style="text-align: right;">7.612033</td>
+<td style="text-align: right;">0.6944257</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.3772880</td>
+<td style="text-align: right;">0.0387421</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5.687635</td>
-<td style="text-align: right;">7.764587</td>
-<td style="text-align: right;">0.5397614</td>
+<td style="text-align: right;">6.852230</td>
+<td style="text-align: right;">10.735168</td>
+<td style="text-align: right;">0.3536417</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0525900</td>
+<td style="text-align: right;">0.2250527</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.015727</td>
-<td style="text-align: right;">9.378471</td>
-<td style="text-align: right;">0.2576762</td>
+<td style="text-align: right;">8.315756</td>
+<td style="text-align: right;">10.609103</td>
+<td style="text-align: right;">0.0506886</td>
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.0575219</td>
+<td style="text-align: right;">0.2331549</td>
 <td style="text-align: right;">20</td>
 </tr>
 </tbody>
@@ -569,28 +575,28 @@ Warning
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">9.794745</td>
-<td style="text-align: right;">7.403995</td>
+<td style="text-align: right;">5.609057</td>
+<td style="text-align: right;">4.357742</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9.930797</td>
-<td style="text-align: right;">7.294603</td>
+<td style="text-align: right;">5.628336</td>
+<td style="text-align: right;">4.196229</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">9.674698</td>
-<td style="text-align: right;">7.354671</td>
+<td style="text-align: right;">5.763472</td>
+<td style="text-align: right;">4.616320</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9.456440</td>
-<td style="text-align: right;">7.313440</td>
+<td style="text-align: right;">5.747479</td>
+<td style="text-align: right;">4.485426</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">10.159399</td>
-<td style="text-align: right;">7.302284</td>
+<td style="text-align: right;">5.696527</td>
+<td style="text-align: right;">4.048540</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9.832603</td>
-<td style="text-align: right;">7.354002</td>
+<td style="text-align: right;">5.774196</td>
+<td style="text-align: right;">4.345496</td>
 </tr>
 </tbody>
 </table>
@@ -615,7 +621,7 @@ Warning
 <th style="text-align: right;">vi</th>
 </tr></thead>
 <tbody><tr class="odd">
-<td style="text-align: right;">1.226948</td>
+<td style="text-align: right;">1.241154</td>
 <td style="text-align: right;">0.0020121</td>
 </tr></tbody>
 </table>
@@ -635,32 +641,191 @@ Warning
 </div>
 </div>
 <p>What is the best way to line up variable 1 and variable 2 to calculate their correlation? rWhile imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.</p>
+</section><section id="discrete-responses" class="level2"><h2 class="anchored" data-anchor-id="discrete-responses">Discrete responses</h2>
+<p><strong>This is a pretty rough example…</strong> Imagine you are conducting a meta-analysis concerned with factors driving mortality in some organism. Many of the studies use a discrete predictor, e.g., presence or absence of a driver variable. These types of data are naturally suited for the lnOR or lnRR effect sizes (<span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>). However, other studies report mortality in relationship to a continuous variable. This is the type of data you would probably analyze with a logistic regression (or binomial GLM)</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="7-Zr-challenges_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can be converted to lnOR (see <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point and calculate Zr with the responses as a binary variable of 0 or 1.</p>
+<p>You can imagine similar challenges where instead of 0 or 1 responses, the authors report % of a population, e.g., similar to a survivorship curve (see <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span>):</p>
+<p><strong>THIS IS ROUGH</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="7-Zr-challenges_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>You can calculate Zr between the temperature and the proportion alive (the y axis), directly.</p>
+<p>However, this ignores the number of individuals in the population and can lead to a mismatch in sample size between this effect size and other effect sizes in your dataset (if those were based on number of individuals, like the figure above <span class="citation" data-cites="sec">(<a href="#ref-sec" role="doc-biblioref"><strong>sec?</strong></a>)</span> or lnOR type data).</p>
+<p>To deal with this, you likely want to convert this to binary response data for the total number of individuals in each temperature treatment, if this can be reconstructed from author reported summaries. If this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply 15 by the proportion at each temperature level, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dt</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="kable-table">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: right;">temperature</th>
+<th style="text-align: right;">proportion_alive</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0.7602444</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">0.3911296</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">0.3490531</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0.2749166</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">0.2731208</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">dt</span><span class="op">[</span>, <span class="va">number_alive</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">floor</a></span><span class="op">(</span><span class="va">proportion_alive</span> <span class="op">*</span> <span class="fl">15</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">dt</span><span class="op">[</span>, <span class="va">number_dead</span> <span class="op">:=</span> <span class="fl">15</span> <span class="op">-</span> <span class="va">number_alive</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Now melt dataset:</span></span>
+<span><span class="va">dt.mlt</span> <span class="op">&lt;-</span> <span class="fu">melt</span><span class="op">(</span><span class="va">dt</span>, </span>
+<span>               measure.vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"number_alive"</span>, <span class="st">"number_dead"</span><span class="op">)</span>,</span>
+<span>               variable.name <span class="op">=</span> <span class="st">"status"</span>, </span>
+<span>               value.name <span class="op">=</span> <span class="st">"individuals"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Now expand dataset to a binary response dataset:</span></span>
+<span><span class="va">dt.expanded</span> <span class="op">&lt;-</span> <span class="va">dt.mlt</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">.N</span><span class="op">)</span>, <span class="va">individuals</span><span class="op">)</span>, <span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Add binary column:</span></span>
+<span><span class="va">dt.expanded</span><span class="op">[</span>, <span class="va">living</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="st">"number_alive"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dt.expanded</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="kable-table">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: right;">temperature</th>
+<th style="text-align: right;">proportion_alive</th>
+<th style="text-align: left;">status</th>
+<th style="text-align: right;">individuals</th>
+<th style="text-align: right;">living</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: left;">number_alive</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: left;">number_alive</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: left;">number_alive</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: left;">number_alive</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: left;">number_alive</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: left;">number_alive</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We have now expanded this dataset from a single row per point to a single row per individual. We can now calculate a correlation coefficient and our effect size:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span><span class="va">dt.expanded</span><span class="op">$</span><span class="va">living</span>, <span class="va">dt.expanded</span><span class="op">$</span><span class="va">temperature</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZCOR"</span>,</span>
+<span>       ni <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dt.expanded</span><span class="op">)</span>,</span>
+<span>       ri <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="kable-table">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: right;">yi</th>
+<th style="text-align: right;">vi</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td style="text-align: right;">-0.5130153</td>
+<td style="text-align: right;">0.0042194</td>
+</tr></tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Remember, the reason we did all of this work was to make this effect size more comparable to other effect sizes where sample size was derived from the number of individuals, which we believe would be the best way to treat data like this.</p>
 </section><section id="matrices" class="level2"><h2 class="anchored" data-anchor-id="matrices">Matrices</h2>
-<p>Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise, activities, such as grooming each other. A long-standing question has concerned whether these behaviors are adaptive and potentially increase the chance that an individual will protect another individual.</p>
+<p>Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise activities, such as grooming each other. Does grooming lead to other adaptive behaviors? Such as defending each other? This is a long-standing question in behavioral ecology.</p>
 <p>In this case, you might have a matrix of grooming between individuals:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>               Sally    James     Bart Sergeant Brown
-Sally             NA 23.29141 24.47444       80.59160
-James             NA       NA 93.33151       92.96178
-Bart              NA       NA       NA       12.08907
-Sergeant Brown    NA       NA       NA             NA</code></pre>
+<pre><code>               Sally   James     Bart Sergeant Brown
+Sally             NA 87.0844 71.96164       20.12053
+James             NA      NA 48.09721       62.70641
+Bart              NA      NA       NA       10.66965
+Sergeant Brown    NA      NA       NA             NA</code></pre>
 </div>
 </div>
 <p>And a matrix of defending each other from adversaries:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>               Sally    James     Bart Sergeant Brown
-Sally             NA 81.94055 65.30880       20.33843
-James             NA       NA 19.35629       41.76334
-Bart              NA       NA       NA       36.36350
+Sally             NA 64.57598 21.42843       55.04951
+James             NA       NA 48.88625       80.21632
+Bart              NA       NA       NA       85.64372
 Sergeant Brown    NA       NA       NA             NA</code></pre>
 </div>
 </div>
 <p>How do you go about analyzing such data? For an example of a meta-analysis on this topic, see Schino (2007) https://doi.org/10.1093/beheco/arl045.</p>
 <p>First, you need to melt these matrices into vectors and align the pairs:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html">melt</a></span><span class="op">(</span><span class="va">mat1</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html">melt</a></span><span class="op">(</span><span class="va">mat1</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span><span class="va">mat2</span> <span class="op">&lt;-</span> <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html">melt</a></span><span class="op">(</span><span class="va">mat2</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">mat1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -678,37 +843,37 @@ Sergeant Brown    NA       NA       NA             NA</code></pre>
 <td style="text-align: left;">5</td>
 <td style="text-align: left;">Sally</td>
 <td style="text-align: left;">James</td>
-<td style="text-align: right;">23.29141</td>
+<td style="text-align: right;">87.08440</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">9</td>
 <td style="text-align: left;">Sally</td>
 <td style="text-align: left;">Bart</td>
-<td style="text-align: right;">24.47444</td>
+<td style="text-align: right;">71.96164</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">10</td>
 <td style="text-align: left;">James</td>
 <td style="text-align: left;">Bart</td>
-<td style="text-align: right;">93.33151</td>
+<td style="text-align: right;">48.09721</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">13</td>
 <td style="text-align: left;">Sally</td>
 <td style="text-align: left;">Sergeant Brown</td>
-<td style="text-align: right;">80.59160</td>
+<td style="text-align: right;">20.12053</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">James</td>
 <td style="text-align: left;">Sergeant Brown</td>
-<td style="text-align: right;">92.96178</td>
+<td style="text-align: right;">62.70641</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">15</td>
 <td style="text-align: left;">Bart</td>
 <td style="text-align: left;">Sergeant Brown</td>
-<td style="text-align: right;">12.08907</td>
+<td style="text-align: right;">10.66965</td>
 </tr>
 </tbody>
 </table>
@@ -717,23 +882,23 @@ Sergeant Brown    NA       NA       NA             NA</code></pre>
 </div>
 <p>Then, calculate Kendall’s correlation coefficient:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">$</span><span class="va">value</span>, <span class="va">mat2</span><span class="op">$</span><span class="va">value</span>, method <span class="op">=</span> <span class="st">"kendall"</span><span class="op">)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.test.html">cor.test</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">$</span><span class="va">value</span>, <span class="va">mat2</span><span class="op">$</span><span class="va">value</span>, method <span class="op">=</span> <span class="st">"kendall"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Kendall's rank correlation tau
 
 data:  mat1$value and mat2$value
-T = 4, p-value = 0.2722
+T = 5, p-value = 0.4694
 alternative hypothesis: true tau is not equal to 0
 sample estimates:
        tau 
--0.4666667 </code></pre>
+-0.3333333 </code></pre>
 </div>
 </div>
 <p>And now you’re free to calculate ZCOR:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZCOR"</span>, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZCOR"</span>, </span>
 <span>       ri <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">estimate</span>,</span>
 <span>       ni <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -744,7 +909,7 @@ sample estimates:
 <th style="text-align: right;">vi</th>
 </tr></thead>
 <tbody><tr class="odd">
-<td style="text-align: right;">-0.5058005</td>
+<td style="text-align: right;">-0.3465736</td>
 <td style="text-align: right;">0.3333333</td>
 </tr></tbody>
 </table>
@@ -1209,423 +1374,527 @@ sample estimates:
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Continuous predictor"</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Zr: the correlation coefficient"</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "Zr_extraction_challenges.html"</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
-<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
-<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
-<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
-<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
-<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
-<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
-<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
-<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
-<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
-<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a>Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.</span>
-<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="al">![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg)</span> <span class="sc">\#</span># Simple figures</span>
-<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:</span>
-<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="fl">1.2</span>)</span>
-<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="fl">1.3</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
-<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">sd =</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)),</span>
-<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n =</span> <span class="dv">10</span>)</span>
-<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
-<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
-<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
-<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
-<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a>Then calculate the Zr effect size in escalc:</span>
-<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">length</span>(x)</span>
-<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x, y)</span>
-<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a>out<span class="sc">$</span>estimate</span>
-<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
-<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> out<span class="sc">$</span>estimate, <span class="at">ni =</span> n)</span>
-<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overplotting</span></span>
-<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a>What if there is an ugly cluster of overlapping points?</span>
-<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="fl">1.2</span>)</span>
-<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="fl">1.3</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
-<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">sd =</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)),</span>
-<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n =</span> <span class="dv">10</span>)</span>
-<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a>dat.sub <span class="ot">&lt;-</span> dat[<span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">12</span>), ]</span>
-<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a>dat.sub<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">jitter</span>(dat.sub<span class="sc">$</span>x, <span class="at">amount =</span> .<span class="dv">05</span>)</span>
-<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a>dat.sub<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">jitter</span>(dat.sub<span class="sc">$</span>y, <span class="at">amount =</span> .<span class="dv">05</span>)</span>
-<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
-<span id="cb16-142"><a href="#cb16-142" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
-<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> dat.sub, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">fill =</span> <span class="st">"hotpink"</span>,</span>
-<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
-<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
-<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a>In these cases, if the total number of points (N) is reported for the study, then you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use an N that is less than the real N (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).</span>
-<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single axis error bars</span></span>
-<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a>But what do you do if each point is actually a mean±SD?</span>
-<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
-<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
-<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>, <span class="fu">aes</span>(<span class="at">ymin =</span> y<span class="sc">-</span>sd, <span class="at">ymax =</span> y<span class="sc">+</span>sd))<span class="sc">+</span></span>
-<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
-<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
-<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an internal-N, which will need to be gleaned from the methods of the paper. After determining this internal-N, extract the means and SDs for each point, and then draw a distribution of internal-N for each point with an appropriate distribution. Here we'll demonstrate using <span class="in">`rnorm`</span> to draw normally distributed data for each point.</span>
-<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
-<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a>If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), then you *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See @sec on how to convert from other measures of error to standard deviation.</span>
-<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
-<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a>y_expanded <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)){</span>
-<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a>  y_expanded[[i]] <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">y =</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> dat<span class="sc">$</span>y[i],</span>
-<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">sd =</span> dat<span class="sc">$</span>sd[i],</span>
-<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">n =</span> dat<span class="sc">$</span>n[i]),</span>
-<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a>                                <span class="at">x =</span> dat<span class="sc">$</span>x[i])</span>
-<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a>y_expanded <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(y_expanded)</span>
-<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(y_expanded)</span>
-<span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a>In this example data, each point had an internal N of 10 measurements. Notice that the original dataset went from 50 rows (individual points) to 500 rows (50 <span class="sc">\*</span> 10). We then take this expanded dataset and calculate our correlation coefficient and effect size:</span>
-<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a><span class="co"># Now calculate 'r':</span></span>
-<span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x, y, <span class="at">data =</span> y_expanded)</span>
-<span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(y_expanded)</span>
-<span id="cb16-215"><a href="#cb16-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
-<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> out<span class="sc">$</span>estimate,</span>
-<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> n)</span>
-<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a>Pretty neat, right?</span>
-<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a>If the variable of interest (the response variable <span class="in">`y`</span>) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., <span class="in">`rpois`</span> or <span class="in">`rnbinom`</span>). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See @sec where we demonstrate this for negative binomial data.</span>
-<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a>However, in this example (and the one below) doing this assumes that the internal measurements of each point are at least somewhat independent—at least as independent as the sample N for other studies in your meta-analysis. If the internal measurements of these points are far less independent than in other studies in your meta-analysis then you may want to calculate the correlation just on the point means, and ignore the standard deviation. These decisions require a degree of thoughtfulness and good documentation to ensure consistency, especially when extracting data from a diversity of (messy) ecological studies.</span>
-<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a><span class="fu">## x and y axis error bars</span></span>
-<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a>What do you do if there are also error bars on the x axis? For example, if each point is a mean±SD of two different measurements. This is common in field studies, where researchers may sample vegetation at a site and some other factor (e.g., animal activity or soil nutrients) and then present the means±SD of each site in a correlation.</span>
-<span id="cb16-230"><a href="#cb16-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-233"><a href="#cb16-233" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-234"><a href="#cb16-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-235"><a href="#cb16-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-236"><a href="#cb16-236" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-237"><a href="#cb16-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-238"><a href="#cb16-238" aria-hidden="true" tabindex="-1"></a>dat[, x_sd <span class="sc">:</span><span class="er">=</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">25</span>))]</span>
-<span id="cb16-239"><a href="#cb16-239" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dat, <span class="st">"n"</span>, <span class="st">"y_n"</span>)</span>
-<span id="cb16-240"><a href="#cb16-240" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dat, <span class="st">"sd"</span>, <span class="st">"y_sd"</span>)</span>
-<span id="cb16-241"><a href="#cb16-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-242"><a href="#cb16-242" aria-hidden="true" tabindex="-1"></a>dat[, x_n <span class="sc">:</span><span class="er">=</span> <span class="dv">20</span>]</span>
-<span id="cb16-243"><a href="#cb16-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-244"><a href="#cb16-244" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat[<span class="fu">sample</span>(<span class="dv">25</span>)], <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
-<span id="cb16-245"><a href="#cb16-245" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
-<span id="cb16-246"><a href="#cb16-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>, <span class="fu">aes</span>(<span class="at">ymin =</span> y<span class="sc">-</span>y_sd, <span class="at">ymax =</span> y<span class="sc">+</span>y_sd))<span class="sc">+</span></span>
-<span id="cb16-247"><a href="#cb16-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> x<span class="sc">-</span>x_sd, <span class="at">xmax =</span> x<span class="sc">+</span>x_sd), <span class="at">height =</span> .<span class="dv">25</span>)<span class="sc">+</span></span>
-<span id="cb16-248"><a href="#cb16-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb16-249"><a href="#cb16-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
-<span id="cb16-250"><a href="#cb16-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
-<span id="cb16-251"><a href="#cb16-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb16-252"><a href="#cb16-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb16-253"><a href="#cb16-253" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb16-254"><a href="#cb16-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-255"><a href="#cb16-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-256"><a href="#cb16-256" aria-hidden="true" tabindex="-1"></a>In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the rows of the expanded x and y variables to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable. In the table below, you'll see the extracted mean values for the x and y variables (<span class="in">`x`</span>, <span class="in">`y`</span>), their standard deviations (<span class="in">`x_sd`</span>, <span class="in">`y_sd`</span>), and their internal sample sizes (<span class="in">`x_n`</span> and <span class="in">`y_n`</span>), which differ. We'll first, choose the small sample size and then we'll draw simulated data.</span>
-<span id="cb16-257"><a href="#cb16-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-260"><a href="#cb16-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-261"><a href="#cb16-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb16-262"><a href="#cb16-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-263"><a href="#cb16-263" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
-<span id="cb16-264"><a href="#cb16-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-265"><a href="#cb16-265" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose the n with the lowest sample size:</span></span>
-<span id="cb16-266"><a href="#cb16-266" aria-hidden="true" tabindex="-1"></a>dat[, n <span class="sc">:</span><span class="er">=</span> <span class="fu">min</span>(<span class="fu">c</span>(x_n, y_n))]</span>
-<span id="cb16-267"><a href="#cb16-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-268"><a href="#cb16-268" aria-hidden="true" tabindex="-1"></a>xy_expanded <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb16-269"><a href="#cb16-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-270"><a href="#cb16-270" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)){</span>
-<span id="cb16-271"><a href="#cb16-271" aria-hidden="true" tabindex="-1"></a>  xy_expanded[[i]] <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">y =</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> dat<span class="sc">$</span>y[i],</span>
-<span id="cb16-272"><a href="#cb16-272" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">sd =</span> dat<span class="sc">$</span>y_sd[i],</span>
-<span id="cb16-273"><a href="#cb16-273" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">n =</span> dat<span class="sc">$</span>n[i]),</span>
-<span id="cb16-274"><a href="#cb16-274" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">x =</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> dat<span class="sc">$</span>x[i],</span>
-<span id="cb16-275"><a href="#cb16-275" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">sd =</span> dat<span class="sc">$</span>x_sd[i],</span>
-<span id="cb16-276"><a href="#cb16-276" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">n =</span> dat<span class="sc">$</span>n[i]))</span>
-<span id="cb16-277"><a href="#cb16-277" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-278"><a href="#cb16-278" aria-hidden="true" tabindex="-1"></a>xy_expanded <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(xy_expanded)</span>
-<span id="cb16-279"><a href="#cb16-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-280"><a href="#cb16-280" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(xy_expanded)</span>
-<span id="cb16-281"><a href="#cb16-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-282"><a href="#cb16-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-283"><a href="#cb16-283" aria-hidden="true" tabindex="-1"></a>Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.</span>
-<span id="cb16-284"><a href="#cb16-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-285"><a href="#cb16-285" aria-hidden="true" tabindex="-1"></a>Now, we calculate the correlation between all of these points and calculate our 'Zr' effect size:</span>
-<span id="cb16-286"><a href="#cb16-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-289"><a href="#cb16-289" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-290"><a href="#cb16-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb16-291"><a href="#cb16-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-292"><a href="#cb16-292" aria-hidden="true" tabindex="-1"></a><span class="co"># Now calculate 'r':</span></span>
-<span id="cb16-293"><a href="#cb16-293" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x, y, <span class="at">data =</span> xy_expanded)</span>
-<span id="cb16-294"><a href="#cb16-294" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(y_expanded)</span>
-<span id="cb16-295"><a href="#cb16-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-296"><a href="#cb16-296" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
-<span id="cb16-297"><a href="#cb16-297" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> out<span class="sc">$</span>estimate,</span>
-<span id="cb16-298"><a href="#cb16-298" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> n)</span>
-<span id="cb16-299"><a href="#cb16-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-300"><a href="#cb16-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-301"><a href="#cb16-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-302"><a href="#cb16-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mismatched time series</span></span>
-<span id="cb16-303"><a href="#cb16-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-304"><a href="#cb16-304" aria-hidden="true" tabindex="-1"></a>Sometimes the factors of interest that you want to correlate are in separate graphs as time series. In these cases, it's just the tedious task of extracting data from each and aligning the two variables.</span>
-<span id="cb16-305"><a href="#cb16-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-306"><a href="#cb16-306" aria-hidden="true" tabindex="-1"></a>However, what do you do if the time series are mismatched?</span>
-<span id="cb16-307"><a href="#cb16-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-308"><a href="#cb16-308" aria-hidden="true" tabindex="-1"></a>Below, we'll plot two time series, one for Variable 1 and one for Variable 2:</span>
-<span id="cb16-309"><a href="#cb16-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-312"><a href="#cb16-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-313"><a href="#cb16-313" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-314"><a href="#cb16-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-315"><a href="#cb16-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-316"><a href="#cb16-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-317"><a href="#cb16-317" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
-<span id="cb16-318"><a href="#cb16-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-319"><a href="#cb16-319" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1995</span>, <span class="at">to =</span> <span class="dv">2005</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
-<span id="cb16-320"><a href="#cb16-320" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1995</span>, <span class="at">to =</span> <span class="dv">2005</span>, <span class="at">by =</span> .<span class="dv">25</span>)</span>
-<span id="cb16-321"><a href="#cb16-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-322"><a href="#cb16-322" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">5</span>, <span class="at">to =</span> <span class="dv">15</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
-<span id="cb16-323"><a href="#cb16-323" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> y1[<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>] </span>
-<span id="cb16-324"><a href="#cb16-324" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> y1 <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">11</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)</span>
-<span id="cb16-325"><a href="#cb16-325" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x1, y1)</span></span>
-<span id="cb16-326"><a href="#cb16-326" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-327"><a href="#cb16-327" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb16-328"><a href="#cb16-328" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">100</span>, <span class="at">to =</span> <span class="dv">110</span>, <span class="at">by =</span> .<span class="dv">1</span>)</span>
-<span id="cb16-329"><a href="#cb16-329" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> y2[<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x2)]</span>
-<span id="cb16-330"><a href="#cb16-330" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> y2 <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n=</span><span class="fu">length</span>(x2), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)</span>
-<span id="cb16-331"><a href="#cb16-331" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x2, y2)</span></span>
-<span id="cb16-332"><a href="#cb16-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-333"><a href="#cb16-333" aria-hidden="true" tabindex="-1"></a><span class="co"># slopes2 &lt;- rnorm()</span></span>
-<span id="cb16-334"><a href="#cb16-334" aria-hidden="true" tabindex="-1"></a>dt1 <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x1 =</span> x1,</span>
-<span id="cb16-335"><a href="#cb16-335" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y1 =</span> y1)</span>
-<span id="cb16-336"><a href="#cb16-336" aria-hidden="true" tabindex="-1"></a>dt2 <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x2 =</span> x2,</span>
-<span id="cb16-337"><a href="#cb16-337" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y2 =</span> <span class="fu">rev</span>(y2))</span>
-<span id="cb16-338"><a href="#cb16-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-339"><a href="#cb16-339" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dt1, <span class="fu">aes</span>(<span class="at">x =</span> x1, <span class="at">y =</span> y1))<span class="sc">+</span></span>
-<span id="cb16-340"><a href="#cb16-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb16-341"><a href="#cb16-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb16-342"><a href="#cb16-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>)<span class="sc">+</span></span>
-<span id="cb16-343"><a href="#cb16-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Variable 1"</span>)<span class="sc">+</span></span>
-<span id="cb16-344"><a href="#cb16-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb16-345"><a href="#cb16-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="fu">min</span>(dt1<span class="sc">$</span>x1), <span class="at">to=</span><span class="fu">max</span>(dt1<span class="sc">$</span>x1), <span class="at">by =</span> <span class="dv">2</span>),</span>
-<span id="cb16-346"><a href="#cb16-346" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">as.integer</span>(<span class="fu">seq</span>(<span class="at">from =</span> <span class="fu">min</span>(dt1<span class="sc">$</span>x1), <span class="at">to=</span><span class="fu">max</span>(dt1<span class="sc">$</span>x1), <span class="at">by =</span> <span class="dv">2</span>)))<span class="sc">+</span></span>
-<span id="cb16-347"><a href="#cb16-347" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb16-348"><a href="#cb16-348" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb16-349"><a href="#cb16-349" aria-hidden="true" tabindex="-1"></a><span class="co"># p1</span></span>
-<span id="cb16-350"><a href="#cb16-350" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-351"><a href="#cb16-351" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb16-352"><a href="#cb16-352" aria-hidden="true" tabindex="-1"></a>dt2[, date <span class="sc">:</span><span class="er">=</span> <span class="fu">date_decimal</span>(x2) <span class="sc">|&gt;</span> <span class="fu">as.Date</span>()]</span>
-<span id="cb16-353"><a href="#cb16-353" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dt2, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> y2))<span class="sc">+</span></span>
-<span id="cb16-354"><a href="#cb16-354" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb16-355"><a href="#cb16-355" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb16-356"><a href="#cb16-356" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>)<span class="sc">+</span></span>
-<span id="cb16-357"><a href="#cb16-357" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Variable 2"</span>)<span class="sc">+</span></span>
-<span id="cb16-358"><a href="#cb16-358" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb16-359"><a href="#cb16-359" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2))+</span></span>
-<span id="cb16-360"><a href="#cb16-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb16-361"><a href="#cb16-361" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb16-362"><a href="#cb16-362" aria-hidden="true" tabindex="-1"></a><span class="co"># p2</span></span>
-<span id="cb16-363"><a href="#cb16-363" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-364"><a href="#cb16-364" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span>
-<span id="cb16-365"><a href="#cb16-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-366"><a href="#cb16-366" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-367"><a href="#cb16-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-368"><a href="#cb16-368" aria-hidden="true" tabindex="-1"></a>What is the best way to line up variable 1 and variable 2 to calculate their correlation? rWhile imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.</span>
-<span id="cb16-369"><a href="#cb16-369" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-370"><a href="#cb16-370" aria-hidden="true" tabindex="-1"></a><span class="fu">## Matrices</span></span>
-<span id="cb16-371"><a href="#cb16-371" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-372"><a href="#cb16-372" aria-hidden="true" tabindex="-1"></a>Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise, activities, such as grooming each other. A long-standing question has concerned whether these behaviors are adaptive and potentially increase the chance that an individual will protect another individual.</span>
-<span id="cb16-373"><a href="#cb16-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-374"><a href="#cb16-374" aria-hidden="true" tabindex="-1"></a>In this case, you might have a matrix of grooming between individuals:</span>
-<span id="cb16-375"><a href="#cb16-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-378"><a href="#cb16-378" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-379"><a href="#cb16-379" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-380"><a href="#cb16-380" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-381"><a href="#cb16-381" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-382"><a href="#cb16-382" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-383"><a href="#cb16-383" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github("ddsjoberg/bstfun")</span></span>
-<span id="cb16-384"><a href="#cb16-384" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
-<span id="cb16-385"><a href="#cb16-385" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplotify"</span>)</span>
-<span id="cb16-386"><a href="#cb16-386" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-387"><a href="#cb16-387" aria-hidden="true" tabindex="-1"></a>mat1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">16</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span>
-<span id="cb16-388"><a href="#cb16-388" aria-hidden="true" tabindex="-1"></a>mat1[<span class="fu">lower.tri</span>(mat1, <span class="at">diag =</span> <span class="cn">TRUE</span>)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb16-389"><a href="#cb16-389" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mat1) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
-<span id="cb16-390"><a href="#cb16-390" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(mat1) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
-<span id="cb16-391"><a href="#cb16-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-392"><a href="#cb16-392" aria-hidden="true" tabindex="-1"></a>mat2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">16</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span>
-<span id="cb16-393"><a href="#cb16-393" aria-hidden="true" tabindex="-1"></a>mat2[<span class="fu">lower.tri</span>(mat2, <span class="at">diag =</span> <span class="cn">TRUE</span>)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb16-394"><a href="#cb16-394" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mat2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
-<span id="cb16-395"><a href="#cb16-395" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(mat2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
-<span id="cb16-396"><a href="#cb16-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-397"><a href="#cb16-397" aria-hidden="true" tabindex="-1"></a>mat1</span>
-<span id="cb16-398"><a href="#cb16-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-399"><a href="#cb16-399" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-400"><a href="#cb16-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-401"><a href="#cb16-401" aria-hidden="true" tabindex="-1"></a>And a matrix of defending each other from adversaries:</span>
-<span id="cb16-402"><a href="#cb16-402" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-405"><a href="#cb16-405" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-406"><a href="#cb16-406" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb16-407"><a href="#cb16-407" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb16-408"><a href="#cb16-408" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb16-409"><a href="#cb16-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-410"><a href="#cb16-410" aria-hidden="true" tabindex="-1"></a>mat2</span>
-<span id="cb16-411"><a href="#cb16-411" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-412"><a href="#cb16-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-413"><a href="#cb16-413" aria-hidden="true" tabindex="-1"></a>How do you go about analyzing such data? For an example of a meta-analysis on this topic, see Schino (2007) https://doi.org/10.1093/beheco/arl045.</span>
-<span id="cb16-414"><a href="#cb16-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-415"><a href="#cb16-415" aria-hidden="true" tabindex="-1"></a>First, you need to melt these matrices into vectors and align the pairs:</span>
-<span id="cb16-416"><a href="#cb16-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-419"><a href="#cb16-419" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-420"><a href="#cb16-420" aria-hidden="true" tabindex="-1"></a>mat1 <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(mat1, <span class="at">na.rm =</span> T)</span>
-<span id="cb16-421"><a href="#cb16-421" aria-hidden="true" tabindex="-1"></a>mat2 <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(mat2, <span class="at">na.rm =</span> T)</span>
-<span id="cb16-422"><a href="#cb16-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-423"><a href="#cb16-423" aria-hidden="true" tabindex="-1"></a>mat1</span>
-<span id="cb16-424"><a href="#cb16-424" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-425"><a href="#cb16-425" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-426"><a href="#cb16-426" aria-hidden="true" tabindex="-1"></a>Then, calculate Kendall's correlation coefficient:</span>
-<span id="cb16-427"><a href="#cb16-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-430"><a href="#cb16-430" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-431"><a href="#cb16-431" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(mat1<span class="sc">$</span>value, mat2<span class="sc">$</span>value, <span class="at">method =</span> <span class="st">"kendall"</span>)</span>
-<span id="cb16-432"><a href="#cb16-432" aria-hidden="true" tabindex="-1"></a>res</span>
-<span id="cb16-433"><a href="#cb16-433" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-434"><a href="#cb16-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-435"><a href="#cb16-435" aria-hidden="true" tabindex="-1"></a>And now you're free to calculate ZCOR:</span>
-<span id="cb16-436"><a href="#cb16-436" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-439"><a href="#cb16-439" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb16-440"><a href="#cb16-440" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>, </span>
-<span id="cb16-441"><a href="#cb16-441" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> res<span class="sc">$</span>estimate,</span>
-<span id="cb16-442"><a href="#cb16-442" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="fu">nrow</span>(mat1))</span>
-<span id="cb16-443"><a href="#cb16-443" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb16-444"><a href="#cb16-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-445"><a href="#cb16-445" aria-hidden="true" tabindex="-1"></a>**IS THIS CORRECT???**</span>
-<span id="cb16-446"><a href="#cb16-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-447"><a href="#cb16-447" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model estimates</span></span>
-<span id="cb16-448"><a href="#cb16-448" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-449"><a href="#cb16-449" aria-hidden="true" tabindex="-1"></a>....</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Continuous predictor"</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Zr: the correlation coefficient"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "Zr_extraction_challenges.html"</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.</span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a><span class="al">![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg)</span>{width=60%} </span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simple figures</span></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use cor.test in R to calculate the correlation coefficient:</span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="fl">1.2</span>)</span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="fl">1.3</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">sd =</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)),</span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-105"><a href="#cb19-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-106"><a href="#cb19-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a>Then calculate the Zr effect size in escalc:</span>
+<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a>n <span class="ot">=</span> <span class="fu">length</span>(x)</span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x, y)</span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>out<span class="sc">$</span>estimate</span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> out<span class="sc">$</span>estimate, <span class="at">ni =</span> n)</span>
+<span id="cb19-121"><a href="#cb19-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-122"><a href="#cb19-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overplotting</span></span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a>What if there is an ugly cluster of overlapping points?</span>
+<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">7</span>, <span class="at">sd =</span> <span class="fl">1.2</span>)</span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">*</span> <span class="fl">1.3</span> <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">sd =</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)),</span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a>dat.sub <span class="ot">&lt;-</span> dat[<span class="fu">rep</span>(<span class="dv">5</span>, <span class="dv">12</span>), ]</span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a>dat.sub<span class="sc">$</span>x <span class="ot">&lt;-</span> <span class="fu">jitter</span>(dat.sub<span class="sc">$</span>x, <span class="at">amount =</span> .<span class="dv">05</span>)</span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a>dat.sub<span class="sc">$</span>y <span class="ot">&lt;-</span> <span class="fu">jitter</span>(dat.sub<span class="sc">$</span>y, <span class="at">amount =</span> .<span class="dv">05</span>)</span>
+<span id="cb19-143"><a href="#cb19-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-144"><a href="#cb19-144" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
+<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
+<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> dat.sub, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y), <span class="at">fill =</span> <span class="st">"hotpink"</span>,</span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a>In these cases, if the total number of points (N) is reported for the study, then you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use an N that is less than the real N (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).</span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single axis error bars</span></span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a>But what do you do if each point is actually a mean±SD?</span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>, <span class="fu">aes</span>(<span class="at">ymin =</span> y<span class="sc">-</span>sd, <span class="at">ymax =</span> y<span class="sc">+</span>sd))<span class="sc">+</span></span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-179"><a href="#cb19-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-180"><a href="#cb19-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a>If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an internal-N, which will need to be gleaned from the methods of the paper. After determining this internal-N, extract the means and SDs for each point, and then draw a distribution of internal-N for each point with an appropriate distribution. Here we'll demonstrate using <span class="in">`rnorm`</span> to draw normally distributed data for each point.</span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a>If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), then you *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See @sec on how to convert from other measures of error to standard deviation.</span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-190"><a href="#cb19-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-191"><a href="#cb19-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a>y_expanded <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)){</span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a>  y_expanded[[i]] <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">y =</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> dat<span class="sc">$</span>y[i],</span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">sd =</span> dat<span class="sc">$</span>sd[i],</span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">n =</span> dat<span class="sc">$</span>n[i]),</span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a>                                <span class="at">x =</span> dat<span class="sc">$</span>x[i])</span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a>y_expanded <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(y_expanded)</span>
+<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(y_expanded)</span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a>In this example data, each point had an internal N of 10 measurements. Notice that the original dataset went from 50 rows (individual points) to 500 rows (50 <span class="sc">\*</span> 10). We then take this expanded dataset and calculate our correlation coefficient and effect size:</span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a><span class="co"># Now calculate 'r':</span></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x, y, <span class="at">data =</span> y_expanded)</span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(y_expanded)</span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
+<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> out<span class="sc">$</span>estimate,</span>
+<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> n)</span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a>Pretty neat, right?</span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a>If the variable of interest (the response variable <span class="in">`y`</span>) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., <span class="in">`rpois`</span> or <span class="in">`rnbinom`</span>). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See @sec where we demonstrate this for negative binomial data.</span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-228"><a href="#cb19-228" aria-hidden="true" tabindex="-1"></a>However, in this example (and the one below) doing this assumes that the internal measurements of each point are at least somewhat independent—at least as independent as the sample N for other studies in your meta-analysis. If the internal measurements of these points are far less independent than in other studies in your meta-analysis then you may want to calculate the correlation just on the point means, and ignore the standard deviation. These decisions require a degree of thoughtfulness and good documentation to ensure consistency, especially when extracting data from a diversity of (messy) ecological studies.</span>
+<span id="cb19-229"><a href="#cb19-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a><span class="fu">## x and y axis error bars</span></span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a>What do you do if there are also error bars on the x axis? For example, if each point is a mean±SD of two different measurements. This is common in field studies, where researchers may sample vegetation at a site and some other factor (e.g., animal activity or soil nutrients) and then present the means±SD of each site in a correlation.</span>
+<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a>dat[, x_sd <span class="sc">:</span><span class="er">=</span> <span class="fu">abs</span>(<span class="fu">rnorm</span>(<span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">25</span>))]</span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dat, <span class="st">"n"</span>, <span class="st">"y_n"</span>)</span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(dat, <span class="st">"sd"</span>, <span class="st">"y_sd"</span>)</span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a>dat[, x_n <span class="sc">:</span><span class="er">=</span> <span class="dv">20</span>]</span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat[<span class="fu">sample</span>(<span class="dv">25</span>)], <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y))<span class="sc">+</span></span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> .<span class="dv">25</span>, <span class="fu">aes</span>(<span class="at">ymin =</span> y<span class="sc">-</span>y_sd, <span class="at">ymax =</span> y<span class="sc">+</span>y_sd))<span class="sc">+</span></span>
+<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> x<span class="sc">-</span>x_sd, <span class="at">xmax =</span> x<span class="sc">+</span>x_sd), <span class="at">height =</span> .<span class="dv">25</span>)<span class="sc">+</span></span>
+<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"x"</span>)<span class="sc">+</span></span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"y"</span>)<span class="sc">+</span></span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-256"><a href="#cb19-256" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-257"><a href="#cb19-257" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a>In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the rows of the expanded x and y variables to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable. In the table below, you'll see the extracted mean values for the x and y variables (<span class="in">`x`</span>, <span class="in">`y`</span>), their standard deviations (<span class="in">`x_sd`</span>, <span class="in">`y_sd`</span>), and their internal sample sizes (<span class="in">`x_n`</span> and <span class="in">`y_n`</span>), which differ. We'll first, choose the small sample size and then we'll draw simulated data.</span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
+<span id="cb19-267"><a href="#cb19-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-268"><a href="#cb19-268" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose the n with the lowest sample size:</span></span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a>dat[, n <span class="sc">:</span><span class="er">=</span> <span class="fu">min</span>(<span class="fu">c</span>(x_n, y_n))]</span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a>xy_expanded <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat)){</span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a>  xy_expanded[[i]] <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">y =</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> dat<span class="sc">$</span>y[i],</span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">sd =</span> dat<span class="sc">$</span>y_sd[i],</span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">n =</span> dat<span class="sc">$</span>n[i]),</span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">x =</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> dat<span class="sc">$</span>x[i],</span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">sd =</span> dat<span class="sc">$</span>x_sd[i],</span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a>                                           <span class="at">n =</span> dat<span class="sc">$</span>n[i]))</span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a>xy_expanded <span class="ot">&lt;-</span> <span class="fu">rbindlist</span>(xy_expanded)</span>
+<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-283"><a href="#cb19-283" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(xy_expanded)</span>
+<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-286"><a href="#cb19-286" aria-hidden="true" tabindex="-1"></a>Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.</span>
+<span id="cb19-287"><a href="#cb19-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a>Now, we calculate the correlation between all of these points and calculate our 'Zr' effect size:</span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-292"><a href="#cb19-292" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a><span class="co"># Now calculate 'r':</span></span>
+<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(x, y, <span class="at">data =</span> xy_expanded)</span>
+<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(y_expanded)</span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> out<span class="sc">$</span>estimate,</span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> n)</span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-304"><a href="#cb19-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mismatched time series</span></span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a>Sometimes the factors of interest that you want to correlate are in separate graphs as time series. In these cases, it's just the tedious task of extracting data from each and aligning the two variables.</span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a>However, what do you do if the time series are mismatched?</span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-311"><a href="#cb19-311" aria-hidden="true" tabindex="-1"></a>Below, we'll plot two time series, one for Variable 1 and one for Variable 2:</span>
+<span id="cb19-312"><a href="#cb19-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
+<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-322"><a href="#cb19-322" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1995</span>, <span class="at">to =</span> <span class="dv">2005</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb19-323"><a href="#cb19-323" aria-hidden="true" tabindex="-1"></a>x2 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1995</span>, <span class="at">to =</span> <span class="dv">2005</span>, <span class="at">by =</span> .<span class="dv">25</span>)</span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">5</span>, <span class="at">to =</span> <span class="dv">15</span>, <span class="at">by =</span> <span class="dv">1</span>)</span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> y1[<span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>] </span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> y1 <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">11</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)</span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x1, y1)</span></span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">100</span>, <span class="at">to =</span> <span class="dv">110</span>, <span class="at">by =</span> .<span class="dv">1</span>)</span>
+<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> y2[<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x2)]</span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a>y2 <span class="ot">&lt;-</span> y2 <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">n=</span><span class="fu">length</span>(x2), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> .<span class="dv">5</span>)</span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x2, y2)</span></span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a><span class="co"># slopes2 &lt;- rnorm()</span></span>
+<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a>dt1 <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x1 =</span> x1,</span>
+<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y1 =</span> y1)</span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a>dt2 <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">x2 =</span> x2,</span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y2 =</span> <span class="fu">rev</span>(y2))</span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dt1, <span class="fu">aes</span>(<span class="at">x =</span> x1, <span class="at">y =</span> y1))<span class="sc">+</span></span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>)<span class="sc">+</span></span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Variable 1"</span>)<span class="sc">+</span></span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="fu">min</span>(dt1<span class="sc">$</span>x1), <span class="at">to=</span><span class="fu">max</span>(dt1<span class="sc">$</span>x1), <span class="at">by =</span> <span class="dv">2</span>),</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">as.integer</span>(<span class="fu">seq</span>(<span class="at">from =</span> <span class="fu">min</span>(dt1<span class="sc">$</span>x1), <span class="at">to=</span><span class="fu">max</span>(dt1<span class="sc">$</span>x1), <span class="at">by =</span> <span class="dv">2</span>)))<span class="sc">+</span></span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a><span class="co"># p1</span></span>
+<span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a>dt2[, date <span class="sc">:</span><span class="er">=</span> <span class="fu">date_decimal</span>(x2) <span class="sc">|&gt;</span> <span class="fu">as.Date</span>()]</span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dt2, <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> y2))<span class="sc">+</span></span>
+<span id="cb19-357"><a href="#cb19-357" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb19-358"><a href="#cb19-358" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb19-359"><a href="#cb19-359" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>)<span class="sc">+</span></span>
+<span id="cb19-360"><a href="#cb19-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Variable 2"</span>)<span class="sc">+</span></span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a>  <span class="co"># scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2))+</span></span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-365"><a href="#cb19-365" aria-hidden="true" tabindex="-1"></a><span class="co"># p2</span></span>
+<span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-371"><a href="#cb19-371" aria-hidden="true" tabindex="-1"></a>What is the best way to line up variable 1 and variable 2 to calculate their correlation? rWhile imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series.</span>
+<span id="cb19-372"><a href="#cb19-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-373"><a href="#cb19-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-374"><a href="#cb19-374" aria-hidden="true" tabindex="-1"></a><span class="fu">## Discrete responses</span></span>
+<span id="cb19-375"><a href="#cb19-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-376"><a href="#cb19-376" aria-hidden="true" tabindex="-1"></a>**This is a pretty rough example...**</span>
+<span id="cb19-377"><a href="#cb19-377" aria-hidden="true" tabindex="-1"></a>Imagine you are conducting a meta-analysis concerned with factors driving mortality in some organism. Many of the studies use a discrete predictor, e.g., presence or absence of a driver variable. These types of data are naturally suited for the lnOR or lnRR effect sizes (@sec). However, other studies report mortality in relationship to a continuous variable. This is the type of data you would probably analyze with a logistic regression (or binomial GLM)</span>
+<span id="cb19-378"><a href="#cb19-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-381"><a href="#cb19-381" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-382"><a href="#cb19-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-383"><a href="#cb19-383" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-384"><a href="#cb19-384" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-385"><a href="#cb19-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-386"><a href="#cb19-386" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">living =</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">p =</span> <span class="fl">0.75</span>, <span class="at">size =</span> <span class="dv">1</span>),</span>
+<span id="cb19-387"><a href="#cb19-387" aria-hidden="true" tabindex="-1"></a>                  <span class="at">temperature =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mean =</span> <span class="dv">18</span>, <span class="at">sd =</span> <span class="dv">5</span>))</span>
+<span id="cb19-388"><a href="#cb19-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-389"><a href="#cb19-389" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> temperature, <span class="at">y =</span> living))<span class="sc">+</span></span>
+<span id="cb19-390"><a href="#cb19-390" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"grey50"</span>)<span class="sc">+</span></span>
+<span id="cb19-391"><a href="#cb19-391" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Living"</span>, <span class="st">"Dead"</span>))<span class="sc">+</span></span>
+<span id="cb19-392"><a href="#cb19-392" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-393"><a href="#cb19-393" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-397"><a href="#cb19-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-398"><a href="#cb19-398" aria-hidden="true" tabindex="-1"></a>Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can be converted to lnOR (see @sec) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point and calculate Zr with the responses as a binary variable of 0 or 1.</span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a>You can imagine similar challenges where instead of 0 or 1 responses, the authors report % of a population, e.g., similar to a survivorship curve (see @sec):</span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a>**THIS IS ROUGH**</span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">:</span><span class="dv">30</span></span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rweibull</span>(<span class="at">n =</span> <span class="dv">21</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">4</span>)</span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">sort</span>(a))</span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a <span class="sc">-</span> <span class="fu">min</span>(a)</span>
+<span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a<span class="sc">/</span><span class="fu">max</span>(a)</span>
+<span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a<span class="fl">-.2</span></span>
+<span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">temperature =</span> x, <span class="at">proportion_alive =</span> a)</span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> dt[a <span class="sc">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb19-419"><a href="#cb19-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-420"><a href="#cb19-420" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dt)<span class="sc">+</span></span>
+<span id="cb19-421"><a href="#cb19-421" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> temperature, <span class="at">y =</span> proportion_alive),</span>
+<span id="cb19-422"><a href="#cb19-422" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"black"</span>,</span>
+<span id="cb19-423"><a href="#cb19-423" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb19-424"><a href="#cb19-424" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> temperature, <span class="at">y =</span> proportion_alive),</span>
+<span id="cb19-425"><a href="#cb19-425" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"grey80"</span>,</span>
+<span id="cb19-426"><a href="#cb19-426" aria-hidden="true" tabindex="-1"></a>            <span class="at">shape =</span> <span class="dv">21</span>,</span>
+<span id="cb19-427"><a href="#cb19-427" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb19-428"><a href="#cb19-428" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Survivorship (proportion alive)"</span>)<span class="sc">+</span></span>
+<span id="cb19-429"><a href="#cb19-429" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Temperature"</span>)<span class="sc">+</span></span>
+<span id="cb19-430"><a href="#cb19-430" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-431"><a href="#cb19-431" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-432"><a href="#cb19-432" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb19-433"><a href="#cb19-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-434"><a href="#cb19-434" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-436"><a href="#cb19-436" aria-hidden="true" tabindex="-1"></a>You can calculate Zr between the temperature and the proportion alive (the y axis), directly. </span>
+<span id="cb19-437"><a href="#cb19-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-438"><a href="#cb19-438" aria-hidden="true" tabindex="-1"></a>However, this ignores the number of individuals in the population and can lead to a mismatch in sample size between this effect size and other effect sizes in your dataset (if those were based on number of individuals, like the figure above @sec or lnOR type data). </span>
+<span id="cb19-439"><a href="#cb19-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-440"><a href="#cb19-440" aria-hidden="true" tabindex="-1"></a>To deal with this, you likely want to convert this to binary response data for the total number of individuals in each temperature treatment, if this can be reconstructed from author reported summaries. If this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply 15 by the proportion at each temperature level, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature. </span>
+<span id="cb19-441"><a href="#cb19-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-444"><a href="#cb19-444" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-445"><a href="#cb19-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-446"><a href="#cb19-446" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-447"><a href="#cb19-447" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-448"><a href="#cb19-448" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dt)</span>
+<span id="cb19-449"><a href="#cb19-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-450"><a href="#cb19-450" aria-hidden="true" tabindex="-1"></a>dt[, number_alive <span class="sc">:</span><span class="er">=</span> <span class="fu">floor</span>(proportion_alive <span class="sc">*</span> <span class="dv">15</span>)]</span>
+<span id="cb19-451"><a href="#cb19-451" aria-hidden="true" tabindex="-1"></a>dt[, number_dead <span class="sc">:</span><span class="er">=</span> <span class="dv">15</span> <span class="sc">-</span> number_alive]</span>
+<span id="cb19-452"><a href="#cb19-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-453"><a href="#cb19-453" aria-hidden="true" tabindex="-1"></a><span class="co"># Now melt dataset:</span></span>
+<span id="cb19-454"><a href="#cb19-454" aria-hidden="true" tabindex="-1"></a>dt.mlt <span class="ot">&lt;-</span> <span class="fu">melt</span>(dt, </span>
+<span id="cb19-455"><a href="#cb19-455" aria-hidden="true" tabindex="-1"></a>               <span class="at">measure.vars =</span> <span class="fu">c</span>(<span class="st">"number_alive"</span>, <span class="st">"number_dead"</span>),</span>
+<span id="cb19-456"><a href="#cb19-456" aria-hidden="true" tabindex="-1"></a>               <span class="at">variable.name =</span> <span class="st">"status"</span>, </span>
+<span id="cb19-457"><a href="#cb19-457" aria-hidden="true" tabindex="-1"></a>               <span class="at">value.name =</span> <span class="st">"individuals"</span>)</span>
+<span id="cb19-458"><a href="#cb19-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-459"><a href="#cb19-459" aria-hidden="true" tabindex="-1"></a><span class="co"># Now expand dataset to a binary response dataset:</span></span>
+<span id="cb19-460"><a href="#cb19-460" aria-hidden="true" tabindex="-1"></a>dt.expanded <span class="ot">&lt;-</span> dt.mlt[<span class="fu">rep</span>(<span class="fu">seq_len</span>(.N), individuals), ]</span>
+<span id="cb19-461"><a href="#cb19-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-462"><a href="#cb19-462" aria-hidden="true" tabindex="-1"></a><span class="co"># Add binary column:</span></span>
+<span id="cb19-463"><a href="#cb19-463" aria-hidden="true" tabindex="-1"></a>dt.expanded[, living <span class="sc">:</span><span class="er">=</span> <span class="fu">ifelse</span>(status <span class="sc">==</span> <span class="st">"number_alive"</span>, <span class="dv">1</span>, <span class="dv">0</span>)]</span>
+<span id="cb19-464"><a href="#cb19-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-465"><a href="#cb19-465" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dt.expanded)</span>
+<span id="cb19-466"><a href="#cb19-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-467"><a href="#cb19-467" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-468"><a href="#cb19-468" aria-hidden="true" tabindex="-1"></a>We have now expanded this dataset from a single row per point to a single row per individual. We can now calculate a correlation coefficient and our effect size:</span>
+<span id="cb19-469"><a href="#cb19-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-472"><a href="#cb19-472" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-473"><a href="#cb19-473" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(dt.expanded<span class="sc">$</span>living, dt.expanded<span class="sc">$</span>temperature)</span>
+<span id="cb19-474"><a href="#cb19-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-475"><a href="#cb19-475" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>,</span>
+<span id="cb19-476"><a href="#cb19-476" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="fu">nrow</span>(dt.expanded),</span>
+<span id="cb19-477"><a href="#cb19-477" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> res<span class="sc">$</span>estimate)</span>
+<span id="cb19-478"><a href="#cb19-478" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-479"><a href="#cb19-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-480"><a href="#cb19-480" aria-hidden="true" tabindex="-1"></a>Remember, the reason we did all of this work was to make this effect size more comparable to other effect sizes where sample size was derived from the number of individuals, which we believe would be the best way to treat data like this.</span>
+<span id="cb19-481"><a href="#cb19-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-482"><a href="#cb19-482" aria-hidden="true" tabindex="-1"></a><span class="fu">## Matrices</span></span>
+<span id="cb19-483"><a href="#cb19-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-484"><a href="#cb19-484" aria-hidden="true" tabindex="-1"></a>Some types of correlations are more complicated because they are actually based on matrix algebra. For instance, correlations between pair-wise behaviors. Imagine, that individuals engage in pairwise activities, such as grooming each other. Does grooming lead to other adaptive behaviors? Such as defending each other? This is a long-standing question in behavioral ecology.</span>
+<span id="cb19-485"><a href="#cb19-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-486"><a href="#cb19-486" aria-hidden="true" tabindex="-1"></a>In this case, you might have a matrix of grooming between individuals:</span>
+<span id="cb19-487"><a href="#cb19-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-490"><a href="#cb19-490" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-491"><a href="#cb19-491" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-492"><a href="#cb19-492" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-493"><a href="#cb19-493" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-494"><a href="#cb19-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-495"><a href="#cb19-495" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github("ddsjoberg/bstfun")</span></span>
+<span id="cb19-496"><a href="#cb19-496" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
+<span id="cb19-497"><a href="#cb19-497" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplotify"</span>)</span>
+<span id="cb19-498"><a href="#cb19-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-499"><a href="#cb19-499" aria-hidden="true" tabindex="-1"></a>mat1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">16</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span>
+<span id="cb19-500"><a href="#cb19-500" aria-hidden="true" tabindex="-1"></a>mat1[<span class="fu">lower.tri</span>(mat1, <span class="at">diag =</span> <span class="cn">TRUE</span>)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb19-501"><a href="#cb19-501" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mat1) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
+<span id="cb19-502"><a href="#cb19-502" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(mat1) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
+<span id="cb19-503"><a href="#cb19-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-504"><a href="#cb19-504" aria-hidden="true" tabindex="-1"></a>mat2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">runif</span>(<span class="dv">16</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">ncol =</span> <span class="dv">4</span>)</span>
+<span id="cb19-505"><a href="#cb19-505" aria-hidden="true" tabindex="-1"></a>mat2[<span class="fu">lower.tri</span>(mat2, <span class="at">diag =</span> <span class="cn">TRUE</span>)] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb19-506"><a href="#cb19-506" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(mat2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
+<span id="cb19-507"><a href="#cb19-507" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(mat2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sally"</span>, <span class="st">"James"</span>, <span class="st">"Bart"</span>, <span class="st">"Sergeant Brown"</span>)</span>
+<span id="cb19-508"><a href="#cb19-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-509"><a href="#cb19-509" aria-hidden="true" tabindex="-1"></a>mat1</span>
+<span id="cb19-510"><a href="#cb19-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-511"><a href="#cb19-511" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-512"><a href="#cb19-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-513"><a href="#cb19-513" aria-hidden="true" tabindex="-1"></a>And a matrix of defending each other from adversaries:</span>
+<span id="cb19-514"><a href="#cb19-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-517"><a href="#cb19-517" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-518"><a href="#cb19-518" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-519"><a href="#cb19-519" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-520"><a href="#cb19-520" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb19-521"><a href="#cb19-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-522"><a href="#cb19-522" aria-hidden="true" tabindex="-1"></a>mat2</span>
+<span id="cb19-523"><a href="#cb19-523" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-524"><a href="#cb19-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-525"><a href="#cb19-525" aria-hidden="true" tabindex="-1"></a>How do you go about analyzing such data? For an example of a meta-analysis on this topic, see Schino (2007) https://doi.org/10.1093/beheco/arl045.</span>
+<span id="cb19-526"><a href="#cb19-526" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-527"><a href="#cb19-527" aria-hidden="true" tabindex="-1"></a>First, you need to melt these matrices into vectors and align the pairs:</span>
+<span id="cb19-528"><a href="#cb19-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-531"><a href="#cb19-531" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-532"><a href="#cb19-532" aria-hidden="true" tabindex="-1"></a>mat1 <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(mat1, <span class="at">na.rm =</span> T)</span>
+<span id="cb19-533"><a href="#cb19-533" aria-hidden="true" tabindex="-1"></a>mat2 <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(mat2, <span class="at">na.rm =</span> T)</span>
+<span id="cb19-534"><a href="#cb19-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-535"><a href="#cb19-535" aria-hidden="true" tabindex="-1"></a>mat1</span>
+<span id="cb19-536"><a href="#cb19-536" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-537"><a href="#cb19-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-538"><a href="#cb19-538" aria-hidden="true" tabindex="-1"></a>Then, calculate Kendall's correlation coefficient:</span>
+<span id="cb19-539"><a href="#cb19-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-542"><a href="#cb19-542" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-543"><a href="#cb19-543" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(mat1<span class="sc">$</span>value, mat2<span class="sc">$</span>value, <span class="at">method =</span> <span class="st">"kendall"</span>)</span>
+<span id="cb19-544"><a href="#cb19-544" aria-hidden="true" tabindex="-1"></a>res</span>
+<span id="cb19-545"><a href="#cb19-545" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-546"><a href="#cb19-546" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-547"><a href="#cb19-547" aria-hidden="true" tabindex="-1"></a>And now you're free to calculate ZCOR:</span>
+<span id="cb19-548"><a href="#cb19-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-551"><a href="#cb19-551" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-552"><a href="#cb19-552" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>, </span>
+<span id="cb19-553"><a href="#cb19-553" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> res<span class="sc">$</span>estimate,</span>
+<span id="cb19-554"><a href="#cb19-554" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="fu">nrow</span>(mat1))</span>
+<span id="cb19-555"><a href="#cb19-555" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-556"><a href="#cb19-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-557"><a href="#cb19-557" aria-hidden="true" tabindex="-1"></a>**IS THIS CORRECT???**</span>
+<span id="cb19-558"><a href="#cb19-558" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-559"><a href="#cb19-559" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model estimates</span></span>
+<span id="cb19-560"><a href="#cb19-560" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-561"><a href="#cb19-561" aria-hidden="true" tabindex="-1"></a>....</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

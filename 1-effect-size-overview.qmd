@@ -172,22 +172,32 @@ We try to clear up this confusion in the Appendix with some charts of compatibil
 
 # Less common effect sizes
 
-The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, ref) or variance between two groups (lnCVR, ref). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the `escalc` tutorial. Others, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD, lnRoM, and Zmu. 
+The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, ref) or variability between two groups (lnCVR, ref). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the `escalc` tutorial (@sec). Others, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD, lnRoM, and Zmu. Let $m$, $sd$, and $n$, denote mean, standard deviation and sample size:
+
+| Name  | Inputs                          | Purpose                                       | R Package |
+|-------|----------------------------------|----------------------------------------------|---------|
+| lnCVR | $m_{1,2}$, $sd_{1,2}$, $n_{1,2}$ | Variability between two groups               | `escalc` |
+| lnM   | $m_{1,2}$, $sd_{1,2}$, $n_{1,2}$ | Magnitude of differences between two groups  | `orchaRdR` |
+| XXXX  |                                  |                                              |           |
 
 
 # Custom effect sizes
 
-Some meta-analytic questions may seem to have a simple effect size of choice. For example, if you're synthesizing the results of experimental studies that compare a physiological response of an organism to two different temperatures, potentially to forecast the effect of climate change on these organisms. This data is presented as means±SD and it would make intuitive sense to calculate SMD or lnRoM for each comparison, treating the difference in temperature between the treatments as a moderator.
+You may be working on a question that requires a custom effect size. For example, Wooster et al. Nat Comms created a custom effect to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see XYZ) or with the SAFE method (see ejlundgren.github.io/SAFE/).
 
-However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the temperature (or both the low and high temperature values, if you think both matter).
+However, custom effect sizes (or at least rare effect sizes) can also be very useful even with data that is readily synthesizable with common effect sizes, like those we discussed above (SMD/lnRoM/etc). 
 
-Another way of thinking about these problems is to realize that you can formulate effect sizes that explicitly include the temperature difference. For example, with the problem above, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable, drawing the resulting point cloud estimated by the mean and SD with `rnorm` (see @sec where we discuss this method).
+For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator.
 
-Another, probably preferable option would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two groups, while accounting for differences in the temperature treatments. This is a formula that was developed into a meta-analytic effect size by XXXX. 
+However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.
+
+Another way of thinking about this problem is to use an effect size that explicitly includes the temperature difference. For example, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable, drawing the resulting point cloud estimated by the means±SD with `rnorm` (see @sec where we discuss this method) and then calculating the correlation with temperature.
+
+Another, probably preferable option, would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference in its point estimate. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$. 
 
 $$Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}$$
-Sampling variance can either be estimated from a plugin formula or using the SAFE method (see https://ejlundgren.github.io/SAFE/), which will take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$).
+Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by REF using the Delta method) or with the SAFE method (see https://ejlundgren.github.io/SAFE/). These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). 
 
-We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity. See Noble et al 2022 (10.1242/jeb.243225) for a thorough discussion of these matters. 
+We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly with your effect size. See Noble et al 2022 (10.1242/jeb.243225) for a thorough discussion of these matters. If there is consistent heterogeneity like this in your meta-analysis, consider whether a custom or less-used effect size would help explicitly capture heterogeneity, leading to simpler models, better model estimates, and simpler interpretation of your results.
 
 In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.

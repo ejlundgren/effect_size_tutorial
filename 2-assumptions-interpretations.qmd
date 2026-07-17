@@ -1,6 +1,6 @@
 ---
 title: "Effect size assumptions & interpretation"
-subtitle: "XXXX"
+subtitle: "A statistic unto itself"
 date: "`r Sys.Date()`"
 format: 
   html:
@@ -66,11 +66,17 @@ source("scripts/functions/eff_size.R")
 
 ```
 
-We'll here discuss the assumptions inherent to the main effect sizes used in ecology and evolution. We'll also discuss how to interpret effect sizes and corrections. As you may have noticed, there are sometimes several effect size options for the same study designs. These effect sizes differ in their statistical assumptions and in their interpretation. Let's start with the most commonly used category of effect sizes in ecology and conservation: effect sizes for comparing continuous outcomes between two discrete groups.
+Effect sizes are not trivial things. They are, in and themselves, small statistical models with their own numeric assumptions and properties. Understanding these assumptions is essential if you want to conduct an accurate and robust meta-analysis and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.
+
+Also, as you may have noticed, there are sometimes several effect size options for the same study designs—such as SMD and lnRoM. What are the trade-offs between these different effect sizes?
+
+We'll start with the most commonly used effect size category: effect sizes used to describe continuous responses to two discrete groups.
+
+**Perhaps this page should be split into multiple pages**
 
 # Discrete groups with continuous outcomes (SMD / lnRoM / Zmu)
 
-This is among the most common class of effect sizes used in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such an experiment and control group. These effect sizes require the following statistics: 1) means for the treatment and control groups (henceforth $m_1$ and $m_2$) 2) standard deviation for the two groups ($sd_1$, $sd_2$); and 3) sample size for each group ($n_1$, $n_2$).
+This is among the most common class of effect sizes used in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such as an experiment and control group. These effect sizes require the following statistics: 1) means for the treatment and control groups (henceforth $m_1$ and $m_2$), 2) standard deviation for the two groups ($sd_1$, $sd_2$), and 3) sample size for each group ($n_1$, $n_2$).
 
 ::: callout-warning
 ##### Measurements of error/variance
@@ -86,17 +92,16 @@ Just to remind you, here are the relationships between these measurements of err
 
 ## Differences between SMD, lnRoM, and Zmu
 
-There are some important differences between SMD, lnRoM, Zmu, which we summarize here. Don't stress about understanding all of these topics, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
+There are some important differences between SMD, lnRoM, Zmu, which we summarize here. Don't stress about understanding all of these topics yet, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
 
-|                                                 | SMD      | lnRoM | Zmu |
-|-------------------------------------------------|----------|-------|-----|
-| **Accepts values ≤ 0**                          | yes      | no    | no  |
-| **Robust to overdispersion**                    | no?      | no    | no  |
-| **Robust to heteroscedasticity**                | yes      | ?     | ?   |
-| **Robust to dimensionality**                    | somewhat | no    | yes |
-| **Paired design formulation**                   | yes      | yes   | yes |
-| **Accepts before-after-control-impact designs** | yes      | no    | no  |
-| **Can be converted to % change**                | no       | yes   | ??? |
+|                                         | SMD      | lnRoM | Zmu |
+|-----------------------------------------|----------|-------|-----|
+| **Accepts values ≤ 0**                  | yes      | no    | no  |
+| **Robust to overdispersion**            | no?      | no    | no  |
+| **Robust to heteroscedasticity**        | SMDH     | ?     | ?   |
+| **Robust to dimensionality**            | somewhat | no    | yes |
+| **Paired design formulation**           | yes      | yes   | yes |
+| **Can be interpreted in plain english** | no       | yes   | ??? |
 
 While we want to keep this tutorial light on equations, we'll briefly give some historic background on the development and math of these effect sizes, which influence the differences in the table above. We'll only look at the point estimator formulas here (see Appendix for variance estimator formulas).
 
@@ -114,17 +119,17 @@ $$\begin{aligned}
 &J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}\\
 &d = \frac{m1-m2}{sd_{pooled}}\\
 &g = J * d
-\end{aligned}$$ The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation. Observations with high standard deviation will have a lower overall point estimate. Because this can reduce power, Hedges and Gurevitch later proposed the log-transformed ratio of means, the most widely used effect size in ecology (ref). This does not have standard deviation in the point estimate:
+\end{aligned}$$
 
-$$lnRoM = log(\frac{m1}{m2})$$ The lnRoM point estimate is thus robust to the standard deviation of the data. However, because this definition formula is still prone to bias with low sample size, bias correction again introduces issues with dispersion because the correction term includes standard deviation:
+The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation. Observations with high standard deviation will have a lower overall point estimate. Because this can reduce power, Hedges and Gurevitch later proposed the log-transformed ratio of means, the most widely used effect size in ecology (ref). This does not have standard deviation in the point estimate:
 
-@Shinichi — but it sounds like we don't generally use lnRoM_BC because of this? Escalc defaults to the first-order formula?
+$$lnRoM = log(\frac{m1}{m2})$$
 
-$$lnRoM_{BC} = log(\frac{m1}{m2}) + 0.5 * \frac{sd_1^2}{n_1 * m_1^2}-\frac{sd_2^2}{n_2 * m_2^2}$$ Because standard deviation is in this bias-corrected estimator, this estimator can be wildly biased when data is overdispersed.
+The lnRoM point estimate is robust to the standard deviation of the data and thus more robust to overdispersion. Bias corrected lnRoM point estimate formulas are actually more biased, even at lower sample sizes and are thus not widely used
 
-However, there is another more pernicious and underappreciated problem with both formulations of lnRoM-the point estimates double for every added dimension in the underlying datasets (see @sec below where we simulate this).
+However, there is a more pernicious and underappreciated problem with lnRoM-the point estimate doubles for every added dimension in the underlying data (see @sec below where we simulate this). 
 
-For that reason, Nakagawa (ref) recently proposed the $Z_{mu}$ statistic, which is dimensionfree and assumes a lognormal reality. Zmu requires converting the observed summary statistics ($m$ and $sd$) to their lognormal flavors. The math to do so is quite long, so we'll spare you the details. However, once $sd_{ln}$ and $m_{ln}$ have been calculated for each group, Zmu is calculated as follows:
+For that reason, Nakagawa (ref) recently proposed the $Z_{mu}$ statistic, which is dimensionfree and assumes a lognormal reality. Zmu converts the observed summary statistics ($m$ and $sd$) to their lognormal flavors. The math to do so is quite long, so we'll spare you the details. However, once $sd_{ln}$ and $m_{ln}$ have been calculated for each group, Zmu is calculated as follows:
 
 $$\begin{aligned}
 &S_{ln} = \sqrt{sd_{ln1}^2 + sd_{ln2}^2}\\
@@ -137,9 +142,9 @@ This effect size is robust to dimensionality (see @sec) but, like SMD and the bi
 
 Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation (Bonnett 2008) that accounts for heteroscedasticity. This is available as the measure 'SMDH' in metafor::escalc.
 
-**Does heteroscedasticity matter for lnRoM or Zmu? I have no idea.**
+**Does heteroscedasticity matter for lnRoM or Zmu?**
 
-Rules of thumb for heteroscedasticity. Ratio of CV1 to CV2? What threshold?
+Are there rules of thumb for heteroscedasticity? Ratio of CV1 to CV2? What threshold?
 
 ```{r}
 # Demonstrate in R...
@@ -198,7 +203,6 @@ nrow(dat[gl1 > 3 | gl2 > 3]) / nrow(dat) * 100
 It looks like *all* the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? In this case, we'll use $CV$, instead of the Geary_Lajuennesse test, to filter out overdispersed values and rerun our models.
 
 An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation (Nakagawa et al. XXXX).
-
 @Shinichi**:** **Is this only for lnRoM???**
 
 Effective sample size is defined as: $$N_{0} = \frac{4n_1n_2}{n_1 + n_2}\\$$ Let's go through a full example, with lnRoM as our effect size.
@@ -733,11 +737,9 @@ Zr is the dominant effect size for describing correlations between two continuou
 $$\begin{aligned}
 &r_{i} \leftarrow \min(1, \max(-1, r_i))\\
 &Z_{r_i} = atanh(r_{i})\\
-\end{aligned}$$
-The sampling variance of Zr depends entirely on sample size and is defined as:
+\end{aligned}$$ The sampling variance of Zr depends entirely on sample size and is defined as:
 
-$$Var(Z_r) = \frac{1}{n-3}$$
-As you can see, sampling variance is only calculable if $n>3$.
+$$Var(Z_r) = \frac{1}{n-3}$$ As you can see, sampling variance is only calculable if $n>3$.
 
 In `escalc`, this looks like:
 
@@ -781,4 +783,3 @@ escalc(measure = "ZBIS",
       n1i = 15, n2i = 15)
 
 ```
-

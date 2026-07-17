@@ -71,10 +71,104 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
+We have briefly described tricks for recreating data from means±error, which you might encounter in error bars on a scatterplot (see @sec) or in a time series that you'd prefer to analyze as SMD (see @sec). For example, in a figure like this:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+x <- rnorm(n = 50, mean = 7, sd = 1.2)
+y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
+
+dat <- data.table(x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
+                  n = 10)
+dat.sub <- dat[rep(5, 12), ]
+dat.sub$x <- jitter(dat.sub$x, amount = .05)
+dat.sub$y <- jitter(dat.sub$y, amount = .05)
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_errorbar(width = .25, aes(ymin = y-sd, ymax = y+sd))+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+Or, like this:
+
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+x1 <- seq(1:10)
+
+y1 <- x1 * 1 + rnorm(n = 10, mean = 0, sd = 1.5)
+
+# length(x1)
+status <- c(rep("Present", 8),
+            rep("Eradicated", 2))
+dt <- data.table(x1, y1, status)
+dt$group <- 1
+
+dt$error <- rnorm(mean = .5, sd = .2, n = nrow(dt))
+
+ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
+  geom_path()+
+  geom_point(size = 3, shape = 21)+
+  geom_errorbar(aes(ymin = y1 - error, ymax = y1 + error))+
+  scale_fill_manual("Group of interest",
+                    values = c("Present" = "dodgerblue",
+                               "Eradicated"= "indianred"))+
+  scale_x_continuous(breaks = 1995:2005)+
+  xlab("Year")+
+  ylab("Response of interest (mean±SD)")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+```
+
+If the data in these figures (underlying each point) is normally distributed you can use `rnorm` to simulate the original dataset based on the means, standard deviations, and sample sizes (as our code in those sections demonstrated). This allows you to calculate effect sizes on results that may otherwise be unextractable. However, this assumes that data is normally distributed, which may be not be true in the case of ecological or evolutionary data.
+
+
+**Is this actually ok to do?**
+
+
+## Determing the correct distribution
+To understand whether the underlying data can be drawn safely from the normal distribution, you need to think carefully about the data generating process. 
+
+- Is the data discrete, e.g., count data or abundance data?
+
+>*Abundance data generally follows a negative binomial or Poisson distribution.* 
+>*Data bounded between 0 and 1 (e.g., cover data) follows the Beta distribution.*
+
+- What is the relationship between the means and reported error?
+
+>*In normally distributed data the coefficient of variation ($sd/m$) should be <X.*
+>*The variance ($sd^2$) of Poisson type data should be equal to the mean (which is unusual)*
+>*In negative binomial data, the variance should be greater than the mean.*
+
+Use these rules of thumb to help decide what distribution the underlying data is. Once you have a good idea, you then need to use distributionally specific formulas to convert the author-provided summary statistics (mean, standard deviation) to the distribution's own flavors. For example, negative binomial uses `size` instead of standard deviation to describe its dispersion. Luckily, as we show below, converting standard deviation to size is quite doable.
+
+Here is a table of the parameters necessary to simulate data in most distributions you'll encounter during a meta-analysis, along with the formulas to convert standard deviation to these parameters.
+
+| distribution          | diagnosis                            | common applications |
+|-----------------------|--------------------------------------|---------------------|
+| Normal                | continuous; XXXX; $CV < XXXX$        | XXXX                 |
+| Negative binomial     | count; Variance > mean               | Abundance data, XXX |
+| Poisson               | count; Variance ≈ mean               | Count data, XXX          |
+| Binomial              | probability (0-1) across trials      | success, survivorship, survival |
+| Beta                  | proportion bounded *between* 0 and 1 | Cover data, XXXX |
+
 ## Negative binomial
 
-
-If a study reports mean ± SD for a non-Gaussian response, such as negative binomial (overdispersed count data), then you shouldn't simply reconstruct the underlying data (as in @secs XXX and YYY) with `rnorm`. Instead, you should use the appropriate data generating process. This requires converting the author provided summary statistics (mean and standard deviation) to the flavors required for these non-Gaussian distributions. We will here cover simply how to do this for negative binomial distribution data.
+We will here simulate the underlying data for negative binomial derived abundance data, as you might encounter in a time series (similar to the figure above).
 
 The object `dt` here is a dataset extracted from an article with Mean±SD for two groups in a time series (similar data as in @sec). We want to generate the underlying data for each point, so we can calculate group level mean±SD for the two treatments ("Present" vs "Eradicated"). The data looks like this:
 
@@ -110,12 +204,9 @@ Now let's convert the author provided `sd` to `size`, which is the parameter tha
 
 $$\begin{aligned}
 Variance = \mu + \frac{\mu^2}{size}
-\end{aligned}$$
-Solving for `size` (which is the negative binomial flavor of standard deviation):
-$$\begin{aligned}
+\end{aligned}$$ Solving for `size` (which is the negative binomial flavor of standard deviation): $$\begin{aligned}
 size = \frac{\mu^2}{Variance - \mu}
-\end{aligned}$$
-Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance \< our mean, we'll set Variance equal to the mean.
+\end{aligned}$$ Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance \< the mean, we'll set Variance equal to the mean.
 
 ```{r}
 #| eval: true
@@ -147,10 +238,62 @@ final_dt <- dt_expanded[, .(mean = mean(y),
 
 final_dt
 ```
+
 These values can then be used to calculate your SMD / lnRoM / Zmu effect size.
 
+Is this really ok to do???
+
 ## Poisson
+The Poisson distribution takes lambda, which is equivalent to the mean. The variance and the mean must be equal to be Poisson data. 
+
+To draw Poisson data, use the R function `rpois`, as follows:
+
+```{r}
+rpois(n = 10, lambda = 1)
+```
 
 ## Binomial
+The binomial distribution describes the probability of success ($p$) across $t$ trials per $n$ observation (note that $m$ is usually used for number of trials in binomial formulas but, since we are referring to means as $m$, we will refer to number of trials as $t$). $p$ can be calculated from author-provided standard deviation ($sd$) and means ($m$) as follows: 
 
-## ???
+$$
+p=\frac{1-sd^2}{m}
+$$
+
+You can then draw binomial data in R, with size equivalent to the number of trials ($t$). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we're simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events. The output describes the number of successful trials per 10 individuals, which can be converted to a proportion by dividing by `size`:
+
+```{r}
+
+rbinom(n = 10, p = .4, size = 5) / 5
+
+```
+
+**Am I butchering this? Probably :)**
+
+## Beta
+The Beta distribution describes data bounded *between* 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (`shape1`=$\alpha$ and `shape2`=$\beta$). These can be calculated from mean ($m$) and standard deviation ($sd$) as follows:
+
+$$
+\begin{aligned}
+& Var = sd^2 \\
+& t = (\frac{m(1-m)}{Var}) - 1\\
+& \alpha = m * t \\
+& \beta = (1-m) * t \\
+\end{aligned}
+$$
+These parameters can then be used in R. For instance, with a mean of 0.75 (e.g., 75% cover) and a standard deviation of 0.1:
+
+```{r}
+sd <- 0.1
+m <- 0.75
+v <- sd^2
+t <- ((m * (1-m)) / (v)) - 1
+alpha <- m * t
+beta <- (1 - m) * t
+
+rbeta(n = 10, shape1 = alpha, shape2 = beta)
+```
+
+
+
+
+
