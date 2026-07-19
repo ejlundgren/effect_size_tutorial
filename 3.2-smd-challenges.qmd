@@ -10,7 +10,7 @@ format:
     toc-float: true
     toc-expand: true
     toc-title: "**CONTENTS**"
-    output-file: "smd_extraction_challenges.html"
+    output-file: "3.2-smd-challenges.html"
     # embed-resources: true
     # code-fold: true
     code-link: true
@@ -69,17 +69,17 @@ source("scripts/functions/convert_effect_sizes.R")
 
 These are among the most commonly used effect size types in meta-analyses. These effect sizes compare a continuous response variable between two discrete categorical predictors (e.g., Control vs Experiment). By continuous, we mean a measurement summarized by its central tendency (mean, median) and dispersion (variance, standard deviation, standard error) across replicates. These replicates are the sample size.
 
-The effect sizes that can be calculated with this data are standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu. Please see @sec for a description of these effect sizes, their assumptions, and their interpretation. In general, the extraction for these effect sizes is similar, though, as you will see, some data types constrain you to only using SMD because of values ≤ 0, which only SMD can handle.
+The primary effect sizes that can be calculated with this data are standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu. Please see @sec for a more thorough description of these effect sizes, their assumptions, and their interpretation. In general, the extraction for these effect sizes is similar, though, as you will see, some data types constrain you to only using SMD because of values ≤ 0, which only SMD can handle.
 
 # Extraction
 
-Cheatsheet: **Rough version** **Make it downloadable/printable** 
+<!-- Cheatsheet: **Rough version** **Make it downloadable/printable**  -->
 
-![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){width=60%}
+<!-- ![SMD extraction challenges](figures/flowcharts_diagrams/SMD.jpg){width=60%} -->
 
 ## The simple cases
 
-We'll start with the simplest figure types, mostly in order to contrast with more complex types. If you're using `metaDigitise()` to extract data, the function will guide you through calibrating the axes and selecting the top of the error bars and the top of the bars themselves (the mean).
+We'll start with the simplest figure types, mostly in order to contrast with more complex types. If you're using `metaDigitise()` to extract data, the function will guide you through calibrating the axes and selecting the top of the error bars and the top of the bars themselves (the mean). If the figure reports standard error ($se$), metaDigitise() will convert it automatically to standard deviation ($sd$). Always be aware of what the error type is.
 
 ```{r}
 #| echo: false
@@ -109,7 +109,7 @@ ggplot(data = dt,
 
 ```
 
-Box plots are also straightforward and involve extracting the minimum, lower quartile, median, upper quartile, and maximum values. `metaDigitise()` will walk you through that extraction and will automatically convert the interquartile range and medians to mean±SD.
+Box plots are also straightforward and involve extracting the minimum, lower quartile, median, upper quartile, and maximum values. `metaDigitise()` will walk you through that extraction and will automatically convert the interquartile range and median to mean±SD.
 
 ```{r}
 #| echo: false
@@ -134,7 +134,7 @@ ggplot(data = dt,
 
 ```
 
-It's also common to see figures like this with more complex non-independence structures. These can be dealt with by digitizing only the final time point or by controlling for non-independence with random effects (see tutorials in @sec).
+It's also common to see figures like this with more complex non-independence structures. These can be dealt with by digitizing only the final time point or by controlling for non-independence with random effects (see tutorial in @sec).
 
 ```{r}
 #| echo: false
@@ -173,6 +173,8 @@ Let's move on to more complex situations.
 
 ## Histograms
 
+It's also common to see the outcome variable of the two discrete predictor groups plotted as separate histograms:
+
 ```{r}
 #| echo: false
 #| eval: true
@@ -198,7 +200,12 @@ hist1 + hist2
 
 ```
 
-`metaDigitise()` luckily has built-in functionality for dealing with histograms. The function will guide you through each step, which requires calibrating the axes and then clicking on the left and right corners of each bar. It'll then convert the extracted distribution into mean±sd.
+`metaDigitise()` luckily has built-in functionality for dealing with histograms. The function will guide you through each step, which requires calibrating the axes and then clicking on the left and right corners of each bar. It'll then convert the extracted distributions into means±sd.
+
+## 3-dimensional plots
+There was a brief period in the 1990s when these became popular. 3-d plots were often of histograms. but many other types existed. **WHAT SOFTWARE FOR 3-d PLOTS??** 
+
+We won't discuss these much here, we just want to acknowledge your pain if you have come across one. Hopefully the general plot designs will be similar to those covered in this tutorial.
 
 ## Violin and density plots
 
@@ -263,13 +270,18 @@ dens
 
 ## Proportion data (0-1) bounded without error
 
-Sometimes SMD/lnRoM design types will present the total % of a population for a study design that is otherwise indistinguishable from other SMD/lnRoM/Zmu studies. For example, instead of recording mean mortality ± SD across survey plots, a study may present total proportion mortality across study plots. If they also reported the total number of individuals monitored, then this would be an lnOR/lnRR effect size (LINK).
+Sometimes SMD/lnRoM design types will present the total % of a population for a study design that is otherwise indistinguishable from other SMD/lnRoM/Zmu studies in your dataset. For example, instead of recording mean mortality ± SD across survey plots, a study may present total proportion mortality across study plots. If they also reported the total number of individuals monitored, then this would preferably be an lnOR/lnRR effect size.
 
-Luckily, mean±SD can be extracted from a proportions with the following formulas, where $p$ is the proportion, $M$ is the mean, and $total$ is the population size??.
+See @sec where we talk about a potentially better way to deal with this data by converting it back to discrete response data, which, if most of your dataset is lnOR is probably the best way.
 
-*I THINK?* $$\begin{aligned}
-&SD = p * (1-p) \\
-&M = p*total?? \\
+Luckily, mean±SD can be extracted from a proportions with the following formulas, where $p$ is the proportion, $m$ is the mean, $sd$ is standard deviation, and $total$ is the population size??.
+
+*I THINK?* 
+
+
+$$\begin{aligned}
+&sd = p * (1-p) \\
+&m = p*total?? \\
 \end{aligned}$$
 
 ## Proportion data (0-1) bounded with error
@@ -328,9 +340,10 @@ To deal with this data, we'll extract the boxplot with `metaDigitise()`, which w
 |----------------|--------------|--------------|------------|
 | -8.11          | 1.27         | 0            | 1.27       |
 
-@Shinichi - is this correct? The best way to deal with it? You mentioned a trick...
+Note that since lnRoM cannot accept negative values or 0s, you have no choice but to use SMD for this type of data. If the difference was *positive*, you could use lnRoM, after adding a small constant to the mean of the control group. 
 
-Note that since lnRoM cannot accept negative values or 0s, you have no choice but to use a paired formulation of SMD for this type of data. If the difference was *positive*, you could use lnRoM, after adding a small constant to the mean of the control group. Note that you have to specify $r$ (`ri` in `escalc`) for this. We recommend using the values of 0.5 and 0.8 and conducting sensitivity tests with both options.
+Also, given that this is *paired* data, you should use a paired formulation of SMD or lnRoM. Note that you have to specify $r$ (`ri` in `escalc`) for this. We recommend using the values of 0.5 or 0.8 and conducting sensitivity tests with both options.
+
 
 ```{r}
 #| eval: false
@@ -354,9 +367,43 @@ eff_size(x1 = -8.11, sd1 = 1.27,
 
 ```
 
+
+## Ratios of control and treatment groups
+
+Some studies report the ratio of the control group to the treatment group, instead of subtracting the samples from each other and reporting the mean±error of the difference. 
+
+In other words, they report the response ratio (which might be logged or unlogged).
+
+Whether you can extract this data depends on whether they report the mean±error of paired response ratios (e.g., calculated for each paired sample) or if they report a single value response ratio calculated from the group means. To try to spell that out:
+
+This is usable. In this case, a vector of response ratios ($rr_i$) was calculated from each paired sample ($y_{i,treatment}$, $y_{i,control}$) and then summarized by the mean ($m$) and standard deviation ($sd$):
+
+$$
+rr_i = \frac{y_{i,treatment}}{y_{i,control}}}
+m = \frac{\Sigma{rr_i}{n}
+sd = \sqrt{Var(rr_i)}
+$$
+In this case, you can extract the $m$ and $sd$ and use these directly to calculate an lnRoM effect size (after logging it, if it wasn't originally logged). The reported standard deviation can be converted to sampling variance (e.g., $var = sd^2$). 
+
+**IS this correct?**
+
+However, if the authors took group means across each treatment ($m_{control}$, $m_{treatment}$) and then reported the response ratio of these means ($rr$), what do you do? 
+
+$$
+\begin{aligned}
+&m_{treaatment} = \frac{\Sigma{y_{i, treatment}}}{n} \\
+&m_{control} = \frac{\Sigma{y_{i, control}}}{n} \\
+&rr = \frac{m_{treatment}}{m_{control}} \\
+\end{aligned}
+$$
+The error has essentially been discarded and we don't see any way that this data can be recovered.
+
+**????**
+
 ## Before-after-control-impact designs
 
-Before-after control-impact (BACI) designs are gold standard experimental designs. Yet most meta-analyses ignore the before treatment, and only extract and analyze the 'after' treatments. Here is a BACI figure:
+Before-after control-impact (BACI) designs are gold standard experimental designs. Yet most meta-analyses ignore the before treatment and only extract and analyze the 'after' treatments. Here is a BACI figure:
+
 
 ```{r}
 #| echo: false
@@ -470,18 +517,25 @@ ggplot()+
 
 What do you do about something like that? Do you just exclude the study?
 
-The best way to deal with this data is to calculate the difference between the means of the before and after groups for each treatment of interest and extract the standard deviation from the just *after* treatment groups. Since the treatment groups themselves are not paired, you'd use an unpaired estimator formula. Since your values may be negative, you'll most likely have to use SMD.
+The best way to deal with this data is to calculate the difference between the means of the before and after groups for each treatment of interest. 
+
+Then use the standard deviation from the *after* treatment group. You could alternatively use the standard deviation from the before group, but we're not sure how to justify this (you might know though). 
+
+Since the treatment groups themselves are not paired, you'd use an unpaired estimator formula. 
+
+Since your values may be negative, you'll most likely have to use SMD.
 
 ```{r}
 #| echo: true
-#| eval: false
+#| eval: true
 # First calculate differences:
 dt <- data.table(mean_control_difference = 7.36 - 3.00,
                  mean_treatment_difference = 13.87 - 8.27,
                  sd_control = 1.33,
                  sd_treatment = 0.98)
 
-eff_size(x1 = mean_treatment_difference,
+# Now calculate effect size:
+res <- eff_size(x1 = mean_treatment_difference,
        x2 = mean_control_difference,
        sd1 = sd_treatment,
        sd2 = sd_control,
@@ -490,6 +544,8 @@ eff_size(x1 = mean_treatment_difference,
        verbose = F,
        effect_type = "SMD",
        paired = FALSE)
+
+knitr::kable(res)
 
 ```
 
@@ -786,8 +842,8 @@ To walk you through this, imagine you've extracted the means and standard deviat
 setnames(dt, c("y1", "error"), c("mean", "sd"), skip_absent = TRUE)
 dt[, N := 10]
 
-dt[, .(mean, sd, N, status)]
-# cat(md_table(dt[, .(mean, sd, N, status)]))
+knitr::kable(dt[, .(mean, sd, N, status)])
+
 ```
 
 Each row of this dataset is a summary of an internal dataset, which we can reconstruct by drawing from the appropriate statistical distribution. In this case, we are going to assume that the data is normally distributed. See @sec for how to draw data for other distributions (e.g., negative binomial). The object `dt` is our table of extracted means, standard deviations, and author-provided sample sizes. To keep the code readable, we'll do this in a for loop, saving each drawn dataset to an element of our list object `dt_expanded`:
@@ -836,17 +892,23 @@ Unfortunately, if the sample size for each of the points in the above figure is 
 
 ## Results reported as an effect size itself
 
-One quite common situation is for studies to report their results as log-transformed ratio of means (lnRoM, also lnRR) or SMD. These could be extracted directly as your effect size *except* that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).
+One quite common situation is for studies to report their results as log-transformed ratio of means (lnRoM, also lnRR), as we discussed above, or SMD. These could be extracted directly as your effect size *except* that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).
 
 If a measurement of error is provided, then you can extract the data as is, and convert that error to sampling variance. For example, if SMD ± standard error was plotted, the sampling variance is $$vi = SE^2$$.
 
-Otherwise, you're fucked.
+If a study reports standardized mean differences (e.g., Cohen's d), which is uncorrected estimator of SMD, you can use `escalc` to convert it to `Hedges' g`, the dominant estimator of SMD by specifying Cohen's d as the `di` argument:
+
+```{r}
+escalc(measure = "SMD",
+       di = 5, 
+       n1i = 10, n2i = 10)
+```
+
+In many other cases, there's nothing you can do but email the authors and hope they have their raw data.
 
 ## Missing error bars
 
-If someone was willing to summarize Nakagawa's lab papers on interpolating missing error bars....
-
-Impute missing values?
+**If someone was willing to summarize Nakagawa's lab papers on interpolating missing error bars....**
 
 for lnRoM, use average cross-study CV: https://onlinelibrary.wiley.com/doi/10.1111/ele.14144
 
@@ -854,15 +916,41 @@ for lnRoM, use average cross-study CV: https://onlinelibrary.wiley.com/doi/10.11
 
 We have seen some studies that report *geometric* means instead of normal algorithmic means.
 
-I have no idea what these are or what to do about them.
+*According to Gemini*, you can convert the geometric mean ($m_{geo}$) and geometric standard deviation ($sd_{geo}$) to the algorithmic (e.g., normal) mean ($m_a$) and normal standard deviation ($sd_a$) with the following equation, which assumes a log-normal distribution:
+
+**I think gemini might have made some mistakes**
+
+$$
+\begin{aligned}
+&Var_{ln} = log(sd_{geo})^2 \\
+&m_a = m_{geo} * e^{\frac{Var_{ln}}{2}} \\
+&sd_a = m_a * \sqrt{e^{Var_{ln}} - 1} \\
+\end{aligned}
+$$
+In R:
+
+```{r}
+#| eval: true
+#| echo: true
+sd_g <- 2.5
+m_g <- 31
+
+var_ln <- log(sd_g)^2
+m_a <- m_g * exp(var_ln/2)
+sd_a <- m_a * sqrt(exp(var_ln) - 1)
+
+c("final_mean" = m_a, "final_sd" = sd_a)
+```
+
+**That sd is extremely high...**
 
 ## When the predictor isn't really binary
 
 The cases we've been discussing concern a binary predictor. E.g., an experiment and a control group. However, this can sometimes be a farce. For example, imagine you're meta-analyzing the effect of red foxes on the abundance of their prey. Many studies present results that look like the figures we've been seeing that compare an area with high fox abundance to an area with low fox abundance due to an eradication or culling treatment. However, the 'low' fox treatment still has foxes, just a lower density, while the 'high' fox treatment also has foxes.
 
-You have two options with data like this. One option is to use an SMD-type effect size but treat the difference in density as a moderator in your models. This can lead to complex models, especially if you have several other moderators and require an interaction of each to density.
+You have two options with data like this. One option is to use an SMD-type effect size but treat the difference in density as a moderator in your models. This can lead to complex models, especially if you have several other moderators and require an interaction of each to density. A
 
-The other option is to calculate correlation coefficients for this data (Zr). Correlation coefficients require at least 4 observations, which can be simulated if the associated data has mean±error (see @sec). Regardless, these decisions are non-trivial and should be carefully documented.
+The other option is to calculate correlation coefficients for this data (Zr). Correlation coefficients require at least 4 observations, which can be simulated if the associated data has mean±error (see @sec). Regardless, these decisions are non-trivial and should be carefully documented. Furthermore, see @sec for discussion of how formulating custom effect sizes can help account for nuisance heterogeneity.
 
 ## Model estimates
 
@@ -884,6 +972,8 @@ Other articles will present test statistics and p-values from simple linear mode
 
 t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.
 
+**Can you calculate lnRoM or Zmu with statistics? **
+
 ### From the t statistic
 
 Calculating SMD from test statistics depends on whether the data come from a paired design (in which case df = n-1) or an independent two-sample design (df = n_1 + n_2 - 2). This is the formula for calculating SMD from a unpaired, two-sample design t test statistic:
@@ -896,7 +986,6 @@ $$
 &Var(g) = \frac{n_1 + n_2}{n_1 n_2} + \frac{g^2}{2(n_1 + n_2 - 2)} \\
 \end{aligned}
 $$
-
 In `escalc` you simply specify the t statistic (with `ti`), as well as sample sizes for each group (`n1`, `n2`) and use measure "SMD", which will return the unpaired SMD estimate.
 
 ```{r}
@@ -908,6 +997,7 @@ escalc(measure = "SMD",
        ti = t,
        n1i = n1,
        n2i = n2)
+
 ```
 
 For a paired design (e.g., paired t test):
@@ -934,9 +1024,7 @@ We do not know the measure for an SMD paired formula (that is still comparable t
 
 ### From p values:
 
-MATH
-
-To calculate SMD from p values, in `escalc`, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the `yi` point estimate afterwards).
+To calculate SMD from p values, in `escalc`, one needs to assign the sign (e.g., + or -) to the p-value (or do this to the `yi` point estimate afterwards). Note that these p-values needed to be from two-sided tests.
 
 ```{r}
 p = -0.07
@@ -949,11 +1037,9 @@ escalc(measure = "SMD",
        n2i = n2)
 ```
 
-Paired???
-
 ### From F statistic
 
-???
+??? I don't see this as an option in escalc
 
 # NOTES / To read
 

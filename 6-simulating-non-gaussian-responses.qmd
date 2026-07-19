@@ -191,11 +191,8 @@ dt <- copy(structure(list(x1 = 1:10, mean = c(1.15246506001662, 0.61701225802204
 "data.frame")))
 dt[, sd := sqrt(mean) + .001]
 
-knitr::kable(dt[, .(status, mean, sd, N)], caption = "Raw summary statistics in normal scale."#,
-             #table.attr = 'data-quarto-disable-processing="true"'
-             ) #|>
-   # kable_styling(full_width = FALSE, position = "left") #
-
+knitr::kable(dt[, .(status, mean, sd, N)], caption = "Raw summary statistics in normal scale.") 
+   
 ```
 
 Note that the standard deviation has a positive relationship with the mean, which is an indicator that this data is derived from a negative binomial distribution.
@@ -236,7 +233,7 @@ final_dt <- dt_expanded[, .(mean = mean(y),
                             total_n = .N),
                         by = .(status)]
 
-final_dt
+knitr::kable(final_dt)
 ```
 
 These values can then be used to calculate your SMD / lnRoM / Zmu effect size.

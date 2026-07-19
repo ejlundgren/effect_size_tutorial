@@ -10,7 +10,7 @@ format:
     toc-float: true
     toc-expand: true
     toc-title: "**CONTENTS**"
-    output-file: "universal_challenges.html"
+    output-file: "3.1-universal-challenges.html"
     # embed-resources: true
     # code-fold: true
     code-link: true
@@ -172,7 +172,7 @@ setcolorder(extracted, c("article_id", "fig", "species", "experiment_id", "time_
                          "temperature_low", "temperature_high",
                          "mean_low", "sd_low", "n_low", "mean_high", "sd_high", "n_high"))
 
-head(extracted)
+knitr::kable(head(extracted))
 
 ```
 
@@ -252,8 +252,8 @@ setcolorder(extracted2, c("article_id", "fig", "species", "control_id", "experim
                          "temperature_low", "temperature_high",
                          "mean_low", "sd_low", "n_low", "mean_high", "sd_high", "n_high"))
 setorder(extracted2, species, temperature_high)
-head(extracted2)
 
+knitr::kable(head(extracted2))
 ```
 
 This dataset has a `control_id` which specifies that these data share a control. This can be used in your random effect formulation.
@@ -269,7 +269,7 @@ extracted[, control_id := paste0("unique_control", 1:.N)]
 extracted2[, time_sequence := 1:.N]
 full_dat <- rbind(extracted, extracted2)
 
-head(full_dat)
+knitr::kable(head(full_dat))
 
 ```
 
@@ -280,7 +280,7 @@ Now, to demonstrate how we'd control for these non-independence structures, let'
 Note that the `struct` argument in `rma.mv` specifies the correlation structure to apply to time series.
 
 ```{r}
-#| eval: true
+#| eval: false
 #| echo: true
 #| out-width: "70%"
 
@@ -310,8 +310,6 @@ m <- rma.mv(yi ~ temperature_diff,
             method = "ML",
             struct = "AR",
             data = full_dat)
-
-summary(m)
 
 ```
 

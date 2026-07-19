@@ -1,6 +1,6 @@
 ---
-title: "Effect size assumptions & interpretation"
-subtitle: "A statistic unto itself"
+title: "Continuous outcomes with discrete predictor"
+subtitle: "So many options wtf"
 date: "`r Sys.Date()`"
 format: 
   html:
@@ -10,7 +10,7 @@ format:
     toc-float: true
     toc-expand: true
     toc-title: "**CONTENTS**"
-    output-file: "effect_size_assumptions.html"
+    output-file: "2.1-SMD-assumptions.html"
     # embed-resources: true
     # code-fold: true
     code-link: true
@@ -65,16 +65,9 @@ library("crayon")
 source("scripts/functions/eff_size.R")
 
 ```
-
 Effect sizes are not trivial things. They are, in and themselves, small statistical models with their own numeric assumptions and properties. Understanding these assumptions is essential if you want to conduct an accurate and robust meta-analysis and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.
 
-Also, as you may have noticed, there are sometimes several effect size options for the same study designs—such as SMD and lnRoM. What are the trade-offs between these different effect sizes?
-
-We'll start with the most commonly used effect size category: effect sizes used to describe continuous responses to two discrete groups.
-
-**Perhaps this page should be split into multiple pages**
-
-# Discrete groups with continuous outcomes (SMD / lnRoM / Zmu)
+We start this section with effect sizes for encapsulating continuous outcomes between two discrete groups, such as presented by most experiments.
 
 This is among the most common class of effect sizes used in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such as an experiment and control group. These effect sizes require the following statistics: 1) means for the treatment and control groups (henceforth $m_1$ and $m_2$), 2) standard deviation for the two groups ($sd_1$, $sd_2$), and 3) sample size for each group ($n_1$, $n_2$).
 
@@ -612,174 +605,8 @@ cbind(unpaired, paired)
 
 There are several options available in `escalc` to account for paired designs. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See appendix (@sec).
 
-# Discrete outcomes with categorical predictor (lnOR, lnRR)
+### Specifying $rho$
+The correlation between groups, $rho$ (`ri` in `escalc`) is rarely reported and so needs to be assigned based, basically, on guesswork. We'd suggest that if the pairing is within an individual or plot (e.g., before-after a treatment), then a rho of 0.8 seems reasonable. However, if the pairing is based on paired independent plots (e.g., adjacent to each other) then perhaps a rho of 0.5 would be more reasonable. 
 
-The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.
+Consider conducting sensitivity analyses on these choices, to ensure that they aren't unduly changing your model estimates.
 
-|         | Alive | Dead | Total      |
-|---------|-------|------|------------|
-| Drug    | $a$   | $b$  | $n1 = a+b$ |
-| Placebo | $c$   | $d$  | $n2 = c+d$ |
-
-$$lnOR = log(\frac{a * d}{b * c})$$
-
-## log Risk Ratio (lnRR)
-
-The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others.
-
-@Kyle*, can you help with this?*
-
-lnRR is defined as:
-
-$$\begin{aligned}
-&p1 = a/n1 \\
-&p2 = c/n2 \\
-&lnRR = log(p1/p2) \\
-\end{aligned}$$
-
-## Assumptions
-
-## Interpretation
-
-To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.
-
-|         | Alive | Dead |
-|---------|-------|------|
-| Drug    | 35    | 12   |
-| Placebo | 15    | 21   |
-
-lnOR can be calculated by plugging these values into escalc:
-
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-escalc(measure = "OR",
-       ai = 35, bi = 12,
-       ci = 15, di = 21)
-
-```
-
-To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):
-
-$$OR = e^{lnOR}$$
-
-```{r}
-exp(1.4069) |> round()
-```
-
-An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.
-
-We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.
-
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-out <- escalc(measure = "RR",
-       ai = 35, bi = 12,
-       ci = 15, di = 21)
-
-exp(out$yi[1])
-
-```
-
-A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.
-
-*Not sure I am correctly interpreting these*
-
-## Continuity corrections
-
-lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.
-
-lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
-
-## Matched pairs contingency tables
-
-*Are these essentially paired lnOR?*
-
-Directly from `escalc`:
-
-"The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:"
-
-|                 | trt 2 outcome 1 | trt 2 outcome 2 |
-|-----------------|-----------------|-----------------|
-| trt 1 outcome 1 | ai              | bi              |
-| trt 1 outcome 2 | ci              | di              |
-
-"Note that ‘trt1’ and ‘trt2’ may be applied to a single group of subjects or to matched pairs of subjects. Also, ‘trt1’ and ‘trt2’ might refer to two different time points (e.g., before and after a treatment). In any case, the data from such a study can be rearranged into a marginal table of the form:"
-
-|                 | outcome 1 | outcome 2 |
-|-----------------|-----------|-----------|
-| trt 1 or time 1 | ai + bi   | ci + di   |
-| trt 2 or time 2 | ai + ci   | bi + di   |
-
-*I'm not sure I follow this*
-
-Options in `escalc`: "MPRR" (marginal log-risk ratio); "MPOR" (marginal log odds ratio); "MPRD" (marginal risk difference)
-
-And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional log odds ratio estimated with Peto's method)
-
-The paired versions require $r$, just as with paired SMD/lnRoM. In R:
-
-```{r}
-
-# blah blah blah blah
-
-```
-
-# Continuous outcomes with continuous predictor (Zr)
-
-Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1). See Appendix (@sec) for sampling variance formulas.
-
-$$\begin{aligned}
-&r_{i} \leftarrow \min(1, \max(-1, r_i))\\
-&Z_{r_i} = atanh(r_{i})\\
-\end{aligned}$$ The sampling variance of Zr depends entirely on sample size and is defined as:
-
-$$Var(Z_r) = \frac{1}{n-3}$$ As you can see, sampling variance is only calculable if $n>3$.
-
-In `escalc`, this looks like:
-
-```{r}
-escalc(ri = 0.7, ni = 15,
-       measure = "ZCOR")
-```
-
-Zr has among the least biased of point estimate and variance formulas.
-
-*What to do about 0/1 or binary outcomes with a continuous predictor?*
-
-## Assumptions
-
-XXXXX
-
-## Interpretation
-
-Zr effect sizes describe the strength and direction of a relationship between two continuous variables.
-
-## Other correlation types
-
-### Point-biserial correlations & biserial correlations
-
-Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).
-
-In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. `escalc` provides a shorthand to directly convert these statistics to Zr:
-
-```{r}
-# For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`
-escalc(measure = "ZPB",
-      m1i = 13.5, m2i = 10.1,
-      sd1i = 1.5, sd2i = 2.1,
-      n1i = 15, n2i = 15)
-
-
-# For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`
-escalc(measure = "ZBIS",
-      m1i = 13.5, m2i = 10.1,
-      sd1i = 1.5, sd2i = 2.1,
-      n1i = 15, n2i = 15)
-
-```

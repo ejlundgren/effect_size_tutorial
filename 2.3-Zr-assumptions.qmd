@@ -1,0 +1,119 @@
+---
+title: "Continuous predictors"
+subtitle: "Correlate this"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "2.3-Zr-assumptions.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+
+```
+
+Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1). See Appendix (@sec) for sampling variance formulas.
+
+$$\begin{aligned}
+&r_{i} \leftarrow \min(1, \max(-1, r_i))\\
+&Z_{r_i} = atanh(r_{i})\\
+\end{aligned}$$ The sampling variance of Zr depends entirely on sample size and is defined as:
+
+$$Var(Z_r) = \frac{1}{n-3}$$ As you can see, sampling variance is only calculable if $n>3$.
+
+In `escalc`, this looks like:
+
+```{r}
+escalc(ri = 0.7, ni = 15,
+       measure = "ZCOR")
+```
+
+Zr has among the least biased of point estimate and variance formulas.
+
+*What to do about 0/1 or binary outcomes with a continuous predictor?*
+
+## Assumptions
+
+XXXXX
+
+## Interpretation
+
+Zr effect sizes describe the strength and direction of a relationship between two continuous variables.
+
+## Other correlation types
+
+### Point-biserial correlations & biserial correlations
+
+Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).
+
+In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. `escalc` provides a shorthand to directly convert these statistics to Zr:
+
+```{r}
+# For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`
+escalc(measure = "ZPB",
+      m1i = 13.5, m2i = 10.1,
+      sd1i = 1.5, sd2i = 2.1,
+      n1i = 15, n2i = 15)
+
+
+# For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`
+escalc(measure = "ZBIS",
+      m1i = 13.5, m2i = 10.1,
+      sd1i = 1.5, sd2i = 2.1,
+      n1i = 15, n2i = 15)
+
+```

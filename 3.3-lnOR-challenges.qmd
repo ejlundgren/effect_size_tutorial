@@ -10,7 +10,7 @@ format:
     toc-float: true
     toc-expand: true
     toc-title: "**CONTENTS**"
-    output-file: "lnOR_extraction_challenges.html"
+    output-file: "3.3-lnOR-challenges.html"
     # embed-resources: true
     # code-fold: true
     code-link: true
@@ -87,10 +87,10 @@ dat <- data.table(fledged_predators_absent = rep("", 3),
                   fledged_predators_present = rep("", 3),
                   failed_predators_absent = rep("", 3),
                   failed_predators_present = rep("", 3))
-dat
+knitr::kable(dat)
+
 ```
-
-
+**Add values so this doesn't look so dumb...**
 
 Here is a cheatsheet for extracting lnOR/lnRR type data: [XXXXXXX]
 
@@ -163,6 +163,7 @@ dat <- data.table(year = 1990:1999,
 dat[, total_individuals := c(150, 131, 160, 171, 153, 158, 111, 95, 98, 101)]
 dat[, number_deceased := c(5, 8, 4, 7, 11, 13, 12, 18, 15, 17)]
 dat[, mortality_rate := round(number_deceased / total_individuals, 2)]
+dat$treatment <- factor(dat$treatment, levels = c("Pre", "Post"))
 
 ggplot(data = dat, aes(x = year, y = mortality_rate, fill = treatment))+
   geom_col()+
@@ -170,7 +171,7 @@ ggplot(data = dat, aes(x = year, y = mortality_rate, fill = treatment))+
                     values = c("Pre" = "dodgerblue2",
                                "Post" = "indianred"),
                     labels = c("Pre" = "Pre-treatment",
-                               "Pre" = "Post-treatment"))+ 
+                               "Post" = "Post-treatment"))+ 
   xlab(NULL)+
   ylab("Mortality rate")+
   scale_x_continuous(breaks = 1990:1999)+
@@ -187,7 +188,7 @@ To extract data like this, you would need to determine the total population size
 #| eval: true
 #| echo: false
 
-dat
+knitr::kable(dat)
 
 ```
 
@@ -203,7 +204,7 @@ dat.sum <- dat %>% group_by(treatment) %>%
             number_deceased = sum(number_deceased)) %>%
   mutate(number_living = total_individuals - number_deceased)
 
-dat.sum
+knitr::kable(dat.sum)
 
 ```
 
@@ -211,23 +212,6 @@ The columns `number_deceased` and `number_living` provide you the contingency ta
 
 However, what do you do if there is no sample size provided (e.g., total number of individuals)? In this case, your best bet is to calculate the mean ± SD of each year per treatment group and use this to calculate SMD. Since these values are proportions, be sure to arcsin transform these values (see @sec). The resulting effect size and sampling variance can then be converted to lnOR to be comparable to the rest of your dataset.
 
-## Mean±error outcome for two discrete groups
-
-Sometimes discrete outcomes are summarized into mean±error across trials/sites/islands/etc. This data format lends itself naturally to SMD/lnRoM/Zmu type effect sizes. However, the sample size for these effect sizes are likely to be different than for an lnOR type effect size, which uses the number of individuals as the sample size.
-
-**FIGURE**
-
-In these cases, you can either: 
-
-1) convert the mean±SD to proportion and use that to calculate number of individuals
-
-or
-
-2) use `rbinom` to draw number of individuals? Brain is tired maybe this is stupid and I'm not thinking right. Hmmmm.
-
-```{r}
-# HMMMMM
-```
 
 ## Survivorship curves
 
@@ -287,9 +271,104 @@ In this case, the y axis is the proportion ($p1$ and $p2$) for each group (group
 
 As one can see, this type of data also poses a classic time-series challenge, which can face all effect sizes. We recommend extracting the data for each time point and then using random effects to control for temporal autocorrelation in your meta-analytic model (see sec-XXXX). An alternative is to extract the time point with the greatest difference between control and treatment and analyze that.
 
+## Mean±error outcome for two discrete groups
+
+Sometimes discrete outcomes are summarized into mean±error across trials/sites/islands/etc. This data format lends itself naturally to SMD/lnRoM/Zmu type effect sizes @sec. However, the sample size for these effect sizes are likely to be the number of trials/sites/islands/etc instead of the number of individuals. This may make this effect size uncomparable to the rest of your dataset, if the rest of your dataset has individuals as the unit of replication. 
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+# Simple:
+dt <- data.table(mean = c(0.15, 0.31), 
+                 group = c("Control", "Treatment"),
+                 se = c(0.01, 0.015))
+# dt <- 
+ggplot(data = dt,
+       aes(x = group, y = mean, fill = group, ymin = mean-se,
+           ymax = mean+se))+
+  geom_col()+
+  geom_errorbar(width = 0.5)+
+  scale_fill_manual(NULL,
+                    values = c("Control" = "dodgerblue2",
+                               "Treatment" = "indianred"))+  
+  xlab(NULL)+
+  ylab("Mean mortality rate across sites (±standard error)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+dt[, n_sites := ifelse(group == "Control", 7, 9)]
+
+```
+
+This data required a total number of individuals in each fate category (e.g., alive vs dead) and is thus ultimately best suited for lnOR type effect sizes—yet it's presented in a way that is most readily extractable for SMD/lnRoM/Zmu effect sizes. Moreover, as you can see, this figure presents standard error, not standard deviation. Converting standard error to standard deviation requires the sample size used by the study authors to calculate standard error in the first place, which is the number of sites.
+
+In this case, we'd recommend reconstructing the fate of individuals within each site, using properties of the binomial distribution. This requires the following information:
+
+**Is this the best option???**
+
+1) the number of sites used in calculating the standard error.
+
+2) the number of individuals at each site.
+
+The number of sites is, in binomial speak, the number of trials (usually denoted $m$ but here we'll denote it as $t$ to avoid confusion with mean). The number of individuals is the number of observations ($n$).
+
+Let's imagine that we found that the number of sites was 7 for the control treatment and 9 for the treatment. We start by using these to convert the extracted standard error ($se$) to standard deviation ($sd$) in our data.table we extracted from the figure:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+dt[, sd := se * sqrt(n_sites)]
+
+knitr::kable(dt)
+
+```
+
+**I'm not sure this is right...**
+
+We now use the mean ($m$) and standard deviation to calculate $p$, the parameter that describes the shape of the binomial distribution. Note that the the standard deviation must be less than the square root of the mean.
+
+$$
+p=1-\frac{sd^2}{m}
+$$
+We also gleaned from the text that the number of individuals was 30 per site Things get more tricky, coding wise, if the number of individuals is different per site. We use this, along with `p` to simulate the underlying number of individuals that are alive vs dead across all sites per control and treatment.
+
+`rbinom`, which we'll use to draw binomial data, takes `p` as well as `n`, which is the number of sites, and `size`, which is the number of individuals per site
+**Is that correct??**
+
+Since we're interested in the total number that lived, we take the sum of each vector produced by `rbinom`. This vector will be of length equal to the number of sites, with an integer that is the number that lived of 30 individuals per site.
+
+**p becomes equal in both treatments...Think there must be a relationship between mean and sd that I don't understand. Or my equation is wrong...**
+```{r}
+dt[, p := (1 - (sd^2)/mean)]
+
+for(i in 1:nrow(dt)){
+  dt$n_alive[i] <- rbinom(n = dt$n_sites[i],
+                     size = 30,
+                     p = dt$p[i]) |> sum()
+}
+
+# Now calculate total number individuals:
+dt[, total_individuals := 30 * n_sites]
+dt[, n_dead := total_individuals - n_alive]
+
+knitr::kable(dt)
+
+```
+
+Now you have the ingredients to calculate lnOR or lnRR. The sample size went from 7 and 9 to the actual number of individuals, making the unit of replication comparable with the other effect sizes in your dataset.
+
+Note, that if there were variable numbers of individuals per site, then you'd want to create a long dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, using the number of individuals per site as your `size` in the code above. 
+
+Let us know if you'd like us to write sample code to do something like that :)
+
 ## LC50?
 
-Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome.
+Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).
 
 These figures look like this:
 
@@ -297,9 +376,7 @@ These figures look like this:
 #' @Kyle?
 ```
 
-LC50 is already its own effect size. There is no known way to convert it to lnOR or lnRR. We're as clueless as you :)
-
-**Are these directly comparable to regular lnOR/lnRR effect sizes?**
+LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.
 
 ## Model estimates
 

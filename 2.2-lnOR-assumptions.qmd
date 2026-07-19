@@ -1,0 +1,183 @@
+---
+title: "Discrete outcome & discrete predictor assumptions and interpretation"
+subtitle: "Sometimes it is just black and white"
+date: "`r Sys.Date()`"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**CONTENTS**"
+    output-file: "2.2-lnOR-assumptions.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+library("metaDigitise")
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+
+```
+
+The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.
+
+|         | Alive | Dead | Total      |
+|---------|-------|------|------------|
+| Drug    | $a$   | $b$  | $n1 = a+b$ |
+| Placebo | $c$   | $d$  | $n2 = c+d$ |
+
+$$lnOR = log(\frac{a * d}{b * c})$$
+
+## log Risk Ratio (lnRR)
+
+The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others.
+
+@Kyle*, can you help with this?*
+
+lnRR is defined as:
+
+$$\begin{aligned}
+&p1 = a/n1 \\
+&p2 = c/n2 \\
+&lnRR = log(p1/p2) \\
+\end{aligned}$$
+
+## Assumptions
+
+## Interpretation
+
+To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.
+
+|         | Alive | Dead |
+|---------|-------|------|
+| Drug    | 35    | 12   |
+| Placebo | 15    | 21   |
+
+lnOR can be calculated by plugging these values into escalc:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+escalc(measure = "OR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21)
+
+```
+
+To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):
+
+$$OR = e^{lnOR}$$
+
+```{r}
+exp(1.4069) |> round()
+```
+
+An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.
+
+We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+out <- escalc(measure = "RR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21)
+
+exp(out$yi[1])
+
+```
+
+A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.
+
+*Not sure I am correctly interpreting these*
+
+## Continuity corrections
+
+lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.
+
+lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
+
+## Matched pairs contingency tables
+
+*Are these paired lnOR?????*
+
+Directly from `escalc`:
+
+"The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:"
+
+|                 | trt 2 outcome 1 | trt 2 outcome 2 |
+|-----------------|-----------------|-----------------|
+| trt 1 outcome 1 | ai              | bi              |
+| trt 1 outcome 2 | ci              | di              |
+
+"Note that ‘trt1’ and ‘trt2’ may be applied to a single group of subjects or to matched pairs of subjects. Also, ‘trt1’ and ‘trt2’ might refer to two different time points (e.g., before and after a treatment). In any case, the data from such a study can be rearranged into a marginal table of the form:"
+
+|                 | outcome 1 | outcome 2 |
+|-----------------|-----------|-----------|
+| trt 1 or time 1 | ai + bi   | ci + di   |
+| trt 2 or time 2 | ai + ci   | bi + di   |
+
+*I'm not sure I follow this*
+
+Options in `escalc`: "MPRR" (marginal log-risk ratio); "MPOR" (marginal log odds ratio); "MPRD" (marginal risk difference)
+
+And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional log odds ratio estimated with Peto's method)
+
+The paired versions require $r$, just as with paired SMD/lnRoM. In R:
+
+```{r}
+
+# blah blah blah blah
+
+```

@@ -10,7 +10,7 @@ format:
     toc-float: true
     toc-expand: true
     toc-title: "**CONTENTS**"
-    output-file: "Zr_extraction_challenges.html"
+    output-file: "3.4-Zr-challenges.html"
     # embed-resources: true
     # code-fold: true
     code-link: true
@@ -71,7 +71,7 @@ source("scripts/functions/convert_effect_sizes.R")
 
 Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.
 
-![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg){width=60%} 
+<!-- ![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg){width=60%} -->
 
 
 ## Simple figures
@@ -262,7 +262,7 @@ for(i in 1:nrow(dat)){
 }
 xy_expanded <- rbindlist(xy_expanded)
 
-head(xy_expanded)
+knitr::kable(head(xy_expanded))
 ```
 
 Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.
@@ -441,7 +441,7 @@ dt.expanded$n_individuals <- NULL
 dt.expanded[, living := ifelse(status == "number_alive", 1, 0)]
 dt.expanded$status <- NULL
 
-head(dt.expanded)
+knitr::kable(head(dt.expanded))
 
 ```
 
@@ -524,7 +524,7 @@ for(i in 1:nrow(dt)){
 }
 y_expanded <- rbindlist(y_expanded)
 
-head(y_expanded)
+knitr::kable(head(y_expanded))
 
 ```
 
@@ -544,7 +544,7 @@ final_dat[, living := ifelse(status == "n_living", 1, 0)]
 final_dat <- final_dat[, .(temperature, living)]
 
 nrow(final_dat)
-head(final_dat)
+knitr::kable(head(final_dat))
 
 ```
 This final dataset has 1,350 rows, one for individual, and the necessary ingredients for calculating Zr. Calculating Zr directly from the mean survivorship across trials would treat the number of temperature treatments as sample size, instead of the number of individuals across all trials, which would give it considerably higher sampling variance and much lower weight in your meta-analytic models.
@@ -574,7 +574,7 @@ mat2[lower.tri(mat2, diag = TRUE)] <- NA
 colnames(mat2) <- c("Sally", "James", "Bart", "Sergeant Brown")
 row.names(mat2) <- c("Sally", "James", "Bart", "Sergeant Brown")
 
-mat1
+knitr::kable(mat1)
 
 ```
 
@@ -585,7 +585,7 @@ Associated with a matrix of defending each other from adversaries:
 #| eval: true
 #| out-width: "70%"
 
-mat2
+knitr::kable(mat2)
 ```
 
 First, you need to melt these matrices into vectors:
@@ -608,7 +608,7 @@ And now you're free to calculate ZCOR:
 ```{r}
 escalc(measure = "ZCOR", 
        ri = res$estimate,
-       ni = nrow(mat1)) |> unlist()
+       ni = nrow(mat1))
 ```
 
 **IS THIS CORRECT???**
@@ -616,3 +616,10 @@ escalc(measure = "ZCOR",
 ## Model estimates
 
 ....
+
+
+## NOTES:
+
+"For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function." <- from `escalc` documentation
+
+`rcalc`: "Function to calculate the variance-covariance matrix of correlation coefficients computed based on the same sample of subjects." Ooof. This is another dimension of complexity....
