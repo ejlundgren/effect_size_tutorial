@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-07-18">
+<meta name="dcterms.date" content="2026-07-19">
 <title>Continuous predictor – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -311,6 +311,7 @@ window.Quarto = {
 </li>
   <li><a href="#matrices" id="toc-matrices" class="nav-link" data-scroll-target="#matrices">Matrices</a></li>
   <li><a href="#model-estimates" id="toc-model-estimates" class="nav-link" data-scroll-target="#model-estimates">Model estimates</a></li>
+  <li><a href="#notes" id="toc-notes" class="nav-link" data-scroll-target="#notes">NOTES:</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -327,7 +328,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 18, 2026</p>
+      <p class="date">July 19, 2026</p>
     </div>
   </div>
   
@@ -355,14 +356,14 @@ window.Quarto = {
 <span><span class="va">out</span><span class="op">$</span><span class="va">estimate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      cor 
-0.8228196 </code></pre>
+0.7993122 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZCOR"</span>,</span>
 <span>       ri <span class="op">=</span> <span class="va">out</span><span class="op">$</span><span class="va">estimate</span>, ni <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.1655 0.0213 </code></pre>
+1 1.0967 0.0213 </code></pre>
 </div>
 </div>
 </section><section id="overplotting" class="level2"><h2 class="anchored" data-anchor-id="overplotting">Overplotting</h2>
@@ -405,12 +406,12 @@ Warning
 <div class="cell-output cell-output-stdout">
 <pre><code>          x         y        sd     n
       &lt;num&gt;     &lt;num&gt;     &lt;num&gt; &lt;num&gt;
-1: 6.378028  8.317835 0.8166037    10
-2: 6.848505 10.304411 0.3418988    10
-3: 8.077939 10.317943 0.3050038    10
-4: 5.982523  6.678794 0.3878527    10
-5: 7.171858  9.213693 0.7587774    10
-6: 5.976327  7.694187 0.1120582    10</code></pre>
+1: 6.580197  8.086862 0.1137918    10
+2: 5.819621  7.625528 0.2610888    10
+3: 7.112273  8.924882 0.1666608    10
+4: 7.288530  8.078789 0.4775739    10
+5: 7.734402 11.579737 1.1054122    10
+6: 6.404772  9.030905 0.1443510    10</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">y_expanded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -426,12 +427,12 @@ Warning
 <div class="cell-output cell-output-stdout">
 <pre><code>          y        x
       &lt;num&gt;    &lt;num&gt;
-1: 7.352290 6.378028
-2: 7.924516 6.378028
-3: 8.738054 6.378028
-4: 8.139501 6.378028
-5: 7.561533 6.378028
-6: 8.605054 6.378028</code></pre>
+1: 8.015352 6.580197
+2: 8.011593 6.580197
+3: 7.927198 6.580197
+4: 8.035034 6.580197
+5: 8.037210 6.580197
+6: 8.031844 6.580197</code></pre>
 </div>
 </div>
 <p>In this example data, each point had an internal N of 10 measurements. Notice that the original dataset went from 50 rows (individual points) to 500 rows (50 * 10). We then take this expanded dataset and calculate our correlation coefficient and effect size:</p>
@@ -446,7 +447,7 @@ Warning
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.1587 0.0020 </code></pre>
+1 1.1786 0.0020 </code></pre>
 </div>
 </div>
 <p>Pretty neat, right?</p>
@@ -466,14 +467,14 @@ Warning
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          x         y      y_sd   y_n       x_sd   x_n
-      &lt;num&gt;     &lt;num&gt;     &lt;num&gt; &lt;num&gt;      &lt;num&gt; &lt;num&gt;
-1: 6.378028  8.317835 0.8166037    10 0.06043683    20
-2: 6.848505 10.304411 0.3418988    10 0.46304474    20
-3: 8.077939 10.317943 0.3050038    10 0.07040155    20
-4: 5.982523  6.678794 0.3878527    10 0.05560234    20
-5: 7.171858  9.213693 0.7587774    10 0.01891223    20
-6: 5.976327  7.694187 0.1120582    10 0.24100621    20</code></pre>
+<pre><code>          x         y      y_sd   y_n      x_sd   x_n
+      &lt;num&gt;     &lt;num&gt;     &lt;num&gt; &lt;num&gt;     &lt;num&gt; &lt;num&gt;
+1: 6.580197  8.086862 0.1137918    10 0.3097916    20
+2: 5.819621  7.625528 0.2610888    10 0.1503916    20
+3: 7.112273  8.924882 0.1666608    10 0.1387269    20
+4: 7.288530  8.078789 0.4775739    10 0.1835382    20
+5: 7.734402 11.579737 1.1054122    10 0.0142382    20
+6: 6.404772  9.030905 0.1443510    10 0.4096762    20</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Choose the n with the lowest sample size:</span></span>
 <span><span class="va">dat</span><span class="op">[</span>, <span class="va">n</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x_n</span>, <span class="va">y_n</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
@@ -499,28 +500,28 @@ Warning
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">8.692503</td>
-<td style="text-align: right;">6.310236</td>
+<td style="text-align: right;">8.037997</td>
+<td style="text-align: right;">6.741757</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">9.040054</td>
-<td style="text-align: right;">6.455919</td>
+<td style="text-align: right;">7.916507</td>
+<td style="text-align: right;">7.393582</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">8.600716</td>
-<td style="text-align: right;">6.407741</td>
+<td style="text-align: right;">8.144775</td>
+<td style="text-align: right;">6.378405</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.844927</td>
-<td style="text-align: right;">6.361895</td>
+<td style="text-align: right;">7.951031</td>
+<td style="text-align: right;">6.581735</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">8.187603</td>
-<td style="text-align: right;">6.336453</td>
+<td style="text-align: right;">8.190803</td>
+<td style="text-align: right;">6.291490</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">7.719404</td>
-<td style="text-align: right;">6.409165</td>
+<td style="text-align: right;">8.069009</td>
+<td style="text-align: right;">6.508921</td>
 </tr>
 </tbody>
 </table>
@@ -539,7 +540,7 @@ Warning
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.1587 0.0020 </code></pre>
+1 1.1786 0.0020 </code></pre>
 </div>
 </div>
 </section><section id="mismatched-time-series" class="level2"><h2 class="anchored" data-anchor-id="mismatched-time-series">Mismatched time series</h2>
@@ -589,11 +590,11 @@ Warning
 <pre><code>   temperature proportion_alive number_alive number_dead
          &lt;int&gt;            &lt;num&gt;        &lt;num&gt;       &lt;num&gt;
 1:          10        0.8000000           12           3
-2:          11        0.6192864            9           6
-3:          12        0.5573450            8           7
-4:          13        0.5099573            7           8
-5:          14        0.4728572            7           8
-6:          15        0.4681186            7           8</code></pre>
+2:          11        0.5177633            7           8
+3:          12        0.4722563            7           8
+4:          13        0.3515645            5          10
+5:          14        0.2773468            4          11
+6:          15        0.2416950            3          12</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Now melt dataset:</span></span>
 <span><span class="va">dt.mlt</span> <span class="op">&lt;-</span> <span class="fu">melt</span><span class="op">(</span><span class="va">dt</span>, </span>
@@ -605,11 +606,11 @@ Warning
 <pre><code>   temperature proportion_alive       status n_individuals
          &lt;int&gt;            &lt;num&gt;       &lt;fctr&gt;         &lt;num&gt;
 1:          10        0.8000000 number_alive            12
-2:          11        0.6192864 number_alive             9
-3:          12        0.5573450 number_alive             8
-4:          13        0.5099573 number_alive             7
-5:          14        0.4728572 number_alive             7
-6:          15        0.4681186 number_alive             7</code></pre>
+2:          11        0.5177633 number_alive             7
+3:          12        0.4722563 number_alive             7
+4:          13        0.3515645 number_alive             5
+5:          14        0.2773468 number_alive             4
+6:          15        0.2416950 number_alive             3</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Now expand dataset to a binary response dataset:</span></span>
 <span><span class="va">dt.expanded</span> <span class="op">&lt;-</span> <span class="va">dt.mlt</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">.N</span><span class="op">)</span>, <span class="va">n_individuals</span><span class="op">)</span>, <span class="op">]</span></span>
@@ -671,7 +672,7 @@ Warning
 <span>       ri <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># only doing this because of the ugly table outputs....</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          yi           vi 
--0.498445663  0.004504505 </code></pre>
+-0.521756780  0.004219409 </code></pre>
 </div>
 </div>
 <p>Remember, the reason we did all of this work was to make this effect size comparable to other effect sizes where sample size was derived from the number of individuals, which we believe is the best way to treat data like this.</p>
@@ -696,16 +697,16 @@ p=1-\frac{sd^2}{m}
 <div class="cell-output cell-output-stdout">
 <pre><code>   temperature proportion_alive         sd
          &lt;int&gt;            &lt;num&gt;      &lt;num&gt;
-1:          10        0.8000000 0.06831655
-2:          11        0.7144432 0.03356224
-3:          12        0.5229165 0.06349258
-4:          13        0.4290414 0.04767729
-5:          14        0.4253150 0.06029992
-6:          15        0.3522609 0.05452788</code></pre>
+1:          10        0.8000000 0.05346933
+2:          11        0.4197144 0.06012318
+3:          12        0.3961206 0.02896671
+4:          13        0.3837917 0.05099862
+5:          14        0.3476519 0.05508410
+6:          15        0.3434045 0.05422708</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html">all</a></span><span class="op">(</span><span class="va">dt</span><span class="op">$</span><span class="va">sd</span> <span class="op">&lt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">dt</span><span class="op">$</span><span class="va">proportion_alive</span><span class="op">)</span><span class="op">)</span> <span class="co"># Must be TRUE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] FALSE</code></pre>
+<pre><code>[1] TRUE</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Calculate 'p':</span></span>
 <span><span class="co"># dt[, p := 1 - (sd^2/proportion_alive)] # I don't think this is correct...Confused. Using proportion_alive for now</span></span>
@@ -742,15 +743,15 @@ p=1-\frac{sd^2}{m}
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">10</td>
+<td style="text-align: right;">14</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">12</td>
+<td style="text-align: right;">9</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">11</td>
+<td style="text-align: right;">5</td>
 <td style="text-align: right;">11</td>
 </tr>
 </tbody>
@@ -773,7 +774,7 @@ p=1-\frac{sd^2}{m}
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">final_dat</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1275</code></pre>
+<pre><code>[1] 1125</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">final_dat</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -829,23 +830,23 @@ p=1-\frac{sd^2}{m}
 <tr class="odd">
 <td style="text-align: left;">Sally</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">6.708137</td>
-<td style="text-align: right;">43.548134</td>
-<td style="text-align: right;">65.78669</td>
+<td style="text-align: right;">2.915332</td>
+<td style="text-align: right;">78.86997</td>
+<td style="text-align: right;">86.16433</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">James</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">6.304384</td>
-<td style="text-align: right;">91.57421</td>
+<td style="text-align: right;">10.57303</td>
+<td style="text-align: right;">52.62949</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bart</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">21.26531</td>
+<td style="text-align: right;">71.45777</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Sergeant Brown</td>
@@ -873,23 +874,23 @@ p=1-\frac{sd^2}{m}
 <tr class="odd">
 <td style="text-align: left;">Sally</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">27.94782</td>
-<td style="text-align: right;">30.237102</td>
-<td style="text-align: right;">33.73563</td>
+<td style="text-align: right;">57.86469</td>
+<td style="text-align: right;">14.73556</td>
+<td style="text-align: right;">82.74392</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">James</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">9.593894</td>
-<td style="text-align: right;">93.27634</td>
+<td style="text-align: right;">17.37874</td>
+<td style="text-align: right;">44.65180</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bart</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">88.95320</td>
+<td style="text-align: right;">59.11932</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Sergeant Brown</td>
@@ -916,11 +917,11 @@ p=1-\frac{sd^2}{m}
     Kendall's rank correlation tau
 
 data:  mat1$value and mat2$value
-T = 13, p-value = 0.05556
+T = 9, p-value = 0.7194
 alternative hypothesis: true tau is not equal to 0
 sample estimates:
-      tau 
-0.7333333 </code></pre>
+tau 
+0.2 </code></pre>
 </div>
 </div>
 <p>And now you’re free to calculate ZCOR:</p>
@@ -931,12 +932,15 @@ sample estimates:
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 0.9359 0.3333 </code></pre>
+1 0.2027 0.3333 </code></pre>
 </div>
 </div>
 <p><strong>IS THIS CORRECT???</strong></p>
 </section><section id="model-estimates" class="level2"><h2 class="anchored" data-anchor-id="model-estimates">Model estimates</h2>
 <p>….</p>
+</section><section id="notes" class="level2"><h2 class="anchored" data-anchor-id="notes">NOTES:</h2>
+<p>“For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function.” &lt;- from <code>escalc</code> documentation</p>
+<p><code>rcalc</code>: “Function to calculate the variance-covariance matrix of correlation coefficients computed based on the same sample of subjects.” Ooof. This is another dimension of complexity….</p>
 
 
 <!-- -->
@@ -2010,6 +2014,13 @@ sample estimates:
 <span id="cb36-662"><a href="#cb36-662" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model estimates</span></span>
 <span id="cb36-663"><a href="#cb36-663" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-664"><a href="#cb36-664" aria-hidden="true" tabindex="-1"></a>....</span>
+<span id="cb36-665"><a href="#cb36-665" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-666"><a href="#cb36-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-667"><a href="#cb36-667" aria-hidden="true" tabindex="-1"></a><span class="fu">## NOTES:</span></span>
+<span id="cb36-668"><a href="#cb36-668" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-669"><a href="#cb36-669" aria-hidden="true" tabindex="-1"></a>"For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function." &lt;- from <span class="in">`escalc`</span> documentation</span>
+<span id="cb36-670"><a href="#cb36-670" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-671"><a href="#cb36-671" aria-hidden="true" tabindex="-1"></a><span class="in">`rcalc`</span>: "Function to calculate the variance-covariance matrix of correlation coefficients computed based on the same sample of subjects." Ooof. This is another dimension of complexity....</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
