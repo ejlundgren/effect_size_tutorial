@@ -74,10 +74,6 @@ library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
 
-# Source our custom functions:
-source("scripts/functions/eff_size.R")
-source("scripts/functions/convert_effect_sizes.R")
-
 ```
 
 ```{r}
@@ -85,12 +81,7 @@ source("scripts/functions/convert_effect_sizes.R")
 #| echo: false
 #| output: false
 
-file.copy("../package_development/metatools_dev/scripts/1_functions/convert_effect_sizes.R",
-          "scripts/functions/convert_effect_sizes.R",
-          overwrite = T)
-file.copy("../package_development/metatools_dev/scripts/1_functions/eff_size.R",
-          "scripts/functions/eff_size.R",
-          overwrite = T)
+
 file.copy("../package_development/metatools_dev/data/conversion_formulas.csv",
           "data/conversion_formulas.csv",
           overwrite = T)
@@ -98,9 +89,14 @@ file.copy("../package_development/metatools_dev/data/effect_size_formulas.csv",
           "data/effect_size_formulas.csv",
           overwrite = T)
 
+
+# Source our custom functions:
+source("scripts/functions/eff_size.R")
+source("scripts/functions/convert_effect_sizes.R")
+
 ```
 
-# Introduction
+# Introduction {#sec-introduction}
 
 Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (e.g., what is) and metascientific questions.
 
@@ -108,17 +104,17 @@ Meta-analysis can be really hard (and sorry, this tutorial aims to make it easie
 
 We here present a living tutorial to navigating this methodological tempest, with particular emphasis on extracting and calculating effect sizes from a variety of data formats. This tutorial is maintained by the Collaboration for Open Science and Synthesis in Ecology and Evolution at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. As such, we hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.
 
-# Voyaging among the ghosts of data past
+# Voyaging among the ghosts of data past  {#sec-voyagers}
 
-Meta-analyses are powerful. But they are full of tedium. And dealing with the challenges that we describe in this tutorial (hopefully in plain english) can be overwhelming. 
+Meta-analyses are powerful. But they are full of tedium. And dealing with the challenges that we describe in this tutorial (hopefully in plain english) can be overwhelming.
 
-Yet there is something beautiful and very human about doing a meta-analysis. You encounter the heartwork and hardwork of dozens or hundreds or thousands of fellow human beings. Stories from last year or 50 years ago, from people exploring, observing, experimenting, and trying to understand our universe. 
+Yet there is something beautiful and very human about doing a meta-analysis. You encounter the heartwork and hardwork of dozens or hundreds or thousands of fellow human beings. Stories from last year or 50 years ago, from people exploring, observing, experimenting, and trying to understand our universe.
 
-These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests. 
+These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests.
 
 While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and respect and awe for the work that came before us--these efforts to describe the mysteries of our world.
 
-# How to use this tutorial
+# How to use this tutorial  {#sec-how-to}
 
 We begin by providing an overview of the workflow we use in designing a meta-analysis, with particular attention paid to effect sizes, their assumptions, and to testing the influence of those assumptions with sensitivity analyses. We then describe the 3 most common effect size types used in ecology and evolution and their assumptions and alternative formulations. For each of these effect sizes, we then provide a detailed tutorial on how to extract data from both common and bizarre formats.
 
@@ -126,11 +122,10 @@ This tutorial is viewable as a webpage or you can clone the repo and run the .qm
 
 This tutorial is based on an `R` workflow and assumes that the users have a basic understanding of `R`.
 
-We begin by giving a brief overview of the steps to conducting a meta-analysis and planning data extraction @sec. We then present an overview of the main effect size types used in meta-analysis and their assumptions @sec. 
+We begin by giving a brief [primer](2.0-assumptions-interpretations.qmd) on effect sizes, their types, and assumptions. We then discuss the nuts and bolts of planning data [extraction](3.0-starting-extraction.qmd). 
 
-We then go into detail about how to extract data for these effect sizes, including the many odd and unusual data formats that you may uncover @sec. We conclude with a discussion of how to convert between effect size types @sec and provide additional code in the Appendix for other unusual cases @sec.
+We then go into [detail](3.1-universal-challenges.qmd) about how to extract data for these effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to [convert](4-converting-effect-sizes.qmd) between effect size types. In the appendix you'll find additional helpful material, including a [cheatsheet](5-escalc-cheatsheet.qmd) for the many options available in the workhorse of effect size calculation: metafor's `escalc` function [@Viechtbauer2010-uq].
 
-# A living tutorial
-This tutorial is a living document. As such, please help us keep it alive and useful. If we missed anything, if we made an error, or overlooked an extraction challenge, please file an Issue on our github page:
+# A living tutorial  {#sec-living-tutorial}
 
-https://github.com/ejlundgren/effect_size_tutorial/issues
+This tutorial is a living document. As such, please help us keep it alive and useful. If we missed anything, if we made an error, or overlooked an extraction challenge, please file an Issue on our github page [here](https://github.com/ejlundgren/effect_size_tutorial/issues).

@@ -64,14 +64,13 @@ library("simplermarkdown")
 library("crayon")
 library("kableExtra")
 
-
-# Source our custom functions:
-source("scripts/functions/eff_size.R")
-source("scripts/functions/convert_effect_sizes.R")
-
 ```
 
-We have briefly described tricks for recreating data from means±error, which you might encounter in error bars on a scatterplot (see @sec) or in a time series that you'd prefer to analyze as SMD (see @sec). For example, in a figure like this:
+# The dark magic of data reconstruction {#sec-dark-magic}
+
+Reconstructing the underlying distributions that lurk beneath data summaries is one of the most interesting and potentially dangerous tricks in our meta-analysis toolkit. These cases are experimental and require further research yet also can do something very important: align the units of replication of the data underlying your meta-analysis.
+
+These tools are for figures like this, which we have already described [here](3.4-Zr-challenges.qmd#sec-error-bars):
 
 ```{r}
 #| echo: false
@@ -99,8 +98,7 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 ```
 
-Or, like this:
-
+Or, like this for an [SMD effect size](3.2-smd-challenges.qmd#sec-smd-reconstructing-data):
 
 ```{r}
 #| eval: true
@@ -136,41 +134,87 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 If the data in these figures (underlying each point) is normally distributed you can use `rnorm` to simulate the original dataset based on the means, standard deviations, and sample sizes (as our code in those sections demonstrated). This allows you to calculate effect sizes on results that may otherwise be unextractable. However, this assumes that data is normally distributed, which may be not be true in the case of ecological or evolutionary data.
 
+## Determing the correct distribution {#sec-determining-the-distribution}
 
-**Is this actually ok to do?**
-
-
-## Determing the correct distribution
-To understand whether the underlying data can be drawn safely from the normal distribution, you need to think carefully about the data generating process. 
+To understand whether the underlying data can be drawn safely from the normal distribution, you need to think carefully about the data generating process.
 
 - Is the data discrete, e.g., count data or abundance data?
 
->*Abundance data generally follows a negative binomial or Poisson distribution.* 
->*Data bounded between 0 and 1 (e.g., cover data) follows the Beta distribution.*
+> *Abundance data generally follows a negative binomial or Poisson distribution.* *Data bounded between 0 and 1 (e.g., cover data) follows the Beta distribution.*
 
 - What is the relationship between the means and reported error?
 
->*In normally distributed data the coefficient of variation ($\frac{sd}{m}$) should be <X.*
->*The variance ($sd^2$) of Poisson type data should be equal to the mean (which is unusual)*
->*In negative binomial data, the variance should be greater than the mean.*
+> *In normally distributed data the coefficient of variation ($\frac{sd}{m}$) should be \<X. 
+> *The variance (*$sd^2$) of Poisson type data should be equal to the mean (which is unusual). 
+> *In negative binomial data, the variance should be greater than the mean.*
 
-Use these rules of thumb to help decide what distribution the underlying data is. Once you have a good idea, you then need to use distributionally specific formulas to convert the author-provided summary statistics (mean, standard deviation) to the distribution's own flavors. For example, negative binomial uses `size` instead of standard deviation to describe its dispersion. Luckily, as we show below, converting standard deviation to size is quite doable.
+Use these rules of thumb to help decide what distribution the underlying data is. Once you have a good idea, you then need to use distributionally specific formulas to convert the author-provided summary statistics (mean, standard deviation) to the distribution's own parameters. For example, negative binomial uses `size` instead of standard deviation to describe its dispersion. Luckily, as we show below, converting standard deviation to size is possible.
 
 Here is a table of the parameters necessary to simulate data in most distributions you'll encounter during a meta-analysis, along with the formulas to convert standard deviation to these parameters.
 
-| distribution          | diagnosis                            | common applications |
-|-----------------------|--------------------------------------|---------------------|
-| Normal                | continuous; XXXX; $CV < XXXX$        | XXXX                 |
-| Negative binomial     | count; Variance > mean               | Abundance data, XXX |
-| Poisson               | count; Variance ≈ mean               | Count data, XXX          |
-| Binomial              | probability (0-1) across trials; $sd < \sqrt(m)$ | success, survivorship, survival |
-| Beta                  | proportion bounded *between* 0 and 1 | Cover data, XXXX |
+| distribution | diagnosis | common applications |
+|---------------------|---------------------------------|-------------------|
+| Normal | continuous; XXXX; $CV < XXXX$ | XXXX |
+| Negative binomial | count; Variance \> mean | Abundance data, XXX |
+| Poisson | count; Variance ≈ mean | Count data, XXX |
+| Binomial | probability (0-1) across trials; $sd < \sqrt(m)$ | success, survivorship, survival |
+| Beta | proportion bounded *between* 0 and 1 | Cover data, XXXX |
 
-## Negative binomial
+
+
+:::callout-important
+######### Summarizing non-independent and independent data {#sec-callout-data-reconstruction}
+In several sections through this tutorial we demonstrate or allude to reconstructing underlying data behind author summaries. This can align the *unit of replication* of the resulting effect sizes with the rest of your dataset. 
+
+However, one should be thoughtful and careful about the non-independence structures embedded within these summaries. The resulting effect size will be based on a mixture of more and less independent data. For example, in the time series [above](#sec-smd-reconstructing-data), there are two types of non-independence: the measurements through time and the summarized measurements within each time point. 
+
+Reconstructing the underlying data with `rnorm`, as we demonstrated above, and then summarizing by the `mean±sd` of each treatment group mixes these non-independence structures.
+
+For that reason, we suggest that data extracted like this should be tagged and that you should record whether the data was summarized across time, across spatially-independent samples (or different individuals), or across both. These factors may explain methodological heterogeneity in your dataset. Note that similar mixtures of spatially, temporally, or spatiotemporally summarized data are also likely embedded within author-reported means±sds (which we also [recommend](3.1-universal-challenges.qmd#sec-callout-non-independence) recording)
+:::
+
+## Negative binomial {#sec-negative-binomial}
+
+**THIS WORKED BEFORE AND NOW DOESN'T**
+Also, is this really ok to do???
 
 We will here simulate the underlying data for negative binomial derived abundance data, as you might encounter in a time series (similar to the figure above).
 
-The object `dt` here is a dataset extracted from an article with Mean±SD for two groups in a time series (similar data as in @sec). We want to generate the underlying data for each point, so we can calculate group level mean±SD for the two treatments ("Present" vs "Eradicated"). The data looks like this:
+The object `dt` here is a dataset extracted from an article with Mean±SD for two groups in a time series (similar data as in our normally distributed example [here](3.2-smd-challenges.qmd#sec-smd-reconstructing-data)). 
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dt <- (structure(list(x1 = 1:10, mean = c(1.15246506001662, 0.617012258022042, 
+2.92559078415861, 5.44051812652133, 6.57076998232729, 6.95824795972284, 
+9.00492379537813, 8.94685646989777, 8.32950404584211, 9.56883252898138
+), status = c("Present", "Present", "Present", "Present", "Present", 
+"Present", "Present", "Present", "Eradicated", "Eradicated"), 
+    group = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1), sd = c(0.3, 0.3, 
+    0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3), N = c(10, 10, 10, 
+    10, 10, 10, 10, 10, 10, 10)), row.names = c(NA, -10L), class = c("data.table", 
+"data.frame")))
+dt[, sd := sqrt(mean) + rnorm(mean = 0.001, n = .N, sd = .01)]
+
+ggplot(data = dt, aes(x = x1, y = mean, fill = status, group = group))+
+  geom_path()+
+  geom_point(size = 3, shape = 21)+
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd))+
+  scale_fill_manual("Group of interest",
+                    values = c("Present" = "dodgerblue",
+                               "Eradicated"= "indianred"))+
+  scale_x_continuous(breaks = 1995:2005)+
+  xlab("Year")+
+  ylab("Response of interest (mean±SD)")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+
+```
+
+The data looks like this:
 
 ```{r}
 #| eval: true
@@ -179,31 +223,25 @@ The object `dt` here is a dataset extracted from an article with Mean±SD for tw
 # #| tbl-cap: "Custom Width Table"
 #| tbl-colwidths: [10, 10, 10]
 
-dt <- copy(structure(list(x1 = 1:10, mean = c(1.15246506001662, 0.617012258022042, 
-2.92559078415861, 5.44051812652133, 6.57076998232729, 6.95824795972284, 
-9.00492379537813, 8.94685646989777, 8.32950404584211, 9.56883252898138
-), status = c("Present", "Present", "Present", "Present", "Present", 
-"Present", "Present", "Present", "Eradicated", "Eradicated"), 
-    group = c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1), sd = c(0.3, 0.3, 
-    0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3), N = c(10, 10, 10, 
-    10, 10, 10, 10, 10, 10, 10), sd = c(0.3, 0.3, 0.3, 0.3, 0.3, 
-    0.3, 0.3, 0.3, 0.3, 0.3)), row.names = c(NA, -10L), class = c("data.table", 
-"data.frame")))
-dt[, sd := sqrt(mean) + .001]
-
 knitr::kable(dt[, .(status, mean, sd, N)], caption = "Raw summary statistics in normal scale.") 
    
 ```
 
-Note that the standard deviation has a positive relationship with the mean, which is an indicator that this data is derived from a negative binomial distribution.
+Note that in the negative binomial distribution, the standard deviation has a positive relationship with the mean, which is an indicator that this data is generated by a process described by the negative binomial distribution.
 
-Now let's convert the author provided `sd` to `size`, which is the parameter that describes the dispersion of the negative binomial family. This is based on the following relationship:
+Now let's convert the author provided `sd` to `size`, which is the parameter that describes the dispersion of the negative binomial family. This is based on the following relationship between the mean ($m$), variance ($Var$), and size ($size$):
 
 $$\begin{aligned}
-Variance = \mu + \frac{\mu^2}{size}
-\end{aligned}$$ Solving for `size` (which is the negative binomial flavor of standard deviation): $$\begin{aligned}
-size = \frac{\mu^2}{Variance - \mu}
-\end{aligned}$$ Note that Variance must be greater than the mean for the negative binomial distribution. As such, if some of our data has a Variance \< the mean, we'll set Variance equal to the mean.
+Var = m + \frac{m^2}{size}
+\end{aligned}$$
+
+Solving for `size` (which is the negative binomial flavor of dispersion):
+
+$$\begin{aligned}
+size = \frac{m^2}{Var - m}
+\end{aligned}$$
+
+Note that Variance must be greater than the mean for the negative binomial distribution. As such, if just some of our data has a Variance \< the mean, we'll set Variance equal to the mean.
 
 ```{r}
 #| eval: true
@@ -213,7 +251,8 @@ size = \frac{\mu^2}{Variance - \mu}
 # First, calculate the size dispersion parameter:
 dt[, var := sd^2]
 dt[, size := mean^2 / (var - mean)]
-dt[var < mean, var := mean]
+
+dt[var < mean, var := mean + 0.01]
 
 # Now expand dataset with rnbinom:
 dt_expanded <- list()
@@ -238,63 +277,108 @@ knitr::kable(final_dt)
 
 These values can then be used to calculate your SMD / lnRoM / Zmu effect size.
 
-Is this really ok to do???
+## Poisson {#sec-poisson}
 
-## Poisson
-The Poisson distribution takes lambda, which is equivalent to the mean. The variance and the mean must be equal to be Poisson data. 
-
-To draw Poisson data, use the R function `rpois`, as follows:
+The Poisson distribution takes $\lambda$ (lambda) to describe its dispersion. $\lambda$ is equal to the mean. This case is likely very unusual in most data. If your data is truly Poisson, then you'd use similar code as what we described above, except we'd draw Poisson data with the R function `rpois` as follows:
 
 ```{r}
 rpois(n = 10, lambda = 1)
 ```
 
-## Binomial
+## Binomial {#sec-binomial}
 
-**NOT SURE THIS IS CORRECT**
+Some studies report mean±sd ($m±sd$) proportions (or probabilities) across trials/sites/islands/years. For example, the mean proportion of nests that fledged across several islands or the mean proportion of seedlings that survived across plots. 
 
-The binomial distribution describes the probability of success ($p$) across $t$ trials per $n$ observation (note that $m$ is usually used for number of trials in binomial formulas but, since we are referring to means as $m$, we will refer to number of trials as $t$). $p$ can be calculated from author-provided standard deviation ($sd$) and means ($m$) as follows: 
+You can readily meta-analyze this data using an SMD/lnRoM/Zmu type effect size with trials/sites/islands/years as the unit of replication, after transforming the mean and standard deviation (see [here](3.2-smd-challenges.qmd#sec-proportion-data-with-error)) 
 
-$$
-p=1-\frac{sd^2}{m}
-$$
-Note that standard deviation must be less the square root of the mean.
+However, this type of data is naturally an lnOR type effect size, with a discrete outcome (e.g., fledged, survived) and if the rest of your dataset uses individual as the unit of replication, these effect sizes will be considerably underweighted and will be fundamentally incomparable.
 
-You can then draw binomial data in R, with size equivalent to the number of trials ($t$). The number of trials may be difficult to determine unless the data is clearly binomial (e.g., number of events per plot or individual). In the code below, we're simulating data for 10 individuals (or plots) that had a probability of 0.4 and experienced 5 events. The output describes the number of successful trials per 10 individuals, which can be converted to a proportion by dividing by `size`:
+However, it is possible to convert data summaries like this into the underlying binary outcomes using the binomial distribution. The binomial distribution describes the probability of success ($p$) across $t$ trials (sites/islands/years) and $n$ individuals. Note that $m$ is usually used for number of trials in binomial formulas but, since we have been referring to means as $m$, we will refer to number of trials as $t$.
+
+Doing so requires that you know the number of individuals ($n$), e.g. total number of nests or individuals monitored. There are ways to estimate the number of individuals but doing so assumes that $p$ is equal across all trials, which is unlikely in the real world. We also suspect that most studies present the number of individuals (though potentially across all trials and not per trial/site/etc).
+
+You can then draw binomial data in R, with `size` equivalent to the number of individuals and `n` equivalent to the number of trials/sites/islands. In the code below, we're simulating data for an author-reported mean of 0.4, from 5 separate trials/sites/islands, each of which had 10 individuals:
 
 ```{r}
-
-rbinom(n = 10, p = .4, size = 5) / 5
+n_individuals = 10
+mean_proportion = 0.4
+n_sites = 5
+out <- rbinom(size = n_individuals, 
+              p = mean_proportion, 
+              n = n_sites)
+out
 
 ```
 
-**Am I butchering this? Probably :)**
+Each element of the resulting vector is the number of individuals (of 10 total) that experienced the binomial outcome. We can now coerce this into a format that is compatible with calculating lnOR type effect sizes (with only one level of treatment). 
 
-## Beta
-The Beta distribution describes data bounded *between* 0 and 1. Plant cover data is Beta distributed. The Beta distribution has two shape parameters (`shape1`=$\alpha$ and `shape2`=$\beta$). These can be calculated from mean ($m$) and standard deviation ($sd$) as follows:
+```{r}
+
+dat <- data.table(n_fledged = sum(out),
+                  n_failed = (n_individuals * n_sites) - sum(out))
+
+```
+
+You might note that the author-provided $sd$ was ignored. This is because the binomial distribution assumes that variance is a direct result of the proportion ($p$) and number of individuals ($n$):
 
 $$
 \begin{aligned}
-& Var = sd^2 \\
-& t = (\frac{m(1-m)}{Var}) - 1\\
-& \alpha = m * t \\
-& \beta = (1-m) * t \\
+&Var(p) = \frac{p(1-p)}{n} \\
 \end{aligned}
 $$
-These parameters can then be used in R. For instance, with a mean of 0.75 (e.g., 75% cover) and a standard deviation of 0.1:
+
+For that reason, you should check whether the author-reported standard deviation is equal or less than the theoretical standard deviation of the binomial distribution. With $\bar{p}$ as the reported mean proportion and $n$ as the number of individuals, the theoretical $sd_{theoretical}$ should be:
+
+$$
+\begin{aligned}
+sd_{theoretical} = \sqrt{\frac{\bar{p}(1-\bar{p})}{n}}
+\end{aligned}
+$$
+
+If the reported $sd$ is larger than this, you should use the Beta-Binomial distribution instead. Or, consider analyzing this data, and similar data, separately as an SMD type effect size with the number of trials/sites as the unit of replication.
+
+We demonstrated similar conversions for Zr type data [here.](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data)
+
+## Beta-Binomial {#sec-beta-binomial}
+
+It is highly likely that the author-reported $sd$ is larger than the theoretical binomial $sd$. If this is the case, we can inject variance ($sd^2$) into the data generating process by using the Beta-Binomial distribution. To do so we need to calculate Beta distribution shape parameters ($\alpha$ and $\beta$). This can be based on the following relationships, with $m$ and $sd$ as the author-reported mean and standard deviation:
+
+$$\begin{aligned}
+& Var = sd^2 \\
+& r = (\frac{m(1-m)}{Var}) - 1\\
+& \alpha = m * r \\
+& \beta = (1-m) * r \\
+\end{aligned}$$
+In R:
 
 ```{r}
-sd <- 0.1
-m <- 0.75
-v <- sd^2
-t <- ((m * (1-m)) / (v)) - 1
-alpha <- m * t
-beta <- (1 - m) * t
+library("extraDistr")
+n_individuals = 10
+mean_proportion = 0.4
+sd = 0.12
+n_sites = 5
 
-rbeta(n = 10, shape1 = alpha, shape2 = beta)
+var <- sd^2
+r <- (mean_proportion * (1 - mean_proportion) / var) - 1
+
+alpha <- mean_proportion * r
+beta  <- (1 - mean_proportion) * r
+
+out <- rbbinom(n = n_sites, size = n_individuals, alpha = alpha, beta = beta)
+
+out
 ```
 
+This vector gives the estimated number of outcomes (e.g. fledged or survived or died) per individual in each trial, while accounting for standard deviation. We can check how closely it matches the author provided means±sd:
 
+```{r}
+mean(out / n_individuals)
 
+sd(out / n_individuals)
+```
 
+Very closely!
 
+See [above](#sec-negative-binomial) on how to convert this into the key ingredients for an lnOR effect size calculation or see our more thoroughly worked example [here](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data).
+
+## Gamma? {#sec-gamma}

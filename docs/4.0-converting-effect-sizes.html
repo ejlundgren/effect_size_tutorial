@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-07-18">
+<meta name="dcterms.date" content="2026-08-03">
 <title>Converting between effect sizes – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -119,7 +119,32 @@ div.csl-indent {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><link rel="stylesheet" href="styles.css">
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="styles.css">
 </head>
 <body class="docked quarto-light">
 
@@ -291,11 +316,29 @@ div.csl-indent {
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>CONTENTS</strong></h2>
    
   <ul>
-<li><a href="#converting-between-effect-sizes" id="toc-converting-between-effect-sizes" class="nav-link active" data-scroll-target="#converting-between-effect-sizes">Converting between effect sizes</a></li>
-  <li><a href="#smd-lnrom" id="toc-smd-lnrom" class="nav-link" data-scroll-target="#smd-lnrom">SMD ↔︎ lnRoM</a></li>
-  <li><a href="#smd-zr" id="toc-smd-zr" class="nav-link" data-scroll-target="#smd-zr">SMD ↔︎ Zr</a></li>
-  <li><a href="#smd-lnor" id="toc-smd-lnor" class="nav-link" data-scroll-target="#smd-lnor">SMD ↔︎ lnOR</a></li>
-  <li><a href="#zr-smd-lnor" id="toc-zr-smd-lnor" class="nav-link" data-scroll-target="#zr-smd-lnor">Zr ← SMD → lnOR</a></li>
+<li>
+<a href="#sec-effect-size-conversion" id="toc-sec-effect-size-conversion" class="nav-link active" data-scroll-target="#sec-effect-size-conversion">Converting between effect sizes</a>
+  <ul>
+<li><a href="#sec-assumptions" id="toc-sec-assumptions" class="nav-link" data-scroll-target="#sec-assumptions">Assumptions</a></li>
+  <li><a href="#unit-of-replication-alignment" id="toc-unit-of-replication-alignment" class="nav-link" data-scroll-target="#unit-of-replication-alignment">Unit of replication alignment</a></li>
+  <li><a href="#sec-helper-function" id="toc-sec-helper-function" class="nav-link" data-scroll-target="#sec-helper-function">Helper function: <code>convert_effect_sizes</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#smd-lnor" id="toc-smd-lnor" class="nav-link" data-scroll-target="#smd-lnor">SMD ↔︎ lnOR</a>
+  <ul>
+<li><a href="#sec-smd-lnOR" id="toc-sec-smd-lnOR" class="nav-link" data-scroll-target="#sec-smd-lnOR">SMD → lnOR</a></li>
+  <li><a href="#sec-lnOR-smd" id="toc-sec-lnOR-smd" class="nav-link" data-scroll-target="#sec-lnOR-smd">lnOR → SMD</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#smd-zr" id="toc-smd-zr" class="nav-link" data-scroll-target="#smd-zr">SMD ↔︎ Zr</a>
+  <ul>
+<li><a href="#sec-smd-zr" id="toc-sec-smd-zr" class="nav-link" data-scroll-target="#sec-smd-zr">SMD → Zr</a></li>
+  <li><a href="#sec-zr-smd" id="toc-sec-zr-smd" class="nav-link" data-scroll-target="#sec-zr-smd">Zr → SMD</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-lnrom-smd" id="toc-sec-lnrom-smd" class="nav-link" data-scroll-target="#sec-lnrom-smd">lnRoM → SMD</a></li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -312,7 +355,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 18, 2026</p>
+      <p class="date">August 3, 2026</p>
     </div>
   </div>
   
@@ -321,10 +364,17 @@ div.csl-indent {
   
 
 
-</header><section id="converting-between-effect-sizes" class="level1"><h1>Converting between effect sizes</h1>
-<p>Effect sizes can be inter-converted between SMD and lnOR and Zr <span class="citation" data-cites="borenstein2021">(<a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>)</span>. Recently, Lajeunesse presented methods to convert lnRoM to and from SMD (<strong>NEED TO DIGITIZE</strong>).</p>
+</header><section id="sec-effect-size-conversion" class="level1"><h1>Converting between effect sizes</h1>
+<p>Many effect sizes can be inter-converted <span class="citation" data-cites="borenstein2021 Lajeunesse2026-ms">(<a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>; <a href="#ref-Lajeunesse2026-ms" role="doc-biblioref">Lajeunesse 2026</a>)</span> These conversions make assumptions and can bias the resulting effect types (see <span class="citation" data-cites="poom2022accuracy">(<a href="#ref-poom2022accuracy" role="doc-biblioref">Poom and Wåhlberg 2022</a>)</span>) and should be carefully used—with sensitivity analyses to ensure that the conversions aren’t unduly influencing results.</p>
+<p>At the same time, especially for questions with limited data, we believe that conversions are an important tool in the meta-analyst toolkit.</p>
 <p><img src="figures/flowcharts_diagrams/conversions.png" class="img-fluid" alt="Effect size types"> These conversions have some numeric assumptions:</p>
+<section id="sec-assumptions" class="level2"><h2 class="anchored" data-anchor-id="sec-assumptions">Assumptions</h2>
+<p>There are a number of assumptions when converting effect sizes between each other. We summarize these in the table below as well as in each dedicated section.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 78%">
+</colgroup>
 <thead><tr class="header">
 <th>Conversion</th>
 <th>Assumption</th>
@@ -332,45 +382,286 @@ div.csl-indent {
 <tbody>
 <tr class="odd">
 <td>lnOR ↔︎ SMD</td>
-<td></td>
+<td>Response variable is a discretized version of an underlying continuous variable</td>
 </tr>
 <tr class="even">
 <td>SMD ↔︎ Zr</td>
-<td></td>
+<td>Predictor variable is a discretized version of an underlying continuous variable</td>
 </tr>
 <tr class="odd">
 <td>SMD ↔︎ lnRoM</td>
-<td>Homoscedasticity??</td>
+<td>Homogeneity of variances between groups</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Not sure if assumptions go both ways</strong></p>
-<p>In addition to these assumptions, be careful that the data is truly comparable, especially in terms of sample size. Imagine you’re analyzing the effect of an introduced predator on prey. Some studies present abundance correlations of the predator and prey, where N is the number of surveys through time. Other studies present lnOR type presence/absence data across islands with and without the prey and the predator. The sample sizes of these study types are grossly different (n = survey; n = island). It does not seem justifiable to convert between the effect sizes, since the ultimate model will treat the Zr abundance correlations as having more weight than the full-island surveys (which are likely more biologically meaningful).</p>
-<p>Converting between effect sizes should be done carefully and with many sensitivity analyses (e.g., running meta-analytic models with and without converted effect sizes).</p>
-<p>We have digitized these conversion formulas and they are available in our <code>convert_effect_sizes()</code> function.</p>
+<p>You’ll note that the assumption for <strong>lnOR ↔︎ SMD</strong> concerns the response variable (i.e., dependent variable) while the assumption for <strong>SMD ↔︎ Zr</strong> concerns the predictor variable (indendent variable). This means that you can also convert lnOR to Zr via SMD and vice versa.</p>
+</section><section id="unit-of-replication-alignment" class="level2"><h2 class="anchored" data-anchor-id="unit-of-replication-alignment">Unit of replication alignment</h2>
+<p>In addition to these assumptions, be careful that the data is truly comparable, especially in terms of their units of replication—otherwise the converted effect size will have vastly higher or lower weights in the final meta-analytic model.</p>
+<p>For example, imagine you’re analyzing the effect of an introduced predator on prey abundance. Some studies present abundance correlations of the predator and prey (Zr), where the unit of replication is the <strong>number of surveys</strong>. Other studies report the presence and absence of prey species on islands with and without the predator (lnOR), for which the unit of replication is <strong>number of islands</strong> (each of which was presumably surveyed many times).</p>
+<p>Both of these study types are relevant to the same question–—the effect of the predator on prey abundance. Likewise, converting betwee these effect sizes does not violate the assumptions in the <a href="#sec-assumptions">table above</a> because presence-absence is a discretized version of abundance. It is thus possible to convert these effect sizes via SMD to include both papers in the same model.</p>
+<p>However, <strong>the units of replication of these study types are vastly different</strong> (study 1 = survey; study 2 = island). This will lead the Zr abundance correlations to have more weight than the full-island lnOR responses.</p>
+<p>However, in many other cases, conversions will allow similar data to be compared without comparing different units of replication.</p>
+<p>Given the assumptions and potential biases involved in converting effect sizes, we recommend that you convert minority effect sizes to the dominant effect size in your analysis after confirming that assumptions are met and that the unit of replication for all the effect sizes are equivalent. We then recommend running your models with and without these converted effect sizes, to evaluate whether the inclusion of minority effect sizes alter your results.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Alternative to conversion: reconstruct the underlying data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In some cases, converting between effect sizes can be prevented by reconstructing the underlying data of the author-presented summaries and summarizing these data into the desired analysis effect size, which can align the units of replication between studies.</p>
+<p>See examples for <a href="./3.2-smd-challenges.html#sec-smd-reconstructing-data">SMD-type effect sizes</a>, <a href="./3.3-lnOR-challenges.html#sec-lnOR-reconstructing-data">lnOR effect sizes</a>, <a href="./3.4-Zr-challenges.html#sec-single-axis-error-bars">Zr effect sizes</a>, and for <a href="./non_gaussian_responses.html">non-Gaussian responses</a></p>
+</div>
+</div>
+</section><section id="sec-helper-function" class="level2"><h2 class="anchored" data-anchor-id="sec-helper-function">Helper function: <code>convert_effect_sizes</code>
+</h2>
+<p>We have digitized the primary conversion formulas and they are available in our <code>convert_effect_sizes()</code> function. Running the function on its own will return a table with the statistics required for each conversion.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"scripts/functions/convert_effect_sizes.R"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">convert_effect_sizes</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Effect type name must be specified with 'effect_type' argument 
+    and provide necessary variables (as named arguments, e.g., n1 = group1_n or a numeric vector).
+ 
+Returning effect size names &amp; required variables for reference.</code></pre>
 </div>
-<p>Running the function on its own will return a table with the statistics required for conversion. Here, we’ll convert from SMD to Zr:</p>
+<div class="cell-output cell-output-stdout">
+<pre><code>   from_effect to_effect  vars_required
+        &lt;char&gt;    &lt;char&gt;         &lt;char&gt;
+1:        lnOR       SMD yi, vi, n1, n2
+2:          Zr       SMD      yi, vi, n
+3:           r       SMD           r, n
+4:         SMD        Zr yi, vi, n1, n2
+5:         SMD      lnOR yi, vi, n1, n2
+6:       lnRoM       SMD yi, vi, n1, n2</code></pre>
+</div>
+</div>
+<p>To convert an effect size, specify the <code>from</code> effect type and the <code>to</code> effect type, as well as the required statistics:</p>
+<p>We’ll now show the math and demonstrate in R all conversions. SMD is the universal solvent of these conversions and it is important to remember that SMD has multiple estimators. The most commonly used is Hedges’ <span class="math inline">\(g\)</span>, which has a small sample size bias correction factor <span class="math inline">\(J\)</span>. However, all conversion formulas convert to and from <span class="math inline">\(d\)</span>, an alternative estimator of SMD that lacks this correction factor. For that reason, the math below will skip this conversion and be written for <span class="math inline">\(d\)</span> instead of <span class="math inline">\(g\)</span> based on this conversion.</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}\\
+&amp;d = \frac{m1-m2}{sd_{pooled}}\\
+&amp;d = \frac{g}{J}
+\end{aligned}
+\]</span> Note that the default sampling variance estimator for Hedges’ g is the same estimator used for Cohen’s d (in the R package <code>escalc</code>. Thus no conversion from Var(d) to Var(g) is necessary.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Alternative estimators and effect size conversion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As described <a href="./overview.html#sec-alternative-estimators">earlier</a> in this tutorial, there are multiple flavors of estimators for many effect sizes including paired estimators and, for SMD, an estimator that tolerates heteroscedastic data (“SMDH”). To the best of our knowledge, there are no conversion formulas for these alterative estimators.</p>
+<p>This means that if you are converting Zr effect sizes to add to a meta-analysis that is otherwise composed of SMD-type effect sizes, you won’t be able to use SMDH for the larger dataset. Conversely, if you have paired SMD-type data that you wish to convert to add to a meta-analysis of Zr effect sizes, you’ll have to ignore the paired design.</p>
+</div>
+</div>
+</section></section><section id="smd-lnor" class="level1"><h1>SMD ↔︎ lnOR</h1>
+<section id="sec-smd-lnOR" class="level2"><h2 class="anchored" data-anchor-id="sec-smd-lnOR">SMD → lnOR</h2>
+<p>This conversion assumes that the response variable is continuous (e.g., undergirding the binary response of the lnOR effect type) and that it has a logistic distribution (similar to a normal distribution).</p>
+<p>If the lnOR data was presence/absence of a species and the SMD data was abundance, we believe this assumption is satisfied, given that presence/absence are the extreme ends of abundance.</p>
+<p>Let <span class="math inline">\(yi_{lnOR}\)</span> and <span class="math inline">\(yi_{d}\)</span> be the point estimate for the lnOR and Cohen’s d effect sizes and <span class="math inline">\(vi_{lnOR}\)</span> and <span class="math inline">\(vi_{d}\)</span> be their sampling variances:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;yi_{lnOR} = yi_d * \frac{\pi}{\sqrt{3}} \\
+&amp;vi_{lnOR} = vi_{d} * \frac{\pi^2}{3} \\
+\end{aligned}
+\]</span></p>
+<p>In R:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"SMD"</span>, to <span class="op">=</span> <span class="st">"Zr"</span>,</span>
-<span>                     yi <span class="op">=</span> <span class="fl">1.5</span>, vi <span class="op">=</span> <span class="fl">.1</span>,</span>
-<span>                     n1 <span class="op">=</span> <span class="fl">10</span>, n2 <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"lnOR"</span>,</span>
+<span>                     yi <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>                     n1 <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                     n2 <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes that the continuous data has a logistic distribution. 
+Please use conversions carefully and conduct sensitivity analyses. 
+Note that the 'vi' is assumed to have been calculated with `metafor::escalc` package defaults (variance of 'd' not 'g') </code></pre>
 </div>
-</section><section id="smd-lnrom" class="level1"><h1>SMD ↔︎ lnRoM</h1>
-</section><section id="smd-zr" class="level1"><h1>SMD ↔︎ Zr</h1>
-</section><section id="smd-lnor" class="level1"><h1>SMD ↔︎ lnOR</h1>
-</section><section id="zr-smd-lnor" class="level1">
+<div class="cell-output cell-output-stdout">
+<pre><code>   yi_trans   vi_trans
+      &lt;num&gt;      &lt;num&gt;
+1: 1.677835 0.03289868</code></pre>
+</div>
+</div>
+</section><section id="sec-lnOR-smd" class="level2"><h2 class="anchored" data-anchor-id="sec-lnOR-smd">lnOR → SMD</h2>
+<p>To convert from lnOR to Cohen’s <span class="math inline">\(d\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;yi_d = yi_{lnOR} * \frac{\sqrt{3}}{\pi} \\
+&amp;vi_d = vi_{lnOR} * \frac{3}{\pi^2} \\
+\end{aligned}
+\]</span></p>
+<p>In R:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"lnOR"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     yi <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>                     n1 <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                     n2 <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes that the response variable is a discretized version of a continuous variable 
+with a logistic distribution for each group (which approximates the normal distribution).
+Please use conversions carefully and conduct sensitivity analyses with and without converted data. </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   yi_trans    vi_trans
+      &lt;num&gt;       &lt;num&gt;
+1: 0.482765 0.003039636</code></pre>
+</div>
+</div>
+</section></section><section id="smd-zr" class="level1"><h1>SMD ↔︎ Zr</h1>
+<section id="sec-smd-zr" class="level2"><h2 class="anchored" data-anchor-id="sec-smd-zr">SMD → Zr</h2>
+<p>This conversion assumes that a continuous variable was discretized to form the treatment and control groups of an SMD effect size. This may be the case in some situations (e.g., if treatment and control were based on the presence or absence of an independent variable treatment while the correlation was across a continuous gradient of the same variable).</p>
+<p>To convert from SMD to Zr, we first convert <span class="math inline">\(d\)</span> to the correlation coefficient <span class="math inline">\(r\)</span> and then to Zr, using a correction factor <span class="math inline">\(a\)</span> for cases where <span class="math inline">\(n_1 \neq n_2\)</span>. Let <span class="math inline">\(yi_{Zr}\)</span> and <span class="math inline">\(yi_d\)</span> be the point estimate for Zr and Cohen’s d:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;a = \frac{(n_1 + n_2)^2}{n_1*n_2} \\
+&amp;r = \frac{yi_d}{\sqrt{yi_d^2 + a}} \\
+&amp;r \leftarrow \min(1, \max(-1, r_i))\\
+&amp;yi_{Zr} = atanh(r)\\
+\end{aligned}
+\]</span></p>
+<p>And the sampling variance of Zr (<span class="math inline">\(vi_{Zr}\)</span>): <span class="math display">\[
+\begin{aligned}
+&amp;n = n1 + n2 \\
+&amp;vi_{Zr} = \frac{1}{(n - 3)} \\
+\end{aligned}
+\]</span></p>
+<p>In R:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"Zr"</span>,</span>
+<span>                     yi <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>                     n1 <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>                     n2 <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes a continuous variable was dichotomized to create the treatment and control groups. 
+Note that the 'vi' is assumed to have been calculated with 'metafor::escalc' defaults (variance of 'd' not 'g'). 
+Like usual, be careful :) </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    yi_trans   vi_trans
+       &lt;num&gt;      &lt;num&gt;
+1: 0.4474395 0.03703704</code></pre>
+</div>
+</div>
+</section><section id="sec-zr-smd" class="level2"><h2 class="anchored" data-anchor-id="sec-zr-smd">Zr → SMD</h2>
+<p>First, convert the point estimate of Zr (<span class="math inline">\(yi_{Zr}\)</span>) to the correlation coefficient <span class="math inline">\(r\)</span> and calculate the variance of <span class="math inline">\(r\)</span> (<span class="math inline">\(vi_r\)</span>: <span class="math display">\[
+\begin{aligned}
+&amp;r = tanh(yi_{Zr}) \\
+&amp;vi_r = \frac{(1-r^2)^2}{(n-1)}
+\end{aligned}
+\]</span></p>
+<p>Then calculate the point estimate (<span class="math inline">\(yi_d\)</span>) and variance (<span class="math inline">\(vi_d\)</span>) of Cohen’s d:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;yi_d = \frac{2*r}{\sqrt{1-r^2}} \\
+&amp;vi_d = \frac{4*vi_r}{(1-r^2)^3} \\
+\end{aligned}
+\]</span></p>
+<p>In R:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"Zr"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     yi <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>                     n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'yi' is assumed to be 'Zr' (r-to-z transformed correlation coefficient). 
+It may be preferable to supply 'r' and 'n' instead. To do so specify 'r' in the 'from' argument and provide a vector of correlation coefficients named 'r'. 
+This conversion assumes that the underlying data was continuous with a bivariate normal distribution, with the two groups created by dichotomozing one of the two variables. 
+Please use conversions carefully and conduct sensitivity analyses </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   yi_trans vi_trans
+      &lt;num&gt;    &lt;num&gt;
+1: 2.037275 0.167652</code></pre>
+</div>
+</div>
+<p>Note you can also calculate this directly from <span class="math inline">\(r\)</span> if preferred:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"r"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     r <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>                     n <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'r' directly provided.
+This conversion assumes that the underlying data was continuous with a bivariate normal distribution, 
+with the two groups created by dichotomozing one of the two variables. 
+Please use conversions carefully and conduct sensitivity analyses </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   yi_trans  vi_trans
+      &lt;num&gt;     &lt;num&gt;
+1: 1.145837 0.1088435</code></pre>
+</div>
+</div>
+</section></section><section id="sec-lnrom-smd" class="level1"><h1>lnRoM → SMD</h1>
+<p>Imagine you are conducting a meta-analysis using SMD as your effect size of choice due to negative values, dimensionality, or other concerns. During this meta-analysis you may encounter data reported directly as lnRoM (log-transformed ratio of means) alongside its sampling variance or standard error. Until recently, converting lnRoM effect sizes to SMD was mathematically impossible. However, <span class="citation" data-cites="Lajeunesse2026-ms">Lajeunesse (<a href="#ref-Lajeunesse2026-ms" role="doc-biblioref">2026</a>)</span> developed the mathematics to allow such conversion. This not only facilitates the extraction of data published as effect sizes to a common currency but can also facilitate secondary meta-analyses (e.g., meta-meta-analyses) by allowing conversion to the universal solvent of SMD.</p>
+<p>The primary mathematical assumption of these conversions is homoscedasticity: that the variance of group 1 is similar to the variance of group 2. These may or may not be met in ecological data. There are additional risks as well: SMD represents linear scale effects as a difference between means whereas lnRoM represents multipicative effects, e.g., where treatment effects scale proportional to baseline levels. As with all conversions, sensitivity analyses are critical to ensure that this assumption isn’t unduly influencing your results.</p>
+<p>Note that converting SMD to lnRoM remains unresolved.</p>
+<p>As with the other conversions, we’ll relay the math to convert between Cohen’s d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, <code>convert_effect_sizes</code> automatically converts Cohen’s to Hedges’ g (the bias-corrected estimator of SMD).</p>
+<p>Let <span class="math inline">\(yi_{ROM}\)</span> and <span class="math inline">\(yi_{d}\)</span> be the point estimates of lnRoM and SMD (after converting Hedges’ g to Cohen’s d) and <span class="math inline">\(vi_{ROM}\)</span> and <span class="math inline">\(vi_{d}\)</span> be their sampling variance estimates. Finally, let <span class="math inline">\(n_1\)</span> and <span class="math inline">\(n_2\)</span> be the numerator and denominator of lnRoM (e.g., the treatment and control groups respectively):</p>
+<p><span class="math display">\[
+\begin{aligned}
+yi_d = (yi_{ROM} - 1) * \sqrt{\frac{n_1/yi_{ROM}^2 + n_2}{n_1 n_2 vi_{ROM}}}
+\end{aligned}
+\]</span></p>
+<p>The sampling variance is estimated as follows. Note that this estimator is the same for Cohen’s d and for Hedges’ g (by default in <code>escalc</code>) as it is less biased and is thus the final estimated variance for SMD:</p>
+<p><span class="math display">\[
+\begin{aligned}
+vi_{g} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}
+\end{aligned}
+\]</span></p>
+<p>In R:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">convert_effect_sizes</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"lnRoM"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     yi <span class="op">=</span> <span class="fl">1.48</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>                     n1 <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>                     n2 <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion requires that lnRoM point estimates and variance were calculated from the uncorrected estimators,
+which are returned by default from `metafor::escalc`. 
+IS THIS TRUE? 
+This conversion assumes equal variances (e.g., homoscedasticity) between groups. 
+Also note that n1 is taken as the treatment group and n2 as the control group. </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   yi_trans   vi_trans
+      &lt;num&gt;      &lt;num&gt;
+1: 1.274986 0.09677931</code></pre>
+</div>
+</div>
 
 
 <!-- -->
 
 
-</section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Zr ← SMD → lnOR</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+</section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-borenstein2021" class="csl-entry" role="listitem">
 Borenstein, Michael, Larry V Hedges, Julian Higgins, and Hannah R Rothstein. 2021. <em>Introduction to Meta-Analysis</em>. 2nd ed. John Wiley &amp; Sons.
+</div>
+<div id="ref-Lajeunesse2026-ms" class="csl-entry" role="listitem">
+Lajeunesse, Marc J. 2026. <span>“Converting and Constructing Effect Sizes with the Response Ratio.”</span> <em>Ecol. Lett.</em> 29 (3): e70335.
+</div>
+<div id="ref-poom2022accuracy" class="csl-entry" role="listitem">
+Poom, Leo, and Anders af Wåhlberg. 2022. <span>“Accuracy of Conversion Formula for Effect Sizes: A Monte Carlo Simulation.”</span> <em>Research Synthesis Methods</em> 13 (4): 508–19.
 </div>
 </div></section></div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -823,123 +1114,337 @@ Borenstein, Michael, Larry V Hedges, Julian Higgins, and Hannah R Rothstein. 202
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Converting between effect sizes"</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Risky business"</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "4.0-converting-effect-sizes.html"</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a><span class="fu"># Converting between effect sizes</span></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>Effect sizes can be inter-converted between SMD and lnOR and Zr <span class="co">[</span><span class="ot">@borenstein2021</span><span class="co">]</span>. Recently, Lajeunesse presented methods to convert lnRoM to and from SMD (**NEED TO DIGITIZE**).</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="al">![Effect size types](figures/flowcharts_diagrams/conversions.png)</span> These conversions have some numeric assumptions:</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conversion  <span class="pp">|</span> Assumption         <span class="pp">|</span></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|--------------------|</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnOR ↔ SMD  <span class="pp">|</span>                    <span class="pp">|</span></span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SMD ↔ Zr    <span class="pp">|</span>                    <span class="pp">|</span></span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SMD ↔ lnRoM <span class="pp">|</span> Homoscedasticity?? <span class="pp">|</span></span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>**Not sure if assumptions go both ways**</span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>In addition to these assumptions, be careful that the data is truly comparable, especially in terms of sample size. Imagine you're analyzing the effect of an introduced predator on prey. Some studies present abundance correlations of the predator and prey, where N is the number of surveys through time. Other studies present lnOR type presence/absence data across islands with and without the prey and the predator. The sample sizes of these study types are grossly different (n = survey; n = island). It does not seem justifiable to convert between the effect sizes, since the ultimate model will treat the Zr abundance correlations as having more weight than the full-island surveys (which are likely more biologically meaningful).</span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>Converting between effect sizes should be done carefully and with many sensitivity analyses (e.g., running meta-analytic models with and without converted effect sizes).</span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>We have digitized these conversion formulas and they are available in our <span class="in">`convert_effect_sizes()`</span> function.</span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>()</span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>Running the function on its own will return a table with the statistics required for conversion. Here, we'll convert from SMD to Zr:</span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"SMD"</span>, <span class="at">to =</span> <span class="st">"Zr"</span>,</span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>                     <span class="at">yi =</span> <span class="fl">1.5</span>, <span class="at">vi =</span> .<span class="dv">1</span>,</span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">10</span>, <span class="at">n2 =</span> <span class="dv">10</span>)</span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ lnRoM</span></span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ Zr</span></span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ lnOR</span></span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a><span class="fu"># Zr ← SMD → lnOR</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Converting between effect sizes"</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Risky business"</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "4.0-converting-effect-sizes.html"</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"gt"</span>)</span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"lubridate"</span>)</span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="st">"../package_development/metatools_dev/scripts/1_functions/convert_effect_sizes.R"</span>,</span>
+<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a>          <span class="st">"scripts/functions/convert_effect_sizes.R"</span>,</span>
+<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a>          <span class="at">overwrite =</span> T)</span>
+<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="st">"../package_development/metatools_dev/scripts/1_functions/eff_size.R"</span>,</span>
+<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a>          <span class="st">"scripts/functions/eff_size.R"</span>,</span>
+<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a>          <span class="at">overwrite =</span> T)</span>
+<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
+<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
+<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
+<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-82"><a href="#cb22-82" aria-hidden="true" tabindex="-1"></a><span class="fu"># Converting between effect sizes {#sec-effect-size-conversion}</span></span>
+<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a>Many effect sizes can be inter-converted <span class="co">[</span><span class="ot">@borenstein2021; @Lajeunesse2026-ms</span><span class="co">]</span> These conversions make assumptions and can bias the resulting effect types (see <span class="co">[</span><span class="ot">@poom2022accuracy</span><span class="co">]</span>) and should be carefully used—with sensitivity analyses to ensure that the conversions aren't unduly influencing results. </span>
+<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a>At the same time, especially for questions with limited data, we believe that conversions are an important tool in the meta-analyst toolkit.</span>
+<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a><span class="al">![Effect size types](figures/flowcharts_diagrams/conversions.png)</span> These conversions have some numeric assumptions:</span>
+<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assumptions {#sec-assumptions}</span></span>
+<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a>There are a number of assumptions when converting effect sizes between each other. We summarize these in the table below as well as in each dedicated section. </span>
+<span id="cb22-93"><a href="#cb22-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-94"><a href="#cb22-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-95"><a href="#cb22-95" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conversion  <span class="pp">|</span> Assumption                                    <span class="pp">|</span></span>
+<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-----------------------------------------------|</span></span>
+<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnOR ↔ SMD  <span class="pp">|</span>Response variable is a discretized version of an underlying continuous variable     <span class="pp">|</span></span>
+<span id="cb22-98"><a href="#cb22-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SMD ↔ Zr    <span class="pp">|</span>Predictor variable is a discretized version of an underlying continuous variable <span class="pp">|</span></span>
+<span id="cb22-99"><a href="#cb22-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SMD ↔ lnRoM <span class="pp">|</span>Homogeneity of variances between groups <span class="pp">|</span></span>
+<span id="cb22-100"><a href="#cb22-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-101"><a href="#cb22-101" aria-hidden="true" tabindex="-1"></a>You'll note that the assumption for **lnOR ↔ SMD** concerns the response variable (i.e., dependent variable) while the assumption for **SMD ↔ Zr** concerns the predictor variable (indendent variable). This means that you can also convert lnOR to Zr via SMD and vice versa.</span>
+<span id="cb22-102"><a href="#cb22-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-103"><a href="#cb22-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Unit of replication alignment</span></span>
+<span id="cb22-104"><a href="#cb22-104" aria-hidden="true" tabindex="-1"></a>In addition to these assumptions, be careful that the data is truly comparable, especially in terms of their units of replication---otherwise the converted effect size will have vastly higher or lower weights in the final meta-analytic model. </span>
+<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a>For example, imagine you're analyzing the effect of an introduced predator on prey abundance. Some studies present abundance correlations of the predator and prey (Zr), where the unit of replication is the **number of surveys**. Other studies report the presence and absence of prey species on islands with and without the predator (lnOR), for which the unit of replication is **number of islands** (each of which was presumably surveyed many times).</span>
+<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a>Both of these study types are relevant to the same question--—the effect of the predator on prey abundance. Likewise, converting betwee these effect sizes does not violate the assumptions in the <span class="co">[</span><span class="ot">table above</span><span class="co">](#sec-assumptions)</span> because presence-absence is a discretized version of abundance. It is thus possible to convert these effect sizes via SMD to include both papers in the same model.</span>
+<span id="cb22-109"><a href="#cb22-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-110"><a href="#cb22-110" aria-hidden="true" tabindex="-1"></a>However, **the units of replication of these study types are vastly different** (study 1 = survey; study 2 = island). This will lead the Zr abundance correlations to have more weight than the full-island lnOR responses.</span>
+<span id="cb22-111"><a href="#cb22-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-112"><a href="#cb22-112" aria-hidden="true" tabindex="-1"></a>However, in many other cases, conversions will allow similar data to be compared without comparing different units of replication. </span>
+<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a>Given the assumptions and potential biases involved in converting effect sizes, we recommend that you convert minority effect sizes to the dominant effect size in your analysis after confirming that assumptions are met and that the unit of replication for all the effect sizes are equivalent. We then recommend running your models with and without these converted effect sizes, to evaluate whether the inclusion of minority effect sizes alter your results.</span>
+<span id="cb22-115"><a href="#cb22-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-116"><a href="#cb22-116" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb22-117"><a href="#cb22-117" aria-hidden="true" tabindex="-1"></a>####### Alternative to conversion: reconstruct the underlying data {#sec-callout-reconstructing-data}</span>
+<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a>In some cases, converting between effect sizes can be prevented by reconstructing the underlying data of the author-presented summaries and summarizing these data into the desired analysis effect size, which can align the units of replication between studies. </span>
+<span id="cb22-119"><a href="#cb22-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-120"><a href="#cb22-120" aria-hidden="true" tabindex="-1"></a>See examples for <span class="co">[</span><span class="ot">SMD-type effect sizes</span><span class="co">](3.2-smd-challenges.qmd#sec-smd-reconstructing-data)</span>, <span class="co">[</span><span class="ot">lnOR effect sizes</span><span class="co">](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data)</span>, <span class="co">[</span><span class="ot">Zr effect sizes</span><span class="co">](3.4-Zr-challenges.qmd#sec-single-axis-error-bars)</span>, and for <span class="co">[</span><span class="ot">non-Gaussian responses</span><span class="co">](6-simulating-non-gaussian-responses.qmd)</span></span>
+<span id="cb22-121"><a href="#cb22-121" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb22-122"><a href="#cb22-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-123"><a href="#cb22-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-124"><a href="#cb22-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Helper function: `convert_effect_sizes` {#sec-helper-function}</span></span>
+<span id="cb22-125"><a href="#cb22-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-126"><a href="#cb22-126" aria-hidden="true" tabindex="-1"></a>We have digitized the primary conversion formulas and they are available in our <span class="in">`convert_effect_sizes()`</span> function. Running the function on its own will return a table with the statistics required for each conversion.</span>
+<span id="cb22-127"><a href="#cb22-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-130"><a href="#cb22-130" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-131"><a href="#cb22-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-132"><a href="#cb22-132" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-133"><a href="#cb22-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-134"><a href="#cb22-134" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
+<span id="cb22-135"><a href="#cb22-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-136"><a href="#cb22-136" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>()</span>
+<span id="cb22-137"><a href="#cb22-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-138"><a href="#cb22-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-139"><a href="#cb22-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-140"><a href="#cb22-140" aria-hidden="true" tabindex="-1"></a>To convert an effect size, specify the <span class="in">`from`</span> effect type and the <span class="in">`to`</span> effect type, as well as the required statistics:</span>
+<span id="cb22-141"><a href="#cb22-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-142"><a href="#cb22-142" aria-hidden="true" tabindex="-1"></a>We'll now show the math and demonstrate in R all conversions. SMD is the universal solvent of these conversions and it is important to remember that SMD has multiple estimators. The most commonly used is Hedges' $g$, which has a small sample size bias correction factor $J$. However, all conversion formulas convert to and from $d$, an alternative estimator of SMD that lacks this correction factor. For that reason, the math below will skip this conversion and be written for $d$ instead of $g$ based on this conversion. </span>
+<span id="cb22-143"><a href="#cb22-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-144"><a href="#cb22-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-145"><a href="#cb22-145" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-146"><a href="#cb22-146" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-147"><a href="#cb22-147" aria-hidden="true" tabindex="-1"></a>&amp;J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}<span class="sc">\\</span></span>
+<span id="cb22-148"><a href="#cb22-148" aria-hidden="true" tabindex="-1"></a>&amp;d = \frac{m1-m2}{sd_{pooled}}<span class="sc">\\</span></span>
+<span id="cb22-149"><a href="#cb22-149" aria-hidden="true" tabindex="-1"></a>&amp;d = \frac{g}{J}</span>
+<span id="cb22-150"><a href="#cb22-150" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-151"><a href="#cb22-151" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-152"><a href="#cb22-152" aria-hidden="true" tabindex="-1"></a>Note that the default sampling variance estimator for Hedges' g is the same estimator used for Cohen's d (in the R package <span class="in">`escalc`</span>. Thus no conversion from Var(d) to Var(g) is necessary.</span>
+<span id="cb22-153"><a href="#cb22-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-154"><a href="#cb22-154" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb22-155"><a href="#cb22-155" aria-hidden="true" tabindex="-1"></a>####### Alternative estimators and effect size conversion {#sec-alternative-estimators}</span>
+<span id="cb22-156"><a href="#cb22-156" aria-hidden="true" tabindex="-1"></a>As described <span class="co">[</span><span class="ot">earlier</span><span class="co">](1-effect-size-overview.qmd#sec-alternative-estimators)</span> in this tutorial, there are multiple flavors of estimators for many effect sizes including paired estimators and, for SMD, an estimator that tolerates heteroscedastic data ("SMDH"). To the best of our knowledge, there are no conversion formulas for these alterative estimators. </span>
+<span id="cb22-157"><a href="#cb22-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-158"><a href="#cb22-158" aria-hidden="true" tabindex="-1"></a>This means that if you are converting Zr effect sizes to add to a meta-analysis that is otherwise composed of SMD-type effect sizes, you won't be able to use SMDH for the larger dataset. Conversely, if you have paired SMD-type data that you wish to convert to add to a meta-analysis of Zr effect sizes, you'll have to ignore the paired design.</span>
+<span id="cb22-159"><a href="#cb22-159" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb22-160"><a href="#cb22-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-161"><a href="#cb22-161" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ lnOR </span></span>
+<span id="cb22-162"><a href="#cb22-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-163"><a href="#cb22-163" aria-hidden="true" tabindex="-1"></a><span class="fu">## SMD → lnOR {#sec-smd-lnOR}</span></span>
+<span id="cb22-164"><a href="#cb22-164" aria-hidden="true" tabindex="-1"></a>This conversion assumes that the response variable is continuous (e.g., undergirding the binary response of the lnOR effect type) and that it has a logistic distribution (similar to a normal distribution).</span>
+<span id="cb22-165"><a href="#cb22-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-166"><a href="#cb22-166" aria-hidden="true" tabindex="-1"></a>If the lnOR data was presence/absence of a species and the SMD data was abundance, we believe this assumption is satisfied, given that presence/absence are the extreme ends of abundance.</span>
+<span id="cb22-167"><a href="#cb22-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-168"><a href="#cb22-168" aria-hidden="true" tabindex="-1"></a>Let $yi_{lnOR}$ and $yi_{d}$ be the point estimate for the lnOR and Cohen's d effect sizes and $vi_{lnOR}$ and $vi_{d}$ be their sampling variances:</span>
+<span id="cb22-169"><a href="#cb22-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-170"><a href="#cb22-170" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-171"><a href="#cb22-171" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-172"><a href="#cb22-172" aria-hidden="true" tabindex="-1"></a>&amp;yi_{lnOR} = yi_d * \frac{\pi}{\sqrt{3}} <span class="sc">\\</span></span>
+<span id="cb22-173"><a href="#cb22-173" aria-hidden="true" tabindex="-1"></a>&amp;vi_{lnOR} = vi_{d} * \frac{\pi^2}{3} <span class="sc">\\</span></span>
+<span id="cb22-174"><a href="#cb22-174" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-175"><a href="#cb22-175" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-176"><a href="#cb22-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-177"><a href="#cb22-177" aria-hidden="true" tabindex="-1"></a>In R:</span>
+<span id="cb22-178"><a href="#cb22-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-181"><a href="#cb22-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-182"><a href="#cb22-182" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-183"><a href="#cb22-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-184"><a href="#cb22-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb22-185"><a href="#cb22-185" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-186"><a href="#cb22-186" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"lnOR"</span>,</span>
+<span id="cb22-187"><a href="#cb22-187" aria-hidden="true" tabindex="-1"></a>                     <span class="at">yi =</span> <span class="fl">0.9</span>,</span>
+<span id="cb22-188"><a href="#cb22-188" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> <span class="fl">0.01</span>,</span>
+<span id="cb22-189"><a href="#cb22-189" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">15</span>,</span>
+<span id="cb22-190"><a href="#cb22-190" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n2 =</span> <span class="dv">15</span>)</span>
+<span id="cb22-191"><a href="#cb22-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-192"><a href="#cb22-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-193"><a href="#cb22-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-194"><a href="#cb22-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-195"><a href="#cb22-195" aria-hidden="true" tabindex="-1"></a><span class="fu">## lnOR → SMD {#sec-lnOR-smd}</span></span>
+<span id="cb22-196"><a href="#cb22-196" aria-hidden="true" tabindex="-1"></a>To convert from lnOR to Cohen's $d$:</span>
+<span id="cb22-197"><a href="#cb22-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-198"><a href="#cb22-198" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-199"><a href="#cb22-199" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-200"><a href="#cb22-200" aria-hidden="true" tabindex="-1"></a>&amp;yi_d = yi_{lnOR} * \frac{\sqrt{3}}{\pi} <span class="sc">\\</span></span>
+<span id="cb22-201"><a href="#cb22-201" aria-hidden="true" tabindex="-1"></a>&amp;vi_d = vi_{lnOR} * \frac{3}{\pi^2} <span class="sc">\\</span></span>
+<span id="cb22-202"><a href="#cb22-202" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-203"><a href="#cb22-203" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-204"><a href="#cb22-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-205"><a href="#cb22-205" aria-hidden="true" tabindex="-1"></a>In R:</span>
+<span id="cb22-208"><a href="#cb22-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-209"><a href="#cb22-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-210"><a href="#cb22-210" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-211"><a href="#cb22-211" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb22-212"><a href="#cb22-212" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"lnOR"</span>,</span>
+<span id="cb22-213"><a href="#cb22-213" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-214"><a href="#cb22-214" aria-hidden="true" tabindex="-1"></a>                     <span class="at">yi =</span> <span class="fl">0.9</span>,</span>
+<span id="cb22-215"><a href="#cb22-215" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> <span class="fl">0.01</span>,</span>
+<span id="cb22-216"><a href="#cb22-216" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">15</span>,</span>
+<span id="cb22-217"><a href="#cb22-217" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n2 =</span> <span class="dv">15</span>)</span>
+<span id="cb22-218"><a href="#cb22-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-219"><a href="#cb22-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-220"><a href="#cb22-220" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ Zr</span></span>
+<span id="cb22-221"><a href="#cb22-221" aria-hidden="true" tabindex="-1"></a><span class="fu">## SMD → Zr {#sec-smd-zr}</span></span>
+<span id="cb22-222"><a href="#cb22-222" aria-hidden="true" tabindex="-1"></a>This conversion assumes that a continuous variable was discretized to form the treatment and control groups of an SMD effect size. This may be the case in some situations (e.g., if treatment and control were based on the presence or absence of an independent variable treatment while the correlation was across a continuous gradient of the same variable).</span>
+<span id="cb22-223"><a href="#cb22-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-224"><a href="#cb22-224" aria-hidden="true" tabindex="-1"></a>To convert from SMD to Zr, we first convert $d$ to the correlation coefficient $r$ and then to Zr, using a correction factor $a$ for cases where $n_1 \neq n_2$. Let $yi_{Zr}$ and $yi_d$ be the point estimate for Zr and Cohen's d:</span>
+<span id="cb22-225"><a href="#cb22-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-226"><a href="#cb22-226" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-227"><a href="#cb22-227" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-228"><a href="#cb22-228" aria-hidden="true" tabindex="-1"></a>&amp;a = \frac{(n_1 + n_2)^2}{n_1*n_2} <span class="sc">\\</span></span>
+<span id="cb22-229"><a href="#cb22-229" aria-hidden="true" tabindex="-1"></a>&amp;r = \frac{yi_d}{\sqrt{yi_d^2 + a}} <span class="sc">\\</span></span>
+<span id="cb22-230"><a href="#cb22-230" aria-hidden="true" tabindex="-1"></a>&amp;r \leftarrow \min(1, \max(-1, r_i))<span class="sc">\\</span></span>
+<span id="cb22-231"><a href="#cb22-231" aria-hidden="true" tabindex="-1"></a>&amp;yi_{Zr} = atanh(r)<span class="sc">\\</span></span>
+<span id="cb22-232"><a href="#cb22-232" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-233"><a href="#cb22-233" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-234"><a href="#cb22-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-235"><a href="#cb22-235" aria-hidden="true" tabindex="-1"></a>And the sampling variance of Zr ($vi_{Zr}$):</span>
+<span id="cb22-236"><a href="#cb22-236" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-237"><a href="#cb22-237" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-238"><a href="#cb22-238" aria-hidden="true" tabindex="-1"></a>&amp;n = n1 + n2 <span class="sc">\\</span></span>
+<span id="cb22-239"><a href="#cb22-239" aria-hidden="true" tabindex="-1"></a>&amp;vi_{Zr} = \frac{1}{(n - 3)} <span class="sc">\\</span></span>
+<span id="cb22-240"><a href="#cb22-240" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-241"><a href="#cb22-241" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-242"><a href="#cb22-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-243"><a href="#cb22-243" aria-hidden="true" tabindex="-1"></a>In R:</span>
+<span id="cb22-246"><a href="#cb22-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-247"><a href="#cb22-247" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-248"><a href="#cb22-248" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-249"><a href="#cb22-249" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb22-250"><a href="#cb22-250" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-251"><a href="#cb22-251" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"Zr"</span>,</span>
+<span id="cb22-252"><a href="#cb22-252" aria-hidden="true" tabindex="-1"></a>                     <span class="at">yi =</span> <span class="fl">0.9</span>,</span>
+<span id="cb22-253"><a href="#cb22-253" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> <span class="fl">0.01</span>,</span>
+<span id="cb22-254"><a href="#cb22-254" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">15</span>,</span>
+<span id="cb22-255"><a href="#cb22-255" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n2 =</span> <span class="dv">15</span>)</span>
+<span id="cb22-256"><a href="#cb22-256" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-257"><a href="#cb22-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-258"><a href="#cb22-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-259"><a href="#cb22-259" aria-hidden="true" tabindex="-1"></a><span class="fu">## Zr → SMD {#sec-zr-smd}</span></span>
+<span id="cb22-260"><a href="#cb22-260" aria-hidden="true" tabindex="-1"></a>First, convert the point estimate of Zr ($yi_{Zr}$) to the correlation coefficient $r$ and calculate the variance of $r$ ($vi_r$:</span>
+<span id="cb22-261"><a href="#cb22-261" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-262"><a href="#cb22-262" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-263"><a href="#cb22-263" aria-hidden="true" tabindex="-1"></a>&amp;r = tanh(yi_{Zr}) <span class="sc">\\</span></span>
+<span id="cb22-264"><a href="#cb22-264" aria-hidden="true" tabindex="-1"></a>&amp;vi_r = \frac{(1-r^2)^2}{(n-1)}</span>
+<span id="cb22-265"><a href="#cb22-265" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-266"><a href="#cb22-266" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-267"><a href="#cb22-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-268"><a href="#cb22-268" aria-hidden="true" tabindex="-1"></a>Then calculate the point estimate ($yi_d$) and variance ($vi_d$) of Cohen's d:</span>
+<span id="cb22-269"><a href="#cb22-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-270"><a href="#cb22-270" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-271"><a href="#cb22-271" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-272"><a href="#cb22-272" aria-hidden="true" tabindex="-1"></a>&amp;yi_d = \frac{2*r}{\sqrt{1-r^2}} <span class="sc">\\</span></span>
+<span id="cb22-273"><a href="#cb22-273" aria-hidden="true" tabindex="-1"></a>&amp;vi_d = \frac{4*vi_r}{(1-r^2)^3} <span class="sc">\\</span></span>
+<span id="cb22-274"><a href="#cb22-274" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-275"><a href="#cb22-275" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-276"><a href="#cb22-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-277"><a href="#cb22-277" aria-hidden="true" tabindex="-1"></a>In R:</span>
+<span id="cb22-280"><a href="#cb22-280" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-281"><a href="#cb22-281" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-282"><a href="#cb22-282" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-283"><a href="#cb22-283" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb22-284"><a href="#cb22-284" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"Zr"</span>,</span>
+<span id="cb22-285"><a href="#cb22-285" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-286"><a href="#cb22-286" aria-hidden="true" tabindex="-1"></a>                     <span class="at">yi =</span> <span class="fl">0.9</span>,</span>
+<span id="cb22-287"><a href="#cb22-287" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> <span class="fl">0.01</span>,</span>
+<span id="cb22-288"><a href="#cb22-288" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">50</span>)</span>
+<span id="cb22-289"><a href="#cb22-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-290"><a href="#cb22-290" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-291"><a href="#cb22-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-292"><a href="#cb22-292" aria-hidden="true" tabindex="-1"></a>Note you can also calculate this directly from $r$ if preferred:</span>
+<span id="cb22-293"><a href="#cb22-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-296"><a href="#cb22-296" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-297"><a href="#cb22-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-298"><a href="#cb22-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-299"><a href="#cb22-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb22-300"><a href="#cb22-300" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"r"</span>,</span>
+<span id="cb22-301"><a href="#cb22-301" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-302"><a href="#cb22-302" aria-hidden="true" tabindex="-1"></a>                     <span class="at">r =</span> <span class="fl">0.5</span>,</span>
+<span id="cb22-303"><a href="#cb22-303" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> <span class="fl">0.1</span>,</span>
+<span id="cb22-304"><a href="#cb22-304" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">50</span>)</span>
+<span id="cb22-305"><a href="#cb22-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-306"><a href="#cb22-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb22-307"><a href="#cb22-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-308"><a href="#cb22-308" aria-hidden="true" tabindex="-1"></a><span class="fu"># lnRoM → SMD {#sec-lnrom-smd}</span></span>
+<span id="cb22-309"><a href="#cb22-309" aria-hidden="true" tabindex="-1"></a>Imagine you are conducting a meta-analysis using SMD as your effect size of choice due to negative values, dimensionality, or other concerns. During this meta-analysis you may encounter data reported directly as lnRoM (log-transformed ratio of means) alongside its sampling variance or standard error. Until recently, converting lnRoM effect sizes to SMD was mathematically impossible. However, @Lajeunesse2026-ms developed the mathematics to allow such conversion. This not only facilitates the extraction of data published as effect sizes to a common currency but can also facilitate secondary meta-analyses (e.g., meta-meta-analyses) by allowing conversion to the universal solvent of SMD.</span>
+<span id="cb22-310"><a href="#cb22-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-311"><a href="#cb22-311" aria-hidden="true" tabindex="-1"></a>The primary mathematical assumption of these conversions is homoscedasticity: that the variance of group 1 is similar to the variance of group 2. These may or may not be met in ecological data. There are additional risks as well: SMD represents linear scale effects as a difference between means whereas lnRoM represents multipicative effects, e.g., where treatment effects scale proportional to baseline levels. As with all conversions, sensitivity analyses are critical to ensure that this assumption isn't unduly influencing your results. </span>
+<span id="cb22-312"><a href="#cb22-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-313"><a href="#cb22-313" aria-hidden="true" tabindex="-1"></a>Note that converting SMD to lnRoM remains unresolved.</span>
+<span id="cb22-314"><a href="#cb22-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-315"><a href="#cb22-315" aria-hidden="true" tabindex="-1"></a>As with the other conversions, we'll relay the math to convert between Cohen's d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, <span class="in">`convert_effect_sizes`</span> automatically converts Cohen's to Hedges' g (the bias-corrected estimator of SMD).</span>
+<span id="cb22-316"><a href="#cb22-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-317"><a href="#cb22-317" aria-hidden="true" tabindex="-1"></a>Let $yi_{ROM}$ and $yi_{d}$ be the point estimates of lnRoM and SMD (after converting Hedges' g to Cohen's d) and $vi_{ROM}$ and $vi_{d}$ be their sampling variance estimates. Finally, let $n_1$ and $n_2$ be the numerator and denominator of lnRoM (e.g., the treatment and control groups respectively):</span>
+<span id="cb22-318"><a href="#cb22-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-319"><a href="#cb22-319" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-320"><a href="#cb22-320" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-321"><a href="#cb22-321" aria-hidden="true" tabindex="-1"></a>yi_d = (yi_{ROM} - 1) * \sqrt{\frac{n_1/yi_{ROM}^2 + n_2}{n_1 n_2 vi_{ROM}}}</span>
+<span id="cb22-322"><a href="#cb22-322" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-323"><a href="#cb22-323" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-324"><a href="#cb22-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-325"><a href="#cb22-325" aria-hidden="true" tabindex="-1"></a>The sampling variance is estimated as follows. Note that this estimator is the same for Cohen's d and for Hedges' g (by default in <span class="in">`escalc`</span>) as it is less biased and is thus the final estimated variance for SMD:</span>
+<span id="cb22-326"><a href="#cb22-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-327"><a href="#cb22-327" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-328"><a href="#cb22-328" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb22-329"><a href="#cb22-329" aria-hidden="true" tabindex="-1"></a>vi_{g} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}</span>
+<span id="cb22-330"><a href="#cb22-330" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb22-331"><a href="#cb22-331" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb22-332"><a href="#cb22-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-333"><a href="#cb22-333" aria-hidden="true" tabindex="-1"></a>In R:</span>
+<span id="cb22-336"><a href="#cb22-336" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb22-337"><a href="#cb22-337" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb22-338"><a href="#cb22-338" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb22-339"><a href="#cb22-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-340"><a href="#cb22-340" aria-hidden="true" tabindex="-1"></a><span class="fu">convert_effect_sizes</span>(<span class="at">from =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb22-341"><a href="#cb22-341" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb22-342"><a href="#cb22-342" aria-hidden="true" tabindex="-1"></a>                     <span class="at">yi =</span> <span class="fl">1.48</span>,</span>
+<span id="cb22-343"><a href="#cb22-343" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> <span class="fl">0.1</span>,</span>
+<span id="cb22-344"><a href="#cb22-344" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">25</span>,</span>
+<span id="cb22-345"><a href="#cb22-345" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n2 =</span> <span class="dv">25</span>)</span>
+<span id="cb22-346"><a href="#cb22-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-347"><a href="#cb22-347" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

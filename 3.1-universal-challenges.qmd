@@ -1,6 +1,6 @@
 ---
 title: "Universal extraction challenges"
-subtitle: "XXX"
+subtitle: ""
 date: "`r Sys.Date()`"
 format: 
   html:
@@ -67,22 +67,31 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
-There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We'll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect may be more pervasive and widespread.
+There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We'll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect they are pervasive and widespread.
 
-# Sample size
+# Sample size {#sec-sample-size}
 
 One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.
 
-Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the actual unit of replication is. While sample size might be conceptually straightforward with behavioral or physiological data, where the unit of replication is generally the number of individuals, it can become incredible complex with plot data or survey data. 
+Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the *unit of replication* is and whether these are *comparable* across studies in your dataset. While sample size might be conceptually straightforward with behavioral or physiological data---where the unit of replication is generally the number of individuals---it can become incredible complex with plot data or survey data.
 
-For example, meta-analyzing vegetation plot data may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence with their own model random effects). 
+For example, if you are meta-analyzing vegetation data you may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence within their models with random effects), while others will make individual plants nested within plots the unit of replication.
 
-Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know-but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).
+Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know---but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).
 
-We recommend recording the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.
+For these reasons, it is essential to record the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.
 
-## Measurement scale
-Another issue that haunts vegetation meta-analyses is plot size. Studies with larger plots (e.g., 100 m^2^) will  have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects. 
+::: callout-note
+###### Reconstructing underlying data {#sec-callout-reconstructing-underlying-data}
+
+You will see that some of the hardest extraction challenges involve deconstructing author-provided summaries (e.g., mean±sd) to reconstruct underlying units of replication. For example, if authors provide mean±sd of survivorship of individuals across sites, the unit of replication for the raw mean±sd is number of sites. However, this may make your data incomparable to other studies for which the unit of replication is individuals.
+
+There are techniques—with their own assumptions-for reconstructing the underlying data in these cases by drawing from the data generating process. See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [Zr effect sizes](3.4-Zr-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](6-simulating-non-gaussian-responses.qmd),
+:::
+
+## Measurement scale {#sec-measurement-scale}
+
+Another issue that haunts vegetation meta-analyses is plot size (**REF to that Ecology Letters paper**). Studies with larger plots (e.g., 100 m^2^) will have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects.
 
 ```{r}
 #| eval: true
@@ -93,22 +102,27 @@ Another issue that haunts vegetation meta-analyses is plot size. Studies with la
 
 ```
 
-There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest. 
+There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest.
 
 In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses.
 
 Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error, if that is what they reported.
 
-**Let's imagine that an article presented standard error based on one measure of sample size (let's say subplots) however the rest of your dataset uses plot N as sample size. Can you convert the standard error to standard deviation using the author-sample size but then use the plot-N for the actual calculation of sampling variance?**
+::: callout-important
+############ Different Ns???
 
-# Complex non-independence structures
+Let's imagine that an article presented standard error based on one measure of sample size (let's say plots) however the rest of your dataset uses subplot N as sample size. Can you convert the standard error to standard deviation using the author-sample size (plots) but then use the subplot-N for the  calculation of sampling variance so that the unit of replication is comparable?
 
-Also check this: https://royalsocietypublishing.org/rsta/article/384/2321/20240604/481953/A-preliminary-data-analysis-workflow-for-meta
+I think so: Rao, J.N.K. & Scott, A.J. 1992. A simple method for the analysis of clustered binary data. Biometrics 48: 577–585.
+:::
 
-One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract. 
+# Complex non-independence structures {#sec-non-independence}
 
-## Repeated measurements
-Time series random effects are fairly straightforward to implement in the primary frequentist package for meta-analytic models (`metafor` and `rma.mv`, ref). Controlling for them requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable. 
+One of the many challenges in extracting data for meta-analysis is that studies often report multiple measurements of the same phenomena, e.g., through time or from independent plots. These situations must be controlled for with random effects—or with clear and transparent rules on how to choose which data to extract.
+
+## Repeated measurements {#sec-repeated-measures}
+
+Time series random effects are fairly straightforward to implement in the primary frequentist package for meta-analytic models (`metafor` and `rma.mv`, @Viechtbauer2010-uq). Controlling for them requires creating a time series column with a simple numeric value that describes temporal ordering of measurements (e.g., 1, 2, 3, 4). An additional column should provide a grouping variable.
 
 To illustrate, let's imagine we are assessing the influence of temperature on the growth rates of clams. A study reports an experimental trial for two species (zebra mussels and quagga mussels), each through time. The control is ambient conditions while the treatment is increased temperature. These are moderators we are explicitly interested in. Imagine the results of this study look like this:
 
@@ -176,14 +190,13 @@ knitr::kable(head(extracted))
 
 ```
 
-Note that we have a column for the article (`article_id`), a column describing where in the article the data came from (`fig`), a column recording the species (`species`), an id for the experiment (which was unique to each species) and the time sequence (`time_sequence`) within that experiment. The experiment id might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).
+Note that we have a column for the article (`article_id`), a column describing where in the article the data came from (`fig`), a column recording the species (`species`), an id for the experiment (which was unique to each species) and the time sequence (`time_sequence`) within that experiment. The experiment ID might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).
 
 These columns control our non-independence structures within this study. We also have the statistics necessary for our effect size calculations (`mean_*`, `sd_*`, `n_*`) for each temperature treatment. And we have two columns that can be used to construct moderators (`temperature_high` and `temperature_low`).
 
-## Multiple comparisons to same control
+## Multiple comparisons to same control {#sec-multiple-comparisons-same-control}
 
-Let's imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control, again for two different species (one of which is in the first study). In this case, they do not report repeated measures. Their figure might look like this:
-
+Let's imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control, again for two different species. In this case, they do not report repeated measures. Their figure might look like this:
 
 ```{r}
 #| eval: true
@@ -275,7 +288,9 @@ knitr::kable(head(full_dat))
 
 Tricky business, right?
 
-Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. Messy! Ultimately, we would likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. But let's leave that out for now :) 
+Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. Messy!
+
+Ultimately, we would also likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. And we should also control for spatial non-independence between studies. But let's leave that out for now. See @Mizuno2026-ab for a tutorial on controlling for both spatial and phylogenetic non-independence structures.
 
 Note that the `struct` argument in `rma.mv` specifies the correlation structure to apply to time series.
 
@@ -313,23 +328,39 @@ m <- rma.mv(yi ~ temperature_diff,
 
 ```
 
-These non-independence structures can be calculated separately as well with the function `metafor::vcalc` (which is preferred, especially if adding a phylogenetic or spatial dissimilarity matrix). See XXXXXX for a tutorial on how to use `vcalc`.
-
-As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
-
-We recommend the following tutorial on thinking through random effects in meta-analysis: XXXXXX
-
 ::: callout-important
-In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have  calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size (see @sec). 
+####### Custom effect sizes to reduce nuisance heterogeneity {#sec-callout-custom-effect-sizes}
+
+In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size. We demonstrate this [here](3.4-Zr-challenges.qmd#sec-single-axis-error-bars).
 
 A third option would have been to use a totally different (and more unusual effect size): Q~10~. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and less overall heterogeneity.
 
-For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see Noble et al 2022 and where we discuss this in brief (@sec)
+For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see @Noble2022-pl.
 :::
 
-# Database design
-As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on. 
+#### Creating a variance-covariance matrix with `vcalc` {#sec-vcalc}
 
-We recommend that you do a pilot extraction, and analysis, of ~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.
+Complex non-independence structures can also be calculated separately with the function `metafor::vcalc`.
 
+Use `vcalc` to control for non-independence structures within studies that may be non-identifiable as a random effect. E.g., if you have 20 studies and 22 cohort IDs within then, you'll likely never get a good estimate at the cohort_ID level of your random effects. Factoring cohort ID, effect size ID into vcalc can take care of that non-independence without overfitting your model.
 
+See XXXXXX for a tutorial on how to use `vcalc`.
+
+As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
+
+We recommend the following tutorial on thinking through random effects in meta-analysis: **XXXXXX**
+
+:::callout-important
+######### Author summaries across different dimensions of non-independence {#sec-callout-non-independence}
+The examples above assume that the authors summarized data *within* certain groups (e.g., time points or spatially independent plots). However, you will note that some articles will summarize data (e.g., calculate `means±sd`) across **space and time**; some will summarize data just by **space** (e.g., independent plots or individuals); and some will summarize data over **time** points within each spatially independent sample (plots or individuals).
+
+These differences likely matter, especially in ecological data, yet are rarely addressed. We recommend recording whether data-reported summaries are across time, across spatially-independent samples (or individuals), or across both. These factors may explain methodological heterogeneity in your dataset.
+:::
+
+# Database design {#sec-database-design}
+
+As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on.
+
+We recommend that you do a pilot extraction, and analysis, of \~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.
+
+## Database template or further guidance?? {#sec-database-template}

@@ -66,14 +66,18 @@ source("scripts/functions/eff_size.R")
 
 ```
 
-Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1). See Appendix (@sec) for sampling variance formulas.
+Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1).
 
 $$\begin{aligned}
 &r_{i} \leftarrow \min(1, \max(-1, r_i))\\
 &Z_{r_i} = atanh(r_{i})\\
-\end{aligned}$$ The sampling variance of Zr depends entirely on sample size and is defined as:
+\end{aligned}$$
 
-$$Var(Z_r) = \frac{1}{n-3}$$ As you can see, sampling variance is only calculable if $n>3$.
+The sampling variance of Zr depends entirely on sample size and is defined as:
+
+$$\begin{aligned}
+&Var(Z_r) = \frac{1}{n-3} \\
+\end{aligned}$$ As you can see, sampling variance is only calculable if $n>3$.
 
 In `escalc`, this looks like:
 
@@ -82,21 +86,21 @@ escalc(ri = 0.7, ni = 15,
        measure = "ZCOR")
 ```
 
-Zr has among the least biased of point estimate and variance formulas.
+Zr has among the least biased of point estimate and variance formulas (REF).
 
 *What to do about 0/1 or binary outcomes with a continuous predictor?*
 
-## Assumptions
+## Assumptions {#sec-assumptions}
 
 XXXXX
 
-## Interpretation
+## Interpretation {#sec-interpretation}
 
 Zr effect sizes describe the strength and direction of a relationship between two continuous variables.
 
-## Other correlation types
+## Other correlation types {#sec-other-correlation-types}
 
-### Point-biserial correlations & biserial correlations
+### Point-biserial correlations & biserial correlations {#sec-point-biserial}
 
 Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).
 

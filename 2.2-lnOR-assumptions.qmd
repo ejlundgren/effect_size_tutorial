@@ -73,25 +73,17 @@ The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-gr
 | Drug    | $a$   | $b$  | $n1 = a+b$ |
 | Placebo | $c$   | $d$  | $n2 = c+d$ |
 
+## log Odds Ratio (lnOR) {#sec-lnOR}
+
+The log odds ratio is the ratio of two probabilities:
+
 $$lnOR = log(\frac{a * d}{b * c})$$
 
-## log Risk Ratio (lnRR)
+### Assumptions {#sec-lnOR-assumptions}
 
-The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others.
+Blah blah blah
 
-@Kyle*, can you help with this?*
-
-lnRR is defined as:
-
-$$\begin{aligned}
-&p1 = a/n1 \\
-&p2 = c/n2 \\
-&lnRR = log(p1/p2) \\
-\end{aligned}$$
-
-## Assumptions
-
-## Interpretation
+### Interpretation {#sec-lnOR-interpretation}
 
 To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.
 
@@ -123,6 +115,22 @@ exp(1.4069) |> round()
 
 An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.
 
+## log Risk Ratio (lnRR) {#sec-lnRR}
+
+The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be easier to interpret than lnOR but has numeric properties that are less preferred and for that reason is less commonly used in ecology and evolution.
+
+The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in some cases [@borenstein2021].
+
+@Kyle*, can you help with this?*
+
+lnRR is defined as:
+
+$$\begin{aligned}
+&p1 = a/n1 \\
+&p2 = c/n2 \\
+&lnRR = log(p1/p2) \\
+\end{aligned}$$
+
 We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.
 
 ```{r}
@@ -142,15 +150,15 @@ A risk ratio of 1.79 indicates that the risk of mortality in the placebo group i
 
 *Not sure I am correctly interpreting these*
 
-## Continuity corrections
+## Continuity corrections {#sec-continuity-corrections}
 
 lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.
 
 lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
 
-## Matched pairs contingency tables
+## Matched pairs contingency tables {#sec-paired-contigency-tables}
 
-*Are these paired lnOR?????*
+*Are these paired lnOR????? And, if so, can they be compared to regular lnOR??*
 
 Directly from `escalc`:
 
@@ -181,3 +189,5 @@ The paired versions require $r$, just as with paired SMD/lnRoM. In R:
 # blah blah blah blah
 
 ```
+
+**Not sure if these are comparable to normal lnOR/lnRR. My guess is that they aren't**
