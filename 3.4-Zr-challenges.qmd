@@ -71,13 +71,14 @@ source("scripts/functions/convert_effect_sizes.R")
 
 # Everything's a spectrum, man {#sec-introduction}
 
-Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data.
+Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data. We'll start, however, by describing how to structure a database for Zr type effect sizes.
 
-In general, Zr effect size extractions often require a long-format raw database, where each row is one of the points in the corresponding scatterplot. This dataset is then summarized in R to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ whiel extracting data but this may lead to clunkiness in your workflow.
+## Database design
+**Not sure if we should get into this...**
 
-**Demonstrate this here?**
+In general, Zr effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis This dataset is then summarized in R to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
 
-<!-- ![Zr extraction challenges](figures/flowcharts_diagrams/Zr.jpg){width=60%} -->
+Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). We suggest multiple tabs in your spread sheet with identical coluns except for those that need to be summarized. 
 
 ## Simple figures {#sec-simple-figures}
 
@@ -105,7 +106,7 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 ```
 
-Then calculate the Zr effect size in escalc:
+The Zr effect size can be calculated in `escalc` after summarizing this data into $r$ (the `estimate` output from `cor.test`) and $n$ (the number of points).
 
 ```{r}
 #| echo: true
@@ -151,7 +152,9 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 ```
 
-In these cases, if the total number of points is reported for the study, you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall Zr estimate more conservative—e.g., less weight in the model). For example, in the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
+If the total number of points is reported for the study, you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall Zr estimate more conservative—e.g., less weight in the model). 
+
+In the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
 
 # Error bars {#sec-error-bars}
 ## Single axis error bars {#sec-single-axis-error-bars}
@@ -168,18 +171,18 @@ ggplot(data = dat, aes(x = x, y = y))+
   geom_errorbar(width = .25, aes(ymin = y-sd, ymax = y+sd))+
   geom_smooth(method = "lm", color = "black")+
   xlab("x")+
-  ylab("y")+
+  ylab("mean y±SD per site")+
   theme_bw()+
   theme(panel.grid = element_blank(),
         legend.position = "none")
 
 ```
 
-If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an internal-N, which will need to be gleaned from the methods of the paper. After determining this internal-N, extract the means and SDs for each point, and then draw a distribution of internal-N for each point with an appropriate distribution. Here we'll demonstrate using `rnorm` to draw normally distributed data for each point.
+If the error bars are only on the y axis this is fairly straightforward but is a bit surprising. In this case, each point actually has an **internal sample size**, which will need to be gleaned from the methods of the paper. After determining this internal sample size, you can extract the means and SDs for each point and then draw a random sample of the data underlying each point from the appropriate statistical distribution (with the length of this sample equal to the internal sample size). 
 
-::: callout-warning
-If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation (which is common), remember that you absolutely *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See [here](2.1-SMD-assumptions.qmd#sec-callout-error-types) on how to convert from other measures of error to standard deviation.
-:::
+One of the biggest reasons to draw the underlying data from figures like this is to align the **units of replication** between these data and the rest of your dataset. For example, if the rest of your dataset uses individuals (or nests or plots) as the unit of replication but the figure above uses sites and reports the mean±sd across individuals, then you will have a serious mismatch in the units of replication between these effect sizes. This mismatch will underweight the above effect size in your models.
+
+Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](6-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a Zr-type effect size and the binomial distribution)
 
 ```{r}
 #| echo: true
@@ -201,7 +204,33 @@ head(y_expanded)
 
 ```
 
-In this example data, each point had an internal N of 10 measurements. Notice that the original dataset went from 50 rows (individual points) to 500 rows ($50 * 10$). We then take this expanded dataset and calculate our correlation coefficient and effect size:
+
+::: callout-warning
+If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation, remember that you absolutely *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See [here](2.1-SMD-assumptions.qmd#sec-callout-error-types) on how to convert from other measures of error to standard deviation.
+:::
+
+In this example data, each point had an internal sample size of 10 measurements. As such, that the original dataset went from a sample size of 50 (50 rows) to 500 ($50 * 10$), which means the resulting effect size will have considerably greater influence in your models. 
+
+If you were to plot this reconstructed data, it would look like this:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+ggplot(data = y_expanded, aes(x = x, y = y))+
+  geom_jitter(size = 3, shape = 21, fill = "grey50",
+              alpha = 0.5)+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+We then take this expanded dataset and calculate our correlation coefficient and effect size:
 
 ```{r}
 # Now calculate 'r':
@@ -215,7 +244,18 @@ escalc(measure = "ZCOR",
 
 Pretty neat, right?
 
-However, in this example (and the one below) doing this assumes that the internal measurements of each point are at least somewhat independent—at least as independent as the sample N for other studies in your meta-analysis. If the internal measurements of these points are far less independent than in other studies in your meta-analysis then you may want to calculate the correlation just on the point means, and ignore the standard deviation. These decisions require a degree of thoughtfulness and good documentation to ensure consistency, especially when extracting data from a diversity of (messy) ecological studies.
+:::callout-important
+######### Summarizing across non-independent and independent data {#sec-callout-data-reconstruction}
+Simulating underlying data, as in the example above, can help align the *units of replication* of your dataset. 
+
+However, one should be thoughtful and careful about the non-independence structures embedded within these summaries. The resulting effect size may be based on a mixture of more and less independent data. For example, in the correlation plots [above](#sec-single-axis-error-bars), there are two types of non-independence: the measurements across the x-axis locations and the summarized measurements *within* each mean±sd. 
+
+Reconstructing the underlying data with `rnorm`, as we demonstrated above, and then summarizing by the `mean±sd` of each treatment group may mix these non-independence structures.
+
+For that reason, we suggest that data extracted like this should be tagged and that you should record whether the data was summarized across time, across spatially-independent samples (or different individuals), or across both. These factors may explain methodological heterogeneity in your dataset. 
+
+Note that similar mixtures of spatially, temporally, or spatiotemporally summarized data are also likely embedded within author-reported means±sds (which we also [recommend](3.1-universal-challenges.qmd#sec-callout-non-independence) tagging)
+:::
 
 ## x and y axis error bars {#sec-x-and-y-axis-error-bars}
 
@@ -244,7 +284,9 @@ ggplot(data = dat[sample(25)], aes(x = x, y = y))+
         legend.position = "none")
 ```
 
-In this case, you'll do approximately the same thing. Except that you need to choose a single internal-N (for the rows of the expanded x and y variables to align). The most conservative choice would be the N with the lowest sample size between the x and the y variable. In the table below, you'll see the extracted mean values for the x and y variables (`x`, `y`), their standard deviations (`x_sd`, `y_sd`), and their internal sample sizes (`x_n` and `y_n`), which differ. We'll first, choose the small sample size and then we'll draw simulated data.
+In this case, you'll do approximately the same thing. However, the rows of the expanded `x` and `y` variables must align to calculate a correlation coefficient. If the internal sample sizes for `x` are not the same as for `y`, you won't be able to align those rows. For that reason, we suggest that you choose a single internal sample size from the variable with the lowest sample size.
+
+In the table below, you'll see the extracted mean values for the x and y variables (`x`, `y`), their standard deviations (`x_sd`, `y_sd`), and their internal sample sizes (`x_n` and `y_n`), which differ. We'll start by choosing the smallest sample size and then we'll draw simulated data.
 
 ```{r}
 #| echo: true
@@ -287,25 +329,84 @@ escalc(measure = "ZCOR",
 ```
 
 
-If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See [here](6-simulating-non-gaussian-responses.qmd) where we demonstrate this.
-
-
-:::callout-important
-######### Summarizing non-independent and independent data {#sec-callout-data-reconstruction}
-In several sections through this tutorial we demonstrate or allude to reconstructing underlying data behind author summaries. This can align the *unit of replication* of the resulting effect sizes with the rest of your dataset. 
-
-However, one should be thoughtful and careful about the non-independence structures embedded within these summaries. The resulting effect size will be based on a mixture of more and less independent data. For example, in the correlation plots [above](#sec-single-axis-error-bars), there are two types of non-independence: the measurements across the x-axis locations and the summarized measurements within each x-axis location. 
-
-Reconstructing the underlying data with `rnorm`, as we demonstrated above, and then summarizing by the `mean±sd` of each treatment group mixes these non-independence structures.
-
-For that reason, we suggest that data extracted like this should be tagged and that you should record whether the data was summarized across time, across spatially-independent samples (or different individuals), or across both. These factors may explain methodological heterogeneity in your dataset. Note that similar mixtures of spatially, temporally, or spatiotemporally summarized data are also likely embedded within author-reported means±sds (which we also [recommend](3.1-universal-challenges.qmd#sec-callout-non-independence) recording)
-:::
-
+If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See [here](6-simulating-non-gaussian-responses.qmd) where we discuss this and [below](#sec-zr-reconstructing-proportion-data) where we demonstrate using the binomial distribution to reconstruct discrete individual outcomes from a correlation figure.
 
 # Time series {#sec-time-series}
-## Mismatched time series {#sec-mismatched-time-series}
+Some observational type studies, especially in ecology, present multiple time series, which may include the two continuous variables you wish to correlate, in this case `Variable 1` and `Variable 2`:
 
-Sometimes the factors of interest that you want to correlate are in separate graphs as time series. In these cases, it's just the tedious task of extracting data from each and aligning the two variables.
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+library("lubridate")
+
+x1 <- seq(from = 1995, to = 2005, by = 1)
+x2 <- seq(from = 1995, to = 2005, by = 1)
+
+y1 <- seq(from = 5, to = 15, by = 1)
+y1 <- y1[1:11] 
+y1 <- y1 + rnorm(n = 11, mean = 0, sd = .5)
+# plot(x1, y1)
+
+#
+y2 <- y1 * -1.7 + rnorm(n=length(x2), mean = 0, sd = 4) + 15
+# plot(x2, y2)
+
+# slopes2 <- rnorm()
+dt <- data.table(x1 = x1,
+                 y1 = y1,
+                 y2 = y2)
+
+p1 <- ggplot(data = dt, aes(x = x1, y = y1))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Variable 1")+
+  theme_bw()+
+  scale_x_continuous(breaks = seq(from = min(dt$x1), to=max(dt$x1), by = 2),
+                     labels = as.integer(seq(from = min(dt$x1), to=max(dt$x1), by = 2)))+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+# p1
+
+#
+p2 <- ggplot(data = dt, aes(x = x1, y = y2))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Variable 2")+
+  theme_bw()+
+  scale_x_continuous(breaks = seq(from = min(dt$x1), to=max(dt$x1), by = 2),
+                     labels = as.integer(seq(from = min(dt$x1), to=max(dt$x1), by = 2)))+  
+  theme(panel.grid = element_blank(),
+        legend.position = "bottom")
+# p2
+
+p1 / p2
+
+```
+
+If the interval between measurements is identical (on x-axis), then these figures are straightforward to extract. You simply extract each point from each figure and then copy and paste the resulting columns next to each other so that they look like this:
+
+```{r}
+#| eval: true
+#| echo: false
+
+setnames(dt, c("y1", "y2"), c("Variable 1", "Variable 2"))
+knitr::kable(dt)
+
+```
+
+You can then calculate the correlation between `Variable 1` and `Variable 2`, with $n$ equal to the number of measurements.
+
+:::callout-important
+Note that in time series data, the correlation coefficient is calculated across temporal measurements and thus has a different internal non-independent structure than correlations calculated across independent sites/plots/individuals.
+
+As such, as previously [mentioned](3.1-universal-challenges.qmd#sec-callout-non-independence), we recommend recording whether your effect sizes are summarized across *time*, *space/individuals*, or *both* throughout your meta-analysis. 
+:::
+
+## Mismatched time series {#sec-mismatched-time-series}
 
 However, what do you do if the time series are mismatched?
 
@@ -374,70 +475,99 @@ Aligning the data like this is tricky and will probably require manual merging b
 # Discrete responses {#sec-discrete-responses}
 ## Discrete responses with a continuous predictor {#sec-discrete-responses-binary-predictor}
 
-Imagine you are conducting a meta-analysis concerned with factors driving mortality in some organism. Many of the studies use a discrete predictor, e.g., presence or absence of a predator. These types of data are naturally suited for the [lnOR or lnRR effect sizes](2.2-lnOR-assumptions.qmd). However, other studies report mortality in relationship to the *abundance* of that predator---e.g., the continuous manifestation of presence/absence.
+Imagine you are conducting a meta-analysis concerned with factors driving nest success or failure in a seabird. Many of the studies use a discrete predictor, e.g., presence or absence of a predator. These types of data are naturally suited for [lnOR or lnRR effect sizes](2.2-lnOR-assumptions.qmd). However, other studies report mortality in relationship to the *abundance* of that predator---e.g., the continuous manifestation of presence/absence.
 
 ```{r}
 #| eval: true
 #| echo: false
 #| out-width: "70%"
 
-dat <- data.table(living = rbinom(n = 50, p = 0.75, size = 1),
-                  temperature = rnorm(n = 50, mean = 18, sd = 5))
+density = rnorm(n = 50, mean = 5, sd = 5)
+density <- density[density > 0]
+p <- density * 2 + 20
+p <- abs(p/max(p))
+dat <- data.table(living = rbinom(n = length(density), p = p, size = 1),
+                  density)
 
-ggplot(data = dat, aes(x = temperature, y = living))+
+ggplot(data = dat, aes(x = density, y = living))+
   geom_point(size = 3, alpha = 0.9, shape = 21, fill = "grey50")+
-  scale_y_continuous(breaks = c(0, 1), labels = c("Living", "Dead"))+
+  scale_y_continuous(breaks = c(0, 1), labels = c("Fledged", "Failed"))+
+  xlab("Predator abundance")+
+  ylab("Nest success")+
   theme_bw()+
   theme(panel.grid = element_blank(),
         legend.position = "none")
 
 ```
 
-Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can be converted to lnOR (see [here](4-converting-effect-sizes.qmd)) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point, which is an individual, and calculate Zr with the responses as a binary variable of 0 or 1.
+Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can then be converted to lnOR (see [here](4-converting-effect-sizes.qmd)) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point, which is an individual, and calculate Zr with the responses as a binary variable of 0 or 1. 
+
+This [conversion](4-converting-effect-sizes.qmd) is safe because presence/absence is a discretized version of abundance and because the **unit of replication** is the number of nests (or individuals) in both cases.
 
 ## Proportion data with a continuous predictor {#sec-proportion-data}
 
 You can imagine similar challenges where instead of 0 or 1 responses, the authors report % of a population:
-
-**THIS IS ROUGH**
 
 ```{r}
 #| eval: true
 #| echo: false
 #| out-width: "70%"
 
-x <- 10:30
-a <- rweibull(n = 21, shape = 2, scale = 4)
-a <- rev(sort(a))
-a <- a - min(a)
-a <- a/max(a)
-a <- a-.2
-dt <- data.table(temperature = x, proportion_alive = a)
-dt <- dt[a > 0]
+v_start <- c(x = 10, y = 2)
+v_end   <- c(x = 25, y = 2)
 
+# Number of simulation steps
+n <- 10
+
+# Generate interpolation parameter t from 0 to 1
+t <- seq(0, 1, length.out = n)
+
+# Linear baseline interpolation between the two vectors
+base_path <- outer(1 - t, v_start) + outer(t, v_end)
+
+# Define peak height (hump amplitude)
+hump_height <- 5
+
+# Add a parabolic arc component (0 at ends, peak at t = 0.5)
+hump_profile <- 4 * hump_height * t * (1 - t)
+
+# Combine baseline with the vertical/value hump offset 
+# (assuming vertical element is index 2 or added to a specific dimension)
+dt <- base_path
+dt <- as.data.frame(dt)
+
+dt$y <- hump_profile + abs(rnorm(n = n, 0, sd = 1)) + 5
+setDT(dt)
+
+# Make y a proportion:
+dt[, y := (y / max(y) - .2)]
+#
 ggplot(data = dt)+
-  geom_path(aes(x = temperature, y = proportion_alive),
+  geom_path(aes(x = x, y = y),
             color = "black",
-            linewidth = 2)+
-  geom_point(aes(x = temperature, y = proportion_alive),
+            linewidth = 1)+
+  geom_point(aes(x = x, y = y),
             fill = "grey80",
             shape = 21,
-            size = 3)+
+            size = 4)+
   ylab("Survivorship (proportion alive)")+
   xlab("Temperature")+
   theme_bw()+
   theme(panel.grid = element_blank(),
         legend.position = "none")
 
+setnames(dt, c("x", "y"), c("temperature", "proportion_alive"))
 ```
 
-You can calculate Zr between the temperature and the proportion alive (the y axis), directly.
+You can calculate Zr directly between the predictor (`temperature`, x-axis) and the proportion alive (the y axis), directly. 
 
-However, this ignores the number of individuals in the population in each x-axis treatment, and can lead to a mismatch in the *unit of replication* between this effect size and other effect sizes in your dataset (if those were based on number of individuals, like the figure [above](#sec-discrete-responses-binary-predictor) or [lnOR](2.2-lnOR-assumptions.qmd) type data).
+However, each location on the x-axis actually represents a *population of individuals*, all of whom were monitored to determine the proportion alive. As such, simply calculating Zr directly from the proportion ignores population size and treats the number of surveys (or sites) as the *unit of replication*  (n=10). 
 
-To deal with this, the best option would be to convert this to binary response data based on the total number of individuals in each temperature treatment, if this can be reconstructed from author reported summaries. 
+This can lead to a serious mismatch with the rest of your dataset---if the rest of your dataset is based the number of individuals as the unit of replication (like [above](#sec-discrete-responses-binary-predictor))
 
-For example, if this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply the survivorship at each temperature level by 15, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature.
+To deal with this, the best option would be to convert the proportion data to binary response data based on the total number of individuals in each x-axis treatment---if this can be reconstructed from author reported summaries. 
+
+For example, if this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply the survivorship at each temperature level by 15, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature treatment.
 
 Let's give it a try. `dt` is a data.table with a column for proportion alive and for temperature. We'll calculate the number of living and dead individuals, make the dataset long so that these are in one column, and then duplicate the dataset to be one row per individual. Finally, we'll create a binary column of 0s and 1s:
 
@@ -465,11 +595,15 @@ dt.expanded$n_individuals <- NULL
 dt.expanded[, living := ifelse(status == "number_alive", 1, 0)]
 dt.expanded$status <- NULL
 
-knitr::kable(head(dt.expanded))
+nrow(dt.expanded)
 
+knitr::kable(rbind(head(dt.expanded, 3),
+                   tail(dt.expanded, 3)))
 ```
 
-We have now expanded this dataset from a single row per temperature treatment to a single row per individual. We can now calculate a correlation coefficient and our Zr effect size. The sample size used in this calculation will reflect the number of individuals instead of the number of temperature treatments.
+We have now expanded this dataset from a single row per temperature treatment (n=17) to a single row per individual (n=255) and we have shifted the *unit of replication* from number of temperature treatments to number of individuals. 
+
+We can now calculate a correlation coefficient and our Zr effect size:
 
 ```{r}
 res <- cor.test(dt.expanded$living, dt.expanded$temperature)
@@ -479,17 +613,14 @@ escalc(measure = "ZCOR",
        ri = res$estimate) |> unlist() # only doing this because of the ugly table outputs....
 ```
 
-Remember, the reason we did all of this work was to make this effect size comparable to other effect sizes where *unit of replication* was derived from the number of individuals, which we believe is the best way to treat data like this.
-
 ::: callout-important
 Continuous predictors with discrete responses can also be analyzed with a Hazard Ratio effect size. These are not supported by `escalc` and rarely meta-analyzed yet should be further integrated into meta-analytic workflows.
 
 IS THIS TRUE? This was something Shinichi said, I think.
 :::
-
 ## Mean±SD proportion data with continuous predictor {#sec-zr-reconstructing-proportion-data}
 
-Now let's look at a similar situation, except the figure is presenting mean±SD mortality across separate trials within each temperature treatment.
+Now let's look at a similar situation, except the figure is presenting mean±SD mortality across **separate trials** within each temperature treatment.
 
 ```{r}
 #| eval: true
@@ -522,13 +653,19 @@ dt[, n_trials := 3]
 
 ```
 
-If we want our effect size to be based on the number of individuals, we need to try to reconstruct the underlying distributions behind each of these trials and then calculate a correlation across those individuals for the binary response of being alive or dead. We also, of course need to figure out, from the text, the number of individuals and the number of trials (or sites, plots, etc) that the mean±sd were calculated from.
+If we want our **unit of replication** to be based on the number of individuals, we need to try to reconstruct the underlying distributions behind each of these summarized trials. This will allow us to calculate a correlation across individuals for the binary response of being alive or dead, instead of across the mean per trial. 
+
+We also, of course need to figure out, from the text, the number of individuals and the number of trials (or sites, plots, etc) that the mean±sd were calculated from.
 
 ::: callout-note
-Data is complex. A similar data structure could occur with plots as the number of individuals (e.g., number of plots occupied by a species) and the number of trials/sites/islands/etc as a larger plot/area/site. We try in this tutorial to keep our language intentionally verbose, in order to guide readers towards conceptual understanding across a multitude of domains. This can, regrettably, lead to clunky and annoying language.
+A similar data structure could occur with discrete outcomes per **plot** instead of **individuals** with the number of **sites/islands** interchangeable with the number of **trials**.
+
+An example would be the number of plots occupied by a species (the discrete outcome) per study site (the trial), which are sampled across some continuous gradient of interest.
 :::
 
-To do this, we will do something similar as in the previous section (#sec-error-bars). However we will use either the binomial or beta-binomial distribution instead of the normal distribution. To understand whether to use the binomial or beta-binomial distribution, check whether the observed (author-reported) standard deviation is greater than the theoretical standard deviation of the [binomial distribution](6-simulating-non-gaussian-responses.qmd), which is defined by the proportion and the the number of individuals per trial. *Total number of individuals or just n individuals per trial?? According to Gemini n_individuals per trial*
+To do this, we will do something similar as in the [previous section](#sec-error-bars). However we will use either the binomial or beta-binomial distribution instead of the normal distribution. 
+
+To understand whether to use the binomial or beta-binomial distribution, we will check whether the observed (author-reported) standard deviation is greater than the theoretical standard deviation of the [binomial distribution](6-simulating-non-gaussian-responses.qmd), which is defined by the proportion and the the number of individuals per trial.
 
 ```{r}
 #| echo: true
@@ -540,9 +677,11 @@ theoretical_sd <- sqrt((dt$proportion_alive * (1 - dt$proportion_alive))/(dt$n_i
 nrow(dt[sd > theoretical_sd])
 ```
 
-It looks like the reported standard deviations are all less than or equal the theoretical standard deviation of the binomial family. So we can use this distribution to generate the raw underyling data. See [here](6-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (e.g., if $sd_{reported}$ is greater than $sd_{theoretical}$).
+It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution to generate the raw underyling data. See [here](6-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
 
 Now we'll draw binomial data with the `rbinom` function. We specify `size` as number of individuals per trial (`n_individuals` in our dataset `dt`), `n` as number of trials (`n_trials` in our dataset), and `p` as the author reported mean proportion alive (`proportion_alive`). The function will return a numeric vector, with each element indicating the number of alive individuals per trial. With 3 trials, each vector should have a length of 3.
+
+For a single temperature treatment, this looks like this:
 
 ```{r}
 #| echo: true
@@ -552,7 +691,25 @@ Now we'll draw binomial data with the `rbinom` function. We specify `size` as nu
 rbinom(p = dt$proportion_alive[1],
        size = dt$n_individuals[1],
        n = dt$n_trials[1])
+
 ```
+Each element of the vector reports the estimated number of individuals that survived of the 20 individuals in that trial.
+
+
+:::callout-note
+Note that if the number of individuals differed across trials *within* the same temperature treatment, you can provide a vector of values instead of a single value to the `size` argument:
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+rbinom(p = dt$proportion_alive[1],
+       size = c(10, 15, 5),
+       n = dt$n_trials[1])
+
+```
+However, in this case, we question whether the article's authors should have summarized this data by mean±sd in the first place.
+:::
 
 Now we'll use a `for` loop to iterate over our dataset per temperature treatment. We'll take the sum of the vector returned by rbbinom, which gives the total number of living individuals across the three trials.
 
@@ -575,12 +732,6 @@ knitr::kable(head(y_expanded))
 
 ```
 
-::: callout-tip
-Note, that if there were variable numbers of individuals per trial, then you'd want to create a long dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, specifying $1$ as your `n`.
-
-Although, the study's authors probably shouldn't have taken the mean±sd in that case....Hmmmm....
-:::
-
 Now we can calculate the number of dead individuals per temperature treatment based on the total number of individuals across the 3 trials (3 \* 20 = 60)
 
 ```{r}
@@ -590,6 +741,7 @@ Now we can calculate the number of dead individuals per temperature treatment ba
 
 y_expanded[, n_dead := 60 - n_alive]
 y_expanded[, n_dead := as.integer(n_dead)]
+
 ```
 
 As with the section [above](#sec-proportion-data), you can then expand this dataset from a row per temperature treatment to become a row per individual and temperature treatment, with a binary outcome variable of living or dead:
@@ -613,11 +765,15 @@ final_dat[, living := ifelse(status == "n_alive", 1, 0)]
 final_dat <- final_dat[, .(temperature, living)]
 
 nrow(final_dat)
-knitr::kable(head(final_dat))
+
+knitr::kable(rbind(head(final_dat, 5),
+                   tail(final_dat, 5)))
 
 ```
 
-This final dataset has 300 rows, one for each individual, and the necessary ingredients for calculating Zr, with number of individuals as the unit of replication. Reconstructing the underlying binomial distribution as we did here gives our resulting effect size considerably lower sampling variance and much higher weight in your meta-analytic models, and if converting to an lnOR effect size, a comparable unit of replication.
+This final dataset has 300 rows, one for each individual, and the necessary ingredients for calculating Zr, with number of individuals as the **unit of replication**. If we had simply calculated Zr from the author-reported means, our sample size would have been 5 and our unit of replication would have been number of trials, instead of number of individuals.
+
+Reconstructing the underlying binomial distribution as we did here gives the resulting effect size considerably higher weight in your meta-analytic models, and may help align your unit of replication to lnOR type effect sizes (if those are also in your dataset and you are planning on [converting](4-converting-effect-sizes.qmd) effect sizes).
 
 ```{r}
 #| echo: true

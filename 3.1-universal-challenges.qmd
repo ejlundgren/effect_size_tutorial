@@ -73,7 +73,7 @@ There are a suite of challenges, regardless of effect size type, that challenge 
 
 One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.
 
-Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the *unit of replication* is and whether these are *comparable* across studies in your dataset. While sample size might be conceptually straightforward with behavioral or physiological data---where the unit of replication is generally the number of individuals---it can become incredible complex with plot data or survey data.
+Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the **unit of replication** is and whether these are *comparable* across studies in your dataset. While sample size might be conceptually straightforward with behavioral or physiological data---where the unit of replication is generally the number of individuals---it can become incredible complex with plot data or survey data.
 
 For example, if you are meta-analyzing vegetation data you may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence within their models with random effects), while others will make individual plants nested within plots the unit of replication.
 
@@ -86,27 +86,9 @@ For these reasons, it is essential to record the unit of replication (e.g., indi
 
 You will see that some of the hardest extraction challenges involve deconstructing author-provided summaries (e.g., mean±sd) to reconstruct underlying units of replication. For example, if authors provide mean±sd of survivorship of individuals across sites, the unit of replication for the raw mean±sd is number of sites. However, this may make your data incomparable to other studies for which the unit of replication is individuals.
 
-There are techniques—with their own assumptions-for reconstructing the underlying data in these cases by drawing from the data generating process. See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [Zr effect sizes](3.4-Zr-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](6-simulating-non-gaussian-responses.qmd),
+There are techniques—with their own assumptions---for reconstructing the underlying data in these cases. These techniques involve drawing simulated data from the original data generating process. See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [Zr effect sizes](3.4-Zr-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](6-simulating-non-gaussian-responses.qmd).
 :::
 
-## Measurement scale {#sec-measurement-scale}
-
-Another issue that haunts vegetation meta-analyses is plot size (**REF to that Ecology Letters paper**). Studies with larger plots (e.g., 100 m^2^) will have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects.
-
-```{r}
-#| eval: true
-#| echo: false
-#| out-width: "70%"
-
-# VISUALIZE
-
-```
-
-There is currently no statistical solution for these scale challenges in meta-analysis. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data. Plot size can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest.
-
-In all these cases, the meta-analyst should be prepared to thoroughly extract, perhaps over multiple columns, the various dimensions of sample size that may haunt the articles in their study. These columns can be used for sensitivity analyses.
-
-Also note that sample size is necessary to convert author-provided measurements of *standard error* to *standard deviation*. For that reason, the meta-analyst must do their utmost to determine the sample size used by the authors to calculate standard error, if that is what they reported.
 
 ::: callout-important
 ############ Different Ns???
@@ -115,6 +97,17 @@ Let's imagine that an article presented standard error based on one measure of s
 
 I think so: Rao, J.N.K. & Scott, A.J. 1992. A simple method for the analysis of clustered binary data. Biometrics 48: 577–585.
 :::
+
+
+:::callout-important
+####### Measurement scale {#sec-measurement-scale}
+Another issue that haunts some meta-analyses is plot size [@Spake2021-fz]. Studies with larger plots (e.g., 100 m^2^) will have a smaller sample size than studies with small plots (e.g., 10 m^2^) for an equal effort. Likewise, some studies will not use areal plots at all but will instead use transects (e.g., of 100 m in length). These differences in scale are also ecological---many ecological processes are scale dependent: a negative effect at a small scale can translate to a positive effect at a large scale (REF). 
+
+There is currently no statistical solution for these scale challenges in vegetation meta-analyses [@Spake2021-fz]. For that reason, we recommend digitizing plot-size when conducting a meta-analysis on vegetation data, which can be used as a moderator or for subsetting your dataset. You'll also notice, if thinking about this problem, that measurement scale does not operate alone but in interaction with *plant size*—a 100 m^2^ plot in a grassland is very different than a 100 m^2^ plot in an old growth forest. 
+
+Given that scale is both biologically and statistically profound, we recommend digitizing measurement scale for explicit analysis. Note that doing so is not always fruitful (e.g., [@Lundgren2024-ly]), likely because it is difficult to account for plant size.
+:::
+
 
 # Complex non-independence structures {#sec-non-independence}
 
@@ -364,3 +357,4 @@ As you can see, one of the key considerations in performing a robust and accurat
 We recommend that you do a pilot extraction, and analysis, of \~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.
 
 ## Database template or further guidance?? {#sec-database-template}
+Or should we have a database template discussion for each effect size type?

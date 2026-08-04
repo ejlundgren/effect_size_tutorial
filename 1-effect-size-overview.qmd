@@ -49,11 +49,13 @@ Effect sizes are statistics calculated from the results of empirical research th
 
 Effect sizes are also known as *'point estimates'*—e.g., the central tendency of a relationship of interest.
 
-Every meta-analytic effect size is associated with *sampling variance*. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is is generally calculated from the sample size and standard deviation of the source data.
+Every meta-analytic effect size is associated with *sampling variance*. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is calculated from the sample size and/or the standard deviation of the source data.
 
 # Effect size types {#sec-effect-size-types}
 
-We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable in relation to a categorical or continuous predictor variable. There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups (lnCVR), effect magnitude regardless of direction (lnM), and heterozygosity in population genetics (HWE). These, alongside other, less common effect sizes for meta-analyzing single-group descriptive statistics are briefly presented in the `escalc` [cheatsheet](5-escalc-cheatsheet.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/).
+We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies of a response variable in relation to categorical or continuous predictor variables. 
+
+There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@REF]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. These, alongside other, less common effect sizes for single-group descriptive statistics are briefly presented in the `escalc` [cheatsheet](5-escalc-cheatsheet.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/) and are discussed [below](#sec-custom-effect-sizes).
 
 We here focus this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution:
 
@@ -62,12 +64,12 @@ We here focus this tutorial on the mathematical assumptions, alternative formula
 2)  log odds ratio (lnOR) and log risk ratio (lnRR)
 
 3)  correlation coefficient (Zr)
+**Need names for each category**
 
 These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.
 
 ![Effect size types](figures/illustration_icons/effect-size-types.jpg) When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is SMD or lnRoM or Zmu-which differ in their interpretability and mathematical assumptions.
 
-**WHAT ABOUT ORDINAL RESPONSES? Is this an extraction challenge for lnOR? e.g., `a` may equal level1 + level2 and `b` may equal level3 + level4?**
 
 If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as lnOR or lnRR. This type of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.
 
@@ -77,19 +79,18 @@ Finally, it is also possible to convert between these main effect size types, wh
 
 
 :::callout-note
-########## When you have multiple effect size options {#sec-effect-size-options}
+########## Effect size types are not always clearcut {#sec-effect-size-options}
 
-The choice of what effect size to use may seem very clearcut. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice. 
+The choice of what effect size to use may seem very simple. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice. 
 
-However, this can sometimes be a farce. For example, imagine you're meta-analyzing the effect of red foxes on the abundance of their prey [like in [@Wallach2025-ta]. Many studies present results that look like the figures we've been seeing: comparing an area with high fox abundance to an area with low fox abundance due to an eradication or culling treatment. However, the 'low' fox treatment still has foxes, just a lower density.
+However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey (like in [@Wallach2025-ta]). Many studies present results that look like SMD-type data: comparing prey abundance between areas with high fox abundance to areas with low fox abundance due to an eradication or culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.
 
-You have two options with data like this. One option is to use an SMD-type effect size but treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators and then require to have an interaction between these moderators and your density measurement.
+It seems obvious to use an SMD-type effect size for data like this but then you are forced to treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators because then you are forced to include an interaction between the density-difference and your other moderators.
 
-An alternative option is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data. Correlation coefficients require at least 4 observations (which can be [simulated](3.4-Zr-challenges.qmd#sec-single-axis-error-bars) if the associated data has mean±error). Regardless, these decisions are non-trivial and should be carefully thought through.
+An alternative option is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. Regardless, these decisions are non-trivial and should be carefully thought through.
 
-Finally, see our section [below](#sec-custom-effect-sizes) and @Noble2022-pl for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.
+Note that it is also possible to formulate custom effect sizes that may help simplify these situations, e.g., by explicitly including density. See our section [below](#sec-custom-effect-sizes) and @Noble2022-pl for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.
 :::
-
 
 
 # Calculating effect sizes & sampling variance {#sec-calculating-effect-sizes}

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-08-03">
+<meta name="dcterms.date" content="2026-08-04">
 <title>An overview of effect sizes – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -185,7 +185,7 @@ window.Quarto = {
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./to_do_list.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">TO DO LIST 🤠🤠🤠</span></a>
+ <span class="menu-text">TO DO LIST 😭🤠😭🤠</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -343,7 +343,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 3, 2026</p>
+      <p class="date">August 4, 2026</p>
     </div>
   </div>
   
@@ -355,18 +355,18 @@ window.Quarto = {
 </header><section id="sec-introduction-to-effect-sizes" class="level1"><h1>A brief introduction to effect sizes and sampling variance</h1>
 <p>Effect sizes are statistics calculated from the results of empirical research that report the variables of interest and, if the effect size is <em>standardized</em>, allow comparison across different studies even if the articles collected data with different units. The effect sizes we’ll discuss in this tutorial concern relationships between 2 variables, however there are other effect sizes for describing univariate results, such as proportions, which we briefly cover in the <a href="./5-escalc-cheatsheet.html">appendix</a>.</p>
 <p>Effect sizes are also known as <em>‘point estimates’</em>—e.g., the central tendency of a relationship of interest.</p>
-<p>Every meta-analytic effect size is associated with <em>sampling variance</em>. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is is generally calculated from the sample size and standard deviation of the source data.</p>
+<p>Every meta-analytic effect size is associated with <em>sampling variance</em>. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is calculated from the sample size and/or the standard deviation of the source data.</p>
 </section><section id="sec-effect-size-types" class="level1"><h1>Effect size types</h1>
-<p>We’ll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable in relation to a categorical or continuous predictor variable. There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups (lnCVR), effect magnitude regardless of direction (lnM), and heterozygosity in population genetics (HWE). These, alongside other, less common effect sizes for meta-analyzing single-group descriptive statistics are briefly presented in the <code>escalc</code> <a href="./5-escalc-cheatsheet.html">cheatsheet</a>. There are also methods for creating custom effect sizes which are covered in a separate <a href="https://ejlundgren.github.io/SAFE/">tutorial</a>.</p>
+<p>We’ll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies of a response variable in relation to categorical or continuous predictor variables.</p>
+<p>There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, <span class="citation" data-cites="Nakagawa2015-tq">(<a href="#ref-Nakagawa2015-tq" role="doc-biblioref">Nakagawa et al. 2015</a>)</span>], difference in magnitude regardless of direction [lnM, <span class="citation" data-cites="REF">(<a href="#ref-REF" role="doc-biblioref"><strong>REF?</strong></a>)</span>], and heterozygosity in population genetics [HWE, <span class="citation" data-cites="Wellek2010-jp">(<a href="#ref-Wellek2010-jp" role="doc-biblioref">Wellek et al. 2010</a>)</span>]. These, alongside other, less common effect sizes for single-group descriptive statistics are briefly presented in the <code>escalc</code> <a href="./5-escalc-cheatsheet.html">cheatsheet</a>. There are also methods for creating custom effect sizes which are covered in a separate <a href="https://ejlundgren.github.io/SAFE/">tutorial</a> and are discussed <a href="#sec-custom-effect-sizes">below</a>.</p>
 <p>We here focus this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution:</p>
 <ol type="1">
 <li><p>standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu</p></li>
 <li><p>log odds ratio (lnOR) and log risk ratio (lnRR)</p></li>
-<li><p>correlation coefficient (Zr)</p></li>
+<li><p>correlation coefficient (Zr) <strong>Need names for each category</strong></p></li>
 </ol>
 <p>These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.</p>
 <p><img src="figures/illustration_icons/effect-size-types.jpg" class="img-fluid" alt="Effect size types"> When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is SMD or lnRoM or Zmu-which differ in their interpretability and mathematical assumptions.</p>
-<p><strong>WHAT ABOUT ORDINAL RESPONSES? Is this an extraction challenge for lnOR? e.g., <code>a</code> may equal level1 + level2 and <code>b</code> may equal level3 + level4?</strong></p>
 <p>If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as lnOR or lnRR. This type of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.</p>
 <p>The correlation between continuous predictors and continuous responses are analyzed as <code>Zr</code> effect sizes. <code>Zr</code> can also be calculated for responses with a continuous predictor and discrete (e.g., 0 or 1) response. Note that there are also correlation effect sizes (<a href="./2.3-Zr-assumptions.html#sec-point-biserial">point-biserial and biserial correlations</a>) for discrete predictors that are readily convertible to <code>Zr</code> and may be preferable to SMD/lnRoM/Zmu effect sizes in some cases—especially if the rest of your dataset consists of <code>Zr</code> data.</p>
 <p>Finally, it is also possible to convert between these main effect size types, which we discuss at the <a href="./4.0-converting-effect-sizes.html">end</a>. This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types (ref to borenstein). However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the <a href="./3.1-universal-challenges.html#sec-sample-size"><em>unit of replication</em></a></p>
@@ -376,15 +376,15 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>When you have multiple effect size options
+<span class="screen-reader-only">Note</span>Effect size types are not always clearcut
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The choice of what effect size to use may seem very clearcut. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice.</p>
-<p>However, this can sometimes be a farce. For example, imagine you’re meta-analyzing the effect of red foxes on the abundance of their prey [like in <span class="citation" data-cites="Wallach2025-ta">(<a href="#ref-Wallach2025-ta" role="doc-biblioref">Wallach and Lundgren 2025</a>)</span>. Many studies present results that look like the figures we’ve been seeing: comparing an area with high fox abundance to an area with low fox abundance due to an eradication or culling treatment. However, the ‘low’ fox treatment still has foxes, just a lower density.</p>
-<p>You have two options with data like this. One option is to use an SMD-type effect size but treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators and then require to have an interaction between these moderators and your density measurement.</p>
-<p>An alternative option is to calculate <a href="./2.3-Zr-assumptions.html">Zr</a> correlation coefficients for this data. Correlation coefficients require at least 4 observations (which can be <a href="./3.4-Zr-challenges.html#sec-single-axis-error-bars">simulated</a> if the associated data has mean±error). Regardless, these decisions are non-trivial and should be carefully thought through.</p>
-<p>Finally, see our section <a href="#sec-custom-effect-sizes">below</a> and <span class="citation" data-cites="Noble2022-pl">Noble et al. (<a href="#ref-Noble2022-pl" role="doc-biblioref">2022</a>)</span> for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.</p>
+<p>The choice of what effect size to use may seem very simple. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice.</p>
+<p>However, this can sometimes be misleading. For example, imagine you’re meta-analyzing the effect of a predator on the abundance of their prey (like in <span class="citation" data-cites="Wallach2025-ta">(<a href="#ref-Wallach2025-ta" role="doc-biblioref">Wallach and Lundgren 2025</a>)</span>). Many studies present results that look like SMD-type data: comparing prey abundance between areas with high fox abundance to areas with low fox abundance due to an eradication or culling treatment. However, the ‘low’ predator treatment still has predators—albeit at lower density.</p>
+<p>It seems obvious to use an SMD-type effect size for data like this but then you are forced to treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators because then you are forced to include an interaction between the density-difference and your other moderators.</p>
+<p>An alternative option is to calculate <a href="./2.3-Zr-assumptions.html">Zr</a> correlation coefficients for this data, treating the predator density as a continuous predictor. Regardless, these decisions are non-trivial and should be carefully thought through.</p>
+<p>Note that it is also possible to formulate custom effect sizes that may help simplify these situations, e.g., by explicitly including density. See our section <a href="#sec-custom-effect-sizes">below</a> and <span class="citation" data-cites="Noble2022-pl">Noble et al. (<a href="#ref-Noble2022-pl" role="doc-biblioref">2022</a>)</span> for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.</p>
 </div>
 </div>
 </section><section id="sec-calculating-effect-sizes" class="level1"><h1>Calculating effect sizes &amp; sampling variance</h1>
@@ -545,6 +545,9 @@ Viechtbauer, Wolfgang. 2010. <span>“Conducting Meta-Analyses in <span>R</span>
 </div>
 <div id="ref-Wallach2025-ta" class="csl-entry" role="listitem">
 Wallach, Arian D, and Erick J Lundgren. 2025. <span>“Review of Evidence That Foxes and Cats Cause Extinctions of Australia’s Endemic Mammals.”</span> <em>BioScience</em>.
+</div>
+<div id="ref-Wellek2010-jp" class="csl-entry" role="listitem">
+Wellek, Stefan, Katrina A B Goddard, and Andreas Ziegler. 2010. <span>“A Confidence-Limit-Based Approach to the Assessment of Hardy-Weinberg Equilibrium.”</span> <em>Biom. J.</em> 52 (2): 253–70.
 </div>
 <div id="ref-Wooster2026-ca" class="csl-entry" role="listitem">
 Wooster, Eamonn I F, Erick J Lundgren, Dale G Nimmo, et al. 2026. <span>“Predator-Prey Temporal Niche Partitioning Under Human Disturbance: A Meta-Analysis.”</span> <em>Nat. Commun.</em>, February, 1–12.
@@ -1051,197 +1054,198 @@ Wooster, Eamonn I F, Erick J Lundgren, Dale G Nimmo, et al. 2026. <span>“Preda
 <span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>Effect sizes are also known as *'point estimates'*—e.g., the central tendency of a relationship of interest.</span>
 <span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>Every meta-analytic effect size is associated with *sampling variance*. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is is generally calculated from the sample size and standard deviation of the source data.</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>Every meta-analytic effect size is associated with *sampling variance*. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is calculated from the sample size and/or the standard deviation of the source data.</span>
 <span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="fu"># Effect size types {#sec-effect-size-types}</span></span>
 <span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable in relation to a categorical or continuous predictor variable. There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups (lnCVR), effect magnitude regardless of direction (lnM), and heterozygosity in population genetics (HWE). These, alongside other, less common effect sizes for meta-analyzing single-group descriptive statistics are briefly presented in the <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](5-escalc-cheatsheet.qmd)</span>. There are also methods for creating custom effect sizes which are covered in a separate <span class="co">[</span><span class="ot">tutorial</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span>.</span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies of a response variable in relation to categorical or continuous predictor variables. </span>
 <span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>We here focus this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution:</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups <span class="co">[</span><span class="ot">lnCVR, [@Nakagawa2015-tq]</span><span class="co">]</span>, difference in magnitude regardless of direction <span class="co">[</span><span class="ot">lnM, [@REF]</span><span class="co">]</span>, and heterozygosity in population genetics <span class="co">[</span><span class="ot">HWE, [@Wellek2010-jp]</span><span class="co">]</span>. These, alongside other, less common effect sizes for single-group descriptive statistics are briefly presented in the <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](5-escalc-cheatsheet.qmd)</span>. There are also methods for creating custom effect sizes which are covered in a separate <span class="co">[</span><span class="ot">tutorial</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> and are discussed <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-custom-effect-sizes)</span>.</span>
 <span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>1)  standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>We here focus this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution:</span>
 <span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>2)  log odds ratio (lnOR) and log risk ratio (lnRR)</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>1)  standardized mean difference (SMD), log-transformed ratio of means (lnRoM), and Zmu</span>
 <span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>3)  correlation coefficient (Zr)</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>2)  log odds ratio (lnOR) and log risk ratio (lnRR)</span>
 <span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.</span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="al">![Effect size types](figures/illustration_icons/effect-size-types.jpg)</span> When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is SMD or lnRoM or Zmu-which differ in their interpretability and mathematical assumptions.</span>
-<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a>**WHAT ABOUT ORDINAL RESPONSES? Is this an extraction challenge for lnOR? e.g., `a` may equal level1 + level2 and `b` may equal level3 + level4?**</span>
-<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a>If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as lnOR or lnRR. This type of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>3)  correlation coefficient (Zr)</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>**Need names for each category**</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a>These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a><span class="al">![Effect size types](figures/illustration_icons/effect-size-types.jpg)</span> When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is SMD or lnRoM or Zmu-which differ in their interpretability and mathematical assumptions.</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>The correlation between continuous predictors and continuous responses are analyzed as <span class="in">`Zr`</span> effect sizes. <span class="in">`Zr`</span> can also be calculated for responses with a continuous predictor and discrete (e.g., 0 or 1) response. Note that there are also correlation effect sizes (<span class="co">[</span><span class="ot">point-biserial and biserial correlations</span><span class="co">](2.3-Zr-assumptions.qmd#sec-point-biserial)</span>) for discrete predictors that are readily convertible to <span class="in">`Zr`</span> and may be preferable to SMD/lnRoM/Zmu effect sizes in some cases—especially if the rest of your dataset consists of <span class="in">`Zr`</span> data.</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as lnOR or lnRR. This type of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.</span>
 <span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>Finally, it is also possible to convert between these main effect size types, which we discuss at the <span class="co">[</span><span class="ot">end</span><span class="co">](4-converting-effect-sizes.qmd)</span>. This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types (ref to borenstein). However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the <span class="co">[</span><span class="ot">*unit of replication*</span><span class="co">](3.1-universal-challenges.qmd#sec-sample-size)</span></span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a>The correlation between continuous predictors and continuous responses are analyzed as <span class="in">`Zr`</span> effect sizes. <span class="in">`Zr`</span> can also be calculated for responses with a continuous predictor and discrete (e.g., 0 or 1) response. Note that there are also correlation effect sizes (<span class="co">[</span><span class="ot">point-biserial and biserial correlations</span><span class="co">](2.3-Zr-assumptions.qmd#sec-point-biserial)</span>) for discrete predictors that are readily convertible to <span class="in">`Zr`</span> and may be preferable to SMD/lnRoM/Zmu effect sizes in some cases—especially if the rest of your dataset consists of <span class="in">`Zr`</span> data.</span>
 <span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
-<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a>########## When you have multiple effect size options {#sec-effect-size-options}</span>
-<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>The choice of what effect size to use may seem very clearcut. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice. </span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a>Finally, it is also possible to convert between these main effect size types, which we discuss at the <span class="co">[</span><span class="ot">end</span><span class="co">](4-converting-effect-sizes.qmd)</span>. This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types (ref to borenstein). However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the <span class="co">[</span><span class="ot">*unit of replication*</span><span class="co">](3.1-universal-challenges.qmd#sec-sample-size)</span></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a>########## Effect size types are not always clearcut {#sec-effect-size-options}</span>
 <span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>However, this can sometimes be a farce. For example, imagine you're meta-analyzing the effect of red foxes on the abundance of their prey <span class="co">[</span><span class="ot">like in [@Wallach2025-ta</span><span class="co">]</span>. Many studies present results that look like the figures we've been seeing: comparing an area with high fox abundance to an area with low fox abundance due to an eradication or culling treatment. However, the 'low' fox treatment still has foxes, just a lower density.</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a>The choice of what effect size to use may seem very simple. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice. </span>
 <span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>You have two options with data like this. One option is to use an SMD-type effect size but treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators and then require to have an interaction between these moderators and your density measurement.</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a>However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey (like in <span class="co">[</span><span class="ot">@Wallach2025-ta</span><span class="co">]</span>). Many studies present results that look like SMD-type data: comparing prey abundance between areas with high fox abundance to areas with low fox abundance due to an eradication or culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.</span>
 <span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>An alternative option is to calculate <span class="co">[</span><span class="ot">Zr</span><span class="co">](2.3-Zr-assumptions.qmd)</span> correlation coefficients for this data. Correlation coefficients require at least 4 observations (which can be <span class="co">[</span><span class="ot">simulated</span><span class="co">](3.4-Zr-challenges.qmd#sec-single-axis-error-bars)</span> if the associated data has mean±error). Regardless, these decisions are non-trivial and should be carefully thought through.</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a>It seems obvious to use an SMD-type effect size for data like this but then you are forced to treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators because then you are forced to include an interaction between the density-difference and your other moderators.</span>
 <span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>Finally, see our section <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-custom-effect-sizes)</span> and @Noble2022-pl for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.</span>
-<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a>An alternative option is to calculate <span class="co">[</span><span class="ot">Zr</span><span class="co">](2.3-Zr-assumptions.qmd)</span> correlation coefficients for this data, treating the predator density as a continuous predictor. Regardless, these decisions are non-trivial and should be carefully thought through.</span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>Note that it is also possible to formulate custom effect sizes that may help simplify these situations, e.g., by explicitly including density. See our section <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-custom-effect-sizes)</span> and @Noble2022-pl for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.</span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a><span class="fu"># Calculating effect sizes &amp; sampling variance {#sec-calculating-effect-sizes}</span></span>
-<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a>The dominant function used to calculate effect sizes and sampling variance in <span class="in">`R`</span> is the function <span class="in">`escalc`</span> in the package <span class="in">`metafor`</span> <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span>. <span class="in">`escalc`</span> takes summary statistics, a variable specifying the effect size type (specified with the <span class="in">`measure`</span> argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). At certain points we will also use our own custom function, <span class="in">`eff_this`</span> *(currently called eff_size but eff_this could be funny...)* which can do most of what escalc can do but also some things that escalc cannot do.</span>
-<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>**Not sure if we want to include this but if we don't, we need to figure out some of the options in escalc, like paired SMD...**</span>
-<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>To start, let's clean the environment and load some packages:</span>
-<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
-<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
-<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
-<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
-<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
-<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
-<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
-<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
-<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a>*The measure argument of escalc has so many damn options!! An escalc flowchart would be nice...in appendix. And effect size specific charts in the appropriate sections*</span>
-<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estimates and estimators {#sec-estimates-and-estimators}</span></span>
-<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>Effect sizes (also called *point estimates*) and sampling variance are *estimated* with a variety of *estimators*. These estimators are the formulas (or methods) used to calculate point estimates and sampling variance for each effect size. Because some estimators can be biased at low sample size, or with heteroscedastic data (e.g., different variance between treatment groups), alternative estimators have been developed for the same effect sizes.</span>
-<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>For example, the point estimate definition formula for lnRoM——the log-transformed ratio of means——is quite simple, with $m_1$\$m_1\$ and $m_2$ equivalent to the mean of an experimental and a control group respectively and $yi$ indicating the resulting effect size point estimate:</span>
-<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>&amp;yi = log(\frac{m_1}{m_2})<span class="sc">\\</span></span>
-<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>$$ </span>
-<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a>The sampling variance for lnRoM is calculated with a second formula that was derived with what's called the Delta method (spooky Calculus). Let $sd_1$, $sd_2$, and $n_1$ and $n_2$ present the standard deviation and sample size of the experimental and control groups respectively.</span>
-<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>&amp;vi = \frac{sd_1^2}{n_1 m_1^2} + \frac{sd_2^2}{n_2 m_2^2} <span class="sc">\\</span></span>
-<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>$$ </span>
-<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a>However, these estimators can produce *biased* estimates when sample size is low. For that reason, the default estimator used by most analysts is slightly more complex, with an additional term that corrects for low sample size bias, which for lnRoM, takes into account standard deviation ($sd_1$ and $sd_2$) and sample size of each group ($n_1$ and $n_2$).</span>
-<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>&amp;yi_{BC} = log(\frac{m_1}{m_2}) + 0.5(\frac{sd_1^2}{n_1 m_1^2} - \frac{sd_2^2}{n_2 m_2^2}) <span class="sc">\\</span></span>
-<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>$$ </span>
-<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a><span class="fu"># Calculating effect sizes &amp; sampling variance {#sec-calculating-effect-sizes}</span></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a>The dominant function used to calculate effect sizes and sampling variance in <span class="in">`R`</span> is the function <span class="in">`escalc`</span> in the package <span class="in">`metafor`</span> <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span>. <span class="in">`escalc`</span> takes summary statistics, a variable specifying the effect size type (specified with the <span class="in">`measure`</span> argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). At certain points we will also use our own custom function, <span class="in">`eff_this`</span> *(currently called eff_size but eff_this could be funny...)* which can do most of what escalc can do but also some things that escalc cannot do.</span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a>**Not sure if we want to include this but if we don't, we need to figure out some of the options in escalc, like paired SMD...**</span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a>To start, let's clean the environment and load some packages:</span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/convert_effect_sizes.R"</span>)</span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a>*The measure argument of escalc has so many damn options!! An escalc flowchart would be nice...in appendix. And effect size specific charts in the appropriate sections*</span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estimates and estimators {#sec-estimates-and-estimators}</span></span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a>Effect sizes (also called *point estimates*) and sampling variance are *estimated* with a variety of *estimators*. These estimators are the formulas (or methods) used to calculate point estimates and sampling variance for each effect size. Because some estimators can be biased at low sample size, or with heteroscedastic data (e.g., different variance between treatment groups), alternative estimators have been developed for the same effect sizes.</span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a>For example, the point estimate definition formula for lnRoM——the log-transformed ratio of means——is quite simple, with $m_1$\$m_1\$ and $m_2$ equivalent to the mean of an experimental and a control group respectively and $yi$ indicating the resulting effect size point estimate:</span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>&amp;yi = log(\frac{m_1}{m_2})<span class="sc">\\</span></span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a>The sampling variance for lnRoM is calculated with a second formula that was derived with what's called the Delta method (spooky Calculus). Let $sd_1$, $sd_2$, and $n_1$ and $n_2$ present the standard deviation and sample size of the experimental and control groups respectively.</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a>&amp;vi = \frac{sd_1^2}{n_1 m_1^2} + \frac{sd_2^2}{n_2 m_2^2} <span class="sc">\\</span></span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a>$$ </span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a>However, these estimators can produce *biased* estimates when sample size is low. For that reason, the default estimator used by most analysts is slightly more complex, with an additional term that corrects for low sample size bias, which for lnRoM, takes into account standard deviation ($sd_1$ and $sd_2$) and sample size of each group ($n_1$ and $n_2$).</span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a>&amp;yi_{BC} = log(\frac{m_1}{m_2}) + 0.5(\frac{sd_1^2}{n_1 m_1^2} - \frac{sd_2^2}{n_2 m_2^2}) <span class="sc">\\</span></span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>$$ </span>
 <span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>These derived formulas are known as *bias-corrected* estimators and they exist for most effect sizes. However, the bias-corrected estimators sometimes are *more* biased. <span class="in">`escalc`</span> uses the best known estimator for each effect size type, which is usually the bias-corrected estimator (but not always and its not always clear which version of an effect size <span class="in">`escalc`</span> uses).</span>
-<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a>To calculate lnRoM in <span class="in">`R`</span>, we use <span class="in">`escalc`</span> as follows:</span>
-<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>,</span>
-<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">6</span>,</span>
-<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.5</span>,</span>
-<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
-<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_this`</span> is similar but provides a little bit more control because it can return all formula versions, the exact formula used, and you can customize the effect size formula table to add custom formulas. Run the function to see the potential formulas support and their inputs:</span>
-<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>() <span class="sc">|&gt;</span> <span class="fu">head</span>()</span>
-<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a>Now let's calculate lnRoM:</span>
-<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">10</span>, <span class="at">x2 =</span> <span class="dv">6</span>,</span>
-<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
-<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
-<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a>       <span class="at">default_formulas =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a>       <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>)</span>
-<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas. the <span class="in">`_second`</span> variables are the bias-corrected point estimates. If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased. Note that the function defaults to unpaired designs.</span>
-<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a>####### How to derive custom effect sizes {#sec-callout-calculating-variance}</span>
-<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a>Until recently, almost all effect size estimators used *plugin* formulas like those shown above to calculate point estimates and sampling variance (which is what `escalc` does). However, growth in computational power has enabled alternative methods for calculating effect sizes and sampling variance. In particular, the *SAFE* method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.</span>
-<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a>SAFE is also essential for calculating point estimates and sampling variance for effect sizes for which differences of 0 (e.g., $m1 - m2$) lead to $NA$ or $Infinite$ values <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>—in particular the log magnitude (lnM) effect size, which describes the absolute difference between two groups <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>. For further information, including an interactive tutorial on the use of the SAFE method, please see **Nakagawa et al. 2026** and the tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span>.</span>
-<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## Alternative estimators {#sec-alternative-estimators}</span></span>
-<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators based on different numeric properties of the data or the study design. For example, there are estimators for heteroscedastic data, estimators for paired study designs, for correlation data that has been discretized (e.g., into two groups, high vs low), and others which are  described in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](5-escalc-cheatsheet.qmd)</span>.</span>
-<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate.</span>
-<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors are paired design formulations. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but many meta-analyses do not take into account paired designs, which may bias results.Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.</span>
-<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a>However, there are also paired design formulations that are *NOT* comparable to unpaired formulas. These take into account the pairing in the *point estimate* formula and produce effect size estimates that need to be analyzed separately.</span>
-<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](5-escalc-cheatsheet.qmd)</span> with some charts of compatibility between the different estimators in <span class="in">`escalc`</span>.</span>
-<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a><span class="fu"># Less common effect sizes {#sec-less-common-effect-sizes}</span></span>
-<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a>The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>) or variability between two groups (lnCVR, <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">tutorial</span><span class="co">](5-escalc-cheatsheet.qmd)</span>. Many of these, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD, lnRoM, and Zmu. Let $m$, $sd$, and $n$, denote mean, standard deviation and sample size and as such are readily calculatable from the same summaries used for more common effect sizes.</span>
-<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes {#sec-custom-effect-sizes}</span></span>
-<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a>You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method (see the tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](ejlundgren.github.io/SAFE/)</span>).</span>
-<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a>However, custom effect sizes (or at least rare effect sizes) can also be very useful even with data that is readily synthesizable with common effect sizes, like those we discussed above (SMD/lnRoM/etc). </span>
-<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a>For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator.</span>
-<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.</span>
-<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a>Another way of thinking about this problem is to use an effect size that explicitly includes the temperature difference <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span>. For example, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable. You can also draw the resulting point cloud estimated by the means±SD of each temperature treatment with <span class="in">`rnorm`</span> (see <span class="co">[</span><span class="ot">here</span><span class="co">](3.4-Zr-challenges.qmd#sec-error-bars)</span> where we demonstrate this method) and then calculating the correlation with temperature.</span>
-<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a>Another, potentially preferable option, would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference in its point estimate. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$. </span>
-<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>These derived formulas are known as *bias-corrected* estimators and they exist for most effect sizes. However, the bias-corrected estimators sometimes are *more* biased. <span class="in">`escalc`</span> uses the best known estimator for each effect size type, which is usually the bias-corrected estimator (but not always and its not always clear which version of an effect size <span class="in">`escalc`</span> uses).</span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-163"><a href="#cb10-163" aria-hidden="true" tabindex="-1"></a>To calculate lnRoM in <span class="in">`R`</span>, we use <span class="in">`escalc`</span> as follows:</span>
+<span id="cb10-164"><a href="#cb10-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>,</span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">6</span>,</span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.5</span>,</span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_this`</span> is similar but provides a little bit more control because it can return all formula versions, the exact formula used, and you can customize the effect size formula table to add custom formulas. Run the function to see the potential formulas support and their inputs:</span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>() <span class="sc">|&gt;</span> <span class="fu">head</span>()</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a>Now let's calculate lnRoM:</span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">10</span>, <span class="at">x2 =</span> <span class="dv">6</span>,</span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a>       <span class="at">default_formulas =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a>       <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>)</span>
+<span id="cb10-197"><a href="#cb10-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-198"><a href="#cb10-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas. the <span class="in">`_second`</span> variables are the bias-corrected point estimates. If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased. Note that the function defaults to unpaired designs.</span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a>####### How to derive custom effect sizes {#sec-callout-calculating-variance}</span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a>Until recently, almost all effect size estimators used *plugin* formulas like those shown above to calculate point estimates and sampling variance (which is what `escalc` does). However, growth in computational power has enabled alternative methods for calculating effect sizes and sampling variance. In particular, the *SAFE* method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.</span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a>SAFE is also essential for calculating point estimates and sampling variance for effect sizes for which differences of 0 (e.g., $m1 - m2$) lead to $NA$ or $Infinite$ values <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>—in particular the log magnitude (lnM) effect size, which describes the absolute difference between two groups <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>. For further information, including an interactive tutorial on the use of the SAFE method, please see **Nakagawa et al. 2026** and the tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span>.</span>
+<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a><span class="fu">## Alternative estimators {#sec-alternative-estimators}</span></span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators based on different numeric properties of the data or the study design. For example, there are estimators for heteroscedastic data, estimators for paired study designs, for correlation data that has been discretized (e.g., into two groups, high vs low), and others which are  described in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](5-escalc-cheatsheet.qmd)</span>.</span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate.</span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors are paired design formulations. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but many meta-analyses do not take into account paired designs, which may bias results.Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.</span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>However, there are also paired design formulations that are *NOT* comparable to unpaired formulas. These take into account the pairing in the *point estimate* formula and produce effect size estimates that need to be analyzed separately.</span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](5-escalc-cheatsheet.qmd)</span> with some charts of compatibility between the different estimators in <span class="in">`escalc`</span>.</span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a><span class="fu"># Less common effect sizes {#sec-less-common-effect-sizes}</span></span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a>The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>) or variability between two groups (lnCVR, <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">tutorial</span><span class="co">](5-escalc-cheatsheet.qmd)</span>. Many of these, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD, lnRoM, and Zmu. Let $m$, $sd$, and $n$, denote mean, standard deviation and sample size and as such are readily calculatable from the same summaries used for more common effect sizes.</span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes {#sec-custom-effect-sizes}</span></span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a>You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method (see the tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](ejlundgren.github.io/SAFE/)</span>).</span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a>However, custom effect sizes (or at least rare effect sizes) can also be very useful even with data that is readily synthesizable with common effect sizes, like those we discussed above (SMD/lnRoM/etc). </span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a>For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator.</span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.</span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a>Another way of thinking about this problem is to use an effect size that explicitly includes the temperature difference <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span>. For example, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable. You can also draw the resulting point cloud estimated by the means±SD of each temperature treatment with <span class="in">`rnorm`</span> (see <span class="co">[</span><span class="ot">here</span><span class="co">](3.4-Zr-challenges.qmd#sec-error-bars)</span> where we demonstrate this method) and then calculating the correlation with temperature.</span>
+<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a>Another, potentially preferable option, would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference in its point estimate. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$. </span>
 <span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a>&amp;Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}<span class="sc">\\</span></span>
-<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a>&amp;Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}<span class="sc">\\</span></span>
+<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb10-245"><a href="#cb10-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a>Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by REF using the Delta method) or with the <span class="co">[</span><span class="ot">SAFE method</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> (REF). These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). </span>
-<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly with your effect size. See <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span> for a thorough discussion of these matters. If there is consistent heterogeneity like this in your meta-analysis, consider whether a custom or less-used effect size would help explicitly capture heterogeneity, leading to simpler models, better model estimates, and simpler interpretation of your results.</span>
-<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
+<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a>Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by REF using the Delta method) or with the <span class="co">[</span><span class="ot">SAFE method</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> (REF). These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). </span>
+<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly with your effect size. See <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span> for a thorough discussion of these matters. If there is consistent heterogeneity like this in your meta-analysis, consider whether a custom or less-used effect size would help explicitly capture heterogeneity, leading to simpler models, better model estimates, and simpler interpretation of your results.</span>
+<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-251"><a href="#cb10-251" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
