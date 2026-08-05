@@ -351,13 +351,20 @@ window.Quarto = {
 </div>
 <p>Zr has among the least biased of point estimate and variance formulas (REF).</p>
 <p><em>What to do about 0/1 or binary outcomes with a continuous predictor?</em></p>
+<div class="callout-question">
+<p><strong>Zr needs Pearson’s correlation coefficient not Spearmans</strong> NEED TO MENTION IN REPORTING OF CORRELATIONS OF DIFFERENT TYPES.</p>
+<p>Also should remind about different correlation types? Pearson’s (2 continuous variables), Spearman’s (1? non-parametric variable), Kendall (???), point-biserial (1 variable truly naturally discrete), biserial (1 variable artificially discretized), techronic (2 variables artificially discretized)</p>
+<p>See correlation confusion.png in the <code>notes/</code> directory</p>
+</div>
 <section id="sec-assumptions" class="level2"><h2 class="anchored" data-anchor-id="sec-assumptions">Assumptions</h2>
-<p>XXXXX</p>
+<p>Presumably need to be truly continuous, e.g., not ordinal? Can you use directly reported Spearman’s correlation coefficients?</p>
 </section><section id="sec-interpretation" class="level2"><h2 class="anchored" data-anchor-id="sec-interpretation">Interpretation</h2>
 <p>Zr effect sizes describe the strength and direction of a relationship between two continuous variables.</p>
 </section><section id="sec-other-correlation-types" class="level2"><h2 class="anchored" data-anchor-id="sec-other-correlation-types">Other correlation types</h2>
 <section id="sec-point-biserial" class="level3"><h3 class="anchored" data-anchor-id="sec-point-biserial">Point-biserial correlations &amp; biserial correlations</h3>
-<p>Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).</p>
+<p>Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction.</p>
+<p>Point-biserial correlations are for truly distinct predictor variables (e.g., male vs female) while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small or presence versus absence).</p>
+<p><strong>Shouldn’t use male vs female as example of truly discrete variables</strong></p>
 <p>In our mind, the biggest advantage of these correlations is that they require fewer assumptions to <em>convert</em> to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. <code>escalc</code> provides a shorthand to directly convert these statistics to Zr:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`</span></span>
@@ -928,37 +935,50 @@ window.Quarto = {
 <span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>*What to do about 0/1 or binary outcomes with a continuous predictor?*</span>
 <span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assumptions {#sec-assumptions}</span></span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>XXXXX</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>:::callout-question</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>**Zr needs Pearson's correlation coefficient not Spearmans** NEED TO MENTION IN REPORTING OF CORRELATIONS OF DIFFERENT TYPES.</span>
 <span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation {#sec-interpretation}</span></span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>Also should remind about different correlation types? Pearson's (2 continuous variables), Spearman's (1? non-parametric variable), Kendall (???), point-biserial (1 variable truly naturally discrete), biserial (1 variable artificially discretized), techronic (2 variables artificially discretized)</span>
 <span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>Zr effect sizes describe the strength and direction of a relationship between two continuous variables.</span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other correlation types {#sec-other-correlation-types}</span></span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="fu">### Point-biserial correlations &amp; biserial correlations {#sec-point-biserial}</span></span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. Point-biserial correlations are for truly distinct predictor variables while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small).</span>
-<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. <span class="in">`escalc`</span> provides a shorthand to directly convert these statistics to Zr:</span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a><span class="co"># For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`</span></span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZPB"</span>,</span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>      <span class="at">m1i =</span> <span class="fl">13.5</span>, <span class="at">m2i =</span> <span class="fl">10.1</span>,</span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.1</span>,</span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>      <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>See correlation confusion.png in the <span class="in">`notes/`</span> directory</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assumptions {#sec-assumptions}</span></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>Presumably need to be truly continuous, e.g., not ordinal? Can you use directly reported Spearman's correlation coefficients?</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation {#sec-interpretation}</span></span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>Zr effect sizes describe the strength and direction of a relationship between two continuous variables.</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other correlation types {#sec-other-correlation-types}</span></span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a><span class="fu">### Point-biserial correlations &amp; biserial correlations {#sec-point-biserial}</span></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. </span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>Point-biserial correlations are for truly distinct predictor variables (e.g., male vs female) while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small or presence versus absence).</span>
 <span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="co"># For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`</span></span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZBIS"</span>,</span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>      <span class="at">m1i =</span> <span class="fl">13.5</span>, <span class="at">m2i =</span> <span class="fl">10.1</span>,</span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.1</span>,</span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>      <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
-<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>**Shouldn't use male vs female as example of truly discrete variables**</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. <span class="in">`escalc`</span> provides a shorthand to directly convert these statistics to Zr:</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a><span class="co"># For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`</span></span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZPB"</span>,</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>      <span class="at">m1i =</span> <span class="fl">13.5</span>, <span class="at">m2i =</span> <span class="fl">10.1</span>,</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.1</span>,</span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a>      <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="co"># For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`</span></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZBIS"</span>,</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>      <span class="at">m1i =</span> <span class="fl">13.5</span>, <span class="at">m2i =</span> <span class="fl">10.1</span>,</span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.1</span>,</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>      <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

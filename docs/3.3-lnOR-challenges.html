@@ -334,7 +334,6 @@ window.Quarto = {
 <a href="#sec-misc" id="toc-sec-misc" class="nav-link" data-scroll-target="#sec-misc">Other cases</a>
   <ul>
 <li><a href="#sec-aggregating-multiple-measurements" id="toc-sec-aggregating-multiple-measurements" class="nav-link" data-scroll-target="#sec-aggregating-multiple-measurements">Aggregating multiple measurements</a></li>
-  <li><a href="#sec-factor-data" id="toc-sec-factor-data" class="nav-link" data-scroll-target="#sec-factor-data">More than 2 discrete outcomes</a></li>
   <li><a href="#sec-survivorship-curves" id="toc-sec-survivorship-curves" class="nav-link" data-scroll-target="#sec-survivorship-curves">Survivorship curves</a></li>
   <li><a href="#sec-lnOR-reconstructing-data" id="toc-sec-lnOR-reconstructing-data" class="nav-link" data-scroll-target="#sec-lnOR-reconstructing-data">Mean±error discrete outcomes</a></li>
   <li><a href="#sec-lc50" id="toc-sec-lc50" class="nav-link" data-scroll-target="#sec-lc50">LC50?</a></li>
@@ -641,10 +640,6 @@ window.Quarto = {
 </div>
 <p>However, what do you do if there is no sample size provided (e.g., total number of individuals)? In this case, your best bet is to summarize the proportion survived into the mean ± SD across years per treatment group and use this to calculate SMD. Since these values are proportions, be sure to transform these values (see <a href="./3.2-smd-challenges.html#sec-proportion-data-with-error">here</a>.</p>
 <p>Unfortunately, the resulting effect size will have <em>year</em> as the unit of replication instead of number of individuals and should not be directly compared to other lnOR type data where individuals are the unit of repliation.</p>
-</section><section id="sec-factor-data" class="level2"><h2 class="anchored" data-anchor-id="sec-factor-data">More than 2 discrete outcomes</h2>
-<p><strong>What if a study presents several categorical or ordinal outcomes?</strong></p>
-<p>Imagine a study presented multiple categorical outcomes instead of a binary? If your dataset is otherwise binary, you can extract this data by summing or excluding the non-relevant outcomes.</p>
-<p><em>However, there must be cases where 3 outcomes are actually real and not just a product of lumping or splitting.</em></p>
 </section><section id="sec-survivorship-curves" class="level2"><h2 class="anchored" data-anchor-id="sec-survivorship-curves">Survivorship curves</h2>
 <p><em>The simulated data below is stupid and sucks. Please fix</em></p>
 <div class="cell">
@@ -780,7 +775,7 @@ window.Quarto = {
 <span>        alpha <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">alpha</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span>
 <span>        beta <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 4 0 2 1 6 0 1 0 1 1</code></pre>
+<pre><code> [1] 3 3 3 5 9 1 0 5 2 3</code></pre>
 </div>
 </div>
 <p>The sum of this is the total number of nests that fledged across all sites. The full workflow:</p>
@@ -844,9 +839,9 @@ window.Quarto = {
 <td style="text-align: right;">4.100000</td>
 <td style="text-align: right;">0.6150000</td>
 <td style="text-align: right;">3.485000</td>
-<td style="text-align: right;">18</td>
+<td style="text-align: right;">55</td>
 <td style="text-align: right;">300</td>
-<td style="text-align: right;">282</td>
+<td style="text-align: right;">245</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0.31</td>
@@ -859,9 +854,9 @@ window.Quarto = {
 <td style="text-align: right;">1.640741</td>
 <td style="text-align: right;">0.5086296</td>
 <td style="text-align: right;">1.132111</td>
-<td style="text-align: right;">38</td>
+<td style="text-align: right;">90</td>
 <td style="text-align: right;">300</td>
-<td style="text-align: right;">262</td>
+<td style="text-align: right;">210</td>
 </tr>
 </tbody>
 </table>
@@ -1588,219 +1583,211 @@ Wolodzko, Tymoteusz. 2023. <em>extraDistr: Additional Univariate and Multivariat
 <span id="cb13-249"><a href="#cb13-249" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-250"><a href="#cb13-250" aria-hidden="true" tabindex="-1"></a>Unfortunately, the resulting effect size will have *year* as the unit of replication instead of number of individuals and should not be directly compared to other lnOR type data where individuals are the unit of repliation.</span>
 <span id="cb13-251"><a href="#cb13-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a><span class="fu">## More than 2 discrete outcomes {#sec-factor-data}</span></span>
+<span id="cb13-252"><a href="#cb13-252" aria-hidden="true" tabindex="-1"></a><span class="fu">## Survivorship curves {#sec-survivorship-curves}</span></span>
 <span id="cb13-253"><a href="#cb13-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>**What if a study presents several categorical or ordinal outcomes?** </span>
+<span id="cb13-254"><a href="#cb13-254" aria-hidden="true" tabindex="-1"></a>*The simulated data below is stupid and sucks. Please fix*</span>
 <span id="cb13-255"><a href="#cb13-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-256"><a href="#cb13-256" aria-hidden="true" tabindex="-1"></a>Imagine a study presented multiple categorical outcomes instead of a binary? If your dataset is otherwise binary, you can extract this data by summing or excluding the non-relevant outcomes.</span>
-<span id="cb13-257"><a href="#cb13-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a>*However, there must be cases where 3 outcomes are actually real and not just a product of lumping or splitting.*</span>
-<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a><span class="fu">## Survivorship curves {#sec-survivorship-curves}</span></span>
+<span id="cb13-258"><a href="#cb13-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-259"><a href="#cb13-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb13-260"><a href="#cb13-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
 <span id="cb13-261"><a href="#cb13-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a>*The simulated data below is stupid and sucks. Please fix*</span>
+<span id="cb13-262"><a href="#cb13-262" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;&gt;&gt; Survivorship --------------------------------------------------------</span></span>
 <span id="cb13-263"><a href="#cb13-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a><span class="co"># &gt;&gt;&gt; Survivorship --------------------------------------------------------</span></span>
-<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>)</span>
-<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rweibull</span>(<span class="at">n =</span> <span class="dv">15</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">4</span>)</span>
-<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x, rev(sort(a)))</span></span>
-<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">rweibull</span>(<span class="at">n =</span> <span class="dv">15</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">4</span>)</span>
-<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x, rev(sort(b)))</span></span>
-<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">sort</span>(a))</span>
-<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">sort</span>(c))</span>
-<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a <span class="sc">-</span> <span class="fu">min</span>(a)</span>
-<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a<span class="sc">/</span><span class="fu">max</span>(a)</span>
-<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a><span class="co"># a</span></span>
-<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> c <span class="sc">-</span> <span class="fu">min</span>(c)</span>
-<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> c<span class="sc">/</span><span class="fu">max</span>(c)</span>
-<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a><span class="co"># b</span></span>
-<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()<span class="sc">+</span></span>
-<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> a),</span>
-<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"indianred"</span>,</span>
-<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> c),</span>
-<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"dodgerblue"</span>,</span>
-<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> a),</span>
-<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"indianred"</span>,</span>
-<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>            <span class="at">shape =</span> <span class="dv">21</span>,</span>
-<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> c),</span>
-<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"dodgerblue"</span>,</span>
-<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a>            <span class="at">shape =</span> <span class="dv">21</span>,</span>
-<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">15</span>, <span class="at">by =</span> <span class="dv">2</span>))<span class="sc">+</span></span>
-<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Survivorship (proportion alive)"</span>)<span class="sc">+</span></span>
-<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Time"</span>)<span class="sc">+</span></span>
-<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a>In this case, the y axis is the proportion ($p1$ and $p2$) for each group (group 1 and 2). The meta-analyst needs to extract the total number of individuals in groups 1 (blue) and 2 (red) at time point 1, which can then be multipled by the total number of individuals at the beginning of the experiment. This will yield $a$ and $c$ for the two groups. $b$ and $d$ can then be found by subtracting from the total $n$:</span>
-<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                <span class="pp">|</span> time <span class="pp">|</span> $p$       <span class="pp">|</span> N        <span class="pp">|</span> Alive   <span class="pp">|</span> Dead   <span class="pp">|</span></span>
-<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------------|------|-----------|----------|---------|--------|</span></span>
-<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Group 1 (blue) <span class="pp">|</span> 3    <span class="pp">|</span> $p1$=0.71 <span class="pp">|</span> $n1$=150 <span class="pp">|</span> $a$=107 <span class="pp">|</span> $b$=43 <span class="pp">|</span></span>
-<span id="cb13-316"><a href="#cb13-316" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Group 2 (red)  <span class="pp">|</span> 3    <span class="pp">|</span> $p2$=0.46 <span class="pp">|</span> $n2$=150 <span class="pp">|</span> $c$=69  <span class="pp">|</span> $d$=81 <span class="pp">|</span></span>
+<span id="cb13-264"><a href="#cb13-264" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>)</span>
+<span id="cb13-265"><a href="#cb13-265" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rweibull</span>(<span class="at">n =</span> <span class="dv">15</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">4</span>)</span>
+<span id="cb13-266"><a href="#cb13-266" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x, rev(sort(a)))</span></span>
+<span id="cb13-267"><a href="#cb13-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-268"><a href="#cb13-268" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">rweibull</span>(<span class="at">n =</span> <span class="dv">15</span>, <span class="at">shape =</span> <span class="dv">2</span>, <span class="at">scale =</span> <span class="dv">4</span>)</span>
+<span id="cb13-269"><a href="#cb13-269" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(x, rev(sort(b)))</span></span>
+<span id="cb13-270"><a href="#cb13-270" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">sort</span>(a))</span>
+<span id="cb13-271"><a href="#cb13-271" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">sort</span>(c))</span>
+<span id="cb13-272"><a href="#cb13-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-273"><a href="#cb13-273" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a <span class="sc">-</span> <span class="fu">min</span>(a)</span>
+<span id="cb13-274"><a href="#cb13-274" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> a<span class="sc">/</span><span class="fu">max</span>(a)</span>
+<span id="cb13-275"><a href="#cb13-275" aria-hidden="true" tabindex="-1"></a><span class="co"># a</span></span>
+<span id="cb13-276"><a href="#cb13-276" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> c <span class="sc">-</span> <span class="fu">min</span>(c)</span>
+<span id="cb13-277"><a href="#cb13-277" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> c<span class="sc">/</span><span class="fu">max</span>(c)</span>
+<span id="cb13-278"><a href="#cb13-278" aria-hidden="true" tabindex="-1"></a><span class="co"># b</span></span>
+<span id="cb13-279"><a href="#cb13-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-280"><a href="#cb13-280" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb13-281"><a href="#cb13-281" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> a),</span>
+<span id="cb13-282"><a href="#cb13-282" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"indianred"</span>,</span>
+<span id="cb13-283"><a href="#cb13-283" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb13-284"><a href="#cb13-284" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> c),</span>
+<span id="cb13-285"><a href="#cb13-285" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"dodgerblue"</span>,</span>
+<span id="cb13-286"><a href="#cb13-286" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb13-287"><a href="#cb13-287" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> a),</span>
+<span id="cb13-288"><a href="#cb13-288" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"indianred"</span>,</span>
+<span id="cb13-289"><a href="#cb13-289" aria-hidden="true" tabindex="-1"></a>            <span class="at">shape =</span> <span class="dv">21</span>,</span>
+<span id="cb13-290"><a href="#cb13-290" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb13-291"><a href="#cb13-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> c),</span>
+<span id="cb13-292"><a href="#cb13-292" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">"dodgerblue"</span>,</span>
+<span id="cb13-293"><a href="#cb13-293" aria-hidden="true" tabindex="-1"></a>            <span class="at">shape =</span> <span class="dv">21</span>,</span>
+<span id="cb13-294"><a href="#cb13-294" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb13-295"><a href="#cb13-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">15</span>, <span class="at">by =</span> <span class="dv">2</span>))<span class="sc">+</span></span>
+<span id="cb13-296"><a href="#cb13-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Survivorship (proportion alive)"</span>)<span class="sc">+</span></span>
+<span id="cb13-297"><a href="#cb13-297" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Time"</span>)<span class="sc">+</span></span>
+<span id="cb13-298"><a href="#cb13-298" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb13-299"><a href="#cb13-299" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb13-300"><a href="#cb13-300" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb13-301"><a href="#cb13-301" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-302"><a href="#cb13-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-303"><a href="#cb13-303" aria-hidden="true" tabindex="-1"></a>In this case, the y axis is the proportion ($p1$ and $p2$) for each group (group 1 and 2). The meta-analyst needs to extract the total number of individuals in groups 1 (blue) and 2 (red) at time point 1, which can then be multipled by the total number of individuals at the beginning of the experiment. This will yield $a$ and $c$ for the two groups. $b$ and $d$ can then be found by subtracting from the total $n$:</span>
+<span id="cb13-304"><a href="#cb13-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-305"><a href="#cb13-305" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                <span class="pp">|</span> time <span class="pp">|</span> $p$       <span class="pp">|</span> N        <span class="pp">|</span> Alive   <span class="pp">|</span> Dead   <span class="pp">|</span></span>
+<span id="cb13-306"><a href="#cb13-306" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------------|------|-----------|----------|---------|--------|</span></span>
+<span id="cb13-307"><a href="#cb13-307" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Group 1 (blue) <span class="pp">|</span> 3    <span class="pp">|</span> $p1$=0.71 <span class="pp">|</span> $n1$=150 <span class="pp">|</span> $a$=107 <span class="pp">|</span> $b$=43 <span class="pp">|</span></span>
+<span id="cb13-308"><a href="#cb13-308" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Group 2 (red)  <span class="pp">|</span> 3    <span class="pp">|</span> $p2$=0.46 <span class="pp">|</span> $n2$=150 <span class="pp">|</span> $c$=69  <span class="pp">|</span> $d$=81 <span class="pp">|</span></span>
+<span id="cb13-309"><a href="#cb13-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-310"><a href="#cb13-310" aria-hidden="true" tabindex="-1"></a>As one can see, this type of data also poses a classic time-series challenge, which can face all effect sizes. We recommend extracting the data for each time point and then using random effects to control for temporal autocorrelation in your meta-analytic model (see <span class="co">[</span><span class="ot">here</span><span class="co">](3.1-universal-challenges.qmd#sec-proportion-data-with-error)</span>). An alternative is to extract the time point with the greatest difference between control and treatment and analyze that.</span>
+<span id="cb13-311"><a href="#cb13-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-312"><a href="#cb13-312" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mean±error discrete outcomes {#sec-lnOR-reconstructing-data}</span></span>
+<span id="cb13-313"><a href="#cb13-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-314"><a href="#cb13-314" aria-hidden="true" tabindex="-1"></a>Sometimes discrete outcomes are summarized into mean±error across trials/sites/islands/etc. For example, a paper that monitored fledgling rates across nests on separate islands, calculated the mortality rate, and then summarized by mean±error across islands.</span>
+<span id="cb13-315"><a href="#cb13-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-316"><a href="#cb13-316" aria-hidden="true" tabindex="-1"></a>This data format lends itself naturally to SMD/lnRoM/Zmu type <span class="co">[</span><span class="ot">effect sizes</span><span class="co">](2.1-SMD-assumptions.qmd)</span>. However, the sample size for the mean±error in these summaries are the number of trials/sites/islands/etc instead of the number of individuals (or nests). If the unit of replication of the rest of your dataset is the number of individuals (or nests) then this effect size would have vastly less weight in your models (and should be analyzed separately).</span>
 <span id="cb13-317"><a href="#cb13-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-318"><a href="#cb13-318" aria-hidden="true" tabindex="-1"></a>As one can see, this type of data also poses a classic time-series challenge, which can face all effect sizes. We recommend extracting the data for each time point and then using random effects to control for temporal autocorrelation in your meta-analytic model (see <span class="co">[</span><span class="ot">here</span><span class="co">](3.1-universal-challenges.qmd#sec-proportion-data-with-error)</span>). An alternative is to extract the time point with the greatest difference between control and treatment and analyze that.</span>
-<span id="cb13-319"><a href="#cb13-319" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mean±error discrete outcomes {#sec-lnOR-reconstructing-data}</span></span>
-<span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a>Sometimes discrete outcomes are summarized into mean±error across trials/sites/islands/etc. For example, a paper that monitored fledgling rates across nests on separate islands, calculated the mortality rate, and then summarized by mean±error across islands.</span>
-<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a>This data format lends itself naturally to SMD/lnRoM/Zmu type <span class="co">[</span><span class="ot">effect sizes</span><span class="co">](2.1-SMD-assumptions.qmd)</span>. However, the sample size for the mean±error in these summaries are the number of trials/sites/islands/etc instead of the number of individuals (or nests). If the unit of replication of the rest of your dataset is the number of individuals (or nests) then this effect size would have vastly less weight in your models (and should be analyzed separately).</span>
-<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple:</span></span>
-<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.31</span>), </span>
-<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>                 <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Treatment"</span>),</span>
-<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>                 <span class="at">se =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.09</span>))</span>
-<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a><span class="co"># dt &lt;- </span></span>
-<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dt,</span>
-<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> mean, <span class="at">fill =</span> group, <span class="at">ymin =</span> mean<span class="sc">-</span>se,</span>
-<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymax =</span> mean<span class="sc">+</span>se))<span class="sc">+</span></span>
-<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
-<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="cn">NULL</span>,</span>
-<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Control"</span> <span class="ot">=</span> <span class="st">"dodgerblue2"</span>,</span>
-<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Treatment"</span> <span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span>  </span>
-<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="cn">NULL</span>)<span class="sc">+</span></span>
-<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Mean fledgling rate rate across islands (±standard error)"</span>)<span class="sc">+</span></span>
-<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a>dt[, n_sites <span class="sc">:</span><span class="er">=</span> <span class="dv">10</span>]</span>
-<span id="cb13-353"><a href="#cb13-353" aria-hidden="true" tabindex="-1"></a>dt[, n_individuals <span class="sc">:</span><span class="er">=</span> <span class="dv">30</span>]</span>
+<span id="cb13-320"><a href="#cb13-320" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-321"><a href="#cb13-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb13-322"><a href="#cb13-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb13-323"><a href="#cb13-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-324"><a href="#cb13-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-325"><a href="#cb13-325" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple:</span></span>
+<span id="cb13-326"><a href="#cb13-326" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">mean =</span> <span class="fu">c</span>(<span class="fl">0.15</span>, <span class="fl">0.31</span>), </span>
+<span id="cb13-327"><a href="#cb13-327" aria-hidden="true" tabindex="-1"></a>                 <span class="at">group =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="st">"Treatment"</span>),</span>
+<span id="cb13-328"><a href="#cb13-328" aria-hidden="true" tabindex="-1"></a>                 <span class="at">se =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.09</span>))</span>
+<span id="cb13-329"><a href="#cb13-329" aria-hidden="true" tabindex="-1"></a><span class="co"># dt &lt;- </span></span>
+<span id="cb13-330"><a href="#cb13-330" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dt,</span>
+<span id="cb13-331"><a href="#cb13-331" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> mean, <span class="at">fill =</span> group, <span class="at">ymin =</span> mean<span class="sc">-</span>se,</span>
+<span id="cb13-332"><a href="#cb13-332" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymax =</span> mean<span class="sc">+</span>se))<span class="sc">+</span></span>
+<span id="cb13-333"><a href="#cb13-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb13-334"><a href="#cb13-334" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb13-335"><a href="#cb13-335" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="cn">NULL</span>,</span>
+<span id="cb13-336"><a href="#cb13-336" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Control"</span> <span class="ot">=</span> <span class="st">"dodgerblue2"</span>,</span>
+<span id="cb13-337"><a href="#cb13-337" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Treatment"</span> <span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span>  </span>
+<span id="cb13-338"><a href="#cb13-338" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="cn">NULL</span>)<span class="sc">+</span></span>
+<span id="cb13-339"><a href="#cb13-339" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Mean fledgling rate rate across islands (±standard error)"</span>)<span class="sc">+</span></span>
+<span id="cb13-340"><a href="#cb13-340" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb13-341"><a href="#cb13-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb13-342"><a href="#cb13-342" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb13-343"><a href="#cb13-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-344"><a href="#cb13-344" aria-hidden="true" tabindex="-1"></a>dt[, n_sites <span class="sc">:</span><span class="er">=</span> <span class="dv">10</span>]</span>
+<span id="cb13-345"><a href="#cb13-345" aria-hidden="true" tabindex="-1"></a>dt[, n_individuals <span class="sc">:</span><span class="er">=</span> <span class="dv">30</span>]</span>
+<span id="cb13-346"><a href="#cb13-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-347"><a href="#cb13-347" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-348"><a href="#cb13-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-349"><a href="#cb13-349" aria-hidden="true" tabindex="-1"></a>Moreover, as you can see, this figure presents standard error, not standard deviation. Converting standard error to standard deviation requires the sample size used by the study authors to calculate standard error in the first place, which is the number of trials/sites/islands/etc.</span>
+<span id="cb13-350"><a href="#cb13-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-351"><a href="#cb13-351" aria-hidden="true" tabindex="-1"></a>To reconstruct the number of individuals and calculate an lnOR type effect size with individuals as the unit of replication, you can simulate the underlying binomial or beta-binomial distribution *behind* these mean±sd summaries. This requires the following information:</span>
+<span id="cb13-352"><a href="#cb13-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-353"><a href="#cb13-353" aria-hidden="true" tabindex="-1"></a>1)  the number of sites used in calculating the standard error.</span>
 <span id="cb13-354"><a href="#cb13-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-355"><a href="#cb13-355" aria-hidden="true" tabindex="-1"></a>2)  the number of individuals across all sites.</span>
 <span id="cb13-356"><a href="#cb13-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a>Moreover, as you can see, this figure presents standard error, not standard deviation. Converting standard error to standard deviation requires the sample size used by the study authors to calculate standard error in the first place, which is the number of trials/sites/islands/etc.</span>
+<span id="cb13-357"><a href="#cb13-357" aria-hidden="true" tabindex="-1"></a>3)  The author-reported mean proportion</span>
 <span id="cb13-358"><a href="#cb13-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>To reconstruct the number of individuals and calculate an lnOR type effect size with individuals as the unit of replication, you can simulate the underlying binomial or beta-binomial distribution *behind* these mean±sd summaries. This requires the following information:</span>
+<span id="cb13-359"><a href="#cb13-359" aria-hidden="true" tabindex="-1"></a>4)  The author-reported standard deviation</span>
 <span id="cb13-360"><a href="#cb13-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>1)  the number of sites used in calculating the standard error.</span>
+<span id="cb13-361"><a href="#cb13-361" aria-hidden="true" tabindex="-1"></a>Let's work through this example and imagine that the figure above was from a paper that reported nest fledging rates for 10 islands in an experimental treatment (rats poisoned) and for 10 sites in a control treatment (rats left alone). The total number of nests monitored *per treatment* was 300—or 30 per site. We start by converting the extracted standard error ($se$) to standard deviation ($sd$) in our <span class="in">`data.table`</span> we extracted from the figure above:</span>
 <span id="cb13-362"><a href="#cb13-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-363"><a href="#cb13-363" aria-hidden="true" tabindex="-1"></a>2)  the number of individuals across all sites.</span>
-<span id="cb13-364"><a href="#cb13-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a>3)  The author-reported mean proportion</span>
-<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a>4)  The author-reported standard deviation</span>
-<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a>Let's work through this example and imagine that the figure above was from a paper that reported nest fledging rates for 10 islands in an experimental treatment (rats poisoned) and for 10 sites in a control treatment (rats left alone). The total number of nests monitored *per treatment* was 300—or 30 per site. We start by converting the extracted standard error ($se$) to standard deviation ($sd$) in our <span class="in">`data.table`</span> we extracted from the figure above:</span>
-<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-365"><a href="#cb13-365" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-366"><a href="#cb13-366" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb13-367"><a href="#cb13-367" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-368"><a href="#cb13-368" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-369"><a href="#cb13-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-370"><a href="#cb13-370" aria-hidden="true" tabindex="-1"></a>dt[, sd <span class="sc">:</span><span class="er">=</span> se <span class="sc">*</span> <span class="fu">sqrt</span>(n_sites)]</span>
+<span id="cb13-371"><a href="#cb13-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-372"><a href="#cb13-372" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dt)</span>
+<span id="cb13-373"><a href="#cb13-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-374"><a href="#cb13-374" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-375"><a href="#cb13-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-376"><a href="#cb13-376" aria-hidden="true" tabindex="-1"></a>Now we check whether the author-reported standard deviation is overdispersed relative to the theoretical standard deviation ($sd_{theoretical}$) of the binomial distribution. If it is greater than $sd_{theoretical}$, we'll use the beta-binomial distribution. If it isn't, we'll use the binomial distribution:</span>
 <span id="cb13-377"><a href="#cb13-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-378"><a href="#cb13-378" aria-hidden="true" tabindex="-1"></a>dt[, sd <span class="sc">:</span><span class="er">=</span> se <span class="sc">*</span> <span class="fu">sqrt</span>(n_sites)]</span>
-<span id="cb13-379"><a href="#cb13-379" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dt)</span>
-<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-384"><a href="#cb13-384" aria-hidden="true" tabindex="-1"></a>Now we check whether the author-reported standard deviation is overdispersed relative to the theoretical standard deviation ($sd_{theoretical}$) of the binomial distribution. If it is greater than $sd_{theoretical}$, we'll use the beta-binomial distribution. If it isn't, we'll use the binomial distribution:</span>
-<span id="cb13-385"><a href="#cb13-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-380"><a href="#cb13-380" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-381"><a href="#cb13-381" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb13-382"><a href="#cb13-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-383"><a href="#cb13-383" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-384"><a href="#cb13-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-385"><a href="#cb13-385" aria-hidden="true" tabindex="-1"></a>sd_theoretical <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((dt<span class="sc">$</span>mean <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> dt<span class="sc">$</span>mean))<span class="sc">/</span>(dt<span class="sc">$</span>n_individuals))</span>
+<span id="cb13-386"><a href="#cb13-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-387"><a href="#cb13-387" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(dt<span class="sc">$</span>sd <span class="sc">&gt;</span> sd_theoretical)</span>
+<span id="cb13-388"><a href="#cb13-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-389"><a href="#cb13-389" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-390"><a href="#cb13-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-391"><a href="#cb13-391" aria-hidden="true" tabindex="-1"></a>It looks like our data is not truly binomial but beta-binomial. See <span class="co">[</span><span class="ot">here</span><span class="co">](6-simulating-non-gaussian-responses.qmd#sec-binomial)</span> and <span class="co">[</span><span class="ot">here</span><span class="co">](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data)</span> for how to draw from the binomial distribution.</span>
 <span id="cb13-392"><a href="#cb13-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>sd_theoretical <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((dt<span class="sc">$</span>mean <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> dt<span class="sc">$</span>mean))<span class="sc">/</span>(dt<span class="sc">$</span>n_individuals))</span>
+<span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a>For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the R package <span class="in">`extraDistr`</span> <span class="co">[</span><span class="ot">@extradistr</span><span class="co">]</span>. This requires the variance ($sd^2$) and two shape parameters that describe the beta distribution ($\alpha$ and $\beta$). See <span class="co">[</span><span class="ot">here</span><span class="co">](6-simulating-non-gaussian-responses.qmd#sec-beta-binomial)</span> for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset <span class="in">`dt`</span>:</span>
 <span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a><span class="fu">any</span>(dt<span class="sc">$</span>sd <span class="sc">&gt;</span> sd_theoretical)</span>
-<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a>It looks like our data is not truly binomial but beta-binomial. See <span class="co">[</span><span class="ot">here</span><span class="co">](6-simulating-non-gaussian-responses.qmd#sec-binomial)</span> and <span class="co">[</span><span class="ot">here</span><span class="co">](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data)</span> for how to draw from the binomial distribution.</span>
-<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a>For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the R package <span class="in">`extraDistr`</span> <span class="co">[</span><span class="ot">@extradistr</span><span class="co">]</span>. This requires the variance ($sd^2$) and two shape parameters that describe the beta distribution ($\alpha$ and $\beta$). See <span class="co">[</span><span class="ot">here</span><span class="co">](6-simulating-non-gaussian-responses.qmd#sec-beta-binomial)</span> for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset <span class="in">`dt`</span>:</span>
-<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-405"><a href="#cb13-405" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb13-407"><a href="#cb13-407" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb13-408"><a href="#cb13-408" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb13-400"><a href="#cb13-400" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb13-401"><a href="#cb13-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"extraDistr"</span>)</span>
+<span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a>dt</span>
+<span id="cb13-404"><a href="#cb13-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-405"><a href="#cb13-405" aria-hidden="true" tabindex="-1"></a>dt[, var <span class="sc">:</span><span class="er">=</span> sd<span class="sc">^</span><span class="dv">2</span>]</span>
+<span id="cb13-406"><a href="#cb13-406" aria-hidden="true" tabindex="-1"></a>dt[, r <span class="sc">:</span><span class="er">=</span> (mean <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> mean) <span class="sc">/</span> var) <span class="sc">-</span> <span class="dv">1</span>]</span>
+<span id="cb13-407"><a href="#cb13-407" aria-hidden="true" tabindex="-1"></a>dt[, alpha <span class="sc">:</span><span class="er">=</span> mean <span class="sc">*</span> r]</span>
+<span id="cb13-408"><a href="#cb13-408" aria-hidden="true" tabindex="-1"></a>dt[, beta <span class="sc">:</span><span class="er">=</span> (<span class="dv">1</span> <span class="sc">-</span> mean) <span class="sc">*</span> r]</span>
 <span id="cb13-409"><a href="#cb13-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-410"><a href="#cb13-410" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"extraDistr"</span>)</span>
-<span id="cb13-411"><a href="#cb13-411" aria-hidden="true" tabindex="-1"></a>dt</span>
-<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a>dt[, var <span class="sc">:</span><span class="er">=</span> sd<span class="sc">^</span><span class="dv">2</span>]</span>
-<span id="cb13-414"><a href="#cb13-414" aria-hidden="true" tabindex="-1"></a>dt[, r <span class="sc">:</span><span class="er">=</span> (mean <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> mean) <span class="sc">/</span> var) <span class="sc">-</span> <span class="dv">1</span>]</span>
-<span id="cb13-415"><a href="#cb13-415" aria-hidden="true" tabindex="-1"></a>dt[, alpha <span class="sc">:</span><span class="er">=</span> mean <span class="sc">*</span> r]</span>
-<span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a>dt[, beta <span class="sc">:</span><span class="er">=</span> (<span class="dv">1</span> <span class="sc">-</span> mean) <span class="sc">*</span> r]</span>
-<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-420"><a href="#cb13-420" aria-hidden="true" tabindex="-1"></a>Now, we'll draw from the beta-binomial distribution. Each draw returns a vector equal in length to the number of sites, with each element giving the number of fledged nests:</span>
+<span id="cb13-410"><a href="#cb13-410" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-411"><a href="#cb13-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-412"><a href="#cb13-412" aria-hidden="true" tabindex="-1"></a>Now, we'll draw from the beta-binomial distribution. Each draw returns a vector equal in length to the number of sites, with each element giving the number of fledged nests:</span>
+<span id="cb13-413"><a href="#cb13-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-416"><a href="#cb13-416" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-417"><a href="#cb13-417" aria-hidden="true" tabindex="-1"></a><span class="fu">rbbinom</span>(<span class="at">n =</span> dt<span class="sc">$</span>n_sites[<span class="dv">1</span>],</span>
+<span id="cb13-418"><a href="#cb13-418" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> dt<span class="sc">$</span>n_individuals[<span class="dv">1</span>],</span>
+<span id="cb13-419"><a href="#cb13-419" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha =</span> dt<span class="sc">$</span>alpha[<span class="dv">1</span>], </span>
+<span id="cb13-420"><a href="#cb13-420" aria-hidden="true" tabindex="-1"></a>        <span class="at">beta =</span> dt<span class="sc">$</span>beta[<span class="dv">1</span>])</span>
 <span id="cb13-421"><a href="#cb13-421" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-424"><a href="#cb13-424" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a><span class="fu">rbbinom</span>(<span class="at">n =</span> dt<span class="sc">$</span>n_sites[<span class="dv">1</span>],</span>
-<span id="cb13-426"><a href="#cb13-426" aria-hidden="true" tabindex="-1"></a>        <span class="at">size =</span> dt<span class="sc">$</span>n_individuals[<span class="dv">1</span>],</span>
-<span id="cb13-427"><a href="#cb13-427" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha =</span> dt<span class="sc">$</span>alpha[<span class="dv">1</span>], </span>
-<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a>        <span class="at">beta =</span> dt<span class="sc">$</span>beta[<span class="dv">1</span>])</span>
-<span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a>The sum of this is the total number of nests that fledged across all sites. The full workflow:</span>
-<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb13-422"><a href="#cb13-422" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-423"><a href="#cb13-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-424"><a href="#cb13-424" aria-hidden="true" tabindex="-1"></a>The sum of this is the total number of nests that fledged across all sites. The full workflow:</span>
+<span id="cb13-425"><a href="#cb13-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-428"><a href="#cb13-428" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-429"><a href="#cb13-429" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb13-430"><a href="#cb13-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-431"><a href="#cb13-431" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dt)){</span>
+<span id="cb13-432"><a href="#cb13-432" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">rbbinom</span>(<span class="at">n =</span> dt<span class="sc">$</span>n_sites[i],</span>
+<span id="cb13-433"><a href="#cb13-433" aria-hidden="true" tabindex="-1"></a>                     <span class="at">size =</span> dt<span class="sc">$</span>n_individuals[i],</span>
+<span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a>                     <span class="at">alpha =</span> dt<span class="sc">$</span>alpha[i], </span>
+<span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a>                     <span class="at">beta =</span> dt<span class="sc">$</span>beta[i])</span>
+<span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a>  dt[i, n_fledged <span class="sc">:</span><span class="er">=</span> <span class="fu">sum</span>(n)]</span>
+<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dt)){</span>
-<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">rbbinom</span>(<span class="at">n =</span> dt<span class="sc">$</span>n_sites[i],</span>
-<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a>                     <span class="at">size =</span> dt<span class="sc">$</span>n_individuals[i],</span>
-<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a>                     <span class="at">alpha =</span> dt<span class="sc">$</span>alpha[i], </span>
-<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a>                     <span class="at">beta =</span> dt<span class="sc">$</span>beta[i])</span>
-<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a>  dt[i, n_fledged <span class="sc">:</span><span class="er">=</span> <span class="fu">sum</span>(n)]</span>
-<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a><span class="co"># Now calculate total number individuals:</span></span>
+<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a>dt[, total_individuals <span class="sc">:</span><span class="er">=</span> <span class="dv">30</span> <span class="sc">*</span> n_sites]</span>
+<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a>dt[, n_dead <span class="sc">:</span><span class="er">=</span> total_individuals <span class="sc">-</span> n_fledged]</span>
+<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dt)</span>
+<span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a><span class="co"># Now calculate total number individuals:</span></span>
-<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>dt[, total_individuals <span class="sc">:</span><span class="er">=</span> <span class="dv">30</span> <span class="sc">*</span> n_sites]</span>
-<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>dt[, n_dead <span class="sc">:</span><span class="er">=</span> total_individuals <span class="sc">-</span> n_fledged]</span>
-<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dt)</span>
-<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a>Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).</span>
+<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
+<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>Note, that if there were variable numbers of nests per site, then you'd want to create a longer dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, specifying $1$ as <span class="in">`n`</span>.</span>
+<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>Although, the study's authors probably shouldn't have taken the mean±sd in that case....Hmmmm....</span>
+<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a>Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).</span>
-<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>Note, that if there were variable numbers of nests per site, then you'd want to create a longer dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, specifying $1$ as <span class="in">`n`</span>.</span>
+<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a><span class="fu">## LC50? {#sec-lc50}</span></span>
+<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).</span>
 <span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>Although, the study's authors probably shouldn't have taken the mean±sd in that case....Hmmmm....</span>
-<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a><span class="fu">## LC50? {#sec-lc50}</span></span>
-<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a>Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).</span>
+<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>These figures look like this:</span>
+<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a><span class="co">#' @Kyle?</span></span>
+<span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a>These figures look like this:</span>
+<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a>LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.</span>
 <span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a><span class="co">#' @Kyle?</span></span>
-<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.</span>
-<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
-<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.</span>
+<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
+<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a>According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

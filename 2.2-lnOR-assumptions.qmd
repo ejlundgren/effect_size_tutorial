@@ -73,9 +73,13 @@ The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-gr
 | Drug    | $a$   | $b$  | $n1 = a+b$ |
 | Placebo | $c$   | $d$  | $n2 = c+d$ |
 
+These outcomes are binomial, i.e., are discrete processes with binary outcomes that occur to individuals. Individuals can be both individual organisms as well as individual sites/islands/plots, i.e., in terms of presence or absence of some binary condition.
+
+Tertiary outcomes binomial outcomes are also possible and need to be handled with alternative effect sizes. For example, the frequency of alleles (AA, Aa, aa) in a population can be described with the Hardy-Weinburg Equilibrium effect size (REF). These are not discussed in this tutorial. 
+
 ## log Odds Ratio (lnOR) {#sec-lnOR}
 
-The log odds ratio is the ratio of two probabilities:
+The log odds ratio is the ratio of two odds:
 
 $$lnOR = log(\frac{a * d}{b * c})$$
 
@@ -117,11 +121,7 @@ An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high
 
 ## log Risk Ratio (lnRR) {#sec-lnRR}
 
-The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be easier to interpret than lnOR but has numeric properties that are less preferred and for that reason is less commonly used in ecology and evolution.
-
-The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in some cases [@borenstein2021].
-
-@Kyle*, can you help with this?*
+The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in many cases [@borenstein2021].
 
 lnRR is defined as:
 
@@ -146,9 +146,12 @@ exp(out$yi[1])
 
 ```
 
+
+**Kyle, can you help with this?**
+
 A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.
 
-*Not sure I am correctly interpreting these*
+**Not sure I am correctly interpreting these**
 
 ## Continuity corrections {#sec-continuity-corrections}
 
@@ -156,9 +159,18 @@ lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we ap
 
 lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
 
+
+# Alternative versions
+There are alternative estimators for similar data that take into account longitudinal pairing (e.g., through time) or matched pairs of subjects. These are broadly referred to as matched pairs contingency table effect sizes by `escalc`.
+
+Extraction for these effect sizes is similar to lnOR and lnRR except that they take an additional parameter: $rho$, or the correlation between subjects---which is likely unreported and needs to be guessed. Unlike paired versions of SMD/lnRoM/Zmu, these do not appear to be comparable to unpaired estimators of lnOR and lnRR, nor are they widely used in ecology and evolution (REF TO THAT NAKAGAWA PAPER). 
+
+**DELETE:**
+The measurement arguments for these effect sizes are given [here](5-escalc-cheatsheet.qmd)
+
 ## Matched pairs contingency tables {#sec-paired-contigency-tables}
 
-*Are these paired lnOR????? And, if so, can they be compared to regular lnOR??*
+**Are these paired lnOR????? And, if so, can they be compared to regular lnOR??**
 
 Directly from `escalc`:
 
@@ -185,9 +197,38 @@ And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional l
 The paired versions require $r$, just as with paired SMD/lnRoM. In R:
 
 ```{r}
+# Let's compare MPORC to OR:
+escalc(measure = "OR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21)
 
-# blah blah blah blah
+escalc(measure = "MPORC",
+       ai = 35, bi = 12,
+       ci = 15, di = 21,
+       ri = 0.5)
+# Whoa, nope.
+
+
+escalc(measure = "OR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21)
+
+escalc(measure = "MPOR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21,
+       ri = 0.5)
+# NOPE
+
+escalc(measure = "RR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21)
+
+escalc(measure = "MPRR",
+       ai = 35, bi = 12,
+       ci = 15, di = 21,
+       ri = 0.5)
+# NOPE
+# OK SO DEFINITELY not comparable 
 
 ```
 
-**Not sure if these are comparable to normal lnOR/lnRR. My guess is that they aren't**

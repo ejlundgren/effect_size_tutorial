@@ -325,7 +325,12 @@ window.Quarto = {
 </li>
   <li><a href="#sec-lnRR" id="toc-sec-lnRR" class="nav-link" data-scroll-target="#sec-lnRR">log Risk Ratio (lnRR)</a></li>
   <li><a href="#sec-continuity-corrections" id="toc-sec-continuity-corrections" class="nav-link" data-scroll-target="#sec-continuity-corrections">Continuity corrections</a></li>
-  <li><a href="#sec-paired-contigency-tables" id="toc-sec-paired-contigency-tables" class="nav-link" data-scroll-target="#sec-paired-contigency-tables">Matched pairs contingency tables</a></li>
+  <li>
+<a href="#alternative-versions" id="toc-alternative-versions" class="nav-link" data-scroll-target="#alternative-versions">Alternative versions</a>
+  <ul>
+<li><a href="#sec-paired-contigency-tables" id="toc-sec-paired-contigency-tables" class="nav-link" data-scroll-target="#sec-paired-contigency-tables">Matched pairs contingency tables</a></li>
+  </ul>
+</li>
   </ul></nav>
     </div>
 <!-- main -->
@@ -374,8 +379,10 @@ window.Quarto = {
 </tr>
 </tbody>
 </table>
+<p>These outcomes are binomial, i.e., are discrete processes with binary outcomes that occur to individuals. Individuals can be both individual organisms as well as individual sites/islands/plots, i.e., in terms of presence or absence of some binary condition.</p>
+<p>Tertiary outcomes binomial outcomes are also possible and need to be handled with alternative effect sizes. For example, the frequency of alleles (AA, Aa, aa) in a population can be described with the Hardy-Weinburg Equilibrium effect size (REF). These are not discussed in this tutorial.</p>
 <section id="sec-lnOR" class="level2"><h2 class="anchored" data-anchor-id="sec-lnOR">log Odds Ratio (lnOR)</h2>
-<p>The log odds ratio is the ratio of two probabilities:</p>
+<p>The log odds ratio is the ratio of two odds:</p>
 <p><span class="math display">\[lnOR = log(\frac{a * d}{b * c})\]</span></p>
 <section id="sec-lnOR-assumptions" class="level3"><h3 class="anchored" data-anchor-id="sec-lnOR-assumptions">Assumptions</h3>
 <p>Blah blah blah</p>
@@ -421,9 +428,7 @@ window.Quarto = {
 </div>
 <p>An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.</p>
 </section></section><section id="sec-lnRR" class="level2"><h2 class="anchored" data-anchor-id="sec-lnRR">log Risk Ratio (lnRR)</h2>
-<p>The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be easier to interpret than lnOR but has numeric properties that are less preferred and for that reason is less commonly used in ecology and evolution.</p>
-<p>The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in some cases <span class="citation" data-cites="borenstein2021">(<a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>)</span>.</p>
-<p><span class="citation" data-cites="Kyle">(<a href="#ref-Kyle" role="doc-biblioref"><strong>Kyle?</strong></a>)</span><em>, can you help with this?</em></p>
+<p>The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in many cases <span class="citation" data-cites="borenstein2021">(<a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>)</span>.</p>
 <p>lnRR is defined as:</p>
 <p><span class="math display">\[\begin{aligned}
 &amp;p1 = a/n1 \\
@@ -441,13 +446,18 @@ window.Quarto = {
 <pre><code>[1] 1.787234</code></pre>
 </div>
 </div>
+<p><strong>Kyle, can you help with this?</strong></p>
 <p>A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.</p>
-<p><em>Not sure I am correctly interpreting these</em></p>
+<p><strong>Not sure I am correctly interpreting these</strong></p>
 </section><section id="sec-continuity-corrections" class="level2"><h2 class="anchored" data-anchor-id="sec-continuity-corrections">Continuity corrections</h2>
 <p>lnOR breaks down whenever <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span>, or <span class="math inline">\(d\)</span> equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.</p>
 <p>lnRR breaks down when <span class="math inline">\(a\)</span> or <span class="math inline">\(c\)</span> equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</p>
-</section><section id="sec-paired-contigency-tables" class="level2"><h2 class="anchored" data-anchor-id="sec-paired-contigency-tables">Matched pairs contingency tables</h2>
-<p><em>Are these paired lnOR????? And, if so, can they be compared to regular lnOR??</em></p>
+</section><section id="alternative-versions" class="level1"><h1>Alternative versions</h1>
+<p>There are alternative estimators for similar data that take into account longitudinal pairing (e.g., through time) or matched pairs of subjects. These are broadly referred to as matched pairs contingency table effect sizes by <code>escalc</code>.</p>
+<p>Extraction for these effect sizes is similar to lnOR and lnRR except that they take an additional parameter: <span class="math inline">\(rho\)</span>, or the correlation between subjects—which is likely unreported and needs to be guessed. Unlike paired versions of SMD/lnRoM/Zmu, these do not appear to be comparable to unpaired estimators of lnOR and lnRR, nor are they widely used in ecology and evolution (REF TO THAT NAKAGAWA PAPER).</p>
+<p><strong>DELETE:</strong> The measurement arguments for these effect sizes are given <a href="./5-escalc-cheatsheet.html">here</a></p>
+<section id="sec-paired-contigency-tables" class="level2"><h2 class="anchored" data-anchor-id="sec-paired-contigency-tables">Matched pairs contingency tables</h2>
+<p><strong>Are these paired lnOR????? And, if so, can they be compared to regular lnOR??</strong></p>
 <p>Directly from <code>escalc</code>:</p>
 <p>“The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:”</p>
 <table class="caption-top table">
@@ -494,15 +504,72 @@ window.Quarto = {
 <p>And for paired: “MPORC” (conditional log odds ratio) and “MRPETO” (conditional log odds ratio estimated with Peto’s method)</p>
 <p>The paired versions require <span class="math inline">\(r\)</span>, just as with paired SMD/lnRoM. In R:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># blah blah blah blah</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Let's compare MPORC to OR:</span></span>
+<span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"OR"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      yi     vi 
+1 1.4069 0.2262 </code></pre>
 </div>
-<p><strong>Not sure if these are comparable to normal lnOR/lnRR. My guess is that they aren’t</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"MPORC"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>       ri <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+       yi     vi 
+1 -0.2231 0.1500 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Whoa, nope.</span></span>
+<span></span>
+<span></span>
+<span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"OR"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      yi     vi 
+1 1.4069 0.2262 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"MPOR"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>       ri <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+       yi     vi 
+1 -0.1489 0.0664 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># NOPE</span></span>
+<span></span>
+<span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"RR"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      yi     vi 
+1 0.5807 0.0462 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"MPRR"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>       ri <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+       yi     vi 
+1 -0.0619 0.0115 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># NOPE</span></span>
+<span><span class="co"># OK SO DEFINITELY not comparable </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 
 
 <!-- -->
 
 
-</section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+</section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-borenstein2021" class="csl-entry" role="listitem">
 Borenstein, Michael, Larry V Hedges, Julian Higgins, and Hannah R Rothstein. 2021. <em>Introduction to Meta-Analysis</em>. 2nd ed. John Wiley &amp; Sons.
 </div>
@@ -957,198 +1024,239 @@ Borenstein, Michael, Larry V Hedges, Julian Higgins, and Hannah R Rothstein. 202
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Discrete outcome &amp; discrete predictor assumptions and interpretation"</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Sometimes it is just black and white"</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "2.2-lnOR-assumptions.html"</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
-<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.</span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>         <span class="pp">|</span> Alive <span class="pp">|</span> Dead <span class="pp">|</span> Total      <span class="pp">|</span></span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------|------|------------|</span></span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Drug    <span class="pp">|</span> $a$   <span class="pp">|</span> $b$  <span class="pp">|</span> $n1 = a+b$ <span class="pp">|</span></span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Placebo <span class="pp">|</span> $c$   <span class="pp">|</span> $d$  <span class="pp">|</span> $n2 = c+d$ <span class="pp">|</span></span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## log Odds Ratio (lnOR) {#sec-lnOR}</span></span>
-<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>The log odds ratio is the ratio of two probabilities:</span>
-<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>$$lnOR = log(\frac{a * d}{b * c})$$</span>
-<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assumptions {#sec-lnOR-assumptions}</span></span>
-<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>Blah blah blah</span>
-<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation {#sec-lnOR-interpretation}</span></span>
-<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.</span>
-<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>         <span class="pp">|</span> Alive <span class="pp">|</span> Dead <span class="pp">|</span></span>
-<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------|------|</span></span>
-<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Drug    <span class="pp">|</span> 35    <span class="pp">|</span> 12   <span class="pp">|</span></span>
-<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Placebo <span class="pp">|</span> 15    <span class="pp">|</span> 21   <span class="pp">|</span></span>
-<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>lnOR can be calculated by plugging these values into escalc:</span>
-<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
-<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
-<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
-<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):</span>
-<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>$$OR = e^{lnOR}$$</span>
-<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fl">1.4069</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>()</span>
-<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.</span>
-<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## log Risk Ratio (lnRR) {#sec-lnRR}</span></span>
-<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be easier to interpret than lnOR but has numeric properties that are less preferred and for that reason is less commonly used in ecology and evolution.</span>
-<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in some cases <span class="co">[</span><span class="ot">@borenstein2021</span><span class="co">]</span>.</span>
-<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>@Kyle*, can you help with this?*</span>
-<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>lnRR is defined as:</span>
-<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>&amp;p1 = a/n1 <span class="sc">\\</span></span>
-<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>&amp;p2 = c/n2 <span class="sc">\\</span></span>
-<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>&amp;lnRR = log(p1/p2) <span class="sc">\\</span></span>
-<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
-<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.</span>
-<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"RR"</span>,</span>
-<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
-<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
-<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(out<span class="sc">$</span>yi[<span class="dv">1</span>])</span>
-<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.</span>
-<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>*Not sure I am correctly interpreting these*</span>
-<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Continuity corrections {#sec-continuity-corrections}</span></span>
-<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-163"><a href="#cb8-163" aria-hidden="true" tabindex="-1"></a>lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.</span>
-<span id="cb8-164"><a href="#cb8-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a>lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</span>
-<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a><span class="fu">## Matched pairs contingency tables {#sec-paired-contigency-tables}</span></span>
-<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>*Are these paired lnOR????? And, if so, can they be compared to regular lnOR??*</span>
-<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>Directly from <span class="in">`escalc`</span>:</span>
-<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>"The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:"</span>
-<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                 <span class="pp">|</span> trt 2 outcome 1 <span class="pp">|</span> trt 2 outcome 2 <span class="pp">|</span></span>
-<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------------|-----------------|-----------------|</span></span>
-<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 1 outcome 1 <span class="pp">|</span> ai              <span class="pp">|</span> bi              <span class="pp">|</span></span>
-<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 1 outcome 2 <span class="pp">|</span> ci              <span class="pp">|</span> di              <span class="pp">|</span></span>
-<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>"Note that ‘trt1’ and ‘trt2’ may be applied to a single group of subjects or to matched pairs of subjects. Also, ‘trt1’ and ‘trt2’ might refer to two different time points (e.g., before and after a treatment). In any case, the data from such a study can be rearranged into a marginal table of the form:"</span>
-<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                 <span class="pp">|</span> outcome 1 <span class="pp">|</span> outcome 2 <span class="pp">|</span></span>
-<span id="cb8-183"><a href="#cb8-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------------|-----------|-----------|</span></span>
-<span id="cb8-184"><a href="#cb8-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 1 or time 1 <span class="pp">|</span> ai + bi   <span class="pp">|</span> ci + di   <span class="pp">|</span></span>
-<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 2 or time 2 <span class="pp">|</span> ai + ci   <span class="pp">|</span> bi + di   <span class="pp">|</span></span>
-<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a>*I'm not sure I follow this*</span>
-<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>Options in <span class="in">`escalc`</span>: "MPRR" (marginal log-risk ratio); "MPOR" (marginal log odds ratio); "MPRD" (marginal risk difference)</span>
-<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional log odds ratio estimated with Peto's method)</span>
-<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>The paired versions require $r$, just as with paired SMD/lnRoM. In R:</span>
-<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a><span class="co"># blah blah blah blah</span></span>
-<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a>**Not sure if these are comparable to normal lnOR/lnRR. My guess is that they aren't**</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Discrete outcome &amp; discrete predictor assumptions and interpretation"</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Sometimes it is just black and white"</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**CONTENTS**"</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "2.2-lnOR-assumptions.html"</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metaDigitise"</span>)</span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Source our custom functions:</span></span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"scripts/functions/eff_size.R"</span>)</span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.</span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>         <span class="pp">|</span> Alive <span class="pp">|</span> Dead <span class="pp">|</span> Total      <span class="pp">|</span></span>
+<span id="cb20-74"><a href="#cb20-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------|------|------------|</span></span>
+<span id="cb20-75"><a href="#cb20-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Drug    <span class="pp">|</span> $a$   <span class="pp">|</span> $b$  <span class="pp">|</span> $n1 = a+b$ <span class="pp">|</span></span>
+<span id="cb20-76"><a href="#cb20-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Placebo <span class="pp">|</span> $c$   <span class="pp">|</span> $d$  <span class="pp">|</span> $n2 = c+d$ <span class="pp">|</span></span>
+<span id="cb20-77"><a href="#cb20-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-78"><a href="#cb20-78" aria-hidden="true" tabindex="-1"></a>These outcomes are binomial, i.e., are discrete processes with binary outcomes that occur to individuals. Individuals can be both individual organisms as well as individual sites/islands/plots, i.e., in terms of presence or absence of some binary condition.</span>
+<span id="cb20-79"><a href="#cb20-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-80"><a href="#cb20-80" aria-hidden="true" tabindex="-1"></a>Tertiary outcomes binomial outcomes are also possible and need to be handled with alternative effect sizes. For example, the frequency of alleles (AA, Aa, aa) in a population can be described with the Hardy-Weinburg Equilibrium effect size (REF). These are not discussed in this tutorial. </span>
+<span id="cb20-81"><a href="#cb20-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-82"><a href="#cb20-82" aria-hidden="true" tabindex="-1"></a><span class="fu">## log Odds Ratio (lnOR) {#sec-lnOR}</span></span>
+<span id="cb20-83"><a href="#cb20-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-84"><a href="#cb20-84" aria-hidden="true" tabindex="-1"></a>The log odds ratio is the ratio of two odds:</span>
+<span id="cb20-85"><a href="#cb20-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-86"><a href="#cb20-86" aria-hidden="true" tabindex="-1"></a>$$lnOR = log(\frac{a * d}{b * c})$$</span>
+<span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assumptions {#sec-lnOR-assumptions}</span></span>
+<span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a>Blah blah blah</span>
+<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation {#sec-lnOR-interpretation}</span></span>
+<span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-94"><a href="#cb20-94" aria-hidden="true" tabindex="-1"></a>To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.</span>
+<span id="cb20-95"><a href="#cb20-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>         <span class="pp">|</span> Alive <span class="pp">|</span> Dead <span class="pp">|</span></span>
+<span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------|------|</span></span>
+<span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Drug    <span class="pp">|</span> 35    <span class="pp">|</span> 12   <span class="pp">|</span></span>
+<span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Placebo <span class="pp">|</span> 15    <span class="pp">|</span> 21   <span class="pp">|</span></span>
+<span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a>lnOR can be calculated by plugging these values into escalc:</span>
+<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-110"><a href="#cb20-110" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb20-111"><a href="#cb20-111" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
+<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a>To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):</span>
+<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a>$$OR = e^{lnOR}$$</span>
+<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fl">1.4069</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>()</span>
+<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a>An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.</span>
+<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a><span class="fu">## log Risk Ratio (lnRR) {#sec-lnRR}</span></span>
+<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a>The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in many cases <span class="co">[</span><span class="ot">@borenstein2021</span><span class="co">]</span>.</span>
+<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a>lnRR is defined as:</span>
+<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
+<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a>&amp;p1 = a/n1 <span class="sc">\\</span></span>
+<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a>&amp;p2 = c/n2 <span class="sc">\\</span></span>
+<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a>&amp;lnRR = log(p1/p2) <span class="sc">\\</span></span>
+<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a>\end{aligned}$$</span>
+<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a>We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.</span>
+<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"RR"</span>,</span>
+<span id="cb20-150"><a href="#cb20-150" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-151"><a href="#cb20-151" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
+<span id="cb20-152"><a href="#cb20-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-153"><a href="#cb20-153" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(out<span class="sc">$</span>yi[<span class="dv">1</span>])</span>
+<span id="cb20-154"><a href="#cb20-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-158"><a href="#cb20-158" aria-hidden="true" tabindex="-1"></a>**Kyle, can you help with this?**</span>
+<span id="cb20-159"><a href="#cb20-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-160"><a href="#cb20-160" aria-hidden="true" tabindex="-1"></a>A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.</span>
+<span id="cb20-161"><a href="#cb20-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-162"><a href="#cb20-162" aria-hidden="true" tabindex="-1"></a>**Not sure I am correctly interpreting these**</span>
+<span id="cb20-163"><a href="#cb20-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-164"><a href="#cb20-164" aria-hidden="true" tabindex="-1"></a><span class="fu">## Continuity corrections {#sec-continuity-corrections}</span></span>
+<span id="cb20-165"><a href="#cb20-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-166"><a href="#cb20-166" aria-hidden="true" tabindex="-1"></a>lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.</span>
+<span id="cb20-167"><a href="#cb20-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-168"><a href="#cb20-168" aria-hidden="true" tabindex="-1"></a>lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</span>
+<span id="cb20-169"><a href="#cb20-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-170"><a href="#cb20-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-171"><a href="#cb20-171" aria-hidden="true" tabindex="-1"></a><span class="fu"># Alternative versions</span></span>
+<span id="cb20-172"><a href="#cb20-172" aria-hidden="true" tabindex="-1"></a>There are alternative estimators for similar data that take into account longitudinal pairing (e.g., through time) or matched pairs of subjects. These are broadly referred to as matched pairs contingency table effect sizes by <span class="in">`escalc`</span>.</span>
+<span id="cb20-173"><a href="#cb20-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-174"><a href="#cb20-174" aria-hidden="true" tabindex="-1"></a>Extraction for these effect sizes is similar to lnOR and lnRR except that they take an additional parameter: $rho$, or the correlation between subjects---which is likely unreported and needs to be guessed. Unlike paired versions of SMD/lnRoM/Zmu, these do not appear to be comparable to unpaired estimators of lnOR and lnRR, nor are they widely used in ecology and evolution (REF TO THAT NAKAGAWA PAPER). </span>
+<span id="cb20-175"><a href="#cb20-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-176"><a href="#cb20-176" aria-hidden="true" tabindex="-1"></a>**DELETE:**</span>
+<span id="cb20-177"><a href="#cb20-177" aria-hidden="true" tabindex="-1"></a>The measurement arguments for these effect sizes are given <span class="co">[</span><span class="ot">here</span><span class="co">](5-escalc-cheatsheet.qmd)</span></span>
+<span id="cb20-178"><a href="#cb20-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-179"><a href="#cb20-179" aria-hidden="true" tabindex="-1"></a><span class="fu">## Matched pairs contingency tables {#sec-paired-contigency-tables}</span></span>
+<span id="cb20-180"><a href="#cb20-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-181"><a href="#cb20-181" aria-hidden="true" tabindex="-1"></a>**Are these paired lnOR????? And, if so, can they be compared to regular lnOR??**</span>
+<span id="cb20-182"><a href="#cb20-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-183"><a href="#cb20-183" aria-hidden="true" tabindex="-1"></a>Directly from <span class="in">`escalc`</span>:</span>
+<span id="cb20-184"><a href="#cb20-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-185"><a href="#cb20-185" aria-hidden="true" tabindex="-1"></a>"The data for a study examining change in a dichotomous variable gives rise to a paired table, which is of the form:"</span>
+<span id="cb20-186"><a href="#cb20-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-187"><a href="#cb20-187" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                 <span class="pp">|</span> trt 2 outcome 1 <span class="pp">|</span> trt 2 outcome 2 <span class="pp">|</span></span>
+<span id="cb20-188"><a href="#cb20-188" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------------|-----------------|-----------------|</span></span>
+<span id="cb20-189"><a href="#cb20-189" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 1 outcome 1 <span class="pp">|</span> ai              <span class="pp">|</span> bi              <span class="pp">|</span></span>
+<span id="cb20-190"><a href="#cb20-190" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 1 outcome 2 <span class="pp">|</span> ci              <span class="pp">|</span> di              <span class="pp">|</span></span>
+<span id="cb20-191"><a href="#cb20-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-192"><a href="#cb20-192" aria-hidden="true" tabindex="-1"></a>"Note that ‘trt1’ and ‘trt2’ may be applied to a single group of subjects or to matched pairs of subjects. Also, ‘trt1’ and ‘trt2’ might refer to two different time points (e.g., before and after a treatment). In any case, the data from such a study can be rearranged into a marginal table of the form:"</span>
+<span id="cb20-193"><a href="#cb20-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-194"><a href="#cb20-194" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                 <span class="pp">|</span> outcome 1 <span class="pp">|</span> outcome 2 <span class="pp">|</span></span>
+<span id="cb20-195"><a href="#cb20-195" aria-hidden="true" tabindex="-1"></a><span class="pp">|-----------------|-----------|-----------|</span></span>
+<span id="cb20-196"><a href="#cb20-196" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 1 or time 1 <span class="pp">|</span> ai + bi   <span class="pp">|</span> ci + di   <span class="pp">|</span></span>
+<span id="cb20-197"><a href="#cb20-197" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> trt 2 or time 2 <span class="pp">|</span> ai + ci   <span class="pp">|</span> bi + di   <span class="pp">|</span></span>
+<span id="cb20-198"><a href="#cb20-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-199"><a href="#cb20-199" aria-hidden="true" tabindex="-1"></a>*I'm not sure I follow this*</span>
+<span id="cb20-200"><a href="#cb20-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-201"><a href="#cb20-201" aria-hidden="true" tabindex="-1"></a>Options in <span class="in">`escalc`</span>: "MPRR" (marginal log-risk ratio); "MPOR" (marginal log odds ratio); "MPRD" (marginal risk difference)</span>
+<span id="cb20-202"><a href="#cb20-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-203"><a href="#cb20-203" aria-hidden="true" tabindex="-1"></a>And for paired: "MPORC" (conditional log odds ratio) and "MRPETO" (conditional log odds ratio estimated with Peto's method)</span>
+<span id="cb20-204"><a href="#cb20-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-205"><a href="#cb20-205" aria-hidden="true" tabindex="-1"></a>The paired versions require $r$, just as with paired SMD/lnRoM. In R:</span>
+<span id="cb20-206"><a href="#cb20-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-209"><a href="#cb20-209" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-210"><a href="#cb20-210" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's compare MPORC to OR:</span></span>
+<span id="cb20-211"><a href="#cb20-211" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb20-212"><a href="#cb20-212" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-213"><a href="#cb20-213" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
+<span id="cb20-214"><a href="#cb20-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-215"><a href="#cb20-215" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MPORC"</span>,</span>
+<span id="cb20-216"><a href="#cb20-216" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-217"><a href="#cb20-217" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>,</span>
+<span id="cb20-218"><a href="#cb20-218" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb20-219"><a href="#cb20-219" aria-hidden="true" tabindex="-1"></a><span class="co"># Whoa, nope.</span></span>
+<span id="cb20-220"><a href="#cb20-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-221"><a href="#cb20-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-222"><a href="#cb20-222" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb20-223"><a href="#cb20-223" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-224"><a href="#cb20-224" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
+<span id="cb20-225"><a href="#cb20-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-226"><a href="#cb20-226" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MPOR"</span>,</span>
+<span id="cb20-227"><a href="#cb20-227" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-228"><a href="#cb20-228" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>,</span>
+<span id="cb20-229"><a href="#cb20-229" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb20-230"><a href="#cb20-230" aria-hidden="true" tabindex="-1"></a><span class="co"># NOPE</span></span>
+<span id="cb20-231"><a href="#cb20-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-232"><a href="#cb20-232" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"RR"</span>,</span>
+<span id="cb20-233"><a href="#cb20-233" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-234"><a href="#cb20-234" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
+<span id="cb20-235"><a href="#cb20-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-236"><a href="#cb20-236" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MPRR"</span>,</span>
+<span id="cb20-237"><a href="#cb20-237" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
+<span id="cb20-238"><a href="#cb20-238" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>,</span>
+<span id="cb20-239"><a href="#cb20-239" aria-hidden="true" tabindex="-1"></a>       <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb20-240"><a href="#cb20-240" aria-hidden="true" tabindex="-1"></a><span class="co"># NOPE</span></span>
+<span id="cb20-241"><a href="#cb20-241" aria-hidden="true" tabindex="-1"></a><span class="co"># OK SO DEFINITELY not comparable </span></span>
+<span id="cb20-242"><a href="#cb20-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-243"><a href="#cb20-243" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
