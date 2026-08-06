@@ -185,6 +185,10 @@ One of the biggest reasons to draw the underlying data from figures like this is
 
 Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](6-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a Zr-type effect size and the binomial distribution)
 
+::: callout-warning
+Note that reconstructing underlying data is an experimental method. Use carefully.
+:::
+
 ```{r}
 #| echo: true
 #| eval: true
@@ -619,6 +623,7 @@ Continuous predictors with discrete responses can also be analyzed with a Hazard
 
 IS THIS TRUE? This was something Shinichi said, I think.
 :::
+
 ## Mean±SD proportion data with continuous predictor {#sec-zr-reconstructing-proportion-data}
 
 Now let's look at a similar situation, except the figure is presenting mean±SD mortality across **separate trials** within each temperature treatment.
@@ -681,6 +686,10 @@ nrow(dt[sd > theoretical_sd])
 It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution to generate the raw underyling data. See [here](6-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
 
 Now we'll draw binomial data with the `rbinom` function. We specify `size` as number of individuals per trial (`n_individuals` in our dataset `dt`), `n` as number of trials (`n_trials` in our dataset), and `p` as the author reported mean proportion alive (`proportion_alive`). The function will return a numeric vector, with each element indicating the number of alive individuals per trial. With 3 trials, each vector should have a length of 3.
+
+::: callout-warning
+Note that reconstructing underlying data is an experimental method. Use carefully.
+:::
 
 For a single temperature treatment, this looks like this:
 
