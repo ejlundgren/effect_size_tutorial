@@ -70,18 +70,27 @@ source("scripts/functions/convert_effect_sizes.R")
 There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We'll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect they are pervasive and widespread.
 
 # Sample size {#sec-sample-size}
+**Might need to expand this into several subsections, as suggested by teh proliferation of callouts below...**
 
 One of the biggest challenges of data extraction is figuring out the sample size. This is non-trivial. Sample size is essential to accurately calculate effect sizes and sampling variance.
 
-Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the **unit of replication** is and whether these are *comparable* across studies in your dataset. While sample size might be conceptually straightforward with behavioral or physiological data---where the unit of replication is generally the number of individuals---it can become incredible complex with plot data or survey data.
+Not only can sample size be incredibly difficult to determine from the text of a paper, it can also be hard to know what the **unit of replication** is and whether these are *comparable* across studies in your dataset. While the unit of replication might be conceptually straightforward with behavioral or physiological data---where the unit of replication is generally the number of individuals---it can become incredible complex with plot data or survey data.
 
 For example, if you are meta-analyzing vegetation data you may find some studies that make their plots the unit of replication (pooling data from subplots) while others make subplots the unit of replication (and control for non-independence within their models with random effects), while others will make individual plants nested within plots the unit of replication.
 
-Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know---but probably not. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).
+Likewise, imagine you are meta-analyzing the effects of some treatment (say logging) on vertebrate abundance. Some studies did spotlight surveys from a vehicle (where sample size would intuitively be the number of survey nights or survey kilometers) while other studies did camera trapping (where the sample size would be number of camera trap nights or number of camera trap locations). Are these two sample sizes comparable? We don't know. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights).
 
 For these reasons, it is essential to record the unit of replication (e.g., individual, plot, subplot, survey) in your dataset. This information can be used for sensitivity analyses and subgroup analyses.
 
-**LOTS OF CALLOUTS HERE BUT I'M NOT SURE THEY SERVE THEIR OWN SECTIONS**
+**LOTS OF CALLOUTS HERE BUT I'M NOT SURE THEY DESERVE THEIR OWN SECTIONS**
+
+:::callout-important
+######### Author summaries across different dimensions of non-independence {#sec-callout-non-independence}
+The examples above assume that the authors summarized data *within* certain groups (e.g., time points or spatially independent plots). However, you will note that some articles will summarize data (e.g., calculate `means±sd`) across **space and time**; some will summarize data just by **space** (e.g., independent plots or individuals); and some will summarize data over **time** points within each spatially independent sample (plots or individuals).
+
+These differences likely matter, especially in ecological data, yet are rarely addressed. We recommend recording whether data-reported summaries are across time, across spatially-independent samples (or individuals), or across both. These factors may explain methodological heterogeneity in your dataset.
+:::
+
 ::: callout-note
 ###### Reconstructing underlying data {#sec-callout-reconstructing-underlying-data}
 
@@ -89,7 +98,6 @@ You will see that some of the hardest extraction challenges involve deconstructi
 
 There are techniques—with their own assumptions---for reconstructing the underlying data in these cases. These techniques involve drawing simulated data from the original data generating process. See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [Zr effect sizes](3.4-Zr-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](6-simulating-non-gaussian-responses.qmd).
 
-**I also think these dark magic tricks should maybe just migrate to their own page**
 :::
 
 
@@ -99,6 +107,9 @@ There are techniques—with their own assumptions---for reconstructing the under
 Let's imagine that an article presented standard error based on one measure of sample size (let's say plots) however the rest of your dataset uses subplot N as sample size. Can you convert the standard error to standard deviation using the author-sample size (plots) but then use the subplot-N for the  calculation of sampling variance so that the unit of replication is comparable?
 
 I think so: Rao, J.N.K. & Scott, A.J. 1992. A simple method for the analysis of clustered binary data. Biometrics 48: 577–585.
+
+Likewise, if the mean±SE came from 3 individuals summarized across 10 temporal sampling points (n=30) per treatment, this study will be overweighted relative to a study that had 30 independent individuals across 1 temporal sampling point (n=30)....
+
 :::
 
 
@@ -356,13 +367,6 @@ See XXXXXX for a tutorial on how to use `vcalc`.
 As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
 
 We recommend the following tutorial on thinking through random effects in meta-analysis: **XXXXXX**
-
-:::callout-important
-######### Author summaries across different dimensions of non-independence {#sec-callout-non-independence}
-The examples above assume that the authors summarized data *within* certain groups (e.g., time points or spatially independent plots). However, you will note that some articles will summarize data (e.g., calculate `means±sd`) across **space and time**; some will summarize data just by **space** (e.g., independent plots or individuals); and some will summarize data over **time** points within each spatially independent sample (plots or individuals).
-
-These differences likely matter, especially in ecological data, yet are rarely addressed. We recommend recording whether data-reported summaries are across time, across spatially-independent samples (or individuals), or across both. These factors may explain methodological heterogeneity in your dataset.
-:::
 
 # Database design {#sec-database-design}
 
