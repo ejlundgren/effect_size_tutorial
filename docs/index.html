@@ -16,7 +16,7 @@
 <meta name="author" content="Iwo Gross">
 <meta name="author" content="Wolfgang??">
 <meta name="author" content="Shinichi Nakagawa">
-<meta name="dcterms.date" content="2026-08-04">
+<meta name="dcterms.date" content="2026-08-05">
 <title>Effect sizes – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -340,7 +340,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 4, 2026</p>
+      <p class="date">August 5, 2026</p>
     </div>
   </div>
   
@@ -350,14 +350,14 @@ div.csl-indent {
 
 
 </header><section id="sec-introduction" class="level1"><h1>Introduction</h1>
-<p>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (e.g., what is) and metascientific questions.</p>
-<p>Meta-analysis can be really hard (and sorry, this tutorial aims to make it easier but doing so also might make it harder because you’ll realize how much <em>you didn’t know</em>). Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.</p>
-<p>We here present a living tutorial to navigating this methodological tempest, with particular emphasis on extracting and calculating effect sizes from a variety of data formats. This tutorial is maintained by the Collaboration for Open Science and Synthesis in Ecology and Evolution at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. As such, we hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</p>
+<p>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (i.e., what is) and metascientific questions (e.g., how do scientists construct knowledge).</p>
+<p>Meta-analysis can be really hard. Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.</p>
+<p>We here present a living tutorial to navigating this methodological tempest, with particular emphasis on understanding effect sizes and extracting them from a variety of data formats. This tutorial is maintained by the Collaboration for Open Science and Synthesis in Ecology and Evolution at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. As such, we hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</p>
 </section><section id="sec-voyagers" class="level1"><h1>Voyaging among the ghosts of data past</h1>
 <p>Meta-analyses are powerful. But they are full of tedium. And dealing with the challenges that we describe in this tutorial (hopefully in plain english) can be overwhelming.</p>
 <p>Yet there is something beautiful and very human about doing a meta-analysis. You encounter the heartwork and hardwork of dozens or hundreds or thousands of fellow human beings. Stories from last year or 50 years ago, from people exploring, observing, experimenting, and trying to understand our universe.</p>
 <p>These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests.</p>
-<p>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and respect and awe for the work that came before us–these efforts to describe the mysteries of our world.</p>
+<p>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and awe for the work that came before us–these efforts to describe the mysteries of our world.</p>
 </section><section id="sec-how-to" class="level1"><h1>How to use this tutorial</h1>
 <p>We begin by providing an overview of the workflow we use in designing a meta-analysis, with particular attention paid to effect sizes, their assumptions, and to testing the influence of those assumptions with sensitivity analyses. We then describe the 3 most common effect size types used in ecology and evolution and their assumptions and alternative formulations. For each of these effect sizes, we then provide a detailed tutorial on how to extract data from both common and bizarre formats.</p>
 <p>This tutorial is viewable as a webpage or you can clone the repo and run the .qmd files interactively. This tutorial corresponds with the cheatsheets provided here <em>XXXXXX.</em></p>
@@ -926,11 +926,11 @@ Viechtbauer, Wolfgang. 2010. <span>“Conducting Meta-Analyses in <span>R</span>
 <span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction {#sec-introduction}</span></span>
 <span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (e.g., what is) and metascientific questions.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>Meta-analysis has grown to be one of the powerful methods in science. By extracting data from across the literature, a meta-analyst can answer age-old questions at scales previously unimaginable. Moreover, meta-analysis can test for and correct publication bias and can thus not only control for biases in the literature base but provide a bridge between empirical questions (i.e., what is) and metascientific questions (e.g., how do scientists construct knowledge).</span>
 <span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Meta-analysis can be really hard (and sorry, this tutorial aims to make it easier but doing so also might make it harder because you'll realize how much *you didn't know*). Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Meta-analysis can be really hard. Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.  </span>
 <span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>We here present a living tutorial to navigating this methodological tempest, with particular emphasis on extracting and calculating effect sizes from a variety of data formats. This tutorial is maintained by the Collaboration for Open Science and Synthesis in Ecology and Evolution at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. As such, we hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>We here present a living tutorial to navigating this methodological tempest, with particular emphasis on understanding effect sizes and extracting them from a variety of data formats. This tutorial is maintained by the Collaboration for Open Science and Synthesis in Ecology and Evolution at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. As such, we hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</span>
 <span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="fu"># Voyaging among the ghosts of data past  {#sec-voyagers}</span></span>
 <span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
@@ -940,7 +940,7 @@ Viechtbauer, Wolfgang. 2010. <span>“Conducting Meta-Analyses in <span>R</span>
 <span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests.</span>
 <span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and respect and awe for the work that came before us--these efforts to describe the mysteries of our world.</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and awe for the work that came before us--these efforts to describe the mysteries of our world.</span>
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to use this tutorial  {#sec-how-to}</span></span>
 <span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a></span>

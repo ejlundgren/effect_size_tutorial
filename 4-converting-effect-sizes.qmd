@@ -83,27 +83,29 @@ Many effect sizes can be inter-converted [@borenstein2021; @Lajeunesse2026-ms] T
 
 At the same time, especially for questions with limited data, we believe that conversions are an important tool in the meta-analyst toolkit.
 
-![Effect size types](figures/flowcharts_diagrams/conversions.png) These conversions have some numeric assumptions:
+![Effect size types](figures/flowcharts_diagrams/conversions.png) 
 
 
 ## Assumptions {#sec-assumptions}
-There are a number of assumptions when converting effect sizes between each other. We summarize these in the table below as well as in each dedicated section. 
+Converting effect sizes requires several assumptions. We summarize these in the table below: 
 
 
 | Conversion  | Assumption                                    |
 |-------------|-----------------------------------------------|
 | lnOR ↔ SMD  |Response variable is a discretized version of an underlying continuous variable     |
 | SMD ↔ Zr    |Predictor variable is a discretized version of an underlying continuous variable |
+| lnOR ↔ Zr   |Response and predictor have an underlying continuous reality | 
 | SMD ↔ lnRoM |Homogeneity of variances between groups |
 
-You'll note that the assumption for **lnOR ↔ SMD** concerns the response variable (i.e., dependent variable) while the assumption for **SMD ↔ Zr** concerns the predictor variable (indendent variable). This means that you can also convert lnOR to Zr via SMD and vice versa.
 
-:::callout-question
+
+
+:::callout-warning
 What about comparing truly discrete to continuous? Are there any cases where this is desired or needed? Perhaps in behavioral data?
 
-Because $r_{pb}$ (point biserial correlation) is for naturally discrete groups and this can be calculated from means±sd and then you can convert to Zr (though Wolfgang and Jacobs say you shouldn't? because sampling variance isn't correct?). 
+Because $r_{pb}$ (point biserial correlation) is for naturally discrete groups and this can be calculated from means±sd and then you can convert to Zr (though @Jacobs2017-cv say you shouldn't? because sampling variance isn't correct? though it's probably ok to do). 
 
-READ
+READ @Jacobs2017-cv
 :::
 
 ## Unit of replication alignment
@@ -113,11 +115,11 @@ For example, imagine you're analyzing the effect of an introduced predator on pr
 
 Both of these study types are relevant to the same question--—the effect of the predator on prey abundance. Likewise, converting betwee these effect sizes does not violate the assumptions in the [table above](#sec-assumptions) because presence-absence is a discretized version of abundance. It is thus possible to convert these effect sizes via SMD to include both papers in the same model.
 
-However, **the units of replication of these study types are vastly different** (study 1 = survey; study 2 = island). This will lead the Zr abundance correlations to have more weight than the full-island lnOR responses.
+However, **the units of replication of these study types are vastly different** (study 1 = survey; study 2 = island). This means the Zr abundance correlations will have more weight than the full-island lnOR responses.
 
 However, in many other cases, conversions will allow similar data to be compared without comparing different units of replication. 
 
-Given the assumptions and potential biases involved in converting effect sizes, we recommend that you convert minority effect sizes to the dominant effect size in your analysis after confirming that assumptions are met and that the unit of replication for all the effect sizes are equivalent. We then recommend running your models with and without these converted effect sizes, to evaluate whether the inclusion of minority effect sizes alter your results.
+Given the assumptions and potential biases involved in converting effect sizes, we recommend that you convert minority effect sizes to the dominant effect size in your dataset after confirming that assumptions are met and that the unit of replication for all the effect sizes are equivalent. We then recommend running your models with and without these converted effect sizes, to evaluate whether the inclusion of minority effect sizes alter your results.
 
 :::callout-important
 ####### Alternative to conversion: reconstruct the underlying data {#sec-callout-reconstructing-data}
@@ -141,9 +143,9 @@ convert_effect_sizes()
 
 ```
 
-To convert an effect size, specify the `from` effect type and the `to` effect type, as well as the required statistics:
+To convert an effect size, specify the `from` effect type and the `to` effect type, as well as the required statistics. Note that this function also supports full, two-step conversions from Zr to lnOR and vice versa.
 
-We'll now show the math and demonstrate in R all conversions. SMD is the universal solvent of these conversions and it is important to remember that SMD has multiple estimators. The most commonly used is Hedges' $g$, which has a small sample size bias correction factor $J$. However, all conversion formulas convert to and from $d$, an alternative estimator of SMD that lacks this correction factor. For that reason, the math below will skip this conversion and be written for $d$ instead of $g$ based on this conversion. 
+We'll now show the math and demonstrate the conversions in `R`. SMD is the universal solvent of these conversions and it is important to remember that SMD has multiple estimators. The most commonly used is Hedges' $g$, which has a small sample size bias correction factor $J$. However, all conversion formulas convert to and from $d$, an alternative estimator of SMD that lacks this correction factor. For that reason, the math below will skip this conversion and be written for $d$ instead of $g$ based on this conversion. 
 
 
 $$
@@ -153,7 +155,7 @@ $$
 &d = \frac{g}{J}
 \end{aligned}
 $$
-Note that the default sampling variance estimator for Hedges' g is the same estimator used for Cohen's d (in the R package `escalc`. Thus no conversion from Var(d) to Var(g) is necessary.
+Note that the default sampling variance estimator for Hedges' g is the same estimator used for Cohen's d (in the `R` package `escalc`. Thus no conversion from Var(d) to Var(g) is necessary.
 
 :::callout-important
 ####### Alternative estimators and effect size conversion {#sec-alternative-estimators}
@@ -178,7 +180,7 @@ $$
 \end{aligned}
 $$
 
-In R:
+In `R`:
 
 ```{r}
 #| eval: true
@@ -204,7 +206,7 @@ $$
 \end{aligned}
 $$
 
-In R:
+In `R`:
 ```{r}
 #| eval: true
 #| echo: true
@@ -240,7 +242,7 @@ $$
 \end{aligned}
 $$
 
-In R:
+In `R`:
 ```{r}
 #| eval: true
 #| echo: true
@@ -254,7 +256,7 @@ convert_effect_sizes(from = "SMD",
 ```
 
 :::callout-important
-Instead of converting SMD to Zr, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to Zr. This can be done in `escalc` directly:
+Instead of converting SMD to Zr, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to Zr. This can be done in `escalc` directly with the measure "ZBIS", which calculates teh biserial correlation coefficient and converts it to Zr.
 
 ```{r}
 escalc(measure = "ZBIS",
@@ -287,7 +289,7 @@ $$
 \end{aligned}
 $$
 
-In R:
+In `R`:
 ```{r}
 #| eval: true
 #| echo: true
@@ -321,7 +323,7 @@ The primary mathematical assumption of these conversions is homoscedasticity: th
 
 Note that converting SMD to lnRoM remains unresolved.
 
-As with the other conversions, we'll relay the math to convert between Cohen's d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, `convert_effect_sizes` automatically converts Cohen's to Hedges' g (the bias-corrected estimator of SMD).
+As with the other conversions, we'll relay the math to convert between Cohen's d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, `convert_effect_sizes` automatically converts Cohen's d to Hedges' g (the bias-corrected estimator of SMD).
 
 Let $yi_{ROM}$ and $yi_{d}$ be the point estimates of lnRoM and SMD (after converting Hedges' g to Cohen's d) and $vi_{ROM}$ and $vi_{d}$ be their sampling variance estimates. Finally, let $n_1$ and $n_2$ be the numerator and denominator of lnRoM (e.g., the treatment and control groups respectively):
 
@@ -331,15 +333,15 @@ yi_d = (yi_{ROM} - 1) * \sqrt{\frac{n_1/yi_{ROM}^2 + n_2}{n_1 n_2 vi_{ROM}}}
 \end{aligned}
 $$
 
-The sampling variance is estimated as follows. Note that this estimator is the same for Cohen's d and for Hedges' g (by default in `escalc`) as it is less biased and is thus the final estimated variance for SMD:
+The sampling variance is estimated as follows. Note that this estimator is the default used by `escalc` as it is less biased and is thus the final estimated variance for SMD:
 
 $$
 \begin{aligned}
-vi_{g} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}
+vi_{d} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}
 \end{aligned}
 $$
 
-In R:
+In `R`:
 ```{r}
 #| eval: true
 #| echo: true

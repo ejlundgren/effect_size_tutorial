@@ -633,29 +633,38 @@ cbind(unpaired, paired)
 
 ```
 
-For that reason, you need to use our function `eff_this`
+
+There are several options available in `escalc` to account for paired designs. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See the [cheatsheet](5-escalc-cheatsheet.qmd) where we attempt to clear up these (in)compatibilities. For that reason, you need to use our function `eff_size`:
 
 ```{r}
 #| echo: true
 #| eval: false
 
 unpaired <- eff_size(x1 = 7, sd1 = 1.2, 
-        x2 = 12, sd2 = 0.9, 
-        n1 = 15, n2 = 15,
-        paired = FALSE,
-        verbose = FALSE,
-        effect_type = "SMD")
+                      x2 = 12, sd2 = 0.9, 
+                      n1 = 15, n2 = 15,
+                      paired = FALSE,
+                      verbose = FALSE,
+                      effect_type = "SMD")
 setnames(unpaired, c("yi", "vi"), c("yi_unpaired", "vi_unpaired"))
 
 paired <- eff_size(x1 = 7, sd1 = 1.2, 
-        x2 = 12, sd2 = 0.9, 
-        n = 15, r = 0.5,
-        paired = TRUE,
-        verbose = FALSE,
-        effect_type = "SMD")
+                    x2 = 12, sd2 = 0.9, 
+                    n = 15, r = 0.5,
+                    paired = TRUE,
+                    verbose = FALSE,
+                    effect_type = "SMD")
 setnames(paired, c("yi", "vi"), c("yi_paired", "vi_paired"))
 
 cbind(unpaired, paired)
+
+```
+Paired SMD confusion....
+
+```{r}
+# What formula did we use?
+formula <- fread("data/effect_size_formulas.csv")
+unique(formula[effect_size == "SMD" & paired_design == TRUE & default == "yes", ]$formula)
+
 ```
 
-There are several options available in `escalc` to account for paired designs. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See the [cheatsheet](5-escalc-cheatsheet.qmd) where we attempt to clear up these (in)compatibilities.
