@@ -1,7 +1,7 @@
 ---
 title: "Discrete outcomes with discrete predictor"
 subtitle: "lnOR and lnRR"
-date: "`r Sys.Date()`"
+date: today
 format: 
   html:
     toc: true
@@ -372,7 +372,7 @@ any(dt$sd > sd_theoretical)
 
 It looks like our data is not truly binomial but beta-binomial. See [here](6-simulating-non-gaussian-responses.qmd#sec-binomial) and [here](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data) for how to draw from the binomial distribution.
 
-For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the R package `extraDistr` [@extradistr]. This requires the variance ($sd^2$) and two shape parameters that describe the beta distribution ($\alpha$ and $\beta$). See [here](6-simulating-non-gaussian-responses.qmd#sec-beta-binomial) for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset `dt`:
+For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the R package `extraDistr` [@extradistr]. This requires the variance ($Var = sd^2$) and two shape parameters that describe the beta distribution: $\alpha$ ("alpha") and $\beta$ ("beta"). See [here](6-simulating-non-gaussian-responses.qmd#sec-beta-binomial) for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset `dt` after calculating an intermediate variable `r`:
 
 ```{r}
 #| eval: true

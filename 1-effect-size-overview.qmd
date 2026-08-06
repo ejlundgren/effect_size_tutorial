@@ -1,7 +1,7 @@
 ---
 title: "An overview of effect sizes"
 subtitle: "Estimates, estimators, and estimands, oh my!"
-date: "`r Sys.Date()`"
+date: today
 format: 
   html:
     toc: true
@@ -64,6 +64,7 @@ We here focus this tutorial on the mathematical assumptions, alternative formula
 2)  log odds ratio (lnOR) and log risk ratio (lnRR)
 
 3)  correlation coefficient (Zr)
+
 **Need names for each category**
 
 These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.
@@ -83,21 +84,20 @@ Finally, it is also possible to convert between these main effect size types, wh
 
 The choice of what effect size to use may seem very simple. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM/Zmu effect sizes seem like the obvious choice. 
 
-However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey (like in [@Wallach2025-ta]). Many studies present results that look like SMD-type data: comparing prey abundance between areas with high fox abundance to areas with low fox abundance due to an eradication or culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.
+However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey (like in [@Wallach2025-ta]). Many studies present results that look like SMD-type data: comparing mean±SD of prey abundance in areas with high fox abundance to areas with low fox abundance, due to an eradication or culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.
 
-It seems obvious to use an SMD-type effect size for data like this but then you are forced to treat the difference in density as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators because then you are forced to include an interaction between the density-difference and your other moderators.
+While it may seem obvious to use an SMD-type effect size for data like this, you are then forced to treat the *difference* in density between treatments as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators.
 
-An alternative option is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. Regardless, these decisions are non-trivial and should be carefully thought through.
+An alternative is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. 
 
 Note that it is also possible to formulate custom effect sizes that may help simplify these situations, e.g., by explicitly including density. See our section [below](#sec-custom-effect-sizes) and @Noble2022-pl for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.
 :::
-
 
 # Calculating effect sizes & sampling variance {#sec-calculating-effect-sizes}
 
 The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes summary statistics, a variable specifying the effect size type (specified with the `measure` argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). At certain points we will also use our own custom function, `eff_this` *(currently called eff_size but eff_this could be funny...)* which can do most of what escalc can do but also some things that escalc cannot do.
 
-**Not sure if we want to include this but if we don't, we need to figure out some of the options in escalc, like paired SMD...**
+**Not sure if we want to include `eff_size` but if we don't, we need to figure out some of the options in `escalc`, like paired SMD...**
 
 To start, let's clean the environment and load some packages:
 
@@ -132,6 +132,8 @@ source("scripts/functions/convert_effect_sizes.R")
 Effect sizes (also called *point estimates*) and sampling variance are *estimated* with a variety of *estimators*. These estimators are the formulas (or methods) used to calculate point estimates and sampling variance for each effect size. Because some estimators can be biased at low sample size, or with heteroscedastic data (e.g., different variance between treatment groups), alternative estimators have been developed for the same effect sizes.
 
 For example, the point estimate definition formula for lnRoM——the log-transformed ratio of means——is quite simple, with $m_1$\$m_1\$ and $m_2$ equivalent to the mean of an experimental and a control group respectively and $yi$ indicating the resulting effect size point estimate:
+
+**I think we should delete the math here**
 
 $$
 \begin{aligned}
