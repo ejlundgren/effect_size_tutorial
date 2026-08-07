@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-08-06">
+<meta name="dcterms.date" content="2026-08-07">
 <title>escalc cheatsheet – A user's guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -186,12 +186,6 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./2.0-assumptions-interpretations.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Effect sizes are tiny models</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./2.1-SMD-assumptions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Continuous outcomes with discrete predictors</span></a>
   </div>
@@ -327,7 +321,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 6, 2026</p>
+      <p class="date">August 7, 2026</p>
     </div>
   </div>
   
@@ -401,8 +395,6 @@ window.Quarto = {
 </tbody>
 </table>
 <p>Note that “Zmu” is only available in our own function <code>eff_this</code> (originally published in Nakagawa et al.&nbsp;XXXX) and supplied here. To select a paired formula, set paired_design = TRUE and be sure to provide <code>r</code> and <code>n</code> as an input.</p>
-<p><strong>Look into this:</strong> “See also Morris and DeShon (2002) for a thorough discussion of the difference between the”SMCC” and “SMCR” change score measures”</p>
-<p><strong>Not sure when you should use SMCC versus SMCRP</strong> <strong>I don’t think any of them are compatible with SMD unpaired…Gahhh</strong></p>
 </section><section id="sec-lnor-options" class="level1"><h1>lnOR / lnRR options</h1>
 <p>The standard estimator options in <code>escalc</code> are “OR” for lnOR and “RR”. The alternative estimators below are for “matched pairs contingency tables”.</p>
 <table class="caption-top table">
@@ -1116,67 +1108,63 @@ window.Quarto = {
 <span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>Note that "Zmu" is only available in our own function <span class="in">`eff_this`</span> (originally published in Nakagawa et al. XXXX) and supplied here. To select a paired formula, set paired_design = TRUE and be sure to provide <span class="in">`r`</span> and <span class="in">`n`</span> as an input.</span>
 <span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>**Look into this:** "See also Morris and DeShon (2002) for a thorough discussion of the difference between the "SMCC" and "SMCR" change score measures"</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="fu"># lnOR / lnRR options {#sec-lnor-options}</span></span>
 <span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>**Not sure when you should use SMCC versus SMCRP** **I don't think any of them are compatible with SMD unpaired...Gahhh**</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>The standard estimator options in <span class="in">`escalc`</span> are "OR" for lnOR and "RR". The alternative estimators below are for "matched pairs contingency tables".</span>
 <span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="fu"># lnOR / lnRR options {#sec-lnor-options}</span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>The standard estimator options in <span class="in">`escalc`</span> are "OR" for lnOR and "RR". The alternative estimators below are for "matched pairs contingency tables".</span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> class <span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Paired designs <span class="pp">|</span> Comparable to standard? <span class="pp">|</span> Details <span class="pp">|</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-------------|-------------|----------------|------------------|</span></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnOR <span class="pp">|</span> "MPOR" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "marginal log odds ratio" <span class="pp">|</span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "MPORC" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "conditional log odds ratio" <span class="pp">|</span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "MRPETO" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "conditional log odds ratio estimated with Peto's method <span class="pp">|</span></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnRR <span class="pp">|</span> "MPRR" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "marginal log-risk ratio" <span class="pp">|</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "MPRD" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "marginal risk difference" <span class="pp">|</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> class <span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Paired designs <span class="pp">|</span> Comparable to standard? <span class="pp">|</span> Details <span class="pp">|</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-------------|-------------|----------------|------------------|</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnOR <span class="pp">|</span> "MPOR" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "marginal log odds ratio" <span class="pp">|</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "MPORC" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "conditional log odds ratio" <span class="pp">|</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "MRPETO" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "conditional log odds ratio estimated with Peto's method <span class="pp">|</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnRR <span class="pp">|</span> "MPRR" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "marginal log-risk ratio" <span class="pp">|</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "MPRD" <span class="pp">|</span> yes? <span class="pp">|</span> ? <span class="pp">|</span> "marginal risk difference" <span class="pp">|</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="fu"># Zr options {#sec-zr-options}</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>You can also calculate point biserial correlation coefficient "RPB" and biserial correlation coefficient "RBIS" but these return an estimate of 'r' and should not be analyzed directly in a meta-analytic model</span>
 <span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="fu"># Zr options {#sec-zr-options}</span></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>You can also calculate point biserial correlation coefficient "RPB" and biserial correlation coefficient "RBIS" but these return an estimate of 'r' and should not be analyzed directly in a meta-analytic model</span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> class <span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Comparable to standard? <span class="pp">|</span> Details <span class="pp">|</span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------------|--------------|---------------------|------------------------|</span></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Zr <span class="pp">|</span> "ZBP" <span class="pp">|</span> Yes <span class="pp">|</span> "point biserial correlation coefficient directly to Zr" <span class="pp">|</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "ZBIS" <span class="pp">|</span> Yes <span class="pp">|</span> "biserial correlation coefficient directly to Zr" <span class="pp">|</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> class <span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Comparable to standard? <span class="pp">|</span> Details <span class="pp">|</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------------|--------------|---------------------|------------------------|</span></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Zr <span class="pp">|</span> "ZBP" <span class="pp">|</span> Yes <span class="pp">|</span> "point biserial correlation coefficient directly to Zr" <span class="pp">|</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>  <span class="pp">|</span> "ZBIS" <span class="pp">|</span> Yes <span class="pp">|</span> "biserial correlation coefficient directly to Zr" <span class="pp">|</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="fu">## Partial and semi-partial correlations?? {#sec-partial-correlation-options}</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>*NOT SURE IF WE SHOULD INCLUDE THIS...* This seems to be for regression model coefficients but I know that's risky...Takes R2 too?</span>
 <span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Partial and semi-partial correlations?? {#sec-partial-correlation-options}</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>What do we do about these?</span>
 <span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>*NOT SURE IF WE SHOULD INCLUDE THIS...* This seems to be for regression model coefficients but I know that's risky...Takes R2 too?</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Coefficients of determination ($R^2$) {#sec-r2}</span></span>
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>What do we do about these?</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>??? Is this wise ??</span>
 <span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="fu">## Coefficients of determination ($R^2$) {#sec-r2}</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="fu"># Other effect sizes {#sec-other-effect-sizes}</span></span>
 <span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>??? Is this wise ??</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## Individual groups in respect to a dichotomous dependent variable {#sec-single-group-responses}</span></span>
 <span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="fu"># Other effect sizes {#sec-other-effect-sizes}</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>For example, % of a population that is infected. Or percent of diet.</span>
 <span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="fu">## Individual groups in respect to a dichotomous dependent variable {#sec-single-group-responses}</span></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>*PLAIN ENGLISH EXAMPLE*</span>
 <span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>For example, % of a population that is infected. Or percent of diet.</span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>*PLAIN ENGLISH EXAMPLE*</span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Input <span class="pp">|</span> Name <span class="pp">|</span> Recommended <span class="pp">|</span></span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|-----------------------------|---------------|---------------|</span></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PLN" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "log-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PLO" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "logit-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PRZ" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "probit-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PRZ" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "probit-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Input <span class="pp">|</span> Name <span class="pp">|</span> Recommended <span class="pp">|</span></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|-----------------------------|---------------|---------------|</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PLN" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "log-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PLO" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "logit-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PRZ" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "probit-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "PRZ" <span class="pp">|</span> ni=sample size; xi=proportion <span class="pp">|</span> "probit-transformed proportion". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Individual groups with an event count {#sec-single-group-event-counts}</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>For example, % of a population that is infected? Or number of times attacked/affected?</span>
 <span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="fu">## Individual groups with an event count {#sec-single-group-event-counts}</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>*PLAIN ENGLISH EXAMPLE*</span>
 <span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>For example, % of a population that is infected? Or number of times attacked/affected?</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>*PLAIN ENGLISH EXAMPLE*</span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Input <span class="pp">|</span> Name <span class="pp">|</span> Recommended <span class="pp">|</span></span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|-----------------------------|---------------|---------------|</span></span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "IRLN" <span class="pp">|</span> ti=total person-times at risk; xi=n events <span class="pp">|</span> "log-transformed incidence rate". <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "IRS" <span class="pp">|</span> ti=total person-times at risk; xi=n events <span class="pp">|</span> "square root transformed incidence rate". <span class="pp">|</span> ? <span class="pp">|</span></span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "IRFT" <span class="pp">|</span> ti=total person-times at risk; xi=n events <span class="pp">|</span> "Freeman-Tukey transformed incidence rate". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`escalc`</span> <span class="pp">|</span> Input <span class="pp">|</span> Name <span class="pp">|</span> Recommended <span class="pp">|</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------------|-----------------------------|---------------|---------------|</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "IRLN" <span class="pp">|</span> ti=total person-times at risk; xi=n events <span class="pp">|</span> "log-transformed incidence rate". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "IRS" <span class="pp">|</span> ti=total person-times at risk; xi=n events <span class="pp">|</span> "square root transformed incidence rate". <span class="pp">|</span> ? <span class="pp">|</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> "IRFT" <span class="pp">|</span> ti=total person-times at risk; xi=n events <span class="pp">|</span> "Freeman-Tukey transformed incidence rate". <span class="pp">|</span> ? <span class="pp">|</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

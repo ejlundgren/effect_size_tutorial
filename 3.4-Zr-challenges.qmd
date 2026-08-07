@@ -72,18 +72,79 @@ source("scripts/functions/convert_effect_sizes.R")
 
 # Everything's a spectrum, man {#sec-introduction}
 
-Zr describes the correlation between two continuous variables and is thus an important effect size in the meta-analyst tool kit. Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data. We'll start, however, by describing how to structure a database for Zr type effect sizes.
+Zr describes correlations or relationships with a continuous predictor variable (and generally a continuous response variable). Zr is thus an important effect size in the meta-analyst tool kit, especially with observational data. 
+
+Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data. We'll start, however, by describing how to structure a database for Zr type effect sizes.
 
 ## Database design
-**Not sure if we should get into this...**
+In general, Zr effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis. This dataset is then summarized in `R` to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
 
-In general, Zr effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis This dataset is then summarized in R to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
+Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). These can be entered into the same raw dataset or into a separate tab.
 
-Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). We suggest multiple tabs in your spread sheet with identical coluns except for those that need to be summarized. 
+:::callout-important
+######## Types of directly reported correlations
+The Zr effect size is based on a transformation of Pearson's correlation coefficient ($r$). However, there are other correlation types. Spearman correlation is used for non-parametric correlation tests, Kendall for XXXXX, biserial for an artificially discretized predictor variable, and point-biserial for a truly discretized predictor variable.
+
+Of these, it appears that all but point-biserial can be used to calculate Zr without adjustment. However, caution blah blah blah.
+
+DOUBLE CHECK THIS.
+:::
+
+Your dataset may look like this, with the first correlation (`corr_1`) represented as raw data extracted from a scatterplot and the second correlation (`corr_2`) entered directly as the correlation coefficient and sample size:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+dat <- data.table(correlation_id = c(rep("corr_1", 5), "corr_2"),
+                  x = c(rnorm(n = 5, mean = 3, sd = 1), NA),
+                  r = c(rep(NA, 5), 0.31),
+                  n = c(rep(NA, 5), 30))
+dat[!is.na(x), y := x * 1.5 + rnorm(n = 5, mean = 0, sd = 1)]
+setcolorder(dat, c("correlation_id", "x", "y", "r", "n"))
+knitr::kable(dat)
+
+```
+
+This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. We offer a helper function `get_r` that allows you to do this more succinctly:
+
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+get_r <- function(x, y){
+  out <- cor.test(x, y)
+  return(out$estimate)
+}
+
+# Summarize the raw correlation data:
+dat.summarized <- dat %>%
+  filter(!is.na(x)) %>%
+  group_by(correlation_id) %>%
+  summarize(r = get_r(x, y),
+            n = n())
+
+# Bind with the already summarized correlation data:
+dat.final <- rbind(dat.summarized,
+                   dat %>% 
+                     filter(!is.na(r)) %>%
+                     select(-x, -y))
+
+# Now calculate Zr:
+dat.summarized <- escalc(measure = "ZCOR",
+                         ri = r, ni = n,
+                         data = dat.final)
+
+knitr::kable(dat.summarized)
+
+```
+
+You may also note [below](#sec-error-bars) that there are methods to utilize mean ±error data in correlation coefficients. These would require additional columns and additional steps in `R`. 
 
 ## Simple figures {#sec-simple-figures}
 
-This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use `cor.test` in R to calculate the correlation coefficient:
+This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use `cor.test` in `R` to calculate the correlation coefficient:
 
 ```{r}
 #| echo: false
@@ -107,20 +168,6 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 ```
 
-The Zr effect size can be calculated in `escalc` after summarizing this data into $r$ (the `estimate` output from `cor.test`) and $n$ (the number of points).
-
-```{r}
-#| echo: true
-#| eval: true
-
-n = length(x)
-out <- cor.test(x, y)
-out$estimate
-
-escalc(measure = "ZCOR",
-       ri = out$estimate, ni = n)
-
-```
 
 ## Overplotting {#sec-overplotting}
 
@@ -408,7 +455,7 @@ You can then calculate the correlation between `Variable 1` and `Variable 2`, wi
 :::callout-important
 Note that in time series data, the correlation coefficient is calculated across temporal measurements and thus has a different internal non-independent structure than correlations calculated across independent sites/plots/individuals.
 
-As such, as previously [mentioned](3.1-universal-challenges.qmd#sec-callout-non-independence), we recommend recording whether your effect sizes are summarized across *time*, *space/individuals*, or *both* throughout your meta-analysis. 
+As previously [mentioned](3.1-universal-challenges.qmd#sec-callout-non-independence), we recommend recording whether your effect sizes are summarized across *time*, *space/individuals*, or *both* throughout your meta-analysis. 
 :::
 
 ## Mismatched time series {#sec-mismatched-time-series}
