@@ -90,16 +90,15 @@ $$\begin{aligned}
 
 There are some important differences between SMD and lnRoM, which we summarize here. Don't stress about understanding all of these topics yet, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
 
-**I deleted Zmu, a new effect size Shinichi has developed because I don't think that'll be published before this is.**
 
-|                                         | SMD      | lnRoM |
-|-----------------------------------------|----------|-------|
-| **Can be interpreted in plain english** | no       | yes   |
-| **Accepts values ≤ 0**                  | yes      | no    |
-| **Robust to overdispersion**            | no?      | no    |
-| **Robust to heteroscedasticity**        | SMDH     | ?     |
-| **Robust to dimensionality**            | somewhat | no    |
-| **Can handle missing error bars**       | no       | yes   |
+|                                                                       | SMD      | lnRoM |
+|-----------------------------------------------------------------------|----------|-------|
+| [**Can be interpreted in plain english**](#sec-interpretation)        | no       | yes   |
+| [**Accepts values ≤ 0**](#sec-zeros)                                  | yes      | no    |
+| [**Robust to overdispersion**](#sec-overdispersion)                   | no       | point estimate is but variance is not? |
+| [**Robust to heteroscedasticity**](#sec-heteroscedasticity)           | SMDH     | point estimate is but variance is not? |
+| [**Robust to dimensionality**](#sec-dimensionality)                   | somewhat | no    |
+| [**Can handle missing error bars**](#sec-callout-missing-error-bars)  | no       | yes?  |
 
 
 While we want to keep this tutorial light on equations, we'll briefly give some historic background on the development and math of these effect sizes, which influence the differences in the table above. We'll only look at the point estimator formulas here (see [Appendix](5-escalc-cheatsheet.qmd) for variance estimator options in `escalc`).
@@ -130,9 +129,9 @@ $$\begin{aligned}
 &lnRoM = log(\frac{m1}{m2}) \\
 \end{aligned}$$
 
-The lnRoM point estimate is robust to the standard deviation of the data and thus the point estimate, though not the sampling variance, are more robust to overdispersion. **IS THIS TRUE?**
+The lnRoM point estimate, though not the sampling variance, are more robust to overdispersion. **I think?**
 
-However, there is a more pernicious and underappreciated problem with lnRoM-the point estimate doubles for every added dimension in the underlying data (see [below](#sec-dimensionality) where we simulate this).
+However, there is an underappreciated problem with lnRoM---the point estimate doubles for every added dimension in the underlying data (see [below](#sec-dimensionality) where we simulate this).
 
 # Interpretation {#sec-interpretation}
 
@@ -194,45 +193,18 @@ Therefore an lnRoM of -0.5390 is equivalent to a -41.6% decrease as a result of 
 
 # Assumptions
 
-## 0 values
+## 0 values {#sec-zeros}
 
 Need to discuss what to do with when $sd = 0$ or when $m = 0$ for lnRoM. Santi - what you wrote in your music paper was excellent. Want to paraphrase here?
 
-## Data bounded between 0 and 1
+:::callout-important
+###### Data bounded between 0 and 1 {#sec-zero-one-bounded}
 
 Means±SD bounded between 0 and 1 are challenged by their numeric properties: variance tends to retreat to zero when the mean approaches 0 or 1 [@Macartney2022-ik].
 
-To resolve this for SMD and lnRoM effect sizes, you need to transform both the means and the standard deviations, using an arcsin-square root transformation on the mean and an equation derived using the delta method to standardize the standard deviation (see @Macartney2022-ik). Where $m$ is the group mean and $sd$ is its standard deviation:
-
-$$\begin{aligned}
-&m' = arcsin(\sqrt{m})\\
-&sd' = \sqrt{\frac{sd^2}{4m(1-m)}}\\
-\end{aligned}$$
-
-In `R`:
-
-```{r}
-#| echo: true
-#| eval: true
-
-m = 0.7
-sd = 0.1
-
-m_trans <- asin(m)
-sd_trans <- sqrt(sd^2 / (4*m * (1-m)))
-
-c("transformed_mean" = m_trans, "transformed_sd" = sd_trans)
-```
-
-And then calculate your effect sizes as normal with the transformed values ($m'$ and $sd'$). Note that your sample size will be the number of sites this proportion was calculated across.
-
-::: callout-caution
-Proportion data is, at its root, discrete-outcome data, like that naturally handled by lnOR effect sizes. It is often possible to reconstruct the underlying discrete-outcome data from author-reported means±sd across trials/sites/islands/etc, which allows you to calculate an lnOR type effect size.
-
-This can help align the *unit of replication* of this effect size with the rest of your dataset, if the rest of your data treats number of individuals as the unit of replication. Analyzing mean±sd of proportion data with an SMD/lnRoM effect size would likely treat the number of trials/sites/islands/plots as the unit of replication instead, which is likely to underweight this effect size in your models. 
-
-To reconstruct the raw binary outcomes from author reported means and sd, see our explanation [here](3.3-lnOR-challenges.qmd##sec-lnOR-reconstructing-data) and a more general tutorial about reconstructing various data types [here](6-simulatig-non-gaussian-responses.qmd)
+To resolve this for SMD and lnRoM effect sizes, you need to transform both the means and the standard deviations, using an arcsin-square root transformation on the mean and an equation derived using the delta method to standardize the standard deviation (see @Macartney2022-ik). We cover this transformation in our extraction challenges page [here](#sec-proportion-data-with-error) 
 :::
+
 
 ## Heteroscedasticity {#sec-heteroscedasticity}
 
@@ -527,7 +499,7 @@ Even though SMD is mostly dimension-free, it's still slightly affected by the ch
 For this reason, we suggest that if you are committed to using an lnRoM effect size, that you record the number of dimensions of each measurement. You can use divide the resulting effect size point estimate by the number of dimensions to revert dimensionality. However, there may be many cases where the number of dimensions of the measurement is unclear. In this case, we recommend using SMD.
 
 :::callout-important
-############# Missing error bars
+############# Missing error bars {#sec-callout-missing-error-bars}
 It is possible to use cross-study average coefficient of variation ($CV$) to calculate lnRoM point estimates and sampling variance for studies that did not report error. This can potentially salvage a large number of effect sizes that would otherwise be excluded if using an SMD effect size. This is an advantage to using lnRoM effect sizes, if the other assumptions (especially dimensionality) are met.
 
 See @Nakagawa2023-tn and [here](3.2-smd-challenges.qmd#sec-missing-error-bars) for further discussion.

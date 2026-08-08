@@ -352,7 +352,9 @@ To reconstruct the raw binary outcomes from author reported means and sd, see ou
 :::
 
 # Complex data reporting {#sec-derived-data}
-Many studies will present data that has already been partially summarized, such as by taking the difference between paired plots, calculating ratios between means (or paired measurements) or reporting effect sizes themselves. Still other studies may present complex experimental designs, such as before-after-control-impact designs, that require *you* to calculate differences between groups in order to calculate your effect size.
+Many studies will present data that has already been partially summarized, such as by taking the difference between paired plots, calculating ratios between means (or paired measurements) or reporting effect sizes themselves. Still other studies may present complex experimental designs, such as before-after-control-impact designs, that require *you* to calculate differences between groups in order to calculate your effect size. 
+
+Here we'll go through the most common of these challenges, starting with differences between treatments.
 
 ## Differences {#sec-differences}
 
@@ -454,9 +456,9 @@ In other words, they report the response ratio (which might be logged or unlogge
 
 ## Results reported as an effect size itself {#sec-effect-sizes-directly-reported}
 
-One quite common situation is for studies to report their results as log-transformed ratio of means (lnRoM, also lnRR), as we discussed above, or SMD. These could be extracted directly as your effect size *except* that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).
+One common situation is for studies to report their results as an effect size itself (e.g., SMD or lnRoM). These could be extracted directly as your effect size *except* that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).
 
-If a measure of error *is* reported then you can convert these effect sizes, in many cases, to your target effect size. See [here](4-converting-effect-sizes.qmd).
+If a measure of error *is* reported then you can use these effect sizes directly or convert them to your target effect size. See [here](4-converting-effect-sizes.qmd) on how to convert between effect size types.
 
 If a measurement of error is provided, then you can extract the data as is, and convert that error to sampling variance. For example, if SMD ± standard error was plotted, the sampling variance is $$vi = SE^2$$.
 
@@ -582,6 +584,9 @@ ggplot()+
   theme_bw()+
   theme(panel.grid = element_blank(),
         legend.position = "none")
+
+dt <- baci2[, .(m, sd, before_after, control_impact)]
+
 ```
 
 What do you do about something like that? Do you just exclude the study?
@@ -592,31 +597,53 @@ Then use the standard deviation from the *after* treatment group. You could alte
 
 Since the treatment groups themselves are not paired, you'd use an unpaired estimator formula.
 
-Since your values may be negative, you'll most likely have to use SMD.
+Since your values may be negative, you'll most likely have to use SMD. Imagine the object `dt` below is your raw extracted data:
 
 ```{r}
 #| echo: true
 #| eval: true
-# First calculate differences:
-dt <- data.table(mean_control_difference = 7.36 - 3.00,
-                 mean_treatment_difference = 13.87 - 8.27,
-                 sd_control = 1.33,
-                 sd_treatment = 0.98)
 
-# Now calculate effect size:
-res <- eff_size(x1 = mean_treatment_difference,
-       x2 = mean_control_difference,
-       sd1 = sd_treatment,
-       sd2 = sd_control,
-       n1 = 15, n2 = 15,
-       data = dt,
-       verbose = F,
-       effect_type = "SMD",
-       paired = FALSE)
+dt
+```
 
-knitr::kable(res)
+First, we reshape the data so that you can subtract the before/after treatments:
+```{r}
+#| echo: true
+#| eval: true
+
+dt.wide <- dcast(data = dt,
+                 control_impact ~ before_after,
+                 value.var = c("m", "sd"))
 
 ```
+
+Then subtract the means and select just the "after" standard deviation (`st_after`):
+```{r}
+#| echo: true
+#| eval: true
+
+dt.wide[, difference := m_after - m_before]
+
+dt.wide <- dt.wide[, sd := sd_after]
+```
+
+Now, drop the columns you don't need, cast wide again by your treatment column (`control_impact`) and calculate your effect size. 
+
+```{r}
+
+dt.final <- dcast(dt.wide[, .(control_impact, difference, sd)],
+                  . ~ control_impact,
+                  value.var = c("difference", "sd"))
+
+escalc(measure = "SMD",
+       m1i = difference_impact, m2i = difference_control,
+       n1i = 15, n2i = 15,
+       sd1i = sd_impact, sd2i = sd_control,
+       data = dt.final)
+
+```
+
+
 
 Note that these 4 group designs may appear in other contexts than pre and post and can be fairly in common in ecological field experiments. For example, to understand if reintroduced wild dogs affect vegetation by reducing dik-dik browsing and abundance, @Ford2015-el placed controls and exclosures in areas with and without wild dogs, predicting that the *difference* between controls and exclosures would be greatest where there are no wild dogs.
 
@@ -653,7 +680,7 @@ ggplot()+
 
 ```
 
-In this case, you'd do the same as above. As you can see, when dealing with this type of data, lnRoM becomes unusable because of negative values. Instead you have to use SMD.
+In this case, you'd do the same as above. As you can see, when dealing with this type of data, lnRoM often becomes unusable because of negative values. Instead you have to use SMD.
 
 ## % Change {#sec-percent-change}
 
@@ -693,7 +720,6 @@ ggplot(data = baci.wide, aes(x = control_impact,
   theme(panel.grid = element_blank(),
         legend.position = "right")
 ```
-
 
 
 # Crossed designs (meta-analysis of interaction) {#sec-cross-design}
@@ -744,22 +770,11 @@ ggplot()+
 
 ```
 
-*Out of scope for now*
-
-You can either extract one of those treatments as the effect size, and use the other treatment as a moderator in your models, or you can use Shinichi's crazy interaction formulas:
-
-$$\begin{aligned}
-&XXXXXX\\
-\end{aligned}$$
-
-```{r}
-# Demonstrate in R
-
-```
+In these cases, you'll need to simply record these crossed moderators in separate columns in your dataset.
 
 ## Continuous x discrete crossed design {#sec-continuous-x-discrete-crossed-design}
 
-Sometimes interactions will be between continuous and discrete variables:
+However, sometimes interactions will be between continuous and discrete variables:
 
 ```{r}
 #| echo: false
@@ -872,9 +887,9 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-In this case, your best bet will be to calculate a Zr effect size with a binary continuous predictor of 0 or 1 (see sec). The resulting effect size could be [converted](4-converting-effect-sizes.qmd) to SMD.
+In this case, your best bet will be to calculate a Zr effect size with a binary continuous predictor of 0 or 1 (see sec). The resulting effect size could be [converted](4-converting-effect-sizes.qmd) to SMD. 
 
-**better to use point-biserial?**
+Note that summarizing time series data may often create summary statistics that are *less independent* than data that may derive from separate replicates. Record these summaries for use in sensitivity analysis. See our discussion [here](3.1-universal-challenges.qmd#sec-sample-size) and @Noble2017-wv.
 
 ## Time series with error bars {#sec-smd-reconstructing-data}
 
@@ -988,6 +1003,8 @@ For that reason, we suggest that data extracted like this should be tagged and t
 
 
 # Sloppy data reporting {#sec-sloppy-data}
+**This section might need to disappear or be reorganized...**
+
 ## Missing error bars {#sec-missing-error-bars}
 
 **If someone was willing to summarize Nakagawa's lab papers on interpolating missing error bars....**
@@ -997,12 +1014,14 @@ For that reason, we suggest that data extracted like this should be tagged and t
 for lnRoM, use average cross-study CV: https://onlinelibrary.wiley.com/doi/10.1111/ele.14144
 
 ## Geometric mean {#sec-geometric-mean}
-**This doesn't really belong in this section**
+@HAO
+
+**This doesn't really belong in Sloppy reporting section**
 We have seen some studies that report *geometric* means instead of normal algorithmic means.
 
 *According to Gemini*, you can convert the geometric mean ($m_{geo}$) and geometric standard deviation ($sd_{geo}$) to the algorithmic (e.g., normal) mean ($m_a$) and normal standard deviation ($sd_a$) with the following equation, which assumes a log-normal distribution:
 
-**I think gemini might have made some mistakes**
+**I think gemini might have made some mistakes. DOUBLE CHECK**
 
 $$\begin{aligned}
 &Var_{ln} = log(sd_{geo})^2 \\
@@ -1027,11 +1046,10 @@ c("final_mean" = m_a, "final_sd" = sd_a)
 
 **That sd is extremely high...**
 
-
-
 # Model estimates {#sec-model-estimates}
+**THIS NEEDS LOTS OF HELP**
 
-There is often a tension in publishing primary data between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.
+There is often a tension in publishing primary empirical articles between presenting statistical summaries that are usable for a meta-analyst (e.g., means, standard deviation, sample size) and presenting statistical summaries that are robust to non-independence. You will note as a meta-analyst that many studies present model estimates, often derived from mixed-effect models, instead of raw summary statistics. Unfortunately, mixed-effect model estimates are not usable in meta-analysis.
 
 Other articles will present test statistics and p-values from simple linear models (e.g., not mixed effect models). These are usable by the meta-analyst, with some core assumptions.
 
@@ -1047,7 +1065,7 @@ Other articles will present test statistics and p-values from simple linear mode
 | linear model       | Yes    | ?           |                     |
 | mixed effect model | No     | N/A         | N/A                 |
 
-t and z are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.
+$t$ and $z$ are useful, as they include directionality (with a negative or positive sign). F, p-values, chi-square are difficult to use because they lack directionality (so have to figure it out from text or figures). Unfortunately, many articles simply write non-directional statements like "There was no relationship between predictor and response ($\chi^2$=0.5, p=0.7)". In these situations, the data is unusable because there's no suggestion of directionality.
 
 ## From the t statistic {#sec-t-statistic}
 
