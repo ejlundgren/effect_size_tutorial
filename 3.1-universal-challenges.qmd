@@ -77,16 +77,17 @@ Sample size also introduces questions about comparability between studies. For e
 
 Are these two sample sizes comparable? We don't know. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights). We believe it is worth recording the different dimensions of sample size in your meta-analysis dataset, and to conduct sensitivity analyses to ensure that your results are robust to these sources of methodological heterogeneity.
 
-
 :::callout-important
-######## Data summaries of clustered data {#sec-callout-internal-non-independence}
+######## Summaries of clustered, non-independent data {#sec-callout-internal-non-independence}
 Imagine if a study reported $mean±sd$ across 3 individuals measured 5 times per treatment. The resulting sample size is 15 per treatment but the replicates are not fully independent. However, a different study might measure 15 separate individuals a single time, leading also to a sample size of 15 per treatment. The first summary contains a mixture of more and less independent data while the second summary is summarized across a similar level of independence.
 
 As such, you will notice that some articles summarize data (e.g., calculate `means±sd`) across **spatial** dimensions (e.g., independent plots or sites or individuals); some summarize data over **time** points *within* each spatially independent sample (plots or individuals); and others will summarize data over both **spatial** and **temporal** dimensions. 
 
 These differences likely matter, especially in ecological data, yet are rarely addressed. We recommend recording whether data-reported summaries are across time, across spatially-independent samples (or individuals), or across both. These factors may explain methodological heterogeneity in your dataset and should form the basis for sensitivity analyses.
 
-An alternative is to use *effective sample size* instead of author-reported sample size (after converting author-reported standard error or confidence intervals to standard deviation) or a *conservative sample size*. For example, in the study with 3 individuals measured 5 times, you could convert author-reported standard error to standard deviation using an n of 15 but then use an n of 3 to calculate your effect size.
+An alternative is to use *effective sample size* instead of author-reported sample size (after converting author-reported standard error or confidence intervals to standard deviation) or a *conservative sample size*. For example, in the study with 3 individuals measured 5 times, you could convert author-reported standard error to standard deviation using an n of 15 but then use an n of 3 to calculate your effect size [@Noble2017-wv].
+
+**IF THIS IS THE CASE, CAN YOU USE NUMBER OF METERS AS EFFECTIVE N???? (SEE BELOW on SCALE)**
 
 See @Noble2017-wv for further discussion of this approach and @Rutkowska2014-xc for an example meta-analysis.
 
@@ -356,7 +357,9 @@ A third option would have been to use a totally different (and more unusual effe
 For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see @Noble2022-pl.
 :::
 
+
 #### Creating a variance-covariance matrix with `vcalc` {#sec-vcalc}
+**I'm not sure I fully understand when to use `vcalc` versus just random effects**
 
 Complex non-independence structures can also be calculated separately with the function `metafor::vcalc`.
 
@@ -366,13 +369,10 @@ See XXXX for a tutorial on how to use `vcalc`.
 
 As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
 
-We recommend the following tutorial on thinking through random effects in meta-analysis: **XXXXXX**
+We recommend the following tutorial on thinking through random effects and using `vcalc` in meta-analysis: **XXXXXX**
 
 # Database design {#sec-database-design}
 
 As you can see, one of the key considerations in performing a robust and accurate meta-analysis is good database design. Database design depends on your question, whether you plan to extract data for multiple effect size types (e.g., both discrete groups and continuous outcomes), what your rules for repeated measures and shared controls are, and so on.
 
 We recommend that you do a pilot extraction, and analysis, of \~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.
-
-## Database template or further guidance?? {#sec-database-template}
-Or should we have a database template discussion for each effect size type?
