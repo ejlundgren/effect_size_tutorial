@@ -229,10 +229,6 @@ Therefore an lnRoM of -0.5390 is equivalent to a -41.6% decrease as a result of 
 ## Values ≤ 0
 A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of robust [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs. If means ≤ 0 are common in your dataset then you may have to use SMD to calculate effect sizes for these data.
 
-If your dataset has means equal to 0, then you need to add a small constant in order to use lnRoM. **Santi, what you wrote in your music paper tutorial was excellent. Want to paraphrase here?**
-
-**SDs of 0 need to filled in in 3.2-smd-challenges.qmd but maybe should be here?**
-
 :::callout-important
 #### Data bounded between 0 and 1 {#sec-zero-one-bounded}
 
@@ -243,12 +239,11 @@ To resolve this for SMD and lnRoM effect sizes, you need to transform both the m
 We cover this transformation in our extraction challenges page [here](3.2-smd-challenges.qmd#sec-proportion-data-with-error) 
 :::
 
-
 ## Dimensionality {#sec-dimensionality}
 
 The effect sizes in this section are standardized, which allow us to compare results across studies even if their units were grossly different. However, what if one study measured a response in meters but another study measured it in area ($meter^2$) and a third study measured the same response in volume ($meter^3$)? 
 
-Imagine vegetation studies or morphological measurements of an organism. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.
+Imagine vegetation studies or morphological measurements of an organism or the size of a tumor. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.
 
 For lnRoM, this is a very serious problem, with effect sizes estimates increasing with each added dimension.
 
@@ -366,17 +361,27 @@ p1 / p2
 
 ```
 
-Even though SMD is mostly dimension-free, it's still affected by the change in dimensions.
+SMD is still somewhat affected by the change in dimensions but to a far lesser extent.
 
 For this reason, we suggest that if you are committed to using an lnRoM effect size, that you record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was across 2 dimensions ($m^2$) then divide by 2 and if across 3 dimensions ($m^3$), divide by 3. 
 
-However, there may be many cases where the number of dimensions of the measurement may be unclear. In this case, we recommend using SMD.
+However, there may be many cases where the number of dimensions of the measurement may be unclear. In this case, you must use SMD.
+
+:::callout-important
+The dimensionality problem of lnRoM is quite perilous given that lnRoM is the dominant effect size used in ecology and evolution. It may be that the majority of ecological meta-analyses need to be redone.
+:::
 
 ## Overdispersion {#sec-overdispersion}
 
 SMD and lnRoM assume that the underlying data generation process is normal. This assumption can be broken if the data is overdispersed---which is remarkably common in ecology and evolution, especially with abundance or count data. This can lead to biased point and sampling variance estimates.
 
-Given that there are yet no effect sizes formulated for overdispersed data, the appropriate way to handle this data is to conduct sensitivity tests both with the full dataset and with overdispersed effect sizes excluded. As you'll see throughout this tutorial, sensitivity tests are the annoying reality of meta-analysis.
+There are as yet no effect sizes formulated for overdispersed data. As such, if there is overdispersed data in your dataset, you should:
+
+- Exclude effect sizes that are overdispersed based on rules of thumb we'll give below as a sensitivity analysis in comparison to your full dataset
+
+- Use the inverse of effective sample size as your meta-analytic weight, instead of sampling variance, as an additional sensitivity analysis.
+
+As you'll see throughout this tutorial, sensitivity tests are the annoying reality of meta-analysis.
 
 Testing for overdispersion should be part of your analytic [workflow](3.0-starting-extraction.qmd). The easiest way to test for overdispersion is to calculate the coefficient of variation ($CV$) for your control and treatment groups. $CV$ is the ratio of standard deviation to the mean ($sd/x$).
 
@@ -392,7 +397,7 @@ $$
 
 There are several suggested thresholds for this value that can be used to exclude potentially overdispersed and problematic data. Lajuennesse suggested excluding values $\ge3$ , while others have suggested more conservative thresholds such as $\ge11.11$ [@Hayya1975-fq], $\ge10$ [@Kuethe2000-ax], and $\ge4$ [@Marsaglia2006-fa]
 
-Let's do this in `R` but with both a CV threshold and the Geary-Lajuennesse threshold of 3, using a dataset provided by the `metafor` package:
+Let's do this in `R` with a $CV>2$ threshold and the Geary-Lajuennesse threshold of 3, using a dataset provided by the `metafor` package:
 
 ```{r}
 #| eval: true
@@ -412,7 +417,7 @@ nrow(dat[cv1 > 2 | cv2 > 2, ])/nrow(dat) * 100
 
 ```
 
-It looks like 61% of this dataset has a $CV>2$. This could be problematic for calculating lnRoM.
+It looks like 61% of this dataset has a $CV>2$!
 
 ```{r}
 #| eval: true
@@ -429,7 +434,7 @@ nrow(dat[gl1 > 3 | gl2 > 3]) / nrow(dat) * 100
 
 ```
 
-It looks like \~77% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? In this case, we'll use $CV$, instead of the Geary_Lajuennesse test, to filter out overdispersed values and rerun our models.
+It looks like \~77% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.
 
 An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation [@Nakagawa2023-tn].
 
@@ -458,7 +463,7 @@ head(dat)
 
 ```
 
-Now let's run an intercept only model with `vi` as our meta-analytic weight (taken by the argument `V`). Note that there is only one effect size per article, which is reflected in our random effect formula:
+Now let's run an intercept only model with `vi` as our meta-analytic weight (taken by the argument `V`). Note that there is only one effect size per article, which is reflected in our random effect formula (which lacks an effect size ID nested within the article id `author`):
 
 ```{r}
 #| eval: true
@@ -525,7 +530,7 @@ ggplot(data = compare_estimates,
 
 ```
 
-It looks like the sensitivity analyses (CV \<= 2 and 1/effective_N) both produced similar results which were more conservative than when the entire dataset was analyzed.
+It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produced similar results which were more conservative than when the entire dataset was analyzed.
 
 To summarize here are some solutions for overdispersed data. These methods, which unfortunately are rarely used and little known, should be commonplace in ecology, where overdispersed abundance data is common.
 
@@ -535,14 +540,13 @@ To summarize here are some solutions for overdispersed data. These methods, whic
 | Geary-Lajeunesse test             | lnRoM, SMD???      |
 | 1/effective N instead of variance | lnRoM, SMD?  |
 | ???                               |                    |
-
-
+**Can delete this table if all the methods work for both SMD and lnRoM**
 
 ## Heteroscedasticity {#sec-heteroscedasticity}
 
 Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity [@Bonett2009-sf]. This is available as the measure 'SMDH' in `metafor::escalc`.
 
-**Does heteroscedasticity matter for lnRoM????**
+**Does heteroscedasticity matter for lnRoM sampling variance or 2nd-order point estimate????**
 
 Are there rules of thumb for heteroscedasticity? Ratio of CV1 to CV2? What threshold?
 
@@ -606,6 +610,8 @@ First, let's calculate the "missing cases" option:
 #| echo: true
 #| out-width: "70%"
 
+# DO R STUFF HERE
+
 ```
 
 Next, let's calculate the "all cases" option:
@@ -613,6 +619,8 @@ Next, let's calculate the "all cases" option:
 #| eval: true
 #| echo: true
 #| out-width: "70%"
+
+# DO R STUFF HERE
 
 ```
 
@@ -625,7 +633,7 @@ We now have 3 separate ways of fitting our models, with `yi` and `vi` as our poi
 - Using the `yi` and `vi` from the "all cases" method.
 
 :::callout-important
-If your data is overdispersed anyways, then an alternative to the formulas above is to calculate the inverse of effective sample size, and use this as your model weight. See [here](#sec-overdispersion) and @Nakagawa2023-tn. Note that doing so limits you to lnRoM, since SMD requires $sd$ in the point estimator formula.
+If your data is overdispersed anyways, then an alternative to the formulas above is to calculate the inverse of effective sample size, and use this as your model weight. See [above](#sec-overdispersion) and @Nakagawa2023-tn. Note that doing so limits you to lnRoM, since SMD requires $sd$ in the point estimator formula and thus requires $sd$ directly.
 
 Effective sample size is defined as:
 $$
@@ -640,6 +648,7 @@ $$
 As you can see, choosing between lnRoM and SMD is complex. The flow chart below summarizes our advice for choosing between these effect sizes. Note that one consideration we did not discuss above is whether you need to convert between different effect size types. SMD is the universal solvent of effect size conversions. If your dataset requires a considerable number of conversions, then SMD is your guy. See [here](4-converting-effect-sizes.qmd) where we discuss this in further detail.
 
 ![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)
+
 However, we also recommend doing analyses with both SMD and lnRoM, as argued by @Yang2024-fw (**there might be a better ref for this**), who also showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial [here](https://yefeng0920.github.io/BRMA_tutorial_git/).
 
 Note that if you decide to use lnRoM, then you should be prepared to use the 2nd-order point estimator if your data is normally distributed (i.e., isn't overdispersed)---this is to account for bias at low sample sizes. This is returned by `eff_size` as `yi_second`. 
@@ -659,7 +668,7 @@ eff_size(effect_type = "lnRoM",
 
 ```
 
-Finally, if your data fails the Geary-Lajeunesse test described [above](#sec-overdispersion) or that has CV>2, we recommend running models that excluding overdispersed data and with the inverse of effective N as your model weights [@Nakagawa2023-tn].
+Finally, if your data fails the Geary-Lajeunesse test described [above](#sec-overdispersion) or has $CV>2$, we recommend running models that excluding overdispersed data and with the inverse of effective N as your model weights [@Nakagawa2023-tn].
 
 # Alternative estimators {#sec-alternative-estimators}
 

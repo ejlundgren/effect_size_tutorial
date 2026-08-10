@@ -95,7 +95,25 @@ This can be done after initial extraction as well, if you took record of the stu
 
 Finally, following extraction, you'll want to evaluate the statistical distributions of your data to understand whether the effect size estimator you plan to use is appropriate. We discuss these assumptions in previous sections.
 
-![extraction steps](figures/flowcharts_diagrams/extraction-steps.png){width="40%"}
+![](figures/flowcharts_diagrams/extraction-steps.png){width="40%"}
+
+
+**Should make "Test for overdispersion" -> "Test numeric assumptions (e.g., overdispersion)"**
+
+:::callout-note
+#### Organizing sensitivity analyses
+You'll see a common refrain throughout this tutorial---sensitivity analyses! Or as coauthor SR says, "SONG ABOUT SENSITIVITY ANALYSES". 
+
+These can be extremely cumbersome---requiring you to run many models. Typing these out by hand is prone to error and extreme challenges in interpretation.
+
+We recommend creating a "model guide" and evaluating text strings in your model objects in a `for` loop or `foreach` loop to facilitate thorough meta-analyses. The `R` function `eval(parse(text = string))` can evaluate the text string `string` as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in `R`. 
+
+For an example of the `R` code for such a workflow, see a recent example [here](ejlundgren.github.io/cat_evidence_review/)
+
+:::
+
+
+
 
 ## Tools for extracting data from figures {#sec-tools-for-extraction}
 
@@ -118,3 +136,7 @@ We also note that many large language models, such as NotebookLM, Gemini, chatGP
 ## Experimental methods {#sec-experimental-methods}
 
 Some of the techniques we present here, especially for [reconstructing underlying data](6-simulating-non-gaussian-responses.qmd) from author provided summaries are little known and could be regarded as experimental. We nonetheless present these approaches as they are, in our mind, better than the alternative, especially in meta-analyses with limited numbers of studies. **We tag experimental approaches throughout with XXXXX and invite further research on the relative bias and efficacy of these techniques.**
+
+
+
+

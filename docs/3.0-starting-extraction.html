@@ -395,9 +395,23 @@ window.Quarto = {
 <p>Some extraction challenges, while solvable, introduce assumptions or potential error. If these extraction challenges (such as model estimates) are a minimal portion of a very large dataset, then you can justifiably decide not to extract them. However, if these difficult cases are common, if there are relatively few papers, or if you believe these types of data are <em>non-randomly</em> distributed in your dataset (e.g., often occur in papers from certain geographic regions, time periods, etc), then you may want to decide <em>a priori</em> to extract them.</p>
 <p>This can be done after initial extraction as well, if you took record of the studies that were excluded because they were unextractable (and why). For example, if only 5% of your dataset comes from African countries and 50% of that data was not extractable, we think it would be justifiable to expand your extraction criteria to other data types—though this should be done to articles from all geographic regions, not just Africa.</p>
 <p>Finally, following extraction, you’ll want to evaluate the statistical distributions of your data to understand whether the effect size estimator you plan to use is appropriate. We discuss these assumptions in previous sections.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="figures/flowcharts_diagrams/extraction-steps.png" class="img-fluid figure-img" style="width:40.0%"></p>
-<figcaption>extraction steps</figcaption></figure>
+<p><img src="figures/flowcharts_diagrams/extraction-steps.png" class="img-fluid" style="width:40.0%"></p>
+<p><strong>Should make “Test for overdispersion” -&gt; “Test numeric assumptions (e.g., overdispersion)”</strong></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Organizing sensitivity analyses
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You’ll see a common refrain throughout this tutorial—sensitivity analyses! Or as coauthor SR says, “SONG ABOUT SENSITIVITY ANALYSES”.</p>
+<p>These can be extremely cumbersome—requiring you to run many models. Typing these out by hand is prone to error and extreme challenges in interpretation.</p>
+<p>We recommend creating a “model guide” and evaluating text strings in your model objects in a <code>for</code> loop or <code>foreach</code> loop to facilitate thorough meta-analyses. The <code>R</code> function <code>eval(parse(text = string))</code> can evaluate the text string <code>string</code> as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in <code>R</code>.</p>
+<p>For an example of the <code>R</code> code for such a workflow, see a recent example <a href="ejlundgren.github.io/cat_evidence_review/">here</a></p>
+</div>
 </div>
 <section id="sec-tools-for-extraction" class="level2"><h2 class="anchored" data-anchor-id="sec-tools-for-extraction">Tools for extracting data from figures</h2>
 <p>If you’re lucky, some of the data extraction for a meta-analysis can come directly from summary statistics (mean, sample size, standard deviation, etc) reported in tables or the main text of the papers you’re extracting. However, you’ll find that the majority of data extraction will be directly from figures. In these cases, you’ll employ a variety of tools to calibrate the figures and extract the data</p>
@@ -1032,29 +1046,50 @@ Pick, Joel L, Shinichi Nakagawa, and Daniel W A Noble. 2018. <span>“Reproducib
 <span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>Finally, following extraction, you'll want to evaluate the statistical distributions of your data to understand whether the effect size estimator you plan to use is appropriate. We discuss these assumptions in previous sections.</span>
 <span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="al">![extraction steps](figures/flowcharts_diagrams/extraction-steps.png)</span>{width="40%"}</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="al">![](figures/flowcharts_diagrams/extraction-steps.png)</span>{width="40%"}</span>
 <span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tools for extracting data from figures {#sec-tools-for-extraction}</span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>If you're lucky, some of the data extraction for a meta-analysis can come directly from summary statistics (mean, sample size, standard deviation, etc) reported in tables or the main text of the papers you're extracting. However, you'll find that the majority of data extraction will be directly from figures. In these cases, you'll employ a variety of tools to calibrate the figures and extract the data</span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>We do not here discuss the mechanics of these tools but we will describe them and their advantages, briefly, here.</span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Extraction tool <span class="pp">|</span> Environment <span class="pp">|</span> log-axes <span class="pp">|</span> Auto-conversion <span class="pp">|</span> Free-form extraction <span class="pp">|</span> Built-in reproducibility <span class="pp">|</span></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|------------|------------|------------|------------|------------|</span></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`metaDigitise()`</span> <span class="pp">|</span> R <span class="pp">|</span> Yes <span class="pp">|</span> SE/IQR/CIs $\rightarrow$ SD <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`WebPlotDigitizer`</span> <span class="pp">|</span> Web/Desktop <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ImageJ`</span> <span class="pp">|</span> Desktop <span class="pp">|</span> No <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>**Do we know any tool that can extract from 3D figures??**</span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>An analysis <span class="co">[</span><span class="ot">@Gotzsche2007-rb</span><span class="co">]</span> found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction <span class="co">[</span><span class="ot">@Ivimey-Cook2023-vo</span><span class="co">]</span>. This includes saving screenshots of figures, preferably along with extraction points (which is automatically done by <span class="in">`metaDigitise()`</span> <span class="co">[</span><span class="ot">@Pick2018-ia</span><span class="co">]</span>) in folders that link directly to the final dataset.</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>**Should make "Test for overdispersion" -&gt; "Test numeric assumptions (e.g., overdispersion)"**</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Organizing sensitivity analyses</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>You'll see a common refrain throughout this tutorial---sensitivity analyses! Or as coauthor SR says, "SONG ABOUT SENSITIVITY ANALYSES". </span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>These can be extremely cumbersome---requiring you to run many models. Typing these out by hand is prone to error and extreme challenges in interpretation.</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>We recommend creating a "model guide" and evaluating text strings in your model objects in a <span class="in">`for`</span> loop or <span class="in">`foreach`</span> loop to facilitate thorough meta-analyses. The <span class="in">`R`</span> function <span class="in">`eval(parse(text = string))`</span> can evaluate the text string <span class="in">`string`</span> as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in <span class="in">`R`</span>. </span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>For an example of the <span class="in">`R`</span> code for such a workflow, see a recent example <span class="co">[</span><span class="ot">here</span><span class="co">](ejlundgren.github.io/cat_evidence_review/)</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>We also note that many large language models, such as NotebookLM, Gemini, chatGPT, are capable of extracting data from figures--potentially with high accuracy. However, utilizing these tools still requires that researchers maintain reproducible and transparent workflows and understand *what* data to extract.</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Experimental methods {#sec-experimental-methods}</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tools for extracting data from figures {#sec-tools-for-extraction}</span></span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>Some of the techniques we present here, especially for <span class="co">[</span><span class="ot">reconstructing underlying data</span><span class="co">](6-simulating-non-gaussian-responses.qmd)</span> from author provided summaries are little known and could be regarded as experimental. We nonetheless present these approaches as they are, in our mind, better than the alternative, especially in meta-analyses with limited numbers of studies. **We tag experimental approaches throughout with XXXXX and invite further research on the relative bias and efficacy of these techniques.**</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>If you're lucky, some of the data extraction for a meta-analysis can come directly from summary statistics (mean, sample size, standard deviation, etc) reported in tables or the main text of the papers you're extracting. However, you'll find that the majority of data extraction will be directly from figures. In these cases, you'll employ a variety of tools to calibrate the figures and extract the data</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>We do not here discuss the mechanics of these tools but we will describe them and their advantages, briefly, here.</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Extraction tool <span class="pp">|</span> Environment <span class="pp">|</span> log-axes <span class="pp">|</span> Auto-conversion <span class="pp">|</span> Free-form extraction <span class="pp">|</span> Built-in reproducibility <span class="pp">|</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|------------|------------|------------|------------|------------|</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`metaDigitise()`</span> <span class="pp">|</span> R <span class="pp">|</span> Yes <span class="pp">|</span> SE/IQR/CIs $\rightarrow$ SD <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`WebPlotDigitizer`</span> <span class="pp">|</span> Web/Desktop <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`ImageJ`</span> <span class="pp">|</span> Desktop <span class="pp">|</span> No <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>**Do we know any tool that can extract from 3D figures??**</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>An analysis <span class="co">[</span><span class="ot">@Gotzsche2007-rb</span><span class="co">]</span> found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction <span class="co">[</span><span class="ot">@Ivimey-Cook2023-vo</span><span class="co">]</span>. This includes saving screenshots of figures, preferably along with extraction points (which is automatically done by <span class="in">`metaDigitise()`</span> <span class="co">[</span><span class="ot">@Pick2018-ia</span><span class="co">]</span>) in folders that link directly to the final dataset.</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>We also note that many large language models, such as NotebookLM, Gemini, chatGPT, are capable of extracting data from figures--potentially with high accuracy. However, utilizing these tools still requires that researchers maintain reproducible and transparent workflows and understand *what* data to extract.</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Experimental methods {#sec-experimental-methods}</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>Some of the techniques we present here, especially for <span class="co">[</span><span class="ot">reconstructing underlying data</span><span class="co">](6-simulating-non-gaussian-responses.qmd)</span> from author provided summaries are little known and could be regarded as experimental. We nonetheless present these approaches as they are, in our mind, better than the alternative, especially in meta-analyses with limited numbers of studies. **We tag experimental approaches throughout with XXXXX and invite further research on the relative bias and efficacy of these techniques.**</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
