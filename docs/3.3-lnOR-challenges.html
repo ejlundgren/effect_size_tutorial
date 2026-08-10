@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-08-09">
+<meta name="dcterms.date" content="2026-08-10">
 <title>Discrete outcomes with discrete predictor – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -84,6 +84,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href=".//figures/flowcharts_diagrams/temp_logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -281,13 +282,19 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./5-escalc-cheatsheet.html" class="sidebar-item-text sidebar-link">
+  <a href="./5.0-less-common-effect-sizes.qmd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Less common effect sizes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./6-escalc-cheatsheet.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><code>escalc</code> cheatsheet</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
+  <a href="./7-simulating-non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Simulating non-Gaussian data</span></a>
   </div>
 </li>
@@ -347,7 +354,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 9, 2026</p>
+      <p class="date">August 10, 2026</p>
     </div>
   </div>
   
@@ -756,8 +763,8 @@ Warning
 <pre><code>[1] TRUE</code></pre>
 </div>
 </div>
-<p>It looks like our data is not truly binomial but beta-binomial. See <a href="./non_gaussian_responses.html#sec-binomial">here</a> and <a href="./3.4-Zr-challenges.html#sec-zr-reconstructing-proportion-data">here</a> for how to draw from the binomial distribution.</p>
-<p>For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the <code>R</code> package <code>extraDistr</code> <span class="citation" data-cites="extradistr">(<a href="#ref-extradistr" role="doc-biblioref">Wolodzko 2023</a>)</span>. This requires the variance (<span class="math inline">\(Var = sd^2\)</span>) and two shape parameters that describe the beta distribution: <span class="math inline">\(\alpha\)</span> (“alpha”) and <span class="math inline">\(\beta\)</span> (“beta”). See <a href="./non_gaussian_responses.html#sec-beta-binomial">here</a> for the formulas for calculating <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>. We’ll add these to each row of the dataset <code>dt</code> after calculating an intermediate variable <code>r</code>:</p>
+<p>It looks like our data is not truly binomial but beta-binomial. See <a href="./7-simulating-non_gaussian_responses.html#sec-binomial">here</a> and <a href="./3.4-Zr-challenges.html#sec-zr-reconstructing-proportion-data">here</a> for how to draw from the binomial distribution.</p>
+<p>For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the <code>R</code> package <code>extraDistr</code> <span class="citation" data-cites="extradistr">(<a href="#ref-extradistr" role="doc-biblioref">Wolodzko 2023</a>)</span>. This requires the variance (<span class="math inline">\(Var = sd^2\)</span>) and two shape parameters that describe the beta distribution: <span class="math inline">\(\alpha\)</span> (“alpha”) and <span class="math inline">\(\beta\)</span> (“beta”). See <a href="./7-simulating-non_gaussian_responses.html#sec-beta-binomial">here</a> for the formulas for calculating <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>. We’ll add these to each row of the dataset <code>dt</code> after calculating an intermediate variable <code>r</code>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/twolodzko/extraDistr">"extraDistr"</a></span><span class="op">)</span></span>
 <span><span class="va">dt</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -779,7 +786,7 @@ Warning
 <span>        alpha <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">alpha</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span>
 <span>        beta <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1]  3  1  1 10 11  1  3  4  7  0</code></pre>
+<pre><code> [1]  4  7 11  5  6  3  8  9  1  2</code></pre>
 </div>
 </div>
 <p>The sum of this is the total number of nests that fledged across all sites. The full workflow:</p>
@@ -843,9 +850,9 @@ Warning
 <td style="text-align: right;">4.100000</td>
 <td style="text-align: right;">0.6150000</td>
 <td style="text-align: right;">3.485000</td>
-<td style="text-align: right;">29</td>
+<td style="text-align: right;">30</td>
 <td style="text-align: right;">300</td>
-<td style="text-align: right;">271</td>
+<td style="text-align: right;">270</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0.31</td>
@@ -858,29 +865,15 @@ Warning
 <td style="text-align: right;">1.640741</td>
 <td style="text-align: right;">0.5086296</td>
 <td style="text-align: right;">1.132111</td>
-<td style="text-align: right;">88</td>
+<td style="text-align: right;">108</td>
 <td style="text-align: right;">300</td>
-<td style="text-align: right;">212</td>
+<td style="text-align: right;">192</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <p>Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you’re conducting an lnOR meta-analysis with individual as the unit of replication).</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Note, that if there were variable numbers of nests per site, then you’d want to create a longer dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, specifying <span class="math inline">\(1\)</span> as <code>n</code>.</p>
-<p>Although, the study’s authors probably shouldn’t have taken the mean±sd in that case….Hmmmm….</p>
-</div>
-</div>
 </section><section id="sec-lc50" class="level2"><h2 class="anchored" data-anchor-id="sec-lc50">LC50?</h2>
 <p>Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).</p>
 <p>These figures look like this:</p>
@@ -1723,9 +1716,9 @@ Wolodzko, Tymoteusz. 2023. <em>extraDistr: Additional Univariate and Multivariat
 <span id="cb13-393"><a href="#cb13-393" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-394"><a href="#cb13-394" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-395"><a href="#cb13-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>It looks like our data is not truly binomial but beta-binomial. See <span class="co">[</span><span class="ot">here</span><span class="co">](6-simulating-non-gaussian-responses.qmd#sec-binomial)</span> and <span class="co">[</span><span class="ot">here</span><span class="co">](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data)</span> for how to draw from the binomial distribution.</span>
+<span id="cb13-396"><a href="#cb13-396" aria-hidden="true" tabindex="-1"></a>It looks like our data is not truly binomial but beta-binomial. See <span class="co">[</span><span class="ot">here</span><span class="co">](7-simulating-non-gaussian-responses.qmd#sec-binomial)</span> and <span class="co">[</span><span class="ot">here</span><span class="co">](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data)</span> for how to draw from the binomial distribution.</span>
 <span id="cb13-397"><a href="#cb13-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a>For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the <span class="in">`R`</span> package <span class="in">`extraDistr`</span> <span class="co">[</span><span class="ot">@extradistr</span><span class="co">]</span>. This requires the variance ($Var = sd^2$) and two shape parameters that describe the beta distribution: $\alpha$ ("alpha") and $\beta$ ("beta"). See <span class="co">[</span><span class="ot">here</span><span class="co">](6-simulating-non-gaussian-responses.qmd#sec-beta-binomial)</span> for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset <span class="in">`dt`</span> after calculating an intermediate variable <span class="in">`r`</span>:</span>
+<span id="cb13-398"><a href="#cb13-398" aria-hidden="true" tabindex="-1"></a>For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the <span class="in">`R`</span> package <span class="in">`extraDistr`</span> <span class="co">[</span><span class="ot">@extradistr</span><span class="co">]</span>. This requires the variance ($Var = sd^2$) and two shape parameters that describe the beta distribution: $\alpha$ ("alpha") and $\beta$ ("beta"). See <span class="co">[</span><span class="ot">here</span><span class="co">](7-simulating-non-gaussian-responses.qmd#sec-beta-binomial)</span> for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset <span class="in">`dt`</span> after calculating an intermediate variable <span class="in">`r`</span>:</span>
 <span id="cb13-399"><a href="#cb13-399" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-402"><a href="#cb13-402" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb13-403"><a href="#cb13-403" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
@@ -1775,28 +1768,22 @@ Wolodzko, Tymoteusz. 2023. <em>extraDistr: Additional Univariate and Multivariat
 <span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).</span>
 <span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>::: callout-tip</span>
-<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a>Note, that if there were variable numbers of nests per site, then you'd want to create a longer dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, specifying $1$ as <span class="in">`n`</span>.</span>
+<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a><span class="fu">## LC50? {#sec-lc50}</span></span>
 <span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>Although, the study's authors probably shouldn't have taken the mean±sd in that case....Hmmmm....</span>
-<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).</span>
+<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>These figures look like this:</span>
 <span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a><span class="fu">## LC50? {#sec-lc50}</span></span>
-<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a>Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).</span>
-<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a>These figures look like this:</span>
+<span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a><span class="co">#' @Kyle?</span></span>
+<span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a><span class="co">#' @Kyle?</span></span>
-<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a>LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.</span>
-<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
-<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a>According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.</span>
+<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a>LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.</span>
+<span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
+<span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a>According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

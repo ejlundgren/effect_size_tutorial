@@ -85,7 +85,7 @@ Note that some studies (though rarely in our experience) will report the raw cor
 ######## Types of directly reported correlations
 The Zr effect size is based on a transformation of Pearson's correlation coefficient ($r$). However, there are other correlation types. Spearman correlation is used for non-parametric correlation tests, Kendall for XXXXX, biserial for an artificially discretized predictor variable, and point-biserial for a truly discretized predictor variable.
 
-Of these, it appears that all but point-biserial can be used to calculate Zr without adjustment. However, caution blah blah blah.
+Of these, it appears that all but point-biserial can be used to calculate Zr without adjustment [@Jacobs2017-cv]. However, blah blah blah.
 
 DOUBLE CHECK THIS.
 :::
@@ -230,7 +230,7 @@ If the error bars are only on the y axis this is fairly straightforward but is a
 
 One of the biggest reasons to draw the underlying data from figures like this is to align the **units of replication** between these data and the rest of your dataset. For example, if the rest of your dataset uses individuals (or nests or plots) as the unit of replication but the figure above uses sites and reports the mean±sd across individuals, then you will have a serious mismatch in the units of replication between these effect sizes. This mismatch will underweight the above effect size in your models.
 
-Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](6-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a Zr-type effect size and the binomial distribution)
+Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a Zr-type effect size and the binomial distribution)
 
 ::: callout-warning
 Note that reconstructing underlying data is an experimental method. Use carefully.
@@ -338,6 +338,9 @@ ggplot(data = dat[sample(25)], aes(x = x, y = y))+
 
 In this case, you'll do approximately the same thing. However, the rows of the expanded `x` and `y` variables must align to calculate a correlation coefficient. If the internal sample sizes for `x` are not the same as for `y`, you won't be able to align those rows. For that reason, we suggest that you choose a single internal sample size from the variable with the lowest sample size.
 
+<details>
+<summary>Click here to see a full demonstration</summary>
+
 In the table below, you'll see the extracted mean values for the x and y variables (`x`, `y`), their standard deviations (`x_sd`, `y_sd`), and their internal sample sizes (`x_n` and `y_n`), which differ. We'll start by choosing the smallest sample size and then we'll draw simulated data.
 
 ```{r}
@@ -381,7 +384,9 @@ escalc(measure = "ZCOR",
 ```
 
 
-If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See [here](6-simulating-non-gaussian-responses.qmd) where we discuss this and [below](#sec-zr-reconstructing-proportion-data) where we demonstrate using the binomial distribution to reconstruct discrete individual outcomes from a correlation figure.
+If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See [here](7-simulating-non-gaussian-responses.qmd) where we discuss this and [below](#sec-zr-reconstructing-proportion-data) where we demonstrate using the binomial distribution to reconstruct discrete individual outcomes from a correlation figure.
+
+</details>
 
 # Time series {#sec-time-series}
 Some observational type studies, especially in ecology, present multiple time series, which may include the two continuous variables you wish to correlate, in this case `Variable 1` and `Variable 2`:
@@ -718,7 +723,10 @@ An example would be the number of plots occupied by a species (the discrete outc
 
 To do this, we will do something similar as in the [previous section](#sec-error-bars). However we will use either the binomial or beta-binomial distribution instead of the normal distribution. 
 
-To understand whether to use the binomial or beta-binomial distribution, we will check whether the observed (author-reported) standard deviation is greater than the theoretical standard deviation of the [binomial distribution](6-simulating-non-gaussian-responses.qmd), which is defined by the proportion and the the number of individuals per trial.
+<details>
+<summary>Click here for a full demonstration</summary>
+
+To understand whether to use the binomial or beta-binomial distribution, we will check whether the observed (author-reported) standard deviation is greater than the theoretical standard deviation of the [binomial distribution](7-simulating-non-gaussian-responses.qmd), which is defined by the proportion and the the number of individuals per trial.
 
 ```{r}
 #| echo: true
@@ -730,7 +738,7 @@ theoretical_sd <- sqrt((dt$proportion_alive * (1 - dt$proportion_alive))/(dt$n_i
 nrow(dt[sd > theoretical_sd])
 ```
 
-It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution to generate the raw underyling data. See [here](6-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
+It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution to generate the raw underyling data. See [here](7-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
 
 Now we'll draw binomial data with the `rbinom` function. We specify `size` as number of individuals per trial (`n_individuals` in our dataset `dt`), `n` as number of trials (`n_trials` in our dataset), and `p` as the author reported mean proportion alive (`proportion_alive`). The function will return a numeric vector, with each element indicating the number of alive individuals per trial. With 3 trials, each vector should have a length of 3.
 
@@ -789,7 +797,7 @@ knitr::kable(head(y_expanded))
 
 ```
 
-Now we can calculate the number of dead individuals per temperature treatment based on the total number of individuals across the 3 trials (3 \* 20 = 60)
+Now we can calculate the number of dead individuals per temperature treatment based on the total number of individuals across the 3 trials ($3 * 20 = 60$)
 
 ```{r}
 #| echo: true
@@ -844,6 +852,8 @@ escalc(measure = "ZCOR",
        ni = nrow(final_dat))
 
 ```
+
+</details>
 
 # Non-independent correlations {#sec-non-independent-correlations}
 ## Matrices {#sec-matrices}

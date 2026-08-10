@@ -371,9 +371,9 @@ any(dt$sd > sd_theoretical)
 
 ```
 
-It looks like our data is not truly binomial but beta-binomial. See [here](6-simulating-non-gaussian-responses.qmd#sec-binomial) and [here](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data) for how to draw from the binomial distribution.
+It looks like our data is not truly binomial but beta-binomial. See [here](7-simulating-non-gaussian-responses.qmd#sec-binomial) and [here](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data) for how to draw from the binomial distribution.
 
-For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the `R` package `extraDistr` [@extradistr]. This requires the variance ($Var = sd^2$) and two shape parameters that describe the beta distribution: $\alpha$ ("alpha") and $\beta$ ("beta"). See [here](6-simulating-non-gaussian-responses.qmd#sec-beta-binomial) for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset `dt` after calculating an intermediate variable `r`:
+For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the `R` package `extraDistr` [@extradistr]. This requires the variance ($Var = sd^2$) and two shape parameters that describe the beta distribution: $\alpha$ ("alpha") and $\beta$ ("beta"). See [here](7-simulating-non-gaussian-responses.qmd#sec-beta-binomial) for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset `dt` after calculating an intermediate variable `r`:
 
 ```{r}
 #| eval: true
@@ -423,12 +423,6 @@ knitr::kable(dt)
 ```
 
 Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).
-
-::: callout-tip
-Note, that if there were variable numbers of nests per site, then you'd want to create a longer dataframe (e.g., by merging your extracted summaries with a table of number of individuals per site). Then loop through this longer data frame, specifying $1$ as `n`.
-
-Although, the study's authors probably shouldn't have taken the mean±sd in that case....Hmmmm....
-:::
 
 
 ## LC50? {#sec-lc50}

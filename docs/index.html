@@ -20,8 +20,8 @@
 <meta name="author" content="Iwo Gross">
 <meta name="author" content="Wolfgang??">
 <meta name="author" content="Shinichi Nakagawa">
-<meta name="dcterms.date" content="2026-08-09">
-<title>Effect sizes – A user’s guide to effect sizes</title>
+<meta name="dcterms.date" content="2026-08-10">
+<title>Effect sizes in meta-analysis – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -100,6 +100,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href=".//figures/flowcharts_diagrams/temp_logo.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -272,13 +273,19 @@ div.csl-indent {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./5-escalc-cheatsheet.html" class="sidebar-item-text sidebar-link">
+  <a href="./5.0-less-common-effect-sizes.qmd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Less common effect sizes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./6-escalc-cheatsheet.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><code>escalc</code> cheatsheet</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
+  <a href="./7-simulating-non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Simulating non-Gaussian data</span></a>
   </div>
 </li>
@@ -306,7 +313,7 @@ div.csl-indent {
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Effect sizes</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title">Effect sizes in meta-analysis</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
 <p class="subtitle lead">A soup to nuts tutorial for the meta-analyst</p>
 </div>
 
@@ -339,7 +346,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 9, 2026</p>
+      <p class="date">August 10, 2026</p>
     </div>
   </div>
   
@@ -353,17 +360,17 @@ div.csl-indent {
 <p>Meta-analysis can be really hard. Meta-analytic methods continue to proliferate, with new effect sizes, models, and methods being published constantly. The literature has become a minefield of articles and tutorials that can be bewildering for even the most experienced meta-analyst.</p>
 <p>We here present a living tutorial to navigating this methodological tempest, with particular emphasis on understanding effect sizes and extracting them from a variety of data formats. This tutorial is maintained by the <a href="https://cossee.org/">Collaboration for Open Science and Synthesis in Ecology and Evolution</a> at the University of Alberta, which is led by Professor Shinichi Nakagawa—one of the principle developers of new meta-analytic methods. While many of the examples in this tutorial derive from our experiences in ecology and evolution, which is rife with messy data, we believe the contents are applicable broadly.</p>
 <p>We hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</p>
+<p><strong>Should we add more of an overview of what meta-analysis is?</strong></p>
 </section><section id="sec-voyagers" class="level1"><h1>Voyaging among the ghosts of data past</h1>
 <p>Meta-analyses are powerful. But they are full of tedium. And dealing with the challenges that we describe in this tutorial (hopefully in plain english) can be overwhelming.</p>
 <p>Yet there is something beautiful and very human about doing a meta-analysis. You encounter the heartwork and hardwork of dozens or hundreds or thousands of fellow human beings. Stories from last year or 50 years ago, from people exploring, observing, experimenting, and trying to understand our universe.</p>
 <p>These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests.</p>
 <p>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and awe for the work that came before us–these efforts to describe the mysteries of our world.</p>
 </section><section id="sec-how-to" class="level1"><h1>How to use this tutorial</h1>
-<p>We begin by providing an overview of the workflow we use in designing a meta-analysis, with particular attention paid to effect sizes, their assumptions, and to testing the influence of those assumptions with sensitivity analyses. We then describe the 3 most common effect size types used in ecology and evolution and their assumptions and alternative formulations. For each of these effect sizes, we then provide a detailed tutorial on how to extract data from both common and bizarre formats.</p>
+<p>We begin by discussing the dominant <a href="./overview.html">effect size types</a>, their numeric assumptions, and how to interpret them. We then discuss the nuts and bolts of planning data <a href="./3.0-starting-extraction.html">extraction</a>.</p>
+<p>We then go into detail about <a href="./3.1-universal-challenges.html">universal challenges</a> in extracting and calculating effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to <a href="./4.0-converting-effect-sizes.html">convert</a> between effect size types. In the appendix you’ll find additional helpful material, including a <a href="./6-escalc-cheatsheet.html">cheatsheet</a> for the many options available in the workhorse of effect size calculation: metafor’s <code>escalc</code> function <span class="citation" data-cites="Viechtbauer2010-uq">(<a href="#ref-Viechtbauer2010-uq" role="doc-biblioref">Viechtbauer 2010</a>)</span>.</p>
 <p>This tutorial is viewable as a webpage or you can clone the repo and run the .qmd files interactively. This tutorial corresponds with the cheatsheets provided here <em>XXXXXX.</em></p>
 <p>This tutorial is based on an <code>R</code> workflow and assumes that the users have a basic understanding of <code>R</code>.</p>
-<p>We begin by discussing the dominant <a href="./overview.html">types</a> of effect sizes and how to understand them. We then discuss the nuts and bolts of planning data <a href="./3.0-starting-extraction.html">extraction</a>.</p>
-<p>We then go into detail about <a href="./3.1-universal-challenges.html">universal challenges</a> in extracting and calculating effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to <a href="./4.0-converting-effect-sizes.html">convert</a> between effect size types. In the appendix you’ll find additional helpful material, including a <a href="./5-escalc-cheatsheet.html">cheatsheet</a> for the many options available in the workhorse of effect size calculation: metafor’s <code>escalc</code> function <span class="citation" data-cites="Viechtbauer2010-uq">(<a href="#ref-Viechtbauer2010-uq" role="doc-biblioref">Viechtbauer 2010</a>)</span>.</p>
 </section><section id="sec-living-tutorial" class="level1"><h1>A living tutorial</h1>
 <p>This tutorial is a living document. As such, please help us keep it alive and useful. If we missed anything, if we made an error, or overlooked an extraction challenge, please file an Issue on our github page <a href="https://github.com/ejlundgren/effect_size_tutorial/issues">here</a>.</p>
 
@@ -827,7 +834,7 @@ Viechtbauer, Wolfgang. 2010. <span>“Conducting Meta-Analyses in <span>R</span>
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Effect sizes"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Effect sizes in meta-analysis"</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "A soup to nuts tutorial for the meta-analyst"</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span></span>
@@ -938,27 +945,27 @@ Viechtbauer, Wolfgang. 2010. <span>“Conducting Meta-Analyses in <span>R</span>
 <span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>We hope that this tutorial, by integrating tips and tricks and statistical know-how from across the decades and into the future, can increase the consistency, reliability, and reproducibility of meta-analytic research.</span>
 <span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="fu"># Voyaging among the ghosts of data past  {#sec-voyagers}</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>**Should we add more of an overview of what meta-analysis is?**</span>
 <span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>Meta-analyses are powerful. But they are full of tedium. And dealing with the challenges that we describe in this tutorial (hopefully in plain english) can be overwhelming.</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="fu"># Voyaging among the ghosts of data past  {#sec-voyagers}</span></span>
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>Yet there is something beautiful and very human about doing a meta-analysis. You encounter the heartwork and hardwork of dozens or hundreds or thousands of fellow human beings. Stories from last year or 50 years ago, from people exploring, observing, experimenting, and trying to understand our universe.</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>Meta-analyses are powerful. But they are full of tedium. And dealing with the challenges that we describe in this tutorial (hopefully in plain english) can be overwhelming.</span>
 <span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>Yet there is something beautiful and very human about doing a meta-analysis. You encounter the heartwork and hardwork of dozens or hundreds or thousands of fellow human beings. Stories from last year or 50 years ago, from people exploring, observing, experimenting, and trying to understand our universe.</span>
 <span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and awe for the work that came before us--these efforts to describe the mysteries of our world.</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>These voyagers left us breadcrumbs. Sometimes as simple as a mean and a standard deviation. Sometimes as complex as some strange contour plot drawn on a piece of graph paper and scanned in 1975. Extracting their data summaries (or finding their raw datasets) brings their work to life and allows us to continue their quests.</span>
 <span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to use this tutorial  {#sec-how-to}</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>While you struggle to deal with all the strange and bizarre and difficult and annoying decisions these voyagers sometimes made to communicate their tales, remember to feel compassion and awe for the work that came before us--these efforts to describe the mysteries of our world.</span>
 <span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>We begin by providing an overview of the workflow we use in designing a meta-analysis, with particular attention paid to effect sizes, their assumptions, and to testing the influence of those assumptions with sensitivity analyses. We then describe the 3 most common effect size types used in ecology and evolution and their assumptions and alternative formulations. For each of these effect sizes, we then provide a detailed tutorial on how to extract data from both common and bizarre formats.</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to use this tutorial  {#sec-how-to}</span></span>
 <span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>This tutorial is viewable as a webpage or you can clone the repo and run the .qmd files interactively. This tutorial corresponds with the cheatsheets provided here *XXXXXX.*</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>We begin by discussing the dominant <span class="co">[</span><span class="ot">effect size types</span><span class="co">](1-effect-size-overview.qmd)</span>, their numeric assumptions, and how to interpret them. We then discuss the nuts and bolts of planning data <span class="co">[</span><span class="ot">extraction</span><span class="co">](3.0-starting-extraction.qmd)</span>. </span>
 <span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>This tutorial is based on an <span class="in">`R`</span> workflow and assumes that the users have a basic understanding of <span class="in">`R`</span>.</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>We then go into detail about <span class="co">[</span><span class="ot">universal challenges</span><span class="co">](3.1-universal-challenges.qmd)</span> in extracting and calculating effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to <span class="co">[</span><span class="ot">convert</span><span class="co">](4-converting-effect-sizes.qmd)</span> between effect size types. In the appendix you'll find additional helpful material, including a <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](6-escalc-cheatsheet.qmd)</span> for the many options available in the workhorse of effect size calculation: metafor's <span class="in">`escalc`</span> function <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span>.</span>
 <span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>We begin by discussing the dominant <span class="co">[</span><span class="ot">types</span><span class="co">](1-effect-size-overview.qmd)</span> of effect sizes and how to understand them. We then discuss the nuts and bolts of planning data <span class="co">[</span><span class="ot">extraction</span><span class="co">](3.0-starting-extraction.qmd)</span>. </span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>This tutorial is viewable as a webpage or you can clone the repo and run the .qmd files interactively. This tutorial corresponds with the cheatsheets provided here *XXXXXX.*</span>
 <span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>We then go into detail about <span class="co">[</span><span class="ot">universal challenges</span><span class="co">](3.1-universal-challenges.qmd)</span> in extracting and calculating effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to <span class="co">[</span><span class="ot">convert</span><span class="co">](4-converting-effect-sizes.qmd)</span> between effect size types. In the appendix you'll find additional helpful material, including a <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](5-escalc-cheatsheet.qmd)</span> for the many options available in the workhorse of effect size calculation: metafor's <span class="in">`escalc`</span> function <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span>.</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>This tutorial is based on an <span class="in">`R`</span> workflow and assumes that the users have a basic understanding of <span class="in">`R`</span>.</span>
 <span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="fu"># A living tutorial  {#sec-living-tutorial}</span></span>
 <span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>

@@ -98,22 +98,25 @@ Finally, following extraction, you'll want to evaluate the statistical distribut
 ![](figures/flowcharts_diagrams/extraction-steps.png){width="40%"}
 
 
-**Should make "Test for overdispersion" -> "Test numeric assumptions (e.g., overdispersion)"**
+**Should change "Test for overdispersion" -> "Test numeric assumptions (e.g., overdispersion)"**
 
 :::callout-note
 #### Organizing sensitivity analyses
-You'll see a common refrain throughout this tutorial---sensitivity analyses! Or as coauthor SR says, "SONG ABOUT SENSITIVITY ANALYSES". 
+You'll see a common refrain throughout this tutorial---sensitivity analyses! Or as coauthor SR says, "JINGLE ABOUT SENSITIVITY ANALYSES". 
 
-These can be extremely cumbersome---requiring you to run many models. Typing these out by hand is prone to error and extreme challenges in interpretation.
+These can be extremely cumbersome---requiring you to run many models. Typing these out by hand or copy-and-pasting is prone to error and challenges in interpretation.
 
-We recommend creating a "model guide" and evaluating text strings in your model objects in a `for` loop or `foreach` loop to facilitate thorough meta-analyses. The `R` function `eval(parse(text = string))` can evaluate the text string `string` as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in `R`. 
+We recommend creating a "model guide" and evaluating text strings in your model objects in a `for` loop or `foreach` loop to facilitate thorough sensitivity analyses. The `R` call `eval(parse(text = string))` can evaluate the text string `string` as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in `R`. 
 
-For an example of the `R` code for such a workflow, see a recent example [here](ejlundgren.github.io/cat_evidence_review/)
-
+For an example of the `R` code for such a workflow, see a recent example [here](https://ejlundgren.github.io/cat_evidence_review/3.2-run-models.html)
 :::
 
+## Types of extraction
+There are three main types of extraction you'll face in doing a meta-analysis. First, will be using **summary statistics**, like means, standard deviation and sample size. These can be reported in figures, tables, or in the text. 
 
+Second, you may find studies that publish their **raw data**. These can often be difficult to summarize because of unclear metadata but are still a valuable and important source of data for the meta-analyst. Note that these data can also be valuable in cases where the authors report summary statistics across a range of dependent and non-independent data---summarizing the raw data can help you produce effect sizes with clear and coherent non-independence structures.
 
+Third, you will find many studies that report **inferential statistics**---such as test statistics, p-values, and so on. Some of these can be converted to effect sizes directly. Others are lost forever: model estimates derived from mixed effect models cannot be used in meta-analysis.
 
 ## Tools for extracting data from figures {#sec-tools-for-extraction}
 
@@ -127,15 +130,15 @@ We do not here discuss the mechanics of these tools but we will describe them an
 | `WebPlotDigitizer` | Web/Desktop | Yes | No | Yes | No |
 | `ImageJ` | Desktop | No | No | Yes | No |
 
-**Do we know any tool that can extract from 3D figures??**
+An analysis [@Gotzsche2007-rb] found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction [@Ivimey-Cook2023-vo]. This includes saving screenshots of figures, preferably along with extraction points [which is automatically done by `metaDigitise()` [@Pick2018-ia]] in folders that link directly to the final dataset.
 
-An analysis [@Gotzsche2007-rb] found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction [@Ivimey-Cook2023-vo]. This includes saving screenshots of figures, preferably along with extraction points (which is automatically done by `metaDigitise()` [@Pick2018-ia]) in folders that link directly to the final dataset.
-
-We also note that many large language models, such as NotebookLM, Gemini, chatGPT, are capable of extracting data from figures--potentially with high accuracy. However, utilizing these tools still requires that researchers maintain reproducible and transparent workflows and understand *what* data to extract.
+We also note that many large language models, such as NotebookLM, Gemini, chatGPT, are capable of extracting data from figures---potentially with high accuracy. However, utilizing these tools still requires that researchers maintain reproducible and transparent workflows and understand *what* data to extract.
 
 ## Experimental methods {#sec-experimental-methods}
 
-Some of the techniques we present here, especially for [reconstructing underlying data](6-simulating-non-gaussian-responses.qmd) from author provided summaries are little known and could be regarded as experimental. We nonetheless present these approaches as they are, in our mind, better than the alternative, especially in meta-analyses with limited numbers of studies. **We tag experimental approaches throughout with XXXXX and invite further research on the relative bias and efficacy of these techniques.**
+Some of the techniques we present here, especially for [reconstructing underlying data](7-simulating-non-gaussian-responses.qmd) from author provided summaries are little known and could be regarded as experimental. We nonetheless present these approaches as they are, in our mind, better than the alternative, especially in meta-analyses with limited numbers of studies. 
+
+We tag experimental approaches throughout and invite further research on the relative bias and efficacy of these techniques.
 
 
 

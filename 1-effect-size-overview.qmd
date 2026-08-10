@@ -45,17 +45,19 @@ bibliography: references.bib
 
 # A brief introduction to effect sizes and sampling variance  {#sec-introduction-to-effect-sizes}
 
-Effect sizes are statistics calculated from the results of empirical research that report the variables of interest and, if the effect size is *standardized*, allow comparison across different studies even if the articles collected data with different units. The effect sizes we'll discuss in this tutorial concern relationships between 2 variables, however there are other effect sizes for describing univariate results, such as proportions, which we briefly cover in the [appendix](5-escalc-cheatsheet.qmd).
+Effect sizes in meta-analysis are statistics calculated from the results of empirical research that report the variables of interest and, if the effect size is *standardized*, allow meta-analytic comparison across different studies even if the articles collected data with different units. The effect sizes we'll discuss in this tutorial concern relationships between 2 variables, however there are other effect sizes for describing univariate results, such as proportions, which we briefly cover [here](5-less-common-effect-sizes.qmd) and in the `escalc` [cheatsheet](6-escalc-cheatsheet.qmd).
 
 Effect sizes are also known as *'point estimates'*—e.g., the central tendency of a relationship of interest.
 
 Every meta-analytic effect size is associated with *sampling variance*. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is calculated from the sample size and/or the standard deviation of the source data.
 
+**CONCEPTUAL FIGURE??**
+
 # Effect size types {#sec-effect-size-types}
 
 We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies of a response variable in relation to categorical or continuous predictor variables. 
 
-There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@REF]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. These, alongside other, less common effect sizes for single-group descriptive statistics are briefly presented in the `escalc` [cheatsheet](5-escalc-cheatsheet.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/) and are discussed [below](#sec-custom-effect-sizes).
+There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@REF]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. These, alongside other, less common effect sizes for single-group descriptive statistics are briefly presented in the `escalc` [cheatsheet](6-escalc-cheatsheet.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/) and are discussed [below](#sec-custom-effect-sizes).
 
 We here focus this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution:
 
@@ -69,14 +71,15 @@ We here focus this tutorial on the mathematical assumptions, alternative formula
 
 These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.
 
-![Effect size types](figures/illustration_icons/effect-size-types.jpg) When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is SMD or lnRoM---which differ in their interpretability and mathematical assumptions.
+![Effect size types](figures/illustration_icons/effect-size-types.jpg) 
 
+When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**). ---which differ in their interpretability and mathematical assumptions. Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). These effect sizes differ in their interpretability and mathematical assumptions, which we cover [here.](2.1-SMD-assumptions.qmd) 
 
-If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as lnOR or lnRR. This type of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.
+If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). These types of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.
 
-The correlation between continuous predictors and continuous responses are analyzed as `Zr` effect sizes. `Zr` can also be calculated for responses with a continuous predictor and discrete (e.g., 0 or 1) response. Note that there are also correlation effect sizes ([point-biserial and biserial correlations](2.3-Zr-assumptions.qmd#sec-point-biserial)) for discrete predictors that are readily convertible to `Zr` and may be preferable to SMD/lnRoM effect sizes in some cases—especially if the rest of your dataset consists of `Zr` data.
+The correlation between continuous predictors and continuous responses are analyzed as r-t-z-transformed corrleation coefficients (**Zr**) effect sizes. **Zr** can also be calculated for responses with a continuous predictor and discrete (e.g., 0 or 1) response. 
 
-Finally, it is also possible to convert between these main effect size types, which we discuss at the [end](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types (ref to borenstein). However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
+Finally, it is also possible to convert between these main effect size types, which we discuss at the [end](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types [@borenstein2021]. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
 
 
 :::callout-note
@@ -86,7 +89,7 @@ The choice of what effect size to use may seem very simple. For example, if you 
 
 However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey (like in [@Wallach2025-ta]). Many studies present results that look like SMD-type data: comparing mean±SD of prey abundance in areas with high fox abundance to areas with low fox abundance, due to an eradication or culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.
 
-While it may seem obvious to use an SMD-type effect size for data like this, you are then forced to treat the *difference* in density between treatments as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators.
+If you use an SMD-type effect size, then you should treat the *difference* in density between treatments as a moderator in your models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators.
 
 An alternative is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. 
 
@@ -95,7 +98,7 @@ Note that it is also possible to formulate custom effect sizes that may help sim
 
 # Calculating effect sizes & sampling variance {#sec-calculating-effect-sizes}
 
-The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes summary statistics, a variable specifying the effect size type (specified with the `measure` argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). At certain points we will also use our own custom function, `eff_this` *(currently called eff_size but eff_this could be funny...)* which can do most of what escalc can do but also some things that escalc cannot do.
+The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes summary statistics, a variable specifying the effect size type (specified with the `measure` argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). At certain points we will also use our own custom function, `eff_this` **(currently called eff_size but eff_this could be funny...)** which can do most of what `escalc` can do but also some things that `escalc` cannot do.
 
 **Not sure if we want to include `eff_size` but if we don't, we need to figure out some of the options in `escalc`, like paired SMD...**
 
@@ -125,46 +128,47 @@ source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
-*The measure argument of escalc has so many damn options!! An escalc flowchart would be nice...in appendix. And effect size specific charts in the appropriate sections*
-
 # Estimates and estimators {#sec-estimates-and-estimators}
 
 Effect sizes (also called *point estimates*) and sampling variance are *estimated* with a variety of *estimators*. These estimators are the formulas (or methods) used to calculate point estimates and sampling variance for each effect size. Because some estimators can be biased at low sample size, or with heteroscedastic data (e.g., different variance between treatment groups), alternative estimators have been developed for the same effect sizes.
 
-For example, the point estimate definition formula for lnRoM——the log-transformed ratio of means——is quite simple, with $m_1$\$m_1\$ and $m_2$ equivalent to the mean of an experimental and a control group respectively and $yi$ indicating the resulting effect size point estimate:
+**CONCEPTUAL FIGURE??**
 
-**I think we should delete the math here**
+For example, the point estimate definition formula for lnRoM——the log-transformed ratio of means---is quite simple. It is simply the log-transformed ratio of the means of the experimental and control groups. 
 
+The sampling variance for lnRoM is calculated with a second formula that was derived with what's called the Delta method (spooky Calculus) and takes into account sample size and standard deviation for each treatment group.
+
+<details>
+<summary>Click here to see the math</summary>
+with $m_1$ and $m_2$ equivalent to the mean of an experimental and a control group respectively and $yi$ indicating the resulting effect size point estimate:
 $$
 \begin{aligned}
 &yi = log(\frac{m_1}{m_2})\\
 \end{aligned}
-$$ 
+$${#eq-1}
 
-The sampling variance for lnRoM is calculated with a second formula that was derived with what's called the Delta method (spooky Calculus). Let $sd_1$, $sd_2$, and $n_1$ and $n_2$ present the standard deviation and sample size of the experimental and control groups respectively.
+For sampling variance, let $sd_1$, $sd_2$, and $n_1$ and $n_2$ present the standard deviation and sample size of the experimental and control groups respectively.
 
 $$
 \begin{aligned}
 &vi = \frac{sd_1^2}{n_1 m_1^2} + \frac{sd_2^2}{n_2 m_2^2} \\
 \end{aligned}
-$$ 
+$${#eq-2} 
 
-However, these estimators can produce *biased* estimates when sample size is low. For that reason, the default estimator used by most analysts is slightly more complex, with an additional term that corrects for low sample size bias, which for lnRoM, takes into account standard deviation ($sd_1$ and $sd_2$) and sample size of each group ($n_1$ and $n_2$).
+</details>
 
-$$
-\begin{aligned}
-&yi_{BC} = log(\frac{m_1}{m_2}) + 0.5(\frac{sd_1^2}{n_1 m_1^2} - \frac{sd_2^2}{n_2 m_2^2}) \\
-\end{aligned}
-$$ 
+However, these estimators can produce *biased* estimates when sample size is low. For that reason, there are what are called **"second-order"** estimators (also called **bias-corrected estimators**) that have been developed via complex mathematics (which we won't touch here) to account for small-sample size bias. These second-order estimators, however, may have their own problems, if certain numeric assumptions (like normality) are not met.
 
-
-These derived formulas are known as *bias-corrected* estimators and they exist for most effect sizes. However, the bias-corrected estimators sometimes are *more* biased. `escalc` uses the best known estimator for each effect size type, which is usually the bias-corrected estimator (but not always and its not always clear which version of an effect size `escalc` uses).
-
-To calculate lnRoM in `R`, we use `escalc` as follows:
+In general, `escalc` uses the best known estimator for each effect size type, which is often the second-order estimator. In the case of lnRoM, however, `escalc` uses the definition formula (@eq-1), or first-order estimator, which we can confirm here:
 
 ```{r}
+m1 <- 10
+m2 <- 6
+
+log(m1/m2)
+
 escalc(measure = "ROM",
-       m1i = 10, m2i = 6,
+       m1i = m1, m2i = m2,
        sd1i = 1.5, sd2i = 1.5,
        n1i = 15, n2i = 15)
 ```
@@ -191,34 +195,32 @@ eff_size(x1 = 10, x2 = 6,
 
 ```
 
-`yi_first` and `vi_first` are the definition formulas. the `_second` variables are the bias-corrected point estimates. If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased. Note that the function defaults to unpaired designs.
+`yi_first` and `vi_first` are the definition formulas (@eq-1 and @eq-2). the `_second` variables are the bias-corrected estimates. If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
-::: callout-tip
-####### How to derive custom effect sizes {#sec-callout-calculating-variance}
-Until recently, almost all effect size estimators used *plugin* formulas like those shown above to calculate point estimates and sampling variance (which is what `escalc` does). However, growth in computational power has enabled alternative methods for calculating effect sizes and sampling variance. In particular, the *SAFE* method has recently emerged as a powerful way to calculate bias-corrected point estimates and sampling variance for custom effect sizes and for effect sizes which lack a sampling variance formula.
+You'll see in future sections that certain data types should use alternative estimators, which are mostly provided within `eff_size`. For example, if your data is normally distributed you should actually use the second-order estimator of lnRoM [@Lajeunesse2015-gw] and provided by `eff_size`. However, if your data is overdispersed, you should use the first-order estimator of lnRoM provided by `escalc` (and `eff_size`). 
 
-SAFE is also essential for calculating point estimates and sampling variance for effect sizes for which differences of 0 (e.g., $m1 - m2$) lead to $NA$ or $Infinite$ values [@Nakagawa2026-wn]—in particular the log magnitude (lnM) effect size, which describes the absolute difference between two groups [@Nakagawa2026-wn]. For further information, including an interactive tutorial on the use of the SAFE method, please see **Nakagawa et al. 2026** and the tutorial [here](https://ejlundgren.github.io/SAFE/).
-:::
 
 ## Alternative estimators {#sec-alternative-estimators}
 
-You'll also notice, for example if looking at the documentation of `escalc`, that there are many many effect size estimators based on different numeric properties of the data or the study design. For example, there are estimators for heteroscedastic data, estimators for paired study designs, for correlation data that has been discretized (e.g., into two groups, high vs low), and others which are  described in the [appendix](5-escalc-cheatsheet.qmd).
+You'll also notice, for example if looking at the documentation of `escalc`, that there are many many effect size estimators based on different study designs or numeric properties of the data. For example, there are estimators for heteroscedastic data, estimators for paired study designs, for correlation data that has been discretized (e.g., into two groups, high vs low), and others of which we describe some in the [appendix](6-escalc-cheatsheet.qmd).
 
 Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate.
 
-One of the most statistically important alternative flavors are paired design formulations. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but many meta-analyses do not take into account paired designs, which may bias results.Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower—which will give paired design data more weight in downstream meta-analytic models.
+One of the most statistically important alternative flavors are paired design formulations. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account paired designs.
+
+Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.
 
 However, there are also paired design formulations that are *NOT* comparable to unpaired formulas. These take into account the pairing in the *point estimate* formula and produce effect size estimates that need to be analyzed separately.
 
-We try to clear up this confusion in the [appendix](5-escalc-cheatsheet.qmd) with some charts of compatibility between the different estimators in `escalc`.
+We try to clear up this confusion in the [appendix](6-escalc-cheatsheet.qmd) with some charts of compatibility between the different estimators in `escalc`.
 
 # Less common effect sizes {#sec-less-common-effect-sizes}
 
-The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, [@Nakagawa2026-wn]) or variability between two groups (lnCVR, [@Nakagawa2015-tq]). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the `escalc` [tutorial](5-escalc-cheatsheet.qmd). Many of these, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD and lnRoM Let $m$, $sd$, and $n$, denote mean, standard deviation and sample size and as such are readily calculatable from the same summaries used for more common effect sizes.
+The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, [@Nakagawa2026-wn]) or variability between two groups (lnCVR, [@Nakagawa2015-tq]). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the `escalc` [tutorial](6-escalc-cheatsheet.qmd). Many of these, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD and lnRoM (e.g., means, standard deviation, sample size).
 
 # Custom effect sizes {#sec-custom-effect-sizes}
 
-You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method (see the tutorial [here](ejlundgren.github.io/SAFE/)).
+You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method (see the tutorial [here](https://ejlundgren.github.io/SAFE/)).
 
 However, custom effect sizes (or at least rare effect sizes) can also be very useful even with data that is readily synthesizable with common effect sizes, like those we discussed above (SMD/lnRoM/etc). 
 
@@ -235,7 +237,7 @@ $$
 \begin{aligned}
 &Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}\\
 \end{aligned}
-$$
+$${eq-3}
 
 
 Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by REF using the Delta method) or with the [SAFE method](https://ejlundgren.github.io/SAFE/) (REF). These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). 

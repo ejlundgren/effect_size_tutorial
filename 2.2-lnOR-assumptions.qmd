@@ -81,7 +81,11 @@ Tertiary outcomes binomial outcomes are also possible and need to be handled wit
 
 The log odds ratio is the ratio of two odds:
 
-$$lnOR = log(\frac{a * d}{b * c})$$
+$$
+\begin{aligned}
+&lnOR = log(\frac{a * d}{b * c}) \\
+\end{aligned}
+$${#eq-1}
 
 ### Assumptions {#sec-lnOR-assumptions}
 
@@ -111,9 +115,16 @@ escalc(measure = "OR",
 
 To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):
 
-$$OR = e^{lnOR}$$
+$$
+OR = e^{lnOR}
+$${#eq-2}
+
+In `R`:
 
 ```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
 exp(1.4069) |> round()
 ```
 
@@ -129,9 +140,15 @@ $$\begin{aligned}
 &p1 = a/n1 \\
 &p2 = c/n2 \\
 &lnRR = log(p1/p2) \\
-\end{aligned}$$
+\end{aligned}$${#eq-3}
 
-We can do something similar with the log risk ratio. Again, we will exponentiate it to convert it from log scale.
+
+### Assumptions
+KYLE
+
+
+### Interpretation
+To interpret lnRR, we will also exponentiate it to convert it from log scale:
 
 ```{r}
 #| eval: true
@@ -146,22 +163,28 @@ exp(out$yi[1])
 
 ```
 
-
 **Kyle, can you help with this?**
 
 A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.
 
 **Not sure I am correctly interpreting these**
 
+# Should I use lnOR or lnRR?
+
+KYLE
+
+
 ## Continuity corrections {#sec-continuity-corrections}
 
-lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.
+lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0. 
 
 lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
+
+These continuity corrections are applied by `escalc` by default.
 
 # Alternative versions
 There are alternative estimators for similar data that take into account longitudinal pairing (e.g., through time) or matched pairs of subjects. These are broadly referred to as matched pairs contingency table effect sizes by `escalc`.
 
 Extraction for these effect sizes is similar to lnOR and lnRR except that they take an additional parameter: $rho$, or the correlation between subjects---which is likely unreported and needs to be guessed. Unlike paired versions of SMD/lnRoM/Zmu, these do not appear to be comparable to unpaired estimators of lnOR and lnRR, nor are they widely used in ecology and evolution (REF TO THAT NAKAGAWA PAPER). 
 
-The measurement arguments for these effect sizes are given [here](5-escalc-cheatsheet.qmd)
+The measurement arguments for these effect sizes are given [here](6-escalc-cheatsheet.qmd)

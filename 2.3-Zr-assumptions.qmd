@@ -1,6 +1,6 @@
 ---
 title: "Continuous predictors"
-subtitle: "Correlate this"
+subtitle: "The heart of observational data synthesis"
 date: "`r Sys.Date()`"
 format: 
   html:
@@ -66,18 +66,20 @@ source("scripts/functions/eff_size.R")
 
 ```
 
-Zr is the dominant effect size for describing correlations between two continuous variables. Zr takes the correlation coefficient and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1).
+Zr is the dominant effect size for describing correlations. In particular, cases with a continuous predictor variable and one or two continuous response variables. Zr takes the correlation coefficient ($r$) and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1).
 
 $$\begin{aligned}
 &r_{i} \leftarrow \min(1, \max(-1, r_i))\\
 &Z_{r_i} = atanh(r_{i})\\
-\end{aligned}$$
+\end{aligned}$${#eq-1}
 
 The sampling variance of Zr depends entirely on sample size and is defined as:
 
 $$\begin{aligned}
 &Var(Z_r) = \frac{1}{n-3} \\
-\end{aligned}$$ As you can see, sampling variance is only calculable if $n>3$.
+\end{aligned}$${#eq-2}
+
+As you can see, sampling variance is only calculable if $n>3$.
 
 In `escalc`, this looks like:
 
@@ -90,18 +92,19 @@ Zr has among the least biased of point estimate and variance formulas (REF).
 
 *What to do about 0/1 or binary outcomes with a continuous predictor?*
 
-
 :::callout-question
 **Zr needs Pearson's correlation coefficient not Spearmans** NEED TO MENTION IN REPORTING OF CORRELATIONS OF DIFFERENT TYPES.
 
 Also should remind about different correlation types? Pearson's (2 continuous variables), Spearman's (1? non-parametric variable), Kendall (???), point-biserial (1 variable truly naturally discrete), biserial (1 variable artificially discretized), techronic (2 variables artificially discretized)
 
+See @Jacobs2017-cv
+ 
 See correlation confusion.png in the `notes/` directory
 :::
 
 ## Assumptions {#sec-assumptions}
 
-Presumably need to be truly continuous, e.g., not ordinal? Can you use directly reported Spearman's correlation coefficients?
+Presumably need to be truly continuous, e.g., not ordinal? Can you use directly reported correlation coefficients that aren't Pearson's??
 
 ## Interpretation {#sec-interpretation}
 
@@ -117,15 +120,9 @@ Point-biserial correlations are for truly distinct predictor variables (e.g., ma
 
 **Shouldn't use male vs female as example of truly discrete variables**
 
-In our mind, the biggest advantage of these correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate point-biserial or serial correlations for these studies. `escalc` provides a shorthand to directly convert these statistics to Zr:
+According to @Jacobs2017-cv, you should not convert point-biserial correlations to correlation coefficients. However, you can convert biserial correlations. `escalc` provides a shorthand to directly convert these statistics to Zr
 
 ```{r}
-# For the point-biserial correlation coefficient (truly discrete groups), directly to `Zr`
-escalc(measure = "ZPB",
-      m1i = 13.5, m2i = 10.1,
-      sd1i = 1.5, sd2i = 2.1,
-      n1i = 15, n2i = 15)
-
 
 # For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`
 escalc(measure = "ZBIS",
@@ -134,3 +131,6 @@ escalc(measure = "ZBIS",
       n1i = 15, n2i = 15)
 
 ```
+
+In our mind, the biggest advantage of calculating biserial correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate biserial correlations for these studies instead of calculating SMD and then [converting](4-converting-effect-sizes.qmd) SMD to Zr. 
+

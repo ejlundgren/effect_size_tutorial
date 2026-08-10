@@ -68,7 +68,7 @@ source("scripts/functions/eff_size.R")
 
 Effect sizes are not trivial things. They are, in and themselves, small statistical models with their own numeric assumptions and properties. Understanding these assumptions is essential if you want to conduct an accurate and robust meta-analysis and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.
 
-We here discuss effect sizes for describing continuous outcomes between two discrete groups, such as presented by many experiments. 
+We here discuss effect sizes for describing continuous outcomes between two discrete groups, such as presented by many experiments. The two dominant effect sizes in this category are Standardized Mean Differences (SMD) and the log-transformed ratio of means (lnRoM). Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio, which we also discuss in our section about [binary](2.2-lnOR-assumptions.qmd) outcome effect sizes.
 
 This is among the most common class of effect sizes, especially in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such as an experiment and control group. 
 
@@ -91,7 +91,7 @@ $$\begin{aligned}
 &sd = se * \sqrt{n}\\
 &sd = sqrt(Var)\\
 &sd = \frac{CI_{upper} - CI_{lower}}{2*1.96} * \sqrt{n}
-\end{aligned}$$
+\end{aligned}$${#eq-1}
 :::
 
 
@@ -105,7 +105,7 @@ SMD, also known as Hedges' g, is the bias-corrected version of Cohen's d. With $
 
 $$\begin{aligned}
 &d = \frac{m1-m2}{sd_{pooled}} \\
-\end{aligned}$$
+\end{aligned}$${#eq-2}
 
 $sd_{pooled}$ is:
 
@@ -113,7 +113,7 @@ $$
 \begin{aligned}
 sd_{pooled} = \sqrt{\frac{sd_1^2 (n_1 - 1) + sd_2^2 (n_2 - 1)}{n_1 + n_2 - 2}}\\
 \end{aligned}
-$$
+$${#eq-3}
 
 Cohen's d can be biased in its estimate of SMD at low sample size. For that reason, @Hedges1981-bt did some fancy math to create a small-sample size bias correction ($J$), which approaches 0 as total $n$ increases. This formulation is known as Hedges' g and is the primary estimator of SMD.
 
@@ -121,7 +121,7 @@ $$\begin{aligned}
 &J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}\\
 &d = \frac{m1-m2}{sd_{pooled}}\\
 &g = J * d
-\end{aligned}$$
+\end{aligned}$${#eq-4}
 
 The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation. Observations with high standard deviation (e.g., that are overdispersed) will have a lower overall point estimate. 
 
@@ -129,7 +129,7 @@ Because this can reduce power in your model and create issues with overdispersed
 
 $$\begin{aligned}
 &lnRoM = log(\frac{m1}{m2}) \\
-\end{aligned}$$
+\end{aligned}$${#eq-5}
 
 The lnRoM point estimate---though not the sampling variance---are more robust to overdispersion, yet by only using the definition formula (the formula used by `escalc` and shown here), the results can be biased by low sample size. For that reason, @Lajeunesse2015-gw also created a 2nd-order bias-corrected version of lnRoM using the Delta method. This calculation is available in our `eff_size` function (under the name `yi_second` and `vi_second`, if you run the function with `default_formulas = FALSE`).
 
@@ -212,7 +212,7 @@ escalc(m1i = 7, sd1i = 1.2, n1i = 15,
 
 This can be converted to percent change with $y_i$ as the effect size point estimate:
 
-$$(e^{y_i} - 1) * 100$$
+$$(e^{y_i} - 1) * 100$${eq-6}
 
 In `R`:
 
@@ -241,12 +241,18 @@ We cover this transformation in our extraction challenges page [here](3.2-smd-ch
 
 ## Dimensionality {#sec-dimensionality}
 
-The effect sizes in this section are standardized, which allow us to compare results across studies even if their units were grossly different. However, what if one study measured a response in meters but another study measured it in area ($meter^2$) and a third study measured the same response in volume ($meter^3$)? 
+The effect sizes in this section are standardized, which allow us to compare results across studies even if their units were different. However, what if one study measured a response in meters but another study measured it in area ($meter^2$) and a third study measured the same response in volume ($meter^3$)? 
 
 Imagine vegetation studies or morphological measurements of an organism or the size of a tumor. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.
 
-For lnRoM, this is a very serious problem, with effect sizes estimates increasing with each added dimension.
+For lnRoM, this is a very serious problem---the estimated effect at dimension 1 will double at dimension two!
 
+For this reason, we suggest that if you are committed to using an lnRoM effect size, that you must record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was across 2 dimensions ($m^2$) then divide by 2 and if across 3 dimensions ($m^3$), divide by 3. 
+
+However, there may be many cases where the number of dimensions of the measurement may be unclear. In this case, you must use SMD. We demonstrate this in the hidden code block below.
+
+<details>
+<summary>Click to see a demonstration of dimensionality</summary>
 Let us demonstrate. We'll create a starting dataset at one dimension and then we'll increase the dimensions from 1 to 2 and 3, by recreating the underlying distribution, recalculating our summary statistics, and calculating SMD or lnRoM effect sizes:
 
 ```{r}
@@ -268,7 +274,7 @@ dim3.1 <- sim1^3
 dim3.2 <- sim2^3
 
 # Create a data.table of the summary statistics:
-dat <- data.table(m1 = c(mean(dim1.1), mean(dim2.1), mean(dim3.1)),
+dat <- data.frame(m1 = c(mean(dim1.1), mean(dim2.1), mean(dim3.1)),
                   m2 = c(mean(dim1.2), mean(dim2.2), mean(dim3.2)),
                   sd1 = c(sd(dim1.1), sd(dim2.1), sd(dim3.1)),
                   sd2 = c(sd(dim1.2), sd(dim2.2), sd(dim3.2)),
@@ -302,8 +308,8 @@ dat <- eff_size(effect_type = "Z_mean",
 setnames(dat, c("yi", "vi"), c("yi_Zmu", "vi_Zmu"))
 
 # Convert ROM to % change:
-dat[, percent_change := (exp(yi_rom) - 1) * 100]
-
+dat <- dat %>%
+  mutate(percent_change = (exp(yi_rom) - 1) * 100)
 #
 p1 <- ggplot(data = dat, 
        aes(x = dimensions, y = yi_rom))+
@@ -338,13 +344,15 @@ Now let's look at SMD. Since the y axis values are not comparable, we'll plot th
 #| echo: false
 #| out-width: "70%"
 
+setDT(dat)
+
+#' [I forget how to do this in dplyr...]
 dat[, smd_diff := (.SD[dimensions == 1]$yi_smd - yi_smd)/.SD[dimensions == 1]$yi_smd * 100]
 
 p1 <- ggplot(data = dat, aes(x = dimensions, y = yi_smd))+
   geom_path()+
   geom_point(size = 4)+
   ylab("Effect size point estimate (yi)")+
-  # coord_cartesian(ylim = c(5, 10))+
   scale_x_continuous(breaks = c(1, 2, 3))+
   theme_bw()+
     theme(panel.grid = element_blank())
@@ -363,10 +371,7 @@ p1 / p2
 
 SMD is still somewhat affected by the change in dimensions but to a far lesser extent.
 
-For this reason, we suggest that if you are committed to using an lnRoM effect size, that you record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was across 2 dimensions ($m^2$) then divide by 2 and if across 3 dimensions ($m^3$), divide by 3. 
-
-However, there may be many cases where the number of dimensions of the measurement may be unclear. In this case, you must use SMD.
-
+</details>
 :::callout-important
 The dimensionality problem of lnRoM is quite perilous given that lnRoM is the dominant effect size used in ecology and evolution. It may be that the majority of ecological meta-analyses need to be redone.
 :::
@@ -393,9 +398,14 @@ $$
 \begin{aligned}
 G' = \frac{m}{sd}*\frac{4*n^{3/2}}{1+4*n}
 \end{aligned}
-$$
+$${#eq-7}
 
-There are several suggested thresholds for this value that can be used to exclude potentially overdispersed and problematic data. Lajuennesse suggested excluding values $\ge3$ , while others have suggested more conservative thresholds such as $\ge11.11$ [@Hayya1975-fq], $\ge10$ [@Kuethe2000-ax], and $\ge4$ [@Marsaglia2006-fa]
+There are several suggested thresholds for this value that can be used to exclude potentially overdispersed and problematic data. Lajuennesse suggested excluding values ≥3. 
+
+If a lot of your data is overdispersed, we recommend using the first-order point estimate of lnRoM (returned by default from `escalc`). We also recommend conducting sensitivity analyses, excluding overdispersed data based on both a $CV>2$ and $G'\geq3$. If a significant portion of your dataset is overdispersed, we also recommend conducting sensitivity analyses that compare model estimates produced with sampling variance as your model weight and effective sample size as your model weight.
+
+<details>
+<summary>Click to see a demonstration of overdispersion</summary>
 
 Let's do this in `R` with a $CV>2$ threshold and the Geary-Lajuennesse threshold of 3, using a dataset provided by the `metafor` package:
 
@@ -405,19 +415,23 @@ Let's do this in `R` with a $CV>2$ threshold and the Geary-Lajuennesse threshold
 
 data("dat.gibson2002")
 dat <- dat.gibson2002
-setDT(dat)
 
 # Drop NA values for the SMD type effect sizes
-dat <- dat[!is.na(m1i), ]
+dat <- dat %>% filter(!is.na(m1i))
 
 # Calculate coefficient of variation:
-dat[, cv1 := sd1i / m1i]
-dat[, cv2 := sd2i / m2i]
-nrow(dat[cv1 > 2 | cv2 > 2, ])/nrow(dat) * 100
+dat <- dat %>%
+  mutate(cv1 = sd1i / m1i,
+         cv2 = sd2i / m2i)
+
+n_overdispersed <- dat %>% 
+  filter(cv1 > 2 | cv2 > 2) %>%
+  nrow()
+n_overdispersed/nrow(dat) * 100
 
 ```
 
-It looks like 61% of this dataset has a $CV>2$!
+It looks like 46% of this dataset has a $CV>2$!
 
 ```{r}
 #| eval: true
@@ -428,22 +442,28 @@ geary <- function(sd, m, n){
   (m/sd) * (4*n^(3/2))/(1 + 4*n)
 }
 
-dat[, gl1 := geary(sd = sd1i, m = m1i, n = n1i)]
-dat[, gl2 := geary(sd = sd2i, m = m2i, n = n2i)]
-nrow(dat[gl1 > 3 | gl2 > 3]) / nrow(dat) * 100
+dat <- dat %>%
+  mutate(gl1 = geary(sd = sd1i, m = m1i, n = n1i),
+         gl2 = geary(sd = sd2i, m = m2i, n = n2i))
+
+
+n_overdispersed <- dat %>% 
+  filter(gl1 > 3 | gl2 > 3) %>%
+  nrow()
+n_overdispersed/nrow(dat) * 100
 
 ```
 
-It looks like \~77% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.
+It looks like \~54% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.
 
-An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation [@Nakagawa2023-tn].
+An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This may be an essential method when a significant amount of your data is overdispersed. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation [@Nakagawa2023-tn].
 
 Effective sample size is defined as: 
 $$
 \begin{aligned}
 N_{0} = \frac{4n_1n_2}{n_1 + n_2}\\
 \end{aligned}
-$$ 
+$${#eq-8}
 
 Let's go through a full example, with lnRoM as our effect size.
 
@@ -479,7 +499,8 @@ Now, let's run a model excluding the overdispersed data:
 
 ```{r}
 # Now let's run a sensitivity analysis by excluding overdispersed data
-sub.dat <- dat[cv1 <= 2 & cv2 <= 2, ]
+sub.dat <- dat %>% 
+  filter(cv1 <= 2 & cv2 <= 2)
 m2 <- rma.mv(yi, 
              V = vi,
              random = ~ 1 | author,
@@ -489,7 +510,8 @@ m2 <- rma.mv(yi,
 Finally, let's run a model using the inverse of effective sample size as our weight.
 
 ```{r}
-dat[, effective_N := (4*n1i*n2i)/(n1i+n2i)]
+dat <- dat %>%
+  mutate(effective_N = (4*n1i*n2i)/(n1i+n2i))
 
 m3 <- rma.mv(yi, 
              V = 1/effective_N,
@@ -532,15 +554,7 @@ ggplot(data = compare_estimates,
 
 It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produced similar results which were more conservative than when the entire dataset was analyzed.
 
-To summarize here are some solutions for overdispersed data. These methods, which unfortunately are rarely used and little known, should be commonplace in ecology, where overdispersed abundance data is common.
-
-| Method                            | Which effect sizes |
-|-----------------------------------|--------------------|
-| CV test                           | SMD, lnRoM    |
-| Geary-Lajeunesse test             | lnRoM, SMD???      |
-| 1/effective N instead of variance | lnRoM, SMD?  |
-| ???                               |                    |
-**Can delete this table if all the methods work for both SMD and lnRoM**
+</details>
 
 ## Heteroscedasticity {#sec-heteroscedasticity}
 
@@ -555,93 +569,6 @@ Are there rules of thumb for heteroscedasticity? Ratio of CV1 to CV2? What thres
 
 ```
 
-
-## Missing error bars {#sec-callout-missing-error-bars}
-
-Many studies report means but do not report error, which can lead to a tragic loss of data. 
-
-However, it is possible to use cross-study average coefficient of variation ($CV$) to calculate lnRoM point estimates and sampling variance for studies that did not report error [@Nakagawa2023-tn]. Remember that $CV = sd/m$. 
-
-This can potentially salvage a large number of effect sizes that would otherwise be excluded and presents a clear advantage to using lnRoM effect sizes, if the other assumptions (especially dimensionality and values > 0) are met.
-
-To illustrate, we'll use a dataset provided by `escalc` (the same one as above) and let's pretend that 3 of those studies did not report standard deviation (`sd1i`, `sd2i`):
-
-```{r}
-#| eval: true
-#| echo: false
-#| out-width: "70%"
-data("dat.gibson2002")
-dat <- dat.gibson2002
-setDT(dat)
-dat <- dat[!is.na(m1i), ]
-
-dat[sample(.N, 3), `:=` (sd1i = NA, sd2i = NA)]
-
-knitr::kable(dat)
-```
-
-Let's now calculate $CV$ per row:
-
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-dat <- dat %>%
-  mutate(cv1 = sd1i / m1i,
-         cv2 = sd2i / m2i)
-
-```
-
-Given that all studies have means, calculating the point estimate for lnRoM is no problem. However, how do we include the studies that didn't report standard deviation?
-
-The first option is to use average cross study CV ($\bar{CV}$) to calculate sampling variance for just the missing data (the "missing data" option in @Nakagawa2023-tn). This is the right option if there is high heterogeneity in $CV$ within your dataset. **By what thresholds??**
-
-The second option is to use $\bar{CV}$ to calculate sampling variance for all the studies in your dataset ("all cases" option in @Nakagawa2023-tn). This, surprisingly, was the least biased option in the simulations by @Nakagawa2023-tn. We recommend doing both and, as the song goes "XXXXX" **(Sage is going to come up with a song about sensitivity analyses)**.
-
-Note that the following calculations are not encapsulated within `escalc` and you thus need to use our custom functions. **ADD TO EFF_SIZE()????**.
-
-First, let's calculate the "missing cases" option:
-
-**I'm confused by the formulas in @Nakagawa2023-tn...It looks like they return a cross-study value, which would mean that all effect sizes would have the same weight. I'm confused...**
-
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-# DO R STUFF HERE
-
-```
-
-Next, let's calculate the "all cases" option:
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-# DO R STUFF HERE
-
-```
-
-We now have 3 separate ways of fitting our models, with `yi` and `vi` as our point and variance estimate columns: 
-
-- Using only the studies that reported standard deviation (and using the `yi` and `vi` returned by `escalc`)
-
-- Using the `yi` and `vi` returned by `escalc` alongside the "missing cases" calculations of `yi` and `vi`
-
-- Using the `yi` and `vi` from the "all cases" method.
-
-:::callout-important
-If your data is overdispersed anyways, then an alternative to the formulas above is to calculate the inverse of effective sample size, and use this as your model weight. See [above](#sec-overdispersion) and @Nakagawa2023-tn. Note that doing so limits you to lnRoM, since SMD requires $sd$ in the point estimator formula and thus requires $sd$ directly.
-
-Effective sample size is defined as:
-$$
-\begin{aligned}
-&N_{0} = \frac{4n_1n_2}{n_1 + n_2}\\
-\end{aligned}
-$$
-:::
 
 # Conclusion---which effect size to use?
 
@@ -669,6 +596,13 @@ eff_size(effect_type = "lnRoM",
 ```
 
 Finally, if your data fails the Geary-Lajeunesse test described [above](#sec-overdispersion) or has $CV>2$, we recommend running models that excluding overdispersed data and with the inverse of effective N as your model weights [@Nakagawa2023-tn].
+
+:::callout-important
+#### Missing error bars
+
+Note that some extraction challenges may also influence your choice of effect size. For example, it is possible to calculate lnRoM for data that did not report error (e.g., standard deviation, standard error, etc) by imputing error with cross-study coefficient of variation [@Nakagawa2023-tn]. This is a good reason to use lnRoM but has to be weighed against the other numeric assumptions described above. We discuss this further [here](3.2-smd-challenges.qmd#sec-callout-missing-error-bars).
+
+:::
 
 # Alternative estimators {#sec-alternative-estimators}
 
@@ -715,7 +649,10 @@ As you can see, the point estimate remained the same but the variance was reduce
 
 For SMD, there is also a paired version that is comparable to non-paired values (e.g., you can include both in the same analysis). However, to the best of our knowledge, these are not available in `escalc`.
 
-There are several other options available in `escalc` to account for paired designs. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See the [cheatsheet](5-escalc-cheatsheet.qmd) where we attempt to clear up these (in)compatibilities. For that reason, you need to use our function `eff_size`:
+There are several other options available in `escalc` to account for paired designs with SMD-type data. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See the [cheatsheet](6-escalc-cheatsheet.qmd) where we attempt to clear up these (in)compatibilities. 
+
+For that reason, you need to use our function `eff_size`. `eff_size` has a paired formulation of SMD that only influences the sampling variance and can thus be compared with unpaired SMD estimates, like those returned by `escalc`. NEED A REF TO THIS, I GUESS THE SAFE MS?
+
 
 ```{r}
 #| echo: true
@@ -741,5 +678,14 @@ cbind(unpaired, paired)
 
 ```
 
+As you can see, the paired version reduced the sampling variance but not the point estimate. The formula for paired SMD point estimates and sampling variance is here:
 
-
+$$
+\begin{aligned}
+&J = 1 - \frac{3}{4 * (2n - 2) - 1} \\
+&sd_{pooled} = \sqrt{\frac{sd_1^2(n-1) + sd_2^2(n-1)}{2n - 2}} \\
+&d = \frac{m_1 - m_2}{sd_{pooled}} \\
+&g = J * d \\
+&Var(g) = \frac{2 * (1-r)}{n} + \frac{d^2}{2 * (n-1)} \\
+\end{aligned}
+$${#eq-9}
