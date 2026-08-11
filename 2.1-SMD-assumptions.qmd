@@ -184,7 +184,7 @@ Sometimes life as a meta-analyzer is that sweet and nice, you can just plunk tho
 #| out-width: "70%"
 
 escalc(m1i = 7, sd1i = 1.2, n1i = 15,
-       m2i = 12, sd2i = 0.9, n2i = 15,
+       m2i = 9, sd2i = 0.9, n2i = 15,
        measure = "SMD")
 
 ```
@@ -197,7 +197,25 @@ However, SMD values are difficult to interpret. We generally use the following r
 
 - $SMD > |0.2| \approx$ small effect.
 
-In the case above, an SMD of -4.6 can be considered a **strongly negative** effect.
+In the case above, an SMD of -1.83 can be considered a **strongly negative** effect.
+
+:::callout-important
+##### Common Language Effect Size
+An alternative to the SMD interpretation values above is to convert SMD to the "Common Language Effect Size" (CLES) [@McGraw1992-ae]. This can be discussed in terms of the chance that a **randomly picked item from group 1 will have a higher value than a randomly picked item from group 2.**
+
+To calculate CLES from the SMD value of -1.8346 (from above):
+
+```{r}
+#| echo: true
+#| eval: true
+
+pnorm(-1.8346 / sqrt(2))
+
+```
+If our original SMD value pertained to individuals as the unit of replication, we could then write: "We found a 9.7% chance that a person in group 2 (`m2i`) was higher than any randomly individual in group 1."
+
+This can be a useful, albeit a bit linguistically challenging, way to interpret SMD values. 
+:::
 
 This is clunky. One of the big advantages of lnRoM is that it (and the overall meta-analytic model estimates) can be converted to % change. Let's calculate lnRoM with the same summary statistics:
 
@@ -205,7 +223,7 @@ This is clunky. One of the big advantages of lnRoM is that it (and the overall m
 #| echo: true
 #| eval: true
 escalc(m1i = 7, sd1i = 1.2, n1i = 15,
-       m2i = 12, sd2i = 0.9, n2i = 15,
+       m2i = 9, sd2i = 0.9, n2i = 15,
        measure = "ROM")
 
 ```
@@ -220,11 +238,11 @@ In `R`:
 #| echo: true
 #| eval: true
 
-(exp(-0.5390) - 1) * 100
+(exp(-0.2513) - 1) * 100
 
 ```
 
-Therefore an lnRoM of -0.5390 is equivalent to a -41.6% decrease as a result of the treatment. Being able to convert lnRoM to % change is one of the reasons this effect size is so powerful. However, as we described [above](#sec-smd-or-lnrom), you have to be careful with your assumptions.
+Therefore an lnRoM of -0.2513 is equivalent to a -22.6% decrease as a result of the treatment. Being able to convert lnRoM to % change is one of the reasons this effect size is so powerful. However, as we described [above](#sec-smd-or-lnrom), you have to be careful with your assumptions.
 
 ## Values ≤ 0
 A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of robust [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs. If means ≤ 0 are common in your dataset then you may have to use SMD to calculate effect sizes for these data.
