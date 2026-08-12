@@ -12,92 +12,32 @@
 
 DEBUG <- F
 if(DEBUG){
-  #   
+  
   # rm(list = ls())
   library("data.table")
   library("MASS")
   library("tmvtnorm")
   
-  x1 <- 20
-  sd1 <- 1.5
-  x2 <- 15
-  sd2 <- 1
-  n1 <- 10
-  n2 <- 10
-  formula_path = "data/effect_size_formulas.csv"
-  effect_formulas <- fread(formula_path)
-  # formula <- "log(x1 / x2)"
-  # eval(parse(text = formula))
-  input_vars = list(  x1 = 20,
-                      sd1 = 1.5,
-                      x2 = 15,
-                      sd2 = 1,
-                      n1 = 10,
-                      n2 = 10)
-  
-  effect_type <- "lnRoM"
+  # x1=10; x2=15; sd1=2; sd2=1.7; n=20; r=0.5
+  effect_type = "lnM"
   data = NULL
   bind = TRUE
   verbose = TRUE
   default_formulas = TRUE
-  paired = FALSE
-  SAFE = FALSE
+  paired = TRUE
+  SAFE = TRUE
   SAFE_boots = 1e6
   SAFE_distribution = NULL 
   sigma_matrix = NULL
+  formula_path = "data/effect_size_formulas.csv"
+  effect_formulas <- fread(formula_path)
   
-  eff_size(x1 = 20,
-           sd1 = 1.5,
-           x2 = 15,
-           sd2 = 1,
-           n1 = 10,
-           n2 = 10,
-           effect_type = "lnRoM")
-  
-  eff_size(x1 = x1,
-           sd1 = sd1,
-           x2 = x2,
-           sd2 = sd2,
-           n1 = n1,
-           n2 = n2,
-           effect_type = "lnRoM",
-           data = as.data.frame(input_vars),
-           bind = TRUE,
-           verbose = TRUE,
-           default_formulas = TRUE,
-           paired = FALSE,
-           SAFE = FALSE,
-           SAFE_boots = 1e6,
-           SAFE_distribution = NULL,
-           sigma_matrix = NULL)
+  input_vars = list(x1=10, x2=15, sd1=2, sd2=1.7, n=20, r=0.5)
   
   
-  effect_formulas.sub <- effect_formulas[effect_size == effect_type & paired_design == FALSE, ]
   
   
-  eff_size(x1 = 20,
-           sd1 = 1.5,
-           x2 = 15,
-           sd2 = 1,
-           n1 = 10,
-           n2 = 10,
-           effect_type = "lnRoM",
-           data = NULL,
-           bind = TRUE,
-           verbose = TRUE,
-           default_formulas = TRUE,
-           paired = FALSE,
-           SAFE = FALSE,
-           SAFE_boots = 1e6,
-           SAFE_distribution = NULL,
-           sigma_matrix = NULL)
-  #
-  # formula_path = "remote_mirrors/round_1/data/effect_size_formulas.csv"
-  # effect_type = "lnRoM"
-  # paired_design = FALSE
-  # input_vars <- list(x1=x1, x2=x2, sd1=sd1,
-  #                    n1=n1, n2=n2)
-  # data = scenarios
+  
   
 }
 
@@ -127,6 +67,7 @@ if(DEBUG){
 
 
 #' *MASTER FUNCTION*
+
 eff_size <- function(..., 
                      effect_type = NULL,
                      data = NULL, # Data frame including the variables
@@ -155,6 +96,7 @@ eff_size <- function(...,
     cat(red("Effect size table not found. Specify with formula_path"))
     stop()
   }
+  
   setorder(effect_formulas, effect_size, calc_type)
   
   # Check that effect type is specified and filter formulas
@@ -177,16 +119,25 @@ eff_size <- function(...,
     return(unique(effect_formulas[, .(effect_size, vars_required)]))
     
   }
+
+  # If SAFE is unsupported let the user know and set SAFE to FALSE
+  if(all(is.na(effect_formulas.sub$SAFE_family))){
+    SAFE <- FALSE
+    cat(blue("SAFE is currently not implemented for this effect size"))
+  }
+  
   if(SAFE == FALSE){
     # Drop extra rows for multiple SAFE methods:
-    effect_formulas.sub <- effect_formulas.sub[default_safe_family %in% c("yes", "") |  
-                                                 is.na(default_safe_family), ]
+    effect_formulas.sub <- effect_formulas.sub[default_safe_family %in% c("yes"), ]
   }
+  
   # Get the required variables:
   vars <- strsplit(unique(effect_formulas.sub$vars_required), split = ", ") |> 
     unlist()
   
   # >>> Parse inputs ----------------------------------------------------
+  # If debugging, skip this section
+  
   # Function can now accept vectors or NSE inputs (unquoted column names)
   call_expr <- match.call(expand.dots = TRUE)
   args <- as.list(call_expr)[-1]
@@ -223,12 +174,12 @@ eff_size <- function(...,
     cat("Paired design selected", red("but 'r' not specified."), "Setting 'r' to 0.5\n")
     input_vars$r <- rep(0.5, max(lengths(input_vars)))
     
-    # This is not true:
-    # cat("If a mixture of paired and unpaired data, please supply a vector named 'r' with `0`s for unpaired and 'r' for paired designs. 0.5 or 0.8 are commonly used measures for 'r' if unknown.")
-    #' [This could cause trouble later...]
+
   }else if(paired == FALSE &
            !"r" %in% names(input_vars)){
+    
     input_vars$r <- rep(0, max(lengths(input_vars))) # This is necessary for the shared sigma_matrices of some effect sizes
+    
   }
   
   # return(input_vars)
@@ -240,15 +191,16 @@ eff_size <- function(...,
   }
   
   # Print effect size specific warnings, e.g., 0 in lnOR and lnRR
-  if(!is.na(unique(effect_formulas.sub$special_warnings)) & verbose == TRUE){
-    cat(unique(effect_formulas.sub$special_warnings), 
+  if(!is.na(unique(effect_formulas.sub$special_warnings)) &
+     verbose == TRUE){
+    cat(unique(effect_formulas.sub$special_warnings), "\n",
         "Leaving it to user's discretion to check prior to execution.\n\n")
   }
   
   # Deal with alternative SAFE distributions.
-  #' [I think this can be streamlined]
-  if(is.null(SAFE_distribution) & "yes" %in% effect_formulas.sub$default_safe_family
-     & SAFE == TRUE){
+  if(is.null(SAFE_distribution) & 
+     "yes" %in% effect_formulas.sub$default_safe_family & 
+     SAFE == TRUE){
     # If unspecified (SAFE_distribution == NULL & there are multiple options for default, then choose default
     effect_formulas.sub <- effect_formulas.sub[default_safe_family == "yes", ]
   }else if(!is.null(SAFE_distribution)){
@@ -295,7 +247,7 @@ eff_size <- function(...,
     if(length(plugin_effect_size) != max(index)){ return(cat("Shit.")) }
     
     #' *For debugging:*
-    # formulas = effect_formulas.sub
+    # formulas = definition_formula # Shouldn't this be definition_formula?
     # k <- 1
     # input_k = lapply(input_vars, "[[", k) # select the first element in each element...
     # plugin_effect_k = plugin_effect_size[k]
@@ -307,7 +259,7 @@ eff_size <- function(...,
     safe_out <- lapply(index, function(k){
       if(verbose) cat("SAFE:", magenta(k, "/", max(index), "\r"))
       
-      return(SAFE_calc(formulas = effect_formulas.sub,
+      return(SAFE_calc(formulas = definition_formula, # Changed to this from `effect_formulas.sub`
                        input_k = lapply(input_vars, "[[", k), # select the first element in each element...
                        plugin_effect_k = plugin_effect_size[k],
                        sigma_matrix_k = sigma_matrix[[k]], # submit custom sigma_matrix if it exists.
@@ -375,7 +327,7 @@ SAFE_calc <- function(formulas,
                       input_k[!names(input_k) %in% names(cloud)] |> unlist() |> t() |> data.table())
   
   # Convert cloud
-  cloud_trans <- calc_effect(formulas = formulas[calc_type == "effect_size" &
+  cloud_trans <- calc_effect(formulas = formulas[calc_type == "point_estimate" &
                                                    derivative == "first", ],
                              input = cloud)$yi_first
   
@@ -399,6 +351,11 @@ parameter_cloud <- function(formulas,
                             input,
                             sigma_matrix = NULL,
                             SAFE_boots = 1e6){
+  # If paired, add n1 and n2 to input...
+  if(formulas$paired_design == TRUE){
+    input$n1 <- input$n
+    input$n2 <- input$n
+  }
   
   # Construct sigma matrices ------------------------------------------------
   if(any(formulas$SAFE_family %in% "1_normal")){

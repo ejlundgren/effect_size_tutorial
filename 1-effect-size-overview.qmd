@@ -41,6 +41,7 @@ execute:
   message: false
   tidy: true
 bibliography: references.bib
+csl: ecology.csl
 ---
 
 # A brief introduction to effect sizes and sampling variance  {#sec-introduction-to-effect-sizes}
@@ -55,11 +56,13 @@ Every meta-analytic effect size is associated with *sampling variance*. Sampling
 
 # Effect size types {#sec-effect-size-types}
 
-We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies of a response variable in relation to categorical or continuous predictor variables. 
+We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable in relation to categorical or continuous predictor variables. 
 
-There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@REF]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. These, alongside other, less common effect sizes for single-group descriptive statistics are briefly presented in the `escalc` [cheatsheet](6-escalc-cheatsheet.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/) and are discussed [below](#sec-custom-effect-sizes).
+There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@Nakagawa2026-wn]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. 
 
-We here focus this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution:
+These, alongside other, effect sizes for single-group descriptive statistics are described in the [appendix](5-less-common-effect-sizes.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/) [@Nakagawa2025-do] and are discussed [below](#sec-custom-effect-sizes).
+
+We here focus the majority of this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution (@REF):
 
 1)  standardized mean difference (SMD) and log-transformed ratio of means (lnRoM)
 
@@ -67,7 +70,7 @@ We here focus this tutorial on the mathematical assumptions, alternative formula
 
 3)  correlation coefficient (Zr)
 
-**Need names for each category**
+**Better names for each category?**
 
 These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.
 
@@ -81,9 +84,8 @@ The correlation between continuous predictors and continuous responses are analy
 
 Finally, it is also possible to convert between these main effect size types, which we discuss at the [end](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types [@borenstein2021]. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
 
-
-:::callout-note
-########## Effect size types are not always clearcut {#sec-effect-size-options}
+:::callout-important
+### Effect size types are not always clearcut {#sec-effect-size-options}
 
 The choice of what effect size to use may seem very simple. For example, if you are analyzing studies with a binary predictor and a continuous response variable, then SMD/lnRoM effect sizes seem like the obvious choice. 
 
@@ -93,7 +95,12 @@ If you use an SMD-type effect size, then you should treat the *difference* in de
 
 An alternative is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. 
 
+In some situations, even experimental data may, potentially, be better analyzed as a single-group effect size if most studies used >2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or different predator densities). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the various experimental groups (e.g., the temperature of each treatment) as predictors in a metaregression. 
+
+This applies both to continuous data summarized by mean±sd as well as binary outcome data. We describe single-group effect sizes in the appendix, [here](5-less-common-effect-sizes.qmd#sec-single-group).
+
 Note that it is also possible to formulate custom effect sizes that may help simplify these situations, e.g., by explicitly including density. See our section [below](#sec-custom-effect-sizes) and @Noble2022-pl for discussion about the potential to formulate custom effect sizes to help account for nuisance heterogeneity.
+
 :::
 
 # Calculating effect sizes & sampling variance {#sec-calculating-effect-sizes}
@@ -217,21 +224,24 @@ We try to clear up this confusion in the [appendix](6-escalc-cheatsheet.qmd) wit
 
 # Less common effect sizes {#sec-less-common-effect-sizes}
 
-The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, [@Nakagawa2026-wn]) or variability between two groups (lnCVR, [@Nakagawa2015-tq]). There are also effect sizes for summarizing proportion data, and other single-variable type statistics. We cover many of these in the `escalc` [tutorial](6-escalc-cheatsheet.qmd). Many of these, such as lnM and lnCVR can readily be calculated with the same statistical ingredients as SMD and lnRoM (e.g., means, standard deviation, sample size).
+The effect sizes we've thus discussed describe the mean of an outcome variable in relation to a discrete or continuous predictor. However, there are also less commonly used effect sizes that are interested in the magnitude of differences between two groups (lnM, [@Nakagawa2026-wn]) or variability between two groups (lnCVR, [@Nakagawa2015-tq]). These can readily be calculated with the same statistical ingredients as SMD and lnRoM (e.g., means, standard deviation, sample size) and thus present similar extraction challenges (and assumptions) as the main effect size types in this tutorial.
+
+There are also effect sizes for summarizing single-group means±error and proportions, which we discuss in the appendix [here](5-less-common-effect-sizes.qmd). These may be useful even in experimental settings, which we discuss [above](#sec-effect-size-options)
+
 
 # Custom effect sizes {#sec-custom-effect-sizes}
 
-You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method (see the tutorial [here](https://ejlundgren.github.io/SAFE/)).
+You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to either derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method [see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do].
 
-However, custom effect sizes (or at least rare effect sizes) can also be very useful even with data that is readily synthesizable with common effect sizes, like those we discussed above (SMD/lnRoM/etc). 
+However, custom effect sizes (or at least rare effect sizes) can also be useful even with data that is readily synthesizable with the effect sizes we discussed above. 
 
 For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator.
 
 However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.
 
-Another way of thinking about this problem is to use an effect size that explicitly includes the temperature difference [@Noble2022-pl]. For example, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable. You can also draw the resulting point cloud estimated by the means±SD of each temperature treatment with `rnorm` (see [here](3.4-Zr-challenges.qmd#sec-error-bars) where we demonstrate this method) and then calculating the correlation with temperature.
+Another way of thinking about this problem is to use an effect size that explicitly includes the temperature difference [@Noble2022-pl]. For example, instead of treating the temperature difference as a moderator you could instead calculate a Zr effect size, with temperature as the predictor variable. You can also draw the resulting point cloud estimated by the means±SD of each temperature treatment with `rnorm` (see [here](3.4-Zr-challenges.qmd#sec-error-bars) where we demonstrate this method) and then calculate the correlation with temperature.
 
-Another, potentially preferable option, would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference in its point estimate. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$. 
+Another option, would be to use an effect size based on the mean±SD of two groups that explicitly includes the temperature difference in its point estimate. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the difference between two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$. 
 
 
 $$
@@ -241,8 +251,8 @@ $$
 $${#eq-3}
 
 
-Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by REF using the Delta method) or with the [SAFE method](https://ejlundgren.github.io/SAFE/) (REF). These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). 
+Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by @havird2020 using the Delta method) or with the [SAFE method](https://ejlundgren.github.io/SAFE/) [@Nakagawa2025-do]. These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). 
 
-We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this is the most robust way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly with your effect size. See [@Noble2022-pl] for a thorough discussion of these matters. If there is consistent heterogeneity like this in your meta-analysis, consider whether a custom or less-used effect size would help explicitly capture heterogeneity, leading to simpler models, better model estimates, and simpler interpretation of your results.
+We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this may be the best way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly with your custom effect size. See [@Noble2022-pl] for a thorough discussion of these matters. 
 
 In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.

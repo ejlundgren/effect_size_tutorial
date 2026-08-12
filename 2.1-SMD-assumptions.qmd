@@ -41,6 +41,7 @@ execute:
   message: false
   tidy: true
 bibliography: references.bib
+csl: ecology.csl
 ---
 
 ```{r}
@@ -189,7 +190,7 @@ escalc(m1i = 7, sd1i = 1.2, n1i = 15,
 
 ```
 
-However, SMD values are difficult to interpret. We generally use the following rules of thumb: 
+However, SMD values are difficult to interpret. They ultimately mean the number of standard deviations between each group. But we generally use the following rules of thumb to interpret them:
 
 - $SMD > |0.8| \approx$ strong effect 
 
@@ -202,6 +203,8 @@ In the case above, an SMD of -1.83 can be considered a **strongly negative** eff
 :::callout-important
 ##### Common Language Effect Size
 An alternative to the SMD interpretation values above is to convert SMD to the "Common Language Effect Size" (CLES) [@McGraw1992-ae]. This can be discussed in terms of the chance that a **randomly picked item from group 1 will have a higher value than a randomly picked item from group 2.**
+
+*Is it possible to convert model estimates of SMD to CLES? If not, then let's delete this section*
 
 To calculate CLES from the SMD value of -1.8346 (from above):
 
@@ -218,7 +221,7 @@ If our original SMD value pertained to individuals as the unit of replication, w
 This can be a useful, albeit a bit linguistically challenging, way to interpret SMD values. 
 :::
 
-This is clunky. One of the big advantages of lnRoM is that it (and the overall meta-analytic model estimates) can be converted to % change. Let's calculate lnRoM with the same summary statistics:
+All of these methods for SMD are a bit clunky. One of the biggest advantages of lnRoM is that it (and the overall meta-analytic model estimates) can be easily converted to % change. Let's calculate lnRoM with the same summary statistics:
 
 ```{r}
 #| echo: true

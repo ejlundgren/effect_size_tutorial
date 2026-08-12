@@ -5,6 +5,7 @@ date: today
 author:
   - name: Erick J Lundgren
   - name: Eduardo S A Santos
+  - name: Santiago Ortega
   - name: Malgorzata Lagisz
   - name: Sage Raymond
   - name: Kyle Morrison
@@ -15,7 +16,6 @@ author:
   - name: Jonas Trepel
   - name: Eamonn Wooster
   - name: Ayumi Mizuno
-  - name: Santiago Ortega
   - name: Iwo Gross
   - name: Wolfgang??
   - name: Shinichi Nakagawa
@@ -58,6 +58,7 @@ execute:
   message: false
   tidy: true
 bibliography: references.bib
+csl: ecology.csl
 ---
 
 ```{r}
@@ -81,7 +82,7 @@ library("crayon")
 ```
 
 ```{r}
-#| eval: true
+#| eval: false
 #| echo: false
 #| output: false
 
@@ -93,6 +94,12 @@ file.copy("../package_development/metatools_dev/data/effect_size_formulas.csv",
           "data/effect_size_formulas.csv",
           overwrite = T)
 
+file.copy("../package_development/metatools_dev/scripts/1_functions/eff_size.R",
+          "scripts/functions/eff_size.R",
+          overwrite = T)
+file.copy("../package_development/metatools_dev/scripts/1_functions/convert_effect_sizes.R",
+          "scripts/functions/convert_effect_sizes.R",
+          overwrite = T)
 
 # Source our custom functions:
 source("scripts/functions/eff_size.R")
@@ -126,7 +133,7 @@ While you struggle to deal with all the strange and bizarre and difficult and an
 
 We begin by discussing the dominant [effect size types](1-effect-size-overview.qmd), their numeric assumptions, and how to interpret them. We then discuss the nuts and bolts of planning data [extraction](3.0-starting-extraction.qmd). 
 
-We then go into detail about [universal challenges](3.1-universal-challenges.qmd) in extracting and calculating effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to [convert](4-converting-effect-sizes.qmd) between effect size types. In the appendix you'll find additional helpful material, including a [cheatsheet](6-escalc-cheatsheet.qmd) for the many options available in the workhorse of effect size calculation: metafor's `escalc` function [@Viechtbauer2010-uq].
+We then go into detail about [universal challenges](3.1-universal-challenges.qmd) in extracting and calculating effect sizes, including the many odd and unusual data formats that you may uncover. We conclude with a discussion of how to [convert](4-converting-effect-sizes.qmd) between effect size types. In the appendix you'll find additional helpful material, including descriptions of [less common](5-less-common-effect-sizes.qmd), a [cheatsheet](6-escalc-cheatsheet.qmd) for the many options available in the workhorse of effect size calculation: `metafor`'s `escalc` function [@Viechtbauer2010-uq].
 
 This tutorial is viewable as a webpage or you can clone the repo and run the .qmd files interactively. This tutorial corresponds with the cheatsheets provided here *XXXXXX.*
 
