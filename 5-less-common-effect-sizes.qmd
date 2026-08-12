@@ -90,32 +90,44 @@ eff_size(x1 = 15, x2 = 10,
          n1 = 15, n2 = 15,
          effect_type = "lnM",
          SAFE = TRUE)
+
 ```
-The `yi` and `vi` are the plugin-calculations of lnM point estimate (`yi`) and sampling variance (`vi`). The `yi_safe`, `vi_safe`, and `SE_safe` are SAFE calculations. To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do.
+The `yi` and `vi` are the plugin-calculations of lnM point estimate and sampling variance, respectively. The `yi_safe`, `vi_safe`, and `SE_safe` are SAFE calculations. To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
 
+For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call above.
 
-In `orchaRd`, use the internal function `.lnM`:
+In `orchaRd`, use the internal function `.safe_lnM_indep` (for independent, unpaired cases). Note that this has to be namespaced with three colons (`:::`):
 
-**THIS DOESN"T WORK:**
 ```{r}
-#| eval: false
+#| eval: true
 #| echo: true
 #| out-width: "70%"
 
 orchaRd:::.safe_lnM_indep(x1 = 15, x2 = 10, 
-         sd1 = 1.5, sd2 = 2,
-         n1 = 15, n2 = 15)
+                         sd1 = 1.5, sd2 = 2,
+                         n1 = 15, n2 = 15)
 
+```
+This function returns both the point estimate (`lnM_SAFE`), variance (`var_lnM_SAFE`) and the number of successful SAFE bootstraps.
 
+And for dependent cases:
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+orchaRd:::.safe_lnM_dep(x1 = 15, x2 = 10, 
+                       sd1 = 1.5, sd2 = 2,
+                       n = 15, r = 0.5)
 
 ```
 
-Please see the following tutorial for more information about lnM [here](https://itchyshin.github.io/meta-analysis_of_magnitude/).
+Please see the following tutorial for more information about lnM [link](https://itchyshin.github.io/meta-analysis_of_magnitude/).
 
 ## Differences in variability {#sec-two-group-variability}
-The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, and should not be thought of merely as noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important stories about selective pressures which can either act to increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce variation in traits [@Crispo2007-nf]. 
+The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce variation [@Crispo2007-nf]. 
 
-There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors as in SMD and lnRoM effect sizes): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
+There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
 
 ### lnVR {#sec-lnVR}
 **lnVR** is the *log-transformed variability ratio*, defined as $log(\frac{sd_1}{sd_2})$. This effect size is **not** standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable. 
@@ -143,7 +155,6 @@ escalc(measure = "VRC",
        sd1i = 1.5, sd2i = 2.5,
        ni = 15, ri = 0.5)
 ```
-
 
 ### lnCVR {#sec-lnCVR}
 **lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.
@@ -176,12 +187,14 @@ escalc(measure = "CVRC",
 # Single group effect sizes {#sec-single-group}
 While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we're interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.
 
-For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported tiger diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock. These single-group proportions can be converted to effect sizes (so that they obtain a sampling variance estimation). You can then use metaregression to evaluate the influence of various moderators (e.g., human density, elevation, prey density) on livestock depredation rates.
+For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock. These single-group proportions can be converted to effect sizes (so that they obtain a sampling variance estimation). You can then use metaregression to evaluate the influence of various moderators (e.g., human density, elevation, prey density) on livestock depredation rates.
 
 :::callout-important
 In some situations, even experimental data may potentially, be better to analyze as a single-group effect size if most studies used >2 experimental groups or if experimental treatments were extremely different than each other. 
 
-For example, instead of calculating two-group effect sizes between each experimental treatment and the control (e.g., SMD, lnRoM, or lnOR, lnRR), you could calculate single group effect sizes for each group, and then use the various experimental groups as predictors in a metaregression. This would be especially useful if the experimental treatments were different densities of an organism (say a predator) or different temperature treatments. 
+For example, instead of calculating two-group effect sizes between each experimental treatment and the control (e.g., SMD, lnRoM, or lnOR, lnRR), you could calculate single group effect sizes for each group, and then use the various experimental groups as predictors in a metaregression. 
+
+This would be especially useful if the experimental treatments were different densities of an organism (say a predator or herbivore) or different temperature treatments. 
 
 Note that this is possible both with continuous data summarized by mean±sd as well as with binary outcome data.
 :::
