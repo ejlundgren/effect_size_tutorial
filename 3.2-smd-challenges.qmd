@@ -993,6 +993,8 @@ knitr::kable(final_dt)
 
 Voila, a dataset that constructs group means that are comparable, with an accurate sample size and pooled standard deviation. If the underlying data generating process is not normal (which is likely the case for ecological data, especially abundance data), then you probably want to use a [negative binomial](7-simulating-non-gaussian-responses.qmd#sec-negative-binomial) distribution to generate data.
 
+The treatment variable (`status`) in this simulated dataset is *paired*, which should be reflected in your effect size estimator choice. See [here](2.1-SMD-assumptions.qmd#sec-paired-designs) for descriptions of paired estimators for SMD and lnRoM
+
 </details>
 
 Unfortunately, if the sample size for each of the points in the figure above is unknown, then your best option if the number of groups is ≥3, is to ignore the standard deviation and calculate a new mean from each point for the two SMD comparison groups. Or, if the number of groups is <3, to calculate Zr from just the group means per point (ignoring the standard deviation).
@@ -1008,7 +1010,9 @@ However, one should be thoughtful and careful about the non-independence structu
 
 Reconstructing the underlying data with `rnorm`, as we demonstrated above, and then summarizing by the `mean±sd` of each treatment group mixes these non-independence structures.
 
-For that reason, we suggest that data extracted like this should be tagged and that you should record whether the data was summarized across time, across spatially-independent samples (or different individuals), or across both. These factors may explain methodological heterogeneity in your dataset. Note that similar mixtures of spatially, temporally, or spatiotemporally summarized data are also likely embedded within author-reported means±sds (which we also [recommend](3.1-universal-challenges.qmd#sec-callout-non-independence) recording)
+For that reason, we suggest that data extracted like this should be tagged and that you should record whether the data was summarized across time, across spatially-independent samples (or different individuals), or across both. These factors may explain methodological heterogeneity in your dataset. Note that similar mixtures of spatially, temporally, or spatiotemporally summarized data are also likely embedded within author-reported means±sds (which we also [recommend](3.1-universal-challenges.qmd#sec-callout-non-independence) recording).
+
+A potentially better approach would be to generate the data with `MASS:mvrnorm` and specify individual correlations within each group (`rho`), which could be set to 0.8.
 :::
 
 
