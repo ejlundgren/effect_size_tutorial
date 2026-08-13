@@ -67,7 +67,12 @@ csl: ecology.csl
 #| out-width: "70%"
 
 rm(list = ls())
-library("metaDigitise")
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
 library("ggplot2")
 library("data.table")
 library("ggpattern")
@@ -78,32 +83,6 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
-
-```
-
-```{r}
-#| eval: false
-#| echo: false
-#| output: false
-
-
-file.copy("../package_development/metatools_dev/data/conversion_formulas.csv",
-          "data/conversion_formulas.csv",
-          overwrite = T)
-file.copy("../package_development/metatools_dev/data/effect_size_formulas.csv",
-          "data/effect_size_formulas.csv",
-          overwrite = T)
-
-file.copy("../package_development/metatools_dev/scripts/1_functions/eff_size.R",
-          "scripts/functions/eff_size.R",
-          overwrite = T)
-file.copy("../package_development/metatools_dev/scripts/1_functions/convert_effect_sizes.R",
-          "scripts/functions/convert_effect_sizes.R",
-          overwrite = T)
-
-# Source our custom functions:
-source("scripts/functions/eff_size.R")
-source("scripts/functions/convert_effect_sizes.R")
 
 ```
 

@@ -44,6 +44,29 @@ bibliography: references.bib
 csl: ecology.csl
 ---
 
+```{r}
+#| eval: true
+#| echo: false
+
+rm(list = ls())
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+```
+
 The effect sizes that we've described in depth in this tutorial have concerned the direction and magnitude of *mean* relationships between two variables.
 
 However, there are also effect sizes to describe the absolute magnitude of differences between groups (**lnM**), to describe differences in variability (or heteroscedasticity) between two groups (**lnVR** and **lnCVR**) and effect sizes to summarize single-group means and proportions. Extracting data for these effect sizes should be fundamentally similar as the other effect size types that this tutorial was dedicated to. We here briefly discuss these effect sizes, their assumptions, and how to calculate them in `R`.
@@ -64,21 +87,35 @@ Complicated and weird. Need to subtract something from it. Blah blah blah. SANTI
 ### How to calculate {#sec-lnM-how-to}
 The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should use SAFE bootstrapping [@Nakagawa2025-do].
 
-As such, this effect size has to be calculated in the package `orchaRd` [@Nakagawa2023-ol] or with our function `eff_size`:
+As such, this effect size has to be calculated in the package `orchaRd` [@Nakagawa2023-ol]. Note that this has to be namespaced with three colons (`:::`):
 
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
 
-source("scripts/functions/eff_size.R")
-source("scripts/functions/convert_effect_sizes.R")
-
 library("orchaRd")
+orchaRd:::.safe_lnM_indep(x1bar = 15, x2bar = 10, 
+                           sd1 = 1.5, sd2 = 2,
+                           n1 = 15, n2 = 15)
 
 ```
 
-In `eff_size` be sure to set `SAFE=TRUE` in the function arguments:
+For the dependent (i.e., paired version):
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+orchaRd:::.safe_lnM_dep(x1bar = 15, x2bar = 10, 
+                           sd1 = 1.5, sd2 = 2,
+                           n = 15, r = 0.8)
+
+```
+
+These functions returns both the point estimate (`lnM_SAFE`), variance (`var_lnM_SAFE`) and the number of successful SAFE bootstraps.
+
+In `eff_size` be sure to set `SAFE=TRUE` in the function arguments.
 
 ```{r}
 #| eval: true
@@ -92,33 +129,29 @@ eff_size(x1 = 15, x2 = 10,
          SAFE = TRUE)
 
 ```
-The `yi` and `vi` are the plugin-calculations of lnM point estimate and sampling variance, respectively. The `yi_safe`, `vi_safe`, and `SE_safe` are SAFE calculations. To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
+
+The `yi` and `vi` are the plugin-calculations of lnM point estimate and sampling variance, respectively. These may often be `NA`, especially when the means between the two groups are similar. The `yi_safe`, `vi_safe`, and `SE_safe` are the SAFE estimates. 
+
+:::callout-note
+To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
+:::
+
+Note that the estimates for lnM from both the `orchaRd` and `eff_size` package use bootstrapping and will thus return slightly different values each time.
 
 For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call above.
 
-In `orchaRd`, use the internal function `.safe_lnM_indep` (for independent, unpaired cases). Note that this has to be namespaced with three colons (`:::`):
-
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
 
-orchaRd:::.safe_lnM_indep(x1bar = 15, x2bar = 10, 
-                         sd1 = 1.5, sd2 = 2,
-                         n1 = 15, n2 = 15)
+eff_size(x1 = 15, x2 = 10, 
+         sd1 = 1.5, sd2 = 2,
+         n = 15, r = 0.8,
+         effect_type = "lnM",
+         paired = TRUE,
+         SAFE = TRUE)
 
-```
-This function returns both the point estimate (`lnM_SAFE`), variance (`var_lnM_SAFE`) and the number of successful SAFE bootstraps.
-
-And for dependent cases:
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-orchaRd:::.safe_lnM_dep(x1 = 15, x2 = 10, 
-                       sd1 = 1.5, sd2 = 2,
-                       n = 15, r = 0.5)
 
 ```
 

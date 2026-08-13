@@ -109,7 +109,7 @@ The dominant function used to calculate effect sizes and sampling variance in `R
 
 **Not sure if we want to include `eff_size` but if we don't, we need to figure out some of the options in `escalc`, like paired SMD...**
 
-To start, let's clean the environment and load some packages:
+To start, we'll clean the environment and will install a custom package, `metatools` that we developed to go alongside this tutorial. This can be installed with `pak::pak` (which has replaced `devtools::install_github`). We'll also load some packages.
 
 ```{r}
 #| eval: true
@@ -117,7 +117,12 @@ To start, let's clean the environment and load some packages:
 #| out-width: "70%"
 
 rm(list = ls())
-library("metaDigitise")
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
 library("ggplot2")
 library("data.table")
 library("ggpattern")
@@ -128,10 +133,6 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
-
-# Source our custom functions:
-source("scripts/functions/eff_size.R")
-source("scripts/functions/convert_effect_sizes.R")
 
 ```
 
@@ -170,6 +171,10 @@ However, these estimators can produce *biased* estimates when sample size is low
 In general, `escalc` uses the best known estimator for each effect size type, which is often the second-order estimator. In the case of lnRoM, however, `escalc` uses the definition formula (@eq-1), or first-order estimator, which we can confirm here:
 
 ```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
 m1 <- 10
 m2 <- 6
 
@@ -181,12 +186,24 @@ escalc(measure = "ROM",
        n1i = 15, n2i = 15)
 ```
 
-Our function, `eff_this` is similar but provides a little bit more control because it can return all formula versions, the exact formula used, and you can customize the effect size formula table to add custom formulas. Run the function to see the potential formulas support and their inputs:
+Our function, `eff_this` is similar but provides a little bit more control because it can return all formula versions, the exact formula used, and you can customize the effect size formula table to add custom formulas. Run the function to see the potential formulas support and their inputs.
 
 ```{r}
+#| eval: true
+#| echo: true
 #| out-width: "70%"
 
-eff_size() |> head()
+eff_size()
+
+```
+
+You can also look at the documentation:
+```{r}
+#| eval: false
+#| echo: true
+#| out-width: "70%"
+
+?eff_size
 
 ```
 
@@ -206,7 +223,6 @@ eff_size(x1 = 10, x2 = 6,
 `yi_first` and `vi_first` are the definition formulas (@eq-1 and @eq-2). the `_second` variables are the bias-corrected estimates. If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
 You'll see in future sections that certain data types should use alternative estimators, which are mostly provided within `eff_size`. For example, if your data is normally distributed you should actually use the second-order estimator of lnRoM [@Lajeunesse2015-gw] and provided by `eff_size`. However, if your data is overdispersed, you should use the first-order estimator of lnRoM provided by `escalc` (and `eff_size`). 
-
 
 ## Alternative estimators {#sec-alternative-estimators}
 
