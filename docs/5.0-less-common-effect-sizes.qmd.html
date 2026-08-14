@@ -410,7 +410,9 @@ window.Quarto = {
 <span>         sd1 <span class="op">=</span> <span class="fl">1.5</span>, sd2 <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>         n1 <span class="op">=</span> <span class="fl">15</span>, n2 <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>         effect_type <span class="op">=</span> <span class="st">"lnM"</span>,</span>
-<span>         SAFE <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>         SAFE <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>         SAFE_boots <span class="op">=</span> <span class="fl">1e6</span>,</span>
+<span>         SAFE_max_secs <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Results are only reliable with SAFE method 
  Leaving it to user's discretion to check prior to execution.
@@ -426,7 +428,7 @@ Be sure that all variables in formula are correctly named.</code></pre>
 1: 0.6847436 0.03584766 0.6950435 0.03861903                1000000</code></pre>
 </div>
 </div>
-<p>The <code>yi</code> and <code>vi</code> are the plugin-calculations of lnM point estimate and sampling variance, respectively. These may often be <code>NA</code>, especially when the means between the two groups are similar. The <code>yi_safe</code>, <code>vi_safe</code>, and <code>SE_safe</code> are the SAFE estimates.</p>
+<p>The <code>yi</code> and <code>vi</code> are the plugin-calculations of lnM point estimate and sampling variance, respectively. These may be <code>NA</code>, especially when the means between the two groups are similar. The <code>yi_safe</code>, <code>vi_safe</code>, and <code>SE_safe</code> are the SAFE estimates.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -437,10 +439,10 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>lnM is incalculable with standard algebra when means and standard deviations are similar between the two groups. SAFE allows us to calculate effect sizes even in these cases by bootstrapping simulated values, of which enough are calculable. However, cases where the values are very similar may take increasing run times for enough SAFE bootstraps to successfully run.</p>
 <p>To learn more about SAFE see the tutorial <a href="https://ejlundgren.github.io/SAFE/">here</a> and <span class="citation" data-cites="Nakagawa2025-do">Nakagawa et al. (<a href="#ref-Nakagawa2025-do" role="doc-biblioref">2026b</a>)</span>.</p>
 </div>
 </div>
-<p>Note that the estimates for lnM from both the <code>orchaRd</code> and <code>eff_size</code> package use bootstrapping and will thus return slightly different values each time.</p>
 <p>For the paired version of lnM, add <code>paired = TRUE</code> to the <code>eff_size</code> function call above.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">eff_size</span><span class="op">(</span>x1 <span class="op">=</span> <span class="fl">15</span>, x2 <span class="op">=</span> <span class="fl">10</span>, </span>
@@ -448,7 +450,9 @@ Note
 <span>         n <span class="op">=</span> <span class="fl">15</span>, r <span class="op">=</span> <span class="fl">0.8</span>,</span>
 <span>         effect_type <span class="op">=</span> <span class="st">"lnM"</span>,</span>
 <span>         paired <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>         SAFE <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span>         SAFE <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>         SAFE_boots <span class="op">=</span> <span class="fl">1e6</span>,</span>
+<span>         SAFE_max_secs <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Results are only reliable with SAFE method 
  Leaving it to user's discretion to check prior to execution.
@@ -1144,248 +1148,225 @@ Stein, A., K. Gerstner, and H. Kreft. 2014. Environmental heterogeneity as a uni
 <span id="cb20-87"><a href="#cb20-87" aria-hidden="true" tabindex="-1"></a>Complicated and weird. Need to subtract something from it. Blah blah blah. SANTI</span>
 <span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a><span class="fu">### How to calculate {#sec-lnM-how-to}</span></span>
-<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a>The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should use SAFE bootstrapping <span class="co">[</span><span class="ot">@Nakagawa2025-do</span><span class="co">]</span>.</span>
+<span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a>The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should be calculated with SAFE bootstrapping <span class="co">[</span><span class="ot">@Nakagawa2025-do</span><span class="co">]</span>.</span>
 <span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a>As such, this effect size has to be calculated in the package <span class="in">`orchaRd`</span> <span class="co">[</span><span class="ot">@Nakagawa2023-ol</span><span class="co">]</span>. Note that this has to be namespaced with three colons (<span class="in">`:::`</span>):</span>
+<span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a>Here we'll calculate lnM with <span class="in">`metatools::eff_size`</span>. Be sure to set <span class="in">`SAFE=TRUE`</span> in the function arguments. The <span class="in">`SAFE_boots`</span> argument indicates how many bootstraps to run (1e6 is default and <span class="co">[</span><span class="ot">appears</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> to be a good compromise between accuracy nd speed). <span class="in">`SAFE_max_secs`</span> is the number of seconds to run before timing out per effect size calculation.</span>
 <span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-96"><a href="#cb20-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb20-97"><a href="#cb20-97" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
 <span id="cb20-98"><a href="#cb20-98" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb20-99"><a href="#cb20-99" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
 <span id="cb20-100"><a href="#cb20-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"orchaRd"</span>)</span>
-<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a>orchaRd<span class="sc">:::</span><span class="fu">.safe_lnM_indep</span>(<span class="at">x1bar =</span> <span class="dv">15</span>, <span class="at">x2bar =</span> <span class="dv">10</span>, </span>
-<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
-<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a>                           <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>)</span>
-<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a>For the dependent (i.e., paired version):</span>
-<span id="cb20-111"><a href="#cb20-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-101"><a href="#cb20-101" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
+<span id="cb20-102"><a href="#cb20-102" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
+<span id="cb20-103"><a href="#cb20-103" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
+<span id="cb20-104"><a href="#cb20-104" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnM"</span>,</span>
+<span id="cb20-105"><a href="#cb20-105" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-106"><a href="#cb20-106" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_boots =</span> <span class="fl">1e6</span>,</span>
+<span id="cb20-107"><a href="#cb20-107" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_max_secs =</span> <span class="dv">60</span>)</span>
+<span id="cb20-108"><a href="#cb20-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-109"><a href="#cb20-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-110"><a href="#cb20-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-111"><a href="#cb20-111" aria-hidden="true" tabindex="-1"></a>This function returns <span class="in">`yi`</span> and <span class="in">`vi`</span>, which are the plugin-estimates of the lnM point estimate and sampling variance, respectively. The <span class="in">`yi_safe`</span>, <span class="in">`vi_safe`</span>, and <span class="in">`SE_safe`</span> are the SAFE estimates. </span>
+<span id="cb20-112"><a href="#cb20-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-113"><a href="#cb20-113" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb20-114"><a href="#cb20-114" aria-hidden="true" tabindex="-1"></a>lnM is incalculable with standard algebra when the means and standard deviations of the two groups are similar. However, SAFE allows us to circumvent this by bootstrapping simulated values. However, cases where the values are very similar may take increasing run times for enough SAFE bootstraps to successfully run. Increase <span class="in">`SAFE_max_secs`</span> and reduce <span class="in">`SAFE_boots`</span> until your dataset produces finalized SAFE estimates.</span>
 <span id="cb20-115"><a href="#cb20-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a>orchaRd<span class="sc">:::</span><span class="fu">.safe_lnM_dep</span>(<span class="at">x1bar =</span> <span class="dv">15</span>, <span class="at">x2bar =</span> <span class="dv">10</span>, </span>
-<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a>                           <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
-<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a>                           <span class="at">n =</span> <span class="dv">15</span>, <span class="at">r =</span> <span class="fl">0.8</span>)</span>
-<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-121"><a href="#cb20-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-122"><a href="#cb20-122" aria-hidden="true" tabindex="-1"></a>These functions returns both the point estimate (<span class="in">`lnM_SAFE`</span>), variance (<span class="in">`var_lnM_SAFE`</span>) and the number of successful SAFE bootstraps.</span>
-<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a>In <span class="in">`eff_size`</span> be sure to set <span class="in">`SAFE=TRUE`</span> in the function arguments.</span>
-<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
-<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
-<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
-<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnM"</span>,</span>
-<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-116"><a href="#cb20-116" aria-hidden="true" tabindex="-1"></a>To learn more about SAFE see the tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> and @Nakagawa2025-do. </span>
+<span id="cb20-117"><a href="#cb20-117" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb20-118"><a href="#cb20-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-119"><a href="#cb20-119" aria-hidden="true" tabindex="-1"></a>For the paired version of lnM, add <span class="in">`paired = TRUE`</span> to the <span class="in">`eff_size`</span> function call above.</span>
+<span id="cb20-120"><a href="#cb20-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
+<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
+<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">15</span>, <span class="at">r =</span> <span class="fl">0.8</span>,</span>
+<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnM"</span>,</span>
+<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a>         <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_boots =</span> <span class="fl">1e6</span>,</span>
+<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_max_secs =</span> <span class="dv">60</span>)</span>
+<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a>The <span class="in">`yi`</span> and <span class="in">`vi`</span> are the plugin-calculations of lnM point estimate and sampling variance, respectively. These may often be <span class="in">`NA`</span>, especially when the means between the two groups are similar. The <span class="in">`yi_safe`</span>, <span class="in">`vi_safe`</span>, and <span class="in">`SE_safe`</span> are the SAFE estimates. </span>
+<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a>Please see the following tutorial for more information about lnM <span class="co">[</span><span class="ot">link</span><span class="co">](https://itchyshin.github.io/meta-analysis_of_magnitude/)</span>.</span>
 <span id="cb20-142"><a href="#cb20-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
-<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a>To learn more about SAFE see the tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> and @Nakagawa2025-do. </span>
-<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a>Note that the estimates for lnM from both the <span class="in">`orchaRd`</span> and <span class="in">`eff_size`</span> package use bootstrapping and will thus return slightly different values each time.</span>
-<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a>For the paired version of lnM, add <span class="in">`paired = TRUE`</span> to the <span class="in">`eff_size`</span> function call above.</span>
+<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a><span class="fu">## Differences in variability {#sec-two-group-variability}</span></span>
+<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a>The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning <span class="co">[</span><span class="ot">@Stein2014-gj; @Levine2016-hb</span><span class="co">]</span>. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation <span class="co">[</span><span class="ot">@Buckley2016-sn; @O-Dea2016-jy</span><span class="co">]</span> or reduce variation <span class="co">[</span><span class="ot">@Crispo2007-nf</span><span class="co">]</span>. </span>
+<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a>There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>. </span>
+<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnVR {#sec-lnVR}</span></span>
+<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a>**lnVR** is the *log-transformed variability ratio*, defined as $log(\frac{sd_1}{sd_2})$. This effect size is **not** standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable. </span>
 <span id="cb20-150"><a href="#cb20-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-153"><a href="#cb20-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-154"><a href="#cb20-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-158"><a href="#cb20-158" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
-<span id="cb20-159"><a href="#cb20-159" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
-<span id="cb20-160"><a href="#cb20-160" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">15</span>, <span class="at">r =</span> <span class="fl">0.8</span>,</span>
-<span id="cb20-161"><a href="#cb20-161" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnM"</span>,</span>
-<span id="cb20-162"><a href="#cb20-162" aria-hidden="true" tabindex="-1"></a>         <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb20-163"><a href="#cb20-163" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb20-164"><a href="#cb20-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-151"><a href="#cb20-151" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with the measure = "VR".</span>
+<span id="cb20-152"><a href="#cb20-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-158"><a href="#cb20-158" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-159"><a href="#cb20-159" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VR"</span>,</span>
+<span id="cb20-160"><a href="#cb20-160" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb20-161"><a href="#cb20-161" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb20-162"><a href="#cb20-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-163"><a href="#cb20-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-164"><a href="#cb20-164" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it's unreported (which is typical, see <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-paired-designs)</span>):</span>
 <span id="cb20-165"><a href="#cb20-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-166"><a href="#cb20-166" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-166"><a href="#cb20-166" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span> this is specified with the "VRC" measure:</span>
 <span id="cb20-167"><a href="#cb20-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-168"><a href="#cb20-168" aria-hidden="true" tabindex="-1"></a>Please see the following tutorial for more information about lnM <span class="co">[</span><span class="ot">link</span><span class="co">](https://itchyshin.github.io/meta-analysis_of_magnitude/)</span>.</span>
-<span id="cb20-169"><a href="#cb20-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-170"><a href="#cb20-170" aria-hidden="true" tabindex="-1"></a><span class="fu">## Differences in variability {#sec-two-group-variability}</span></span>
-<span id="cb20-171"><a href="#cb20-171" aria-hidden="true" tabindex="-1"></a>The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning <span class="co">[</span><span class="ot">@Stein2014-gj; @Levine2016-hb</span><span class="co">]</span>. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation <span class="co">[</span><span class="ot">@Buckley2016-sn; @O-Dea2016-jy</span><span class="co">]</span> or reduce variation <span class="co">[</span><span class="ot">@Crispo2007-nf</span><span class="co">]</span>. </span>
-<span id="cb20-172"><a href="#cb20-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-173"><a href="#cb20-173" aria-hidden="true" tabindex="-1"></a>There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>. </span>
-<span id="cb20-174"><a href="#cb20-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-175"><a href="#cb20-175" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnVR {#sec-lnVR}</span></span>
-<span id="cb20-176"><a href="#cb20-176" aria-hidden="true" tabindex="-1"></a>**lnVR** is the *log-transformed variability ratio*, defined as $log(\frac{sd_1}{sd_2})$. This effect size is **not** standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable. </span>
-<span id="cb20-177"><a href="#cb20-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-178"><a href="#cb20-178" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with the measure = "VR".</span>
-<span id="cb20-179"><a href="#cb20-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-182"><a href="#cb20-182" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-183"><a href="#cb20-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-184"><a href="#cb20-184" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-185"><a href="#cb20-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-186"><a href="#cb20-186" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VR"</span>,</span>
-<span id="cb20-187"><a href="#cb20-187" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
-<span id="cb20-188"><a href="#cb20-188" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
-<span id="cb20-189"><a href="#cb20-189" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-190"><a href="#cb20-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-191"><a href="#cb20-191" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it's unreported (which is typical, see <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-paired-designs)</span>):</span>
-<span id="cb20-192"><a href="#cb20-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-193"><a href="#cb20-193" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span> this is specified with the "VRC" measure:</span>
-<span id="cb20-194"><a href="#cb20-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-197"><a href="#cb20-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-198"><a href="#cb20-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-199"><a href="#cb20-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-200"><a href="#cb20-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-201"><a href="#cb20-201" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VRC"</span>,</span>
-<span id="cb20-202"><a href="#cb20-202" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
-<span id="cb20-203"><a href="#cb20-203" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
-<span id="cb20-204"><a href="#cb20-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-205"><a href="#cb20-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-206"><a href="#cb20-206" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnCVR {#sec-lnCVR}</span></span>
-<span id="cb20-207"><a href="#cb20-207" aria-hidden="true" tabindex="-1"></a>**lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.</span>
-<span id="cb20-208"><a href="#cb20-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-209"><a href="#cb20-209" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with the measure = "CVR". This effect size requires the same statistical ingredients as SMD and lnRoM:</span>
+<span id="cb20-170"><a href="#cb20-170" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-171"><a href="#cb20-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-172"><a href="#cb20-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-173"><a href="#cb20-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-174"><a href="#cb20-174" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VRC"</span>,</span>
+<span id="cb20-175"><a href="#cb20-175" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb20-176"><a href="#cb20-176" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb20-177"><a href="#cb20-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-178"><a href="#cb20-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-179"><a href="#cb20-179" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnCVR {#sec-lnCVR}</span></span>
+<span id="cb20-180"><a href="#cb20-180" aria-hidden="true" tabindex="-1"></a>**lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.</span>
+<span id="cb20-181"><a href="#cb20-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-182"><a href="#cb20-182" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with the measure = "CVR". This effect size requires the same statistical ingredients as SMD and lnRoM:</span>
+<span id="cb20-183"><a href="#cb20-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-186"><a href="#cb20-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-187"><a href="#cb20-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-188"><a href="#cb20-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-189"><a href="#cb20-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-190"><a href="#cb20-190" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVR"</span>,</span>
+<span id="cb20-191"><a href="#cb20-191" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
+<span id="cb20-192"><a href="#cb20-192" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb20-193"><a href="#cb20-193" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb20-194"><a href="#cb20-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-195"><a href="#cb20-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-196"><a href="#cb20-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-197"><a href="#cb20-197" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnCVR as well. In <span class="in">`escalc`</span> this is specified with the "CVRC" measure:</span>
+<span id="cb20-198"><a href="#cb20-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-201"><a href="#cb20-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-202"><a href="#cb20-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-203"><a href="#cb20-203" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-204"><a href="#cb20-204" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-205"><a href="#cb20-205" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVRC"</span>,</span>
+<span id="cb20-206"><a href="#cb20-206" aria-hidden="true" tabindex="-1"></a>        <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
+<span id="cb20-207"><a href="#cb20-207" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb20-208"><a href="#cb20-208" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb20-209"><a href="#cb20-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb20-210"><a href="#cb20-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-213"><a href="#cb20-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-214"><a href="#cb20-214" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-215"><a href="#cb20-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-216"><a href="#cb20-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-217"><a href="#cb20-217" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVR"</span>,</span>
-<span id="cb20-218"><a href="#cb20-218" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
-<span id="cb20-219"><a href="#cb20-219" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
-<span id="cb20-220"><a href="#cb20-220" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
-<span id="cb20-221"><a href="#cb20-221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-211"><a href="#cb20-211" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single group effect sizes {#sec-single-group}</span></span>
+<span id="cb20-212"><a href="#cb20-212" aria-hidden="true" tabindex="-1"></a>While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we're interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.</span>
+<span id="cb20-213"><a href="#cb20-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-214"><a href="#cb20-214" aria-hidden="true" tabindex="-1"></a>For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock. These single-group proportions can be converted to effect sizes (so that they obtain a sampling variance estimation). You can then use metaregression to evaluate the influence of various moderators (e.g., human density, elevation, prey density) on livestock depredation rates.</span>
+<span id="cb20-215"><a href="#cb20-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-216"><a href="#cb20-216" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb20-217"><a href="#cb20-217" aria-hidden="true" tabindex="-1"></a>In some situations, even experimental data may potentially, be better to analyze as a single-group effect size if most studies used &gt;2 experimental groups or if experimental treatments were extremely different than each other. </span>
+<span id="cb20-218"><a href="#cb20-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-219"><a href="#cb20-219" aria-hidden="true" tabindex="-1"></a>For example, instead of calculating two-group effect sizes between each experimental treatment and the control (e.g., SMD, lnRoM, or lnOR, lnRR), you could calculate single group effect sizes for each group, and then use the various experimental groups as predictors in a metaregression. </span>
+<span id="cb20-220"><a href="#cb20-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-221"><a href="#cb20-221" aria-hidden="true" tabindex="-1"></a>This would be especially useful if the experimental treatments were different densities of an organism (say a predator or herbivore) or different temperature treatments. </span>
 <span id="cb20-222"><a href="#cb20-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-223"><a href="#cb20-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-224"><a href="#cb20-224" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnCVR as well. In <span class="in">`escalc`</span> this is specified with the "CVRC" measure:</span>
+<span id="cb20-223"><a href="#cb20-223" aria-hidden="true" tabindex="-1"></a>Note that this is possible both with continuous data summarized by mean±sd as well as with binary outcome data.</span>
+<span id="cb20-224"><a href="#cb20-224" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb20-225"><a href="#cb20-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-228"><a href="#cb20-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-229"><a href="#cb20-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-230"><a href="#cb20-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-231"><a href="#cb20-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-232"><a href="#cb20-232" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVRC"</span>,</span>
-<span id="cb20-233"><a href="#cb20-233" aria-hidden="true" tabindex="-1"></a>        <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
-<span id="cb20-234"><a href="#cb20-234" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
-<span id="cb20-235"><a href="#cb20-235" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
-<span id="cb20-236"><a href="#cb20-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-237"><a href="#cb20-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-238"><a href="#cb20-238" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single group effect sizes {#sec-single-group}</span></span>
-<span id="cb20-239"><a href="#cb20-239" aria-hidden="true" tabindex="-1"></a>While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we're interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.</span>
-<span id="cb20-240"><a href="#cb20-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-241"><a href="#cb20-241" aria-hidden="true" tabindex="-1"></a>For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock. These single-group proportions can be converted to effect sizes (so that they obtain a sampling variance estimation). You can then use metaregression to evaluate the influence of various moderators (e.g., human density, elevation, prey density) on livestock depredation rates.</span>
-<span id="cb20-242"><a href="#cb20-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-243"><a href="#cb20-243" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb20-244"><a href="#cb20-244" aria-hidden="true" tabindex="-1"></a>In some situations, even experimental data may potentially, be better to analyze as a single-group effect size if most studies used &gt;2 experimental groups or if experimental treatments were extremely different than each other. </span>
-<span id="cb20-245"><a href="#cb20-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-246"><a href="#cb20-246" aria-hidden="true" tabindex="-1"></a>For example, instead of calculating two-group effect sizes between each experimental treatment and the control (e.g., SMD, lnRoM, or lnOR, lnRR), you could calculate single group effect sizes for each group, and then use the various experimental groups as predictors in a metaregression. </span>
-<span id="cb20-247"><a href="#cb20-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-248"><a href="#cb20-248" aria-hidden="true" tabindex="-1"></a>This would be especially useful if the experimental treatments were different densities of an organism (say a predator or herbivore) or different temperature treatments. </span>
-<span id="cb20-249"><a href="#cb20-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-250"><a href="#cb20-250" aria-hidden="true" tabindex="-1"></a>Note that this is possible both with continuous data summarized by mean±sd as well as with binary outcome data.</span>
-<span id="cb20-251"><a href="#cb20-251" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb20-252"><a href="#cb20-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-253"><a href="#cb20-253" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group standardized mean {#sec-standardized-mean}</span></span>
-<span id="cb20-254"><a href="#cb20-254" aria-hidden="true" tabindex="-1"></a>The *single group standardized mean* is the mean divided by standard deviation to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.</span>
-<span id="cb20-255"><a href="#cb20-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-256"><a href="#cb20-256" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
-<span id="cb20-259"><a href="#cb20-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-260"><a href="#cb20-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-261"><a href="#cb20-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-262"><a href="#cb20-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-263"><a href="#cb20-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-264"><a href="#cb20-264" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMN"</span>,</span>
-<span id="cb20-265"><a href="#cb20-265" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
-<span id="cb20-266"><a href="#cb20-266" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb20-267"><a href="#cb20-267" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb20-268"><a href="#cb20-268" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-269"><a href="#cb20-269" aria-hidden="true" tabindex="-1"></a>This, like SMD, can be interpreted as the number of standard deviations the mean is from 0. Given that standard deviation influences the mean, this effect size may be less preferred with overdispersed data (as with SMD). See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span>, where we discuss how to diagnose overdispersion in your data.</span>
-<span id="cb20-270"><a href="#cb20-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-271"><a href="#cb20-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## Log-transformed mean {#sec-log-mean}</span></span>
-<span id="cb20-272"><a href="#cb20-272" aria-hidden="true" tabindex="-1"></a>The *log-transformed mean* is a single group corollary to lnRoM, just as the *single group standardized mean* is a single group version of SMD. This effect size cannot accept negative values. <span class="co">[</span><span class="ot">As with lnRoM</span><span class="co">](2.1-SMD-assumptions.qmd)</span>, the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.</span>
-<span id="cb20-273"><a href="#cb20-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-274"><a href="#cb20-274" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
-<span id="cb20-277"><a href="#cb20-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-278"><a href="#cb20-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-279"><a href="#cb20-279" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-280"><a href="#cb20-280" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-281"><a href="#cb20-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-282"><a href="#cb20-282" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MNLN"</span>,</span>
-<span id="cb20-283"><a href="#cb20-283" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
-<span id="cb20-284"><a href="#cb20-284" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb20-285"><a href="#cb20-285" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb20-286"><a href="#cb20-286" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-287"><a href="#cb20-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-288"><a href="#cb20-288" aria-hidden="true" tabindex="-1"></a>As such, this effect size is likely better suited for <span class="co">[</span><span class="ot">overdispersed</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span> data. </span>
-<span id="cb20-289"><a href="#cb20-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-290"><a href="#cb20-290" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group variability {#sec-single-group-variability}</span></span>
-<span id="cb20-291"><a href="#cb20-291" aria-hidden="true" tabindex="-1"></a>Much as we can meta-analyze differences in variability between two groups with the lnVR and lnCVR effect sizes, we can also summarize the variability of single groups with the *log-transformed standard deviation* and *log-transformed coefficient of variation* effect sizes. </span>
-<span id="cb20-292"><a href="#cb20-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-293"><a href="#cb20-293" aria-hidden="true" tabindex="-1"></a>As with <span class="co">[</span><span class="ot">lnVR</span><span class="co">](#sec-lnVR)</span>, *log-transformed standard deviation* is not standardized by the mean and thus must be compared to studies using the same units of measurement. </span>
+<span id="cb20-226"><a href="#cb20-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group standardized mean {#sec-standardized-mean}</span></span>
+<span id="cb20-227"><a href="#cb20-227" aria-hidden="true" tabindex="-1"></a>The *single group standardized mean* is the mean divided by standard deviation to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.</span>
+<span id="cb20-228"><a href="#cb20-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-229"><a href="#cb20-229" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
+<span id="cb20-232"><a href="#cb20-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-233"><a href="#cb20-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-234"><a href="#cb20-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-235"><a href="#cb20-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-236"><a href="#cb20-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-237"><a href="#cb20-237" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMN"</span>,</span>
+<span id="cb20-238"><a href="#cb20-238" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
+<span id="cb20-239"><a href="#cb20-239" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb20-240"><a href="#cb20-240" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb20-241"><a href="#cb20-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-242"><a href="#cb20-242" aria-hidden="true" tabindex="-1"></a>This, like SMD, can be interpreted as the number of standard deviations the mean is from 0. Given that standard deviation influences the mean, this effect size may be less preferred with overdispersed data (as with SMD). See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span>, where we discuss how to diagnose overdispersion in your data.</span>
+<span id="cb20-243"><a href="#cb20-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-244"><a href="#cb20-244" aria-hidden="true" tabindex="-1"></a><span class="fu">## Log-transformed mean {#sec-log-mean}</span></span>
+<span id="cb20-245"><a href="#cb20-245" aria-hidden="true" tabindex="-1"></a>The *log-transformed mean* is a single group corollary to lnRoM, just as the *single group standardized mean* is a single group version of SMD. This effect size cannot accept negative values. <span class="co">[</span><span class="ot">As with lnRoM</span><span class="co">](2.1-SMD-assumptions.qmd)</span>, the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.</span>
+<span id="cb20-246"><a href="#cb20-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-247"><a href="#cb20-247" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
+<span id="cb20-250"><a href="#cb20-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-251"><a href="#cb20-251" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-252"><a href="#cb20-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-253"><a href="#cb20-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-254"><a href="#cb20-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-255"><a href="#cb20-255" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MNLN"</span>,</span>
+<span id="cb20-256"><a href="#cb20-256" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
+<span id="cb20-257"><a href="#cb20-257" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb20-258"><a href="#cb20-258" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb20-259"><a href="#cb20-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-260"><a href="#cb20-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-261"><a href="#cb20-261" aria-hidden="true" tabindex="-1"></a>As such, this effect size is likely better suited for <span class="co">[</span><span class="ot">overdispersed</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span> data. </span>
+<span id="cb20-262"><a href="#cb20-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-263"><a href="#cb20-263" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group variability {#sec-single-group-variability}</span></span>
+<span id="cb20-264"><a href="#cb20-264" aria-hidden="true" tabindex="-1"></a>Much as we can meta-analyze differences in variability between two groups with the lnVR and lnCVR effect sizes, we can also summarize the variability of single groups with the *log-transformed standard deviation* and *log-transformed coefficient of variation* effect sizes. </span>
+<span id="cb20-265"><a href="#cb20-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-266"><a href="#cb20-266" aria-hidden="true" tabindex="-1"></a>As with <span class="co">[</span><span class="ot">lnVR</span><span class="co">](#sec-lnVR)</span>, *log-transformed standard deviation* is not standardized by the mean and thus must be compared to studies using the same units of measurement. </span>
+<span id="cb20-267"><a href="#cb20-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-268"><a href="#cb20-268" aria-hidden="true" tabindex="-1"></a>To calculate *log-transformed standard deviation* in <span class="in">`R`</span>:</span>
+<span id="cb20-271"><a href="#cb20-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-272"><a href="#cb20-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-273"><a href="#cb20-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-274"><a href="#cb20-274" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-275"><a href="#cb20-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-276"><a href="#cb20-276" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SDLN"</span>,</span>
+<span id="cb20-277"><a href="#cb20-277" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb20-278"><a href="#cb20-278" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb20-279"><a href="#cb20-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-280"><a href="#cb20-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-281"><a href="#cb20-281" aria-hidden="true" tabindex="-1"></a>The *log-transformed coefficient of variation* is standardized by the mean, just like <span class="co">[</span><span class="ot">lnCVR</span><span class="co">](#sec-lnCVR)</span>, and can thus be used to compare data with different units of measurements. In <span class="in">`R`</span>:</span>
+<span id="cb20-284"><a href="#cb20-284" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-285"><a href="#cb20-285" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-286"><a href="#cb20-286" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-287"><a href="#cb20-287" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-288"><a href="#cb20-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-289"><a href="#cb20-289" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVLN"</span>,</span>
+<span id="cb20-290"><a href="#cb20-290" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb20-291"><a href="#cb20-291" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">15</span>,</span>
+<span id="cb20-292"><a href="#cb20-292" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb20-293"><a href="#cb20-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb20-294"><a href="#cb20-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-295"><a href="#cb20-295" aria-hidden="true" tabindex="-1"></a>To calculate *log-transformed standard deviation* in <span class="in">`R`</span>:</span>
-<span id="cb20-298"><a href="#cb20-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-299"><a href="#cb20-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-300"><a href="#cb20-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-301"><a href="#cb20-301" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb20-295"><a href="#cb20-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-296"><a href="#cb20-296" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group proportions {#sec-proportions}</span></span>
+<span id="cb20-297"><a href="#cb20-297" aria-hidden="true" tabindex="-1"></a>The single group measurements so far pertained to normal data (or at least quasi-normal data). However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to <span class="co">[</span><span class="ot">lnOR and lnRR</span><span class="co">](2.2-lnOR-assumptions.qmd)</span> type effect sizes.</span>
+<span id="cb20-298"><a href="#cb20-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-299"><a href="#cb20-299" aria-hidden="true" tabindex="-1"></a>These effect sizes take into account the total number of individuals and the number of individuals that experienced the binary outcome (e.g., mortality). There are several options for single group proportional data like this in <span class="in">`escalc`</span> of which it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* appear to be the most numerically stable.</span>
+<span id="cb20-300"><a href="#cb20-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-301"><a href="#cb20-301" aria-hidden="true" tabindex="-1"></a>These different versions have different numeric assumptions</span>
 <span id="cb20-302"><a href="#cb20-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-303"><a href="#cb20-303" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SDLN"</span>,</span>
-<span id="cb20-304"><a href="#cb20-304" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb20-305"><a href="#cb20-305" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb20-306"><a href="#cb20-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-307"><a href="#cb20-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-308"><a href="#cb20-308" aria-hidden="true" tabindex="-1"></a>The *log-transformed coefficient of variation* is standardized by the mean, just like <span class="co">[</span><span class="ot">lnCVR</span><span class="co">](#sec-lnCVR)</span>, and can thus be used to compare data with different units of measurements. In <span class="in">`R`</span>:</span>
-<span id="cb20-311"><a href="#cb20-311" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-312"><a href="#cb20-312" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-313"><a href="#cb20-313" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-314"><a href="#cb20-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-315"><a href="#cb20-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-316"><a href="#cb20-316" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVLN"</span>,</span>
-<span id="cb20-317"><a href="#cb20-317" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb20-318"><a href="#cb20-318" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">15</span>,</span>
-<span id="cb20-319"><a href="#cb20-319" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb20-320"><a href="#cb20-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-303"><a href="#cb20-303" aria-hidden="true" tabindex="-1"></a>**I'm basically taking this from Gemini, which I really don't like doing....because it's so often wrong**</span>
+<span id="cb20-304"><a href="#cb20-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-305"><a href="#cb20-305" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*log-transformed proportion*: This effect size appears to be best when proportions are low (e.g., p &lt; 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with <span class="in">`exp(value)`</span>). Specified with "PLN" in <span class="in">`escalc`</span>. </span>
+<span id="cb20-306"><a href="#cb20-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-307"><a href="#cb20-307" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*logit-transformed proportion*: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for <span class="co">[</span><span class="ot">lnOR</span><span class="co">](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation)</span> after exponentiating (<span class="in">`exp(value)`</span>). Specified with "PLO" in <span class="in">`escalc`</span>.</span>
+<span id="cb20-308"><a href="#cb20-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-309"><a href="#cb20-309" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*probit-transformed proportion*: This effect size is often used for toxicological or dose-response models, like <span class="co">[</span><span class="ot">LC50</span><span class="co">](3.3-lnOR-challenges.qmd#sec-lc50)</span>, and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in <span class="in">`escalc`</span>.</span>
+<span id="cb20-310"><a href="#cb20-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-311"><a href="#cb20-311" aria-hidden="true" tabindex="-1"></a>We recommend that in many cases, the *logit-transformed proportion* is the effect size choice with proportion data.</span>
+<span id="cb20-312"><a href="#cb20-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-313"><a href="#cb20-313" aria-hidden="true" tabindex="-1"></a>For all of these effect sizes, <span class="in">`xi`</span> is the number of individuals experiencing the event of interest and <span class="in">`ni`</span> is the total number of individuals:</span>
+<span id="cb20-314"><a href="#cb20-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-317"><a href="#cb20-317" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb20-318"><a href="#cb20-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb20-319"><a href="#cb20-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb20-320"><a href="#cb20-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
 <span id="cb20-321"><a href="#cb20-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-322"><a href="#cb20-322" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-323"><a href="#cb20-323" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group proportions {#sec-proportions}</span></span>
-<span id="cb20-324"><a href="#cb20-324" aria-hidden="true" tabindex="-1"></a>The single group measurements so far pertained to normal data (or at least quasi-normal data). However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to <span class="co">[</span><span class="ot">lnOR and lnRR</span><span class="co">](2.2-lnOR-assumptions.qmd)</span> type effect sizes.</span>
-<span id="cb20-325"><a href="#cb20-325" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-326"><a href="#cb20-326" aria-hidden="true" tabindex="-1"></a>These effect sizes take into account the total number of individuals and the number of individuals that experienced the binary outcome (e.g., mortality). There are several options for single group proportional data like this in <span class="in">`escalc`</span> of which it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* appear to be the most numerically stable.</span>
-<span id="cb20-327"><a href="#cb20-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-328"><a href="#cb20-328" aria-hidden="true" tabindex="-1"></a>These different versions have different numeric assumptions</span>
+<span id="cb20-322"><a href="#cb20-322" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"PLO"</span>,</span>
+<span id="cb20-323"><a href="#cb20-323" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>,</span>
+<span id="cb20-324"><a href="#cb20-324" aria-hidden="true" tabindex="-1"></a>       <span class="at">xi =</span> <span class="dv">10</span>)</span>
+<span id="cb20-325"><a href="#cb20-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb20-326"><a href="#cb20-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-327"><a href="#cb20-327" aria-hidden="true" tabindex="-1"></a><span class="fu">## Event counts {#sec-event-counts}</span></span>
+<span id="cb20-328"><a href="#cb20-328" aria-hidden="true" tabindex="-1"></a>**I'm not sure I understand this versus binary outcomes...It seems to take the same exact inputs except `ti` = total person-times at risk (equivalent to `ni`)...**</span>
 <span id="cb20-329"><a href="#cb20-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-330"><a href="#cb20-330" aria-hidden="true" tabindex="-1"></a>**I'm basically taking this from Gemini, which I really don't like doing....because it's so often wrong**</span>
-<span id="cb20-331"><a href="#cb20-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-332"><a href="#cb20-332" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*log-transformed proportion*: This effect size appears to be best when proportions are low (e.g., p &lt; 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with <span class="in">`exp(value)`</span>). Specified with "PLN" in <span class="in">`escalc`</span>. </span>
-<span id="cb20-333"><a href="#cb20-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-334"><a href="#cb20-334" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*logit-transformed proportion*: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for <span class="co">[</span><span class="ot">lnOR</span><span class="co">](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation)</span> after exponentiating (<span class="in">`exp(value)`</span>). Specified with "PLO" in <span class="in">`escalc`</span>.</span>
-<span id="cb20-335"><a href="#cb20-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-336"><a href="#cb20-336" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>*probit-transformed proportion*: This effect size is often used for toxicological or dose-response models, like <span class="co">[</span><span class="ot">LC50</span><span class="co">](3.3-lnOR-challenges.qmd#sec-lc50)</span>, and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in <span class="in">`escalc`</span>.</span>
-<span id="cb20-337"><a href="#cb20-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-338"><a href="#cb20-338" aria-hidden="true" tabindex="-1"></a>We recommend that in many cases, the *logit-transformed proportion* is the effect size choice with proportion data.</span>
-<span id="cb20-339"><a href="#cb20-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-340"><a href="#cb20-340" aria-hidden="true" tabindex="-1"></a>For all of these effect sizes, <span class="in">`xi`</span> is the number of individuals experiencing the event of interest and <span class="in">`ni`</span> is the total number of individuals:</span>
-<span id="cb20-341"><a href="#cb20-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-344"><a href="#cb20-344" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb20-345"><a href="#cb20-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb20-346"><a href="#cb20-346" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb20-347"><a href="#cb20-347" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb20-348"><a href="#cb20-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-349"><a href="#cb20-349" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"PLO"</span>,</span>
-<span id="cb20-350"><a href="#cb20-350" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>,</span>
-<span id="cb20-351"><a href="#cb20-351" aria-hidden="true" tabindex="-1"></a>       <span class="at">xi =</span> <span class="dv">10</span>)</span>
-<span id="cb20-352"><a href="#cb20-352" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb20-353"><a href="#cb20-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-354"><a href="#cb20-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## Event counts {#sec-event-counts}</span></span>
-<span id="cb20-355"><a href="#cb20-355" aria-hidden="true" tabindex="-1"></a>**I'm not sure I understand this versus binary outcomes...It seems to take the same exact inputs except `ti` = total person-times at risk (equivalent to `ni`)...**</span>
-<span id="cb20-356"><a href="#cb20-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-357"><a href="#cb20-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-330"><a href="#cb20-330" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

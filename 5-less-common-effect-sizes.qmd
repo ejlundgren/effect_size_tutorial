@@ -65,6 +65,7 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
+
 ```
 
 The effect sizes that we've described in depth in this tutorial have concerned the direction and magnitude of *mean* relationships between two variables.
@@ -85,37 +86,49 @@ Blah blah blah. SANTI
 Complicated and weird. Need to subtract something from it. Blah blah blah. SANTI
 
 ### How to calculate {#sec-lnM-how-to}
-The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should use SAFE bootstrapping [@Nakagawa2025-do].
+The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should be calculated with SAFE bootstrapping [@Nakagawa2025-do].
 
-As such, this effect size has to be calculated in the package `orchaRd` [@Nakagawa2023-ol]. Note that this has to be namespaced with three colons (`:::`):
+Here we'll calculate lnM with `metatools::eff_size`. Be sure to set `SAFE=TRUE` in the function arguments. The `SAFE_boots` argument indicates how many bootstraps to run (1e6 is default and [appears](https://ejlundgren.github.io/SAFE/) to be a good compromise between accuracy nd speed). `SAFE_max_secs` is the number of seconds to run before timing out per effect size calculation.
 
 ```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
+# TESTING:
+dat <- data.table(x1 = c(15, 15), x2 = c(15.5, 20),
+                  sd1 = c(2, 2), sd2 = c(2, 2),
+                  n1 = c(15, 15), n2 = c(15, 15))
+
+out <- eff_size(x1 = x1, x2 = x2, 
+         sd1 = sd1, sd2 = sd2,
+         n1 = n1, n2 = n2,
+         data = dat,
+         bind = TRUE,
+         effect_type = "lnM",
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 15)
+
+out[, .(yi_safe, vi_safe, x1, x2, sd1, sd2, n1, n2)]
 
 library("orchaRd")
-orchaRd:::.safe_lnM_indep(x1bar = 15, x2bar = 10, 
-                           sd1 = 1.5, sd2 = 2,
-                           n1 = 15, n2 = 15)
+
+orchaRd:::.safe_lnM_indep(x1bar = dat$x1[1], x2bar = dat$x2[1],
+                          sd1 = dat$sd1[1], sd2 = dat$sd2[1],
+                          n1 = dat$n1[1], n2 = dat$n2[1])
+
+eff_size(x1 = x1, x2 = x2, 
+         sd1 = sd1, sd2 = sd2,
+         n = n1, r = 0.5,
+         data = dat[1, ],
+         bind = TRUE,
+         effect_type = "lnM",
+         paired = TRUE,
+         SAFE = TRUE,
+         SAFE_boots = 1e5,
+         SAFE_max_secs = 15)
+
 
 ```
 
-For the dependent (i.e., paired version):
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
 
-orchaRd:::.safe_lnM_dep(x1bar = 15, x2bar = 10, 
-                           sd1 = 1.5, sd2 = 2,
-                           n = 15, r = 0.8)
-
-```
-
-These functions returns both the point estimate (`lnM_SAFE`), variance (`var_lnM_SAFE`) and the number of successful SAFE bootstraps.
-
-In `eff_size` be sure to set `SAFE=TRUE` in the function arguments.
 
 ```{r}
 #| eval: true
@@ -126,17 +139,19 @@ eff_size(x1 = 15, x2 = 10,
          sd1 = 1.5, sd2 = 2,
          n1 = 15, n2 = 15,
          effect_type = "lnM",
-         SAFE = TRUE)
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 15)
 
 ```
 
-The `yi` and `vi` are the plugin-calculations of lnM point estimate and sampling variance, respectively. These may often be `NA`, especially when the means between the two groups are similar. The `yi_safe`, `vi_safe`, and `SE_safe` are the SAFE estimates. 
+This function returns `yi` and `vi`, which are the plugin-estimates of the lnM point estimate and sampling variance, respectively. The `yi_safe`, `vi_safe`, and `SE_safe` are the SAFE estimates. 
 
 :::callout-note
+lnM is incalculable with standard algebra when the means and standard deviations of the two groups are similar. However, SAFE allows us to circumvent this by bootstrapping simulated values. However, cases where the values are very similar may take increasing run times for enough SAFE bootstraps to successfully run. Increase `SAFE_max_secs` and reduce `SAFE_boots` until your dataset produces finalized SAFE estimates.
+
 To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
 :::
-
-Note that the estimates for lnM from both the `orchaRd` and `eff_size` package use bootstrapping and will thus return slightly different values each time.
 
 For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call above.
 
@@ -150,10 +165,13 @@ eff_size(x1 = 15, x2 = 10,
          n = 15, r = 0.8,
          effect_type = "lnM",
          paired = TRUE,
-         SAFE = TRUE)
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 60)
 
 
 ```
+
 
 Please see the following tutorial for more information about lnM [link](https://itchyshin.github.io/meta-analysis_of_magnitude/).
 
