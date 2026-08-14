@@ -13,3 +13,4 @@ sticker("figures/illustration_icons/doggo.png",
         h_fill = "magenta1",
         package="Effect This!", p_size=18, s_x=1, s_y=.75, s_width=.5,
         filename="figures/flowcharts_diagrams/temp_logo.png")
+
