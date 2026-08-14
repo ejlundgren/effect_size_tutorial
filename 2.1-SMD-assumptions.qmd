@@ -1,5 +1,5 @@
 ---
-title: "Continuous outcomes with discrete predictor"
+title: "Continuous outcomes between two groups"
 subtitle: "Standardized Mean Difference and the log-transformed ratio of means"
 date: today
 format: 
@@ -69,11 +69,15 @@ library("crayon")
 
 ```
 
-Effect sizes are not trivial things. They are, in and themselves, small statistical models with their own numeric assumptions and properties. Understanding these assumptions is essential if you want to conduct an accurate and robust meta-analysis and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.
+Effect sizes are not trivial things. Together, point estimates and sampling variance are small statistical models with their own numeric assumptions and properties. Understanding these assumptions is essential if you want to conduct an accurate and robust meta-analysis and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.
 
-We here discuss effect sizes for describing continuous outcomes between two discrete groups, such as presented by many experiments. The two dominant effect sizes in this category are Standardized Mean Differences (SMD) and the log-transformed ratio of means (lnRoM). Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio, which we also discuss in our section about [binary](2.2-lnOR-assumptions.qmd) outcome effect sizes.
+We here discuss effect sizes for describing continuous outcomes between two groups, such as presented by many experiments. The two dominant effect sizes in this category are Standardized Mean Differences (SMD) and the log-transformed ratio of means (lnRoM). 
 
-This is among the most common class of effect sizes, especially in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such as an experiment and control group. 
+:::callout-important
+Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio, which we also discuss in our section about [binary](2.2-lnOR-assumptions.qmd) outcome effect sizes.
+:::
+
+These are among the most common class of effect sizes, especially in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such as an experiment and control group. 
 
 These effect sizes require the following statistics: 
 
@@ -97,10 +101,13 @@ $$\begin{aligned}
 \end{aligned}$${#eq-1}
 :::
 
+Choosing whether to use SMD or lnRoM is not simple. SMD and lnRoM have fundamentally different interpretations. The lnRoM point estimate describes the difference between means of two groups, regardless of the variance of these groups. Signal but no noise! On the other hand the SMD point estimate is akin to a test statistic: it accounts for the variance of each group and is calculated as the difference between means (the signal) relative to noise (standard deviation). 
 
-**Recently started revamping this section because I learned new things and it's still a mess. This shit is fucking confusing**
+These conceptual differences, which derive from their mathematics, have profound consequences for the types of data they can accept and for their interpretation.
 
-# Background
+<details>
+<summary> Click here to see the spoooooky (but actually not so spooky) math </summary>
+# The math
 
 While we want to keep this tutorial light on equations, we'll briefly give some historic background on the development and math of these effect sizes, which influence the differences in the table above. We'll only look at the point estimator formulas here.
 
@@ -156,10 +163,12 @@ escalc(measure = "ROM",
          n1i = 10, n2i = 10)
 ```
 
+</details>
+
 
 # Should I use SMD or lnRoM? {#sec-smd-or-lnrom}
 
-Choosing whether to use SMD or lnRoM is not simple. If it was all about interpretation, then SMD would be dead. Yet SMD and lnRoM have different numeric properties that constrain your choices. We summarize these in the table below. Don't stress about understanding all of these topics yet, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
+SMD and lnRoM have different numeric properties that constrain your choices and also have inherently different meanings. We summarize these in the table below. Don't stress about understanding all of these topics yet, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
 
 |                                                                       | SMD      | lnRoM |
 |-----------------------------------------------------------------------|----------|-------|
@@ -168,10 +177,6 @@ Choosing whether to use SMD or lnRoM is not simple. If it was all about interpre
 | [**Robust to heteroscedasticity**](#sec-heteroscedasticity)           | SMDH     | 1st-order point estimate is but variance is not? |
 | [**Robust to dimensionality**](#sec-dimensionality)                   | somewhat | no    |
 | [**Can handle missing error bars**](#sec-callout-missing-error-bars)  | no       | yes?  |
-
-It is likely that there is no perfect solution and that you should be prepared to analyze your dataset both with SMD and lnRoM. If your results are qualitatively similar (i.e., in terms of significance and directionality of model estimates), then you can put one of the effect sizes into the supplement. Note that @@Yang2024-fw recommended including **both** lnRoM and SMD in a bivariate meta-analytic model, which can improve model estimates. See their tutorial [here](https://yefeng0920.github.io/BRMA_tutorial_git/)
-
-Given that lnRoM can be converted to readily understandable descriptions of [percent change](#sec-interpretation), we think that lnRoM is likely the preferred effect size for most use cases. 
 
 ## Interpretation {#sec-interpretation}
 
@@ -590,7 +595,11 @@ As you can see, choosing between lnRoM and SMD is complex. The flow chart below 
 
 ![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)
 
-However, we also recommend doing analyses with both SMD and lnRoM, as argued by @Yang2024-fw (**there might be a better ref for this**), who also showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial [here](https://yefeng0920.github.io/BRMA_tutorial_git/).
+However, we also recommend doing analyses with both SMD and lnRoM separately as sensitivity analyses. If the results are fundamentally similar (e.g., same direction and significance), then you can choose to make lnRoM the main-text results, converted to % change. 
+
+:::callout-note
+@Yang2024-fw showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial [here](https://yefeng0920.github.io/BRMA_tutorial_git/).
+:::
 
 Note that if you decide to use lnRoM, then you should be prepared to use the 2nd-order point estimator if your data is normally distributed (i.e., isn't overdispersed)---this is to account for bias at low sample sizes. This is returned by `eff_size` as `yi_second`. 
 
