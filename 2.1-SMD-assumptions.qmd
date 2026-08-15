@@ -71,10 +71,10 @@ library("crayon")
 
 Effect sizes are not trivial things. Together, point estimates and sampling variance are small statistical models with their own numeric assumptions and properties. Understanding these assumptions is essential if you want to conduct an accurate and robust meta-analysis and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.
 
-We here discuss effect sizes for describing continuous outcomes between two groups, such as presented by many experiments. The two dominant effect sizes in this category are Standardized Mean Differences (SMD) and the log-transformed ratio of means (lnRoM). 
+We here discuss effect sizes for describing continuous outcomes between two groups, such as presented by many experiments. The two dominant effect sizes in this category are **Standardized Mean Difference** (SMD) and the **log-transformed ratio of means** (lnRoM). 
 
 :::callout-important
-Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio, which we also discuss in our section about [binary](2.2-lnOR-assumptions.qmd) outcome effect sizes.
+Note that many refer to log-transformed ratio of means as lnRR (the log response ratio or just response ratio). However, lnRR is also the abbreviation for the *log risk ratio*, which we also discuss in our section about [binary](2.2-lnOR-assumptions.qmd) outcome effect sizes.
 :::
 
 These are among the most common class of effect sizes, especially in ecology and evolution. These effect sizes compare the mean±error of a continuous predictor measured for two groups, such as an experiment and control group. 
@@ -105,13 +105,11 @@ Choosing whether to use SMD or lnRoM is not simple. SMD and lnRoM have fundament
 
 These conceptual differences, which derive from their mathematics, have profound consequences for the types of data they can accept and for their interpretation.
 
-<details>
-<summary> Click here to see the spoooooky (but actually not so spooky) math </summary>
-# The math
+# Background
 
 While we want to keep this tutorial light on equations, we'll briefly give some historic background on the development and math of these effect sizes, which influence the differences in the table above. We'll only look at the point estimator formulas here.
 
-SMD, also known as Hedges' g, is the bias-corrected version of Cohen's d. With $sd$, $m$, and $n$ the standard deviation, mean, and sample size of the extracted data for groups 1 and 2, Cohen's d is defined as:
+SMD describes the difference between two group means, standardized by pooled standard deviation. The simplest estimator of SMD is Cohen's d. With $sd$, $m$, and $n$ the standard deviation, mean, and sample size of the extracted data for groups 1 and 2, Cohen's d is defined as:
 
 $$\begin{aligned}
 &d = \frac{m1-m2}{sd_{pooled}} \\
@@ -125,23 +123,32 @@ sd_{pooled} = \sqrt{\frac{sd_1^2 (n_1 - 1) + sd_2^2 (n_2 - 1)}{n_1 + n_2 - 2}}\\
 \end{aligned}
 $${#eq-3}
 
-Cohen's d can be biased in its estimate of SMD at low sample size. For that reason, @Hedges1981-bt did some fancy math to create a small-sample size bias correction ($J$), which approaches 0 as total $n$ increases. This formulation is known as Hedges' g and is the primary estimator of SMD.
+Cohen's d can be biased in its estimate of SMD at low sample sizes. For that reason, @Hedges1981-bt did some fancy math to create a small-sample size bias correction ($J$), which approaches 0 as total $n$ increases. This formulation is known as Hedges' g and is the primary estimator of SMD.
 
 $$\begin{aligned}
 &J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}\\
-&d = \frac{m1-m2}{sd_{pooled}}\\
-&g = J * d
+&g = J * d\\
 \end{aligned}$${#eq-4}
 
-The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation. Observations with high standard deviation (e.g., that are overdispersed) will have a lower overall point estimate. 
+The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation---the signal (the difference between means) is standardized by noise (the pooled standard deviation). 
 
-Because this can reduce power in your model and create issues with overdispersed data, @Hedges1999-al later proposed the log-transformed ratio of means, the most widely used effect size in ecology (@REF to Nakagawa/Yefeng). This does not have standard deviation in the point estimate:
+Observations with high standard deviation (e.g., that are overdispersed) will have a lower overall point estimate, even if the means are very different.
+
+Because this can reduce power in your model if your data is overdispersed, @Hedges1999-al later proposed the log-transformed ratio of means, the most widely used effect size in ecology (@REF to Nakagawa/Yefeng). 
+
+This does not have standard deviation in the point estimate:
 
 $$\begin{aligned}
 &lnRoM = log(\frac{m1}{m2}) \\
 \end{aligned}$${#eq-5}
 
-The lnRoM point estimate---though not the sampling variance---are more robust to overdispersion, yet by only using the definition formula (the formula used by `escalc` and shown here), the results can be biased by low sample size. For that reason, @Lajeunesse2015-gw also created a 2nd-order bias-corrected version of lnRoM using the Delta method. This calculation is available in our `eff_size` function (under the name `yi_second` and `vi_second`, if you run the function with `default_formulas = FALSE`).
+The lnRoM point estimate---though not the sampling variance---are more robust to overdispersion, yet by only using the definition formula (the formula used by `escalc` and shown here), the results can be biased by low sample size. 
+
+For that reason, @Lajeunesse2015-gw also created a 2nd-order bias-corrected version of lnRoM using the Delta method.
+
+**MATH?**
+
+Both estimators of lnRoM are available in our `eff_size` function (under the name `yi_second` and `vi_second`. Note, you have to run the function with `default_formulas = FALSE`:
 
 ```{r}
 #| eval: true
@@ -156,6 +163,7 @@ eff_size(effect_type = "lnRoM",
 ```
 
 Whereas `escalc` returns just the first order point estimate:
+
 ```{r}
 escalc(measure = "ROM",
        m1i = 15, m2i = 10,
@@ -163,12 +171,13 @@ escalc(measure = "ROM",
          n1i = 10, n2i = 10)
 ```
 
-</details>
-
-
 # Should I use SMD or lnRoM? {#sec-smd-or-lnrom}
 
-SMD and lnRoM have different numeric properties that constrain your choices and also have inherently different meanings. We summarize these in the table below. Don't stress about understanding all of these topics yet, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
+SMD and lnRoM have different numeric properties that create inherently different interpretations. In a way SMD is itself a test statistic: a ratio of signal (the difference in means) to noise (standard deviation). 
+
+On the other hand, lnRoM simply summarizes the ratio of two means---with the sampling variance of lnRoM weighting results by their *relative* sampling variance in your models. As such the same data can produce a very weak SMD effect size value, close to 0, but an extremely high lnRoM value.
+
+We summarize these in the table below. Don't stress about understanding all of these topics yet, we'll go through each one and can hopefully provide practical guidance on choosing the appropriate effect size for your meta-analysis.
 
 |                                                                       | SMD      | lnRoM |
 |-----------------------------------------------------------------------|----------|-------|
@@ -197,7 +206,7 @@ escalc(m1i = 7, sd1i = 1.2, n1i = 15,
 
 ```
 
-However, SMD values are difficult to interpret. They ultimately mean the number of standard deviations between each group. But we generally use the following rules of thumb to interpret them:
+However, SMD values are difficult to interpret. They ultimately mean the number of standard deviations between each group but that can be difficult to convey or interpret. In general, people use the following rules of thumb to interpret SMD values:
 
 - $SMD > |0.8| \approx$ strong effect 
 
@@ -206,27 +215,6 @@ However, SMD values are difficult to interpret. They ultimately mean the number 
 - $SMD > |0.2| \approx$ small effect.
 
 In the case above, an SMD of -1.83 can be considered a **strongly negative** effect.
-
-:::callout-important
-##### Common Language Effect Size
-An alternative to the SMD interpretation values above is to convert SMD to the "Common Language Effect Size" (CLES) [@McGraw1992-ae]. This can be discussed in terms of the chance that a **randomly picked item from group 1 will have a higher value than a randomly picked item from group 2.**
-
-*Is it possible to convert model estimates of SMD to CLES? If not, then let's delete this section*
-
-To calculate CLES from the SMD value of -1.8346 (from above):
-
-*I think Hedges' g needs to be converted to Cohen's d first though...Which is tricky or impossible when this is a model estimate. Maybe doable though?*
-```{r}
-#| echo: true
-#| eval: true
-
-pnorm(-1.8346 / sqrt(2))
-
-```
-If our original SMD value pertained to individuals as the unit of replication, we could then write: "We found a 9.7% chance that a person in group 2 (`m2i`) was higher than any randomly individual in group 1."
-
-This can be a useful, albeit a bit linguistically challenging, way to interpret SMD values. 
-:::
 
 All of these methods for SMD are a bit clunky. One of the biggest advantages of lnRoM is that it (and the overall meta-analytic model estimates) can be easily converted to % change. Let's calculate lnRoM with the same summary statistics:
 
@@ -255,8 +243,31 @@ In `R`:
 
 Therefore an lnRoM of -0.2513 is equivalent to a -22.6% decrease as a result of the treatment. Being able to convert lnRoM to % change is one of the reasons this effect size is so powerful. However, as we described [above](#sec-smd-or-lnrom), you have to be careful with your assumptions.
 
+
+:::callout-important
+##### Common Language Effect Size
+An alternative to the SMD interpretation rules of thumb above is to convert SMD to the "Common Language Effect Size" (CLES) [@McGraw1992-ae]. This can be discussed in terms of the chance that a **randomly picked item from group 1 will have a higher value than a randomly picked item from group 2.**
+
+*Is it possible to convert model estimates of SMD (Hedges' g) to CLES? If not, then let's delete this section. This is only useful if it provides a way to "plain english" model estimates*
+
+To calculate CLES from the SMD value of -1.8346 (from above):
+
+*I think Hedges' g needs to be converted to Cohen's d first though...Which is tricky or impossible when this is a model estimate. Maybe doable though?*
+```{r}
+#| echo: true
+#| eval: true
+
+pnorm(-1.8346 / sqrt(2))
+
+```
+
+If our original SMD value pertained to individuals as the unit of replication, we could then write: "We found a 9.7% chance that a person in group 2 (`m2i`) was higher than any randomly individual in group 1."
+
+This can be a useful, albeit a bit linguistically challenging, way to interpret SMD values. 
+:::
+
 ## Values ≤ 0
-A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of robust [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs. If means ≤ 0 are common in your dataset then you may have to use SMD to calculate effect sizes for these data.
+A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.
 
 :::callout-important
 #### Data bounded between 0 and 1 {#sec-zero-one-bounded}
