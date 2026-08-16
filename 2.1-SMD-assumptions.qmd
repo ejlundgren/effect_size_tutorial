@@ -144,11 +144,17 @@ $$\begin{aligned}
 
 The lnRoM point estimate---though not the sampling variance---are more robust to overdispersion. 
 
-However, @Lajeunesse2015-gw showed that this point estimate (@eq-5) is biased at low sample sizes. For that reason, @Lajeunesse2015-gw also created a "2nd-order" bias-corrected version of lnRoM using the Delta method.
+However, @Lajeunesse2015-gw showed that this point estimate (@eq-5) is biased at low sample sizes. For that reason, @Lajeunesse2015-gw created a "second-order" bias-corrected version of lnRoM using the Delta method.
 
-**MATH?**
+$$
+\begin{aligned}
+&lnRoM = log(\frac{m1}{m2}) + \frac{1}{2}(\frac{sd_1^2}{n_1 m_1^2} - \frac{sd_2^2}{n_2 m_2^2})\\
+\end{aligned}
+$${#eq-6}
 
-Both of these estimators of lnRoM are available in our `eff_size` function (under the name `yi_second` and `vi_second`. Note, you have to run the function with `default_formulas = FALSE`:
+The correction factor approaches 0 as sample size increases and it does not ultimately affect the interpretation of lnRoM: variance is not in the denominator. lnRoM still is all signal, and not a signal to noise ratio like SMD.
+
+Both the first-order definition formula of lnRoM (@eq-6) and @Lajeunesse2015-gw's second-order estimator are available in our `eff_size` function (under the names `yi_first` and `yi_second`. Note, you have to run the function with `default_formulas = FALSE`:
 
 ```{r}
 #| eval: true
@@ -162,7 +168,7 @@ eff_size(effect_type = "lnRoM",
          default_formulas = FALSE)
 ```
 
-`yi_first` is the definition formula (@eq-1) of lnRoM and `yi_second` is the bias-adjusted estimator produced by @Lajeunesse2015-gw.
+`yi_first` is the definition formula (@eq-1) of lnRoM and `yi_second` is the bias-adjusted estimator produced by @Lajeunesse2015-gw (and the `vi` values are the corresponding sampling variances).
 
 Note that `escalc` returns just the first order point estimate:
 
@@ -173,7 +179,7 @@ escalc(measure = "ROM",
          n1i = 10, n2i = 10)
 ```
 
-For that reason, if using lnRoM as your effect size you may want to consider using `eff_size` and `yi_second`, if your data is not overdispersed (see [below](#sec-overdispersion))
+For that reason, if your data is not overdispersed (see [below](#sec-overdispersion)) and you are using lnRoM as your effect size you may want to consider using `eff_size` and `yi_second`.
 
 # Should I use SMD or lnRoM? {#sec-smd-or-lnrom}
 
