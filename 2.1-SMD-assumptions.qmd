@@ -130,9 +130,9 @@ $$\begin{aligned}
 &g = J * d\\
 \end{aligned}$${#eq-4}
 
-The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation---the signal (the difference between means) is standardized by noise (the pooled standard deviation). 
+The main take away from these formulas is that the point estimate (both $d$ and $g$) are influenced by standard deviation. In other words, the signal (the difference between means) is standardized by noise (the pooled standard deviation). 
 
-Observations with high standard deviation (e.g., that are overdispersed) will have a lower overall point estimate, even if the means are very different.
+Observations with high standard deviation will have a lower overall point estimate, even if the means are very different.
 
 Because this can reduce power in your model if your data is overdispersed, @Hedges1999-al later proposed the log-transformed ratio of means, the most widely used effect size in ecology (@REF to Nakagawa/Yefeng). 
 
@@ -142,13 +142,13 @@ $$\begin{aligned}
 &lnRoM = log(\frac{m1}{m2}) \\
 \end{aligned}$${#eq-5}
 
-The lnRoM point estimate---though not the sampling variance---are more robust to overdispersion, yet by only using the definition formula (the formula used by `escalc` and shown here), the results can be biased by low sample size. 
+The lnRoM point estimate---though not the sampling variance---are more robust to overdispersion. 
 
-For that reason, @Lajeunesse2015-gw also created a 2nd-order bias-corrected version of lnRoM using the Delta method.
+However, @Lajeunesse2015-gw showed that this point estimate (@eq-5) is biased at low sample sizes. For that reason, @Lajeunesse2015-gw also created a "2nd-order" bias-corrected version of lnRoM using the Delta method.
 
 **MATH?**
 
-Both estimators of lnRoM are available in our `eff_size` function (under the name `yi_second` and `vi_second`. Note, you have to run the function with `default_formulas = FALSE`:
+Both of these estimators of lnRoM are available in our `eff_size` function (under the name `yi_second` and `vi_second`. Note, you have to run the function with `default_formulas = FALSE`:
 
 ```{r}
 #| eval: true
@@ -162,7 +162,9 @@ eff_size(effect_type = "lnRoM",
          default_formulas = FALSE)
 ```
 
-Whereas `escalc` returns just the first order point estimate:
+`yi_first` is the definition formula (@eq-1) of lnRoM and `yi_second` is the bias-adjusted estimator produced by @Lajeunesse2015-gw.
+
+Note that `escalc` returns just the first order point estimate:
 
 ```{r}
 escalc(measure = "ROM",
@@ -170,6 +172,8 @@ escalc(measure = "ROM",
          sd1i = 2, sd2i = 2,
          n1i = 10, n2i = 10)
 ```
+
+For that reason, if using lnRoM as your effect size you may want to consider using `eff_size` and `yi_second`, if your data is not overdispersed (see [below](#sec-overdispersion))
 
 # Should I use SMD or lnRoM? {#sec-smd-or-lnrom}
 
