@@ -600,7 +600,7 @@ It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produce
 
 Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity [@Bonett2009-sf]. This is available as the measure 'SMDH' in `metafor::escalc`.
 
-**Does heteroscedasticity matter for lnRoM sampling variance or 2nd-order point estimate????**
+**Does heteroscedasticity matter for lnRoM sampling variance or 2nd-order point estimate???? (I know it doesn't matter for first order)**
 
 Are there rules of thumb for heteroscedasticity? Ratio of CV1 to CV2? What threshold?
 
@@ -652,19 +652,23 @@ Note that some extraction challenges may also influence your choice of effect si
 
 ## Paired designs {#sec-paired-designs}
 
-Alternative variance estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. Effect sizes derived from paired designs can be compared directly to those from unpaired designs, as long as you're using the same effect size (e.g., within the SMD or lnRoM family).
+There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. 
 
-In paired design estimators, the variance estimation formulas accept an additional argument $r$-the correlation between plots or individuals. Since $r$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.
+In some cases, effect sizes derived from paired designs can be compared directly to those from unpaired designs. However, this is not always clear. There are a myriad of estimators for SMD-style effect sizes that account for pre-post treatment designs (see our `escalc` [cheatsheet](6-escalc-cheatsheet.qmd)). These options may preferable if your meta-analysis focuses only on these types of experiments.
+
+However, these estimators are **not** comparable to normal, unpaired SMD estimators. Our `eff_size` function provides a paired option for SMD that is comparable to unpaired SMD estimates, which we demonstrate below. `escalc` (as well as `eff_size`) provides an paired lnRoM estimator that is comparable to the standard unpaired estimator, which we also demonstrate below.
+
+In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals, which is pronounced "rho" and symbolized as `r` in most `R` code. Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.
 
 ::: callout-note
-######### $rho$ {#sec-specifying-rho}
+######### $\rho$ {#sec-specifying-rho}
 
-The correlation between groups, $rho$ (`ri` in `escalc`) is rarely reported and so needs to be assigned based, basically, on guesswork. We'd suggest that if the pairing is within an individual or plot (e.g., before-after a treatment), then a $rho$ of 0.8 seems reasonable. However, if the pairing is based on spatially paired but independent plots (e.g., adjacent to each other) then a rho of 0.5 would be more reasonable.
+The correlation between groups, $\rho$ (`ri` in `escalc` and `r` in `eff_size`) is rarely reported and so needs to be assigned based, basically, on guesswork. We'd suggest that if the pairing is within an individual or plot (e.g., before-after a treatment), then a $\rho$ of 0.8 seems reasonable. However, if the pairing is based on spatially paired but independent plots (e.g., adjacent to each other across a fenceline) then a rho of 0.5 may be more reasonable.
 
 Be sure to always conduct sensitivity analyses on these choices, to ensure that they aren't unduly changing your model estimates.
 :::
 
-If group 1 and 2 are paired (e.g., in a before-after design), you can calculate a paired lnRoM with the following code. Note that you only supply a single value for sample size (`ni`) instead of `n1i` and `n2i` because a paired design must by definition have equal sample sizes in each treatment. Paired lnRoMs will have the same point estimate (yi) as their unpaired flavor but will have lower variance and thus higher weight in your meta-analytic models.
+If groups 1 and 2 are paired (e.g., in a before-after design), you can calculate a paired lnRoM with the following code. Note that you only supply a single value for sample size (`ni`) instead of `n1i` and `n2i` because a paired design must by definition have equal sample sizes in each treatment. Paired lnRoMs will have the same point estimate (yi) as their unpaired flavor but will have lower variance and thus higher weight in your meta-analytic models.
 
 ```{r}
 #| echo: true
@@ -680,10 +684,10 @@ unpaired <- escalc(m1i = 7, sd1i = 1.2,
 
 # Now, the paired version:
 paired <- escalc(m1i = 7, sd1i = 1.2, 
-        m2i = 12, sd2i = 0.9,
-        ni = 15, ri = 0.8,
-        measure = "ROMC",
-        var.names = c("yi_paired", "vi_paired"))
+                  m2i = 12, sd2i = 0.9,
+                  ni = 15, ri = 0.8,
+                  measure = "ROMC",
+                  var.names = c("yi_paired", "vi_paired"))
 
 cbind(unpaired, paired)
 
@@ -691,12 +695,7 @@ cbind(unpaired, paired)
 
 As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to a stronger influence in the meta-analytic models.
 
-For SMD, there is also a paired version that is comparable to non-paired values (e.g., you can include both in the same analysis). However, to the best of our knowledge, these are not available in `escalc`.
-
-There are several other options available in `escalc` to account for paired designs with SMD-type data. However, these are not comparable to standard unpaired SMD measures. And for that reason should only be used if the entire meta-analysis is of the same design. See the [cheatsheet](6-escalc-cheatsheet.qmd) where we attempt to clear up these (in)compatibilities. 
-
-For that reason, you need to use our function `eff_size`. `eff_size` has a paired formulation of SMD that only influences the sampling variance and can thus be compared with unpaired SMD estimates, like those returned by `escalc`. NEED A REF TO THIS, I GUESS THE SAFE MS?
-
+To calculate a paired SMD estimate, you need to use our function. Here we'll calculate paired and unpaired estimates:
 
 ```{r}
 #| echo: true
@@ -722,7 +721,7 @@ cbind(unpaired, paired)
 
 ```
 
-As you can see, the paired version reduced the sampling variance but not the point estimate. The formula for paired SMD point estimates and sampling variance is here:
+As you can see, the paired version reduced the sampling variance but not the point estimate. The formula for paired SMD point estimates and sampling variance we used in `eff_size` are here:
 
 $$
 \begin{aligned}
