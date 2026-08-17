@@ -44,19 +44,34 @@ bibliography: references.bib
 csl: ecology.csl
 ---
 
+```{r}
+#| echo: false
+#| eval: true
+#| output: false
+# SADLY I DONT THINK ANY GLOSSARY POPUP LIBRARIES WORK :(
+library("glossary") 
+glossary_path("glossary.yml")
+glossary_style("purple", "underline")
+
+```
+
+**I tried adding glossary popup definitions...But it doesn't seem like any of the third party packages/extensions work. Can't figure out how to make the popup bigger than nothing...**
+
 # A brief introduction to effect sizes and sampling variance  {#sec-introduction-to-effect-sizes}
 
-Effect sizes in meta-analysis are statistics calculated from the results of empirical research that report the variables of interest and, if the effect size is *standardized*, allow meta-analytic comparison across different studies even if the articles collected data with different units. The effect sizes we'll discuss in this tutorial concern relationships between 2 variables, however there are other effect sizes for describing univariate results, such as single-group means and proportions, which we briefly cover [here](5-less-common-effect-sizes.qmd) and in the `escalc` [cheatsheet](6-escalc-cheatsheet.qmd).
+Effect sizes in meta-analysis are statistics calculated from the results of empirical research that report the variables of interest and, if the effect size is *standardized*, allow meta-analytic comparison across different studies even if the articles collected data with different units. 
 
-Effect sizes are also known as *'point estimates'*—e.g., the central tendency of a relationship of interest.
+The effect sizes we'll discuss in this tutorial concern relationships between 2 variables, however there are other effect sizes for describing univariate results, such as single-group means and proportions, which we briefly cover [here](5-less-common-effect-sizes.qmd) and in the `escalc` [cheatsheet](6-escalc-cheatsheet.qmd).
 
-Every meta-analytic effect size is associated with *sampling variance*. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is calculated from the sample size and/or the standard deviation of the source data.
+Effect sizes are also known as `r glossary("point estimate")`—e.g., the `r glossary("sampling variance")` of a relationship of interest.
 
-**CONCEPTUAL FIGURE??**
+Every meta-analytic effect size is associated with {{< glossary "sampling variance" >}}. Sampling variance describes the estimated variability around the effect size point estimate and is used as a weight in meta-analytic models. Sampling variance is calculated from the sample size and/or the standard deviation of the source data.
+
+**CONCEPTUAL FIGURE**
 
 # Effect size types {#sec-effect-size-types}
 
-We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable in relation to categorical or continuous predictor variables. 
+We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable between two groups (e.g., a categorical variable) or in relationship to a continuous predictor variable. 
 
 There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@Nakagawa2026-wn]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. 
 
@@ -76,13 +91,17 @@ These three effect size classes are determined by the types of data involved in 
 
 ![Effect size types](figures/flowcharts_diagrams/effect-size-types.jpg) 
 
-When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**). ---which differ in their interpretability and mathematical assumptions. Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). These effect sizes differ in their interpretability and mathematical assumptions, which we cover [here.](2.1-SMD-assumptions.qmd) 
+When the predictor is discrete, for instance between a control and experimental treatment with a continuous response variable, then the effect size is Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**). These effect sizes differ in their interpretability and mathematical assumptions, which we cover [here.](2.1-SMD-assumptions.qmd) 
 
-If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). These types of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome.
+:::callout-important
+Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). 
+:::
 
-The correlation between continuous predictors and continuous responses are analyzed as r-t-z-transformed corrleation coefficients (**Zr**) effect sizes. **Zr** can also be calculated for responses with a continuous predictor and discrete (e.g., 0 or 1) response. 
+If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged, then we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). These types of effect size can also be used for presence/absence data between two conditions. For example, the presence or absence of a rare bird species on islands with and without introduced predators, where the number of islands in each category (with vs without predator and with vs without bird species) become the discrete outcome. Or whether individuals in a research study experienced a discrete outcome (lived or died or were infected) between two treatments. 
 
-Finally, it is also possible to convert between these main effect size types, which we discuss at the [end](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding alternative experimental designs / data types [@borenstein2021]. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
+The correlation between a continuous or discrete response variable and a continuous predictor is analyzed as the r-t-z-transformed correlation coefficient (**Zr**). 
+
+Finally, it is also possible to convert between these main effect size types, which we discuss at the [end](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data [@borenstein2021]. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
 
 :::callout-important
 ### Effect size types are not always clearcut {#sec-effect-size-options}
@@ -105,11 +124,11 @@ Note that it is also possible to formulate custom effect sizes that may help sim
 
 # Calculating effect sizes & sampling variance {#sec-calculating-effect-sizes}
 
-The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes summary statistics, a variable specifying the effect size type (specified with the `measure` argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). At certain points we will also use our own custom function, `eff_this` **(currently called eff_size but eff_this could be funny...)** which can do most of what `escalc` can do but also some things that `escalc` cannot do.
+The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes summary statistics, a variable specifying the effect size type (specified with the `measure` argument) and returns the effect size point estimate and sampling variance (which we'll define in further detail below). 
 
-**Not sure if we want to include `eff_size` but if we don't, we need to figure out some of the options in `escalc`, like paired SMD...**
+At certain points we will also use our own custom function, `eff_size` **(currently called eff_size but eff_this could be funny...)** which can do most of what `escalc` can do but also some things that `escalc` cannot do.
 
-To start, we'll clean the environment and will install a custom package, `metatools` that we developed to go alongside this tutorial. This can be installed with `pak::pak` (which has replaced `devtools::install_github`). We'll also load some packages.
+To start, we'll clean the environment and we will install a custom package, `metatools` that we developed to go alongside this tutorial which contains the function `eff_size` and a function for converting between effect sizes (`convert_effect_sizes`). This can be installed with `pak::pak`. We'll also load some packages.
 
 ```{r}
 #| eval: true
@@ -138,7 +157,7 @@ library("crayon")
 
 # Estimates and estimators {#sec-estimates-and-estimators}
 
-Effect sizes (also called *point estimates*) and sampling variance are *estimated* with a variety of *estimators*. These estimators are the formulas (or methods) used to calculate point estimates and sampling variance for each effect size. Because some estimators can be biased at low sample size, or with heteroscedastic data (e.g., different variance between treatment groups), alternative estimators have been developed for the same effect sizes.
+Effect sizes (also called *point estimates*) and sampling variance are *estimated* with a variety of *estimators*. These estimators are the formulas (or methods) used to calculate {{< glossary "point estimates" >}} and {{< glossary "sampling variance" >}} for each effect size. Because some estimators can be biased at low sample size, or with {{< glossary heteroscedastic >}} data (e.g., different variance between treatment groups), alternative estimators have been developed for the same effect sizes.
 
 **CONCEPTUAL FIGURE??**
 
