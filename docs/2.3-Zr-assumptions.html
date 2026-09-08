@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-08-14">
-<title>Continuous predictors – A user’s guide to effect sizes</title>
+<meta name="dcterms.date" content="2026-09-08">
+<title>Continuous predictors: assumptions and interpretation – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -278,7 +278,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendix</span></a>
+ <span class="menu-text">Less common effect sizes</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -287,10 +287,21 @@ window.Quarto = {
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./5.0-less-common-effect-sizes.qmd.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Less common effect sizes</span></a>
+ <span class="menu-text">Other effect sizes</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendix</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./6-escalc-cheatsheet.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><code>escalc</code> cheatsheet</span></a>
@@ -327,20 +338,40 @@ window.Quarto = {
         <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>On this Page</strong></h2>
    
   <ul>
-<li><a href="#sec-assumptions" id="toc-sec-assumptions" class="nav-link active" data-scroll-target="#sec-assumptions">Assumptions</a></li>
-  <li><a href="#sec-interpretation" id="toc-sec-interpretation" class="nav-link" data-scroll-target="#sec-interpretation">Interpretation</a></li>
+<li><a href="#why-cant-we-just-pool-raw-correlations" id="toc-why-cant-we-just-pool-raw-correlations" class="nav-link active" data-scroll-target="#why-cant-we-just-pool-raw-correlations">Why can’t we just pool raw correlations?</a></li>
   <li>
-<a href="#sec-other-correlation-types" id="toc-sec-other-correlation-types" class="nav-link" data-scroll-target="#sec-other-correlation-types">Other correlation types</a>
+<a href="#the-statistical-mechanics-of-z_r" id="toc-the-statistical-mechanics-of-z_r" class="nav-link" data-scroll-target="#the-statistical-mechanics-of-z_r">The statistical mechanics of <span class="math inline">\(Z_r\)</span></a>
   <ul>
-<li><a href="#sec-point-biserial" id="toc-sec-point-biserial" class="nav-link" data-scroll-target="#sec-point-biserial">Point-biserial correlations &amp; biserial correlations</a></li>
+<li><a href="#fishers-z-transformation-the-point-estimate" id="toc-fishers-z-transformation-the-point-estimate" class="nav-link" data-scroll-target="#fishers-z-transformation-the-point-estimate">1. Fisher’s <span class="math inline">\(Z\)</span> transformation (the point estimate)</a></li>
+  <li><a href="#the-sampling-variance" id="toc-the-sampling-variance" class="nav-link" data-scroll-target="#the-sampling-variance">2. The sampling variance</a></li>
+  <li><a href="#back-transformation-to-r" id="toc-back-transformation-to-r" class="nav-link" data-scroll-target="#back-transformation-to-r">3. Back-transformation to <span class="math inline">\(r\)</span></a></li>
   </ul>
 </li>
+  <li><a href="#code-and-formula-pairing-implementation-in-r" id="toc-code-and-formula-pairing-implementation-in-r" class="nav-link" data-scroll-target="#code-and-formula-pairing-implementation-in-r">Code and formula pairing: implementation in R</a></li>
+  <li><a href="#not-all-correlations-are-comparable" id="toc-not-all-correlations-are-comparable" class="nav-link" data-scroll-target="#not-all-correlations-are-comparable">Not all correlations are comparable</a></li>
+  <li>
+<a href="#handling-ranked-correlations-spearmans-rho-and-kendalls-tau" id="toc-handling-ranked-correlations-spearmans-rho-and-kendalls-tau" class="nav-link" data-scroll-target="#handling-ranked-correlations-spearmans-rho-and-kendalls-tau">Handling ranked correlations: Spearman’s <span class="math inline">\(\rho\)</span> and Kendall’s <span class="math inline">\(\tau\)</span></a>
+  <ul>
+<li><a href="#spearmans-rho-to-pearsons-r" id="toc-spearmans-rho-to-pearsons-r" class="nav-link" data-scroll-target="#spearmans-rho-to-pearsons-r">Spearman’s <span class="math inline">\(\rho\)</span> to Pearson’s <span class="math inline">\(r\)</span>:</a></li>
+  <li><a href="#kendalls-tau-to-pearsons-r" id="toc-kendalls-tau-to-pearsons-r" class="nav-link" data-scroll-target="#kendalls-tau-to-pearsons-r">Kendall’s <span class="math inline">\(\tau\)</span> to Pearson’s <span class="math inline">\(r\)</span>:</a></li>
+  </ul>
+</li>
+  <li><a href="#the-unit-of-replication-obsession" id="toc-the-unit-of-replication-obsession" class="nav-link" data-scroll-target="#the-unit-of-replication-obsession">The “unit of replication” obsession</a></li>
+  <li>
+<a href="#non-independence-matrices-and-tagging" id="toc-non-independence-matrices-and-tagging" class="nav-link" data-scroll-target="#non-independence-matrices-and-tagging">Non-independence, matrices, and tagging</a>
+  <ul>
+<li><a href="#pairwise-correlation-matrices-the-melting-trap" id="toc-pairwise-correlation-matrices-the-melting-trap" class="nav-link" data-scroll-target="#pairwise-correlation-matrices-the-melting-trap">1. Pairwise correlation matrices (the melting trap)</a></li>
+  <li><a href="#spatial-and-temporal-flagging" id="toc-spatial-and-temporal-flagging" class="nav-link" data-scroll-target="#spatial-and-temporal-flagging">2. Spatial and temporal flagging</a></li>
+  </ul>
+</li>
+  <li><a href="#interpretation-and-benchmarks-what-does-r-mean" id="toc-interpretation-and-benchmarks-what-does-r-mean" class="nav-link" data-scroll-target="#interpretation-and-benchmarks-what-does-r-mean">Interpretation and benchmarks: what does <span class="math inline">\(r\)</span> mean?</a></li>
+  <li><a href="#recommended-workflow-for-continuous-predictors" id="toc-recommended-workflow-for-continuous-predictors" class="nav-link" data-scroll-target="#recommended-workflow-for-continuous-predictors">Recommended workflow for continuous predictors</a></li>
   </ul></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1-SMD-assumptions.html">Effect size assumptions &amp; interpretation</a></li><li class="breadcrumb-item"><a href="./2.3-Zr-assumptions.html">Continuous predictors</a></li></ol></nav><div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Continuous predictors</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">The heart of observational data synthesis</p>
+<div class="quarto-title-block"><div><h1 class="title">Continuous predictors: assumptions and interpretation</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Fisher’s Z-transformed correlation coefficient (<span class="math inline">\(Z_r\)</span>)</p>
 </div>
 
 
@@ -351,7 +382,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 14, 2026</p>
+      <p class="date">September 8, 2026</p>
     </div>
   </div>
   
@@ -360,65 +391,386 @@ window.Quarto = {
   
 
 
-</header><p>Zr is the dominant effect size for describing correlations. In particular, cases with a continuous predictor variable and one or two continuous response variables. Zr takes the correlation coefficient (<span class="math inline">\(r\)</span>) and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1).</p>
-<p><span id="eq-1"><span class="math display">\[\begin{aligned}
-&amp;r_{i} \leftarrow \min(1, \max(-1, r_i))\\
-&amp;Z_{r_i} = atanh(r_{i})\\
-\end{aligned} \tag{1}\]</span></span></p>
-<p>The sampling variance of Zr depends entirely on sample size and is defined as:</p>
-<p><span id="eq-2"><span class="math display">\[\begin{aligned}
-&amp;Var(Z_r) = \frac{1}{n-3} \\
-\end{aligned} \tag{2}\]</span></span></p>
-<p>As you can see, sampling variance is only calculable if <span class="math inline">\(n&gt;3\)</span>.</p>
-<p>In <code>escalc</code>, this looks like:</p>
+</header><!-- csl: ecology.csl --><p>As you have seen so far in this guide, effect sizes are not trivial things. Together, point estimates and sampling variances are small statistical models with their own numerical assumptions, properties, and quirks. Understanding these assumptions is essential if you want to conduct a proper and robust meta-analysis, and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.</p>
+<p>In this section, we discuss effect sizes for describing the relationship strength between two continuous variables. These are known as measures of association. While the Pearson product-moment correlation coefficient (<span class="math inline">\(r\)</span>) is the most intuitive and widely reported metric in primary studies, its mathematical properties make it problematic for direct meta-analytic pooling. Instead, we will dive into the elegant statistical world of <strong>Fisher’s Z-transformed correlation coefficient</strong> (<span class="math inline">\(Z_r\)</span>), our variance-stabilizing alternative.</p>
+<hr>
+<section id="why-cant-we-just-pool-raw-correlations" class="level3"><h3 class="anchored" data-anchor-id="why-cant-we-just-pool-raw-correlations">Why can’t we just pool raw correlations?</h3>
+<p>When primary studies report their results, they often present Pearson’s correlation coefficient (<span class="math inline">\(r\)</span>). It is an appealing effect size: it carries no units, so a correlation between body mass and clutch size can be compared directly against one between soil nitrogen and plant diversity (if that makes sense to be compared, which is another question). It runs from <span class="math inline">\(-1\)</span> (a perfect negative linear association) through <span class="math inline">\(0\)</span> (no <em>linear</em> association) to <span class="math inline">\(+1\)</span> (a perfect positive linear association).</p>
+<p>Convenient as it is, the raw correlation coefficient has three mathematical properties that sit awkwardly with the assumptions of standard meta-analytic models. All three trace back to a single issue: <span class="math inline">\(r\)</span> is bounded by <span class="math inline">\(-1\)</span> and <span class="math inline">\(+1\)</span>, and statistical estimates behave badly near hard limits.</p>
+<ol type="1">
+<li><p><strong>The estimate gets squeezed against the ceiling.</strong> When the true correlation in the population is near zero, repeated studies scatter symmetrically around it. When the true correlation is strong, say <span class="math inline">\(+0.8\)</span>, there is simply less room to overshoot than to undershoot, because no estimate can exceed <span class="math inline">\(+1\)</span>. The spread of plausible estimates becomes lopsided, with a long tail on the low side. The practical cost is that confidence intervals calculated the usual way assume a symmetric spread, so they end up miscalibrated and can even extend beyond <span class="math inline">\(1\)</span>, which does not make sense. Separately, and through a different route, <span class="math inline">\(r\)</span> is a slightly <em>shrunken</em> estimate of the true correlation. It is pulled toward zero, whatever its sign. That shrinkage is small (for a true correlation of <span class="math inline">\(0.5\)</span> measured on <span class="math inline">\(20\)</span> individuals, roughly <span class="math inline">\(0.01\)</span>), but it is the reason unbiased alternatives to <span class="math inline">\(r\)</span> exist <span class="citation" data-cites="Olkin1958-op">(<a href="#ref-Olkin1958-op" role="doc-biblioref">Olkin and Pratt 1958</a>)</span>.</p></li>
+<li><p><strong>Precision is tangled up with the result.</strong> Meta-analysis weights each study by its precision, and this only works if precision is governed by something independent of the answer, such as sample size. For correlations it is not. The sampling variance of <span class="math inline">\(r\)</span> is</p></li>
+</ol>
+<p><span id="eq-r-variance"><span class="math display">\[
+v_i = \frac{(1 - r_i^2)^2}{n_i - 1}
+\tag{1}\]</span></span></p>
+<p>which contains the correlation itself. The larger the correlation a study happens to report, the smaller its variance and the heavier its weight. A study that overestimated the correlation by chance is therefore rewarded with extra influence, and the pooled estimate is dragged away from zero. Notice that this pushes in the <em>opposite</em> direction to the shrinkage in point 1, above. The same entanglement distorts funnel plots and inflates the false-positive rate of Egger’s test for funnel asymmetry. The scatter narrows toward large correlations for reasons that have nothing to do with genuine precision.</p>
+<ol start="3" type="1">
+<li>
+<strong>Small samples make matters worse.</strong> Meta-analytic models assume each study’s estimate is drawn from a bell-shaped distribution around the true value. For correlations, that approximation holds up well with large samples and modest effects, and it breaks down when the sample is small <em>and</em> the correlation is strong—the combination most familiar to anyone working with a dozen populations or a handful of species.</li>
+</ol>
+<p>To solve these issues, Fisher proposed a variance-stabilizing, normalizing transformation <span class="citation" data-cites="Fisher1921-zr borenstein2021">(<a href="#ref-Fisher1921-zr" role="doc-biblioref">Fisher 1921</a>, <a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>)</span>.</p>
+<hr></section><section id="the-statistical-mechanics-of-z_r" class="level3"><h3 class="anchored" data-anchor-id="the-statistical-mechanics-of-z_r">The statistical mechanics of <span class="math inline">\(Z_r\)</span>
+</h3>
+<section id="fishers-z-transformation-the-point-estimate" class="level4"><h4 class="anchored" data-anchor-id="fishers-z-transformation-the-point-estimate">1. Fisher’s <span class="math inline">\(Z\)</span> transformation (the point estimate)</h4>
+<p>Fisher’s transformation stretches the bounded <span class="math inline">\([-1, +1]\)</span> interval across the entire number line, pushing the ceilings out to infinity so that estimates are no longer squeezed against them. Formally, it is the inverse hyperbolic tangent (<span class="math inline">\(\text{atanh}\)</span>):</p>
+<p><span id="eq-zr-point"><span class="math display">\[
+y_i = Z_{r_i} = \text{atanh}(r_i) = \frac{1}{2} \ln\left(\frac{1 + r_i}{1 - r_i}\right)
+\tag{2}\]</span></span></p>
+<p>Correlations near zero barely move. Correlations near the boundaries are stretched dramatically. The result is a distribution that is close to symmetric and close to normal for samples of roughly <span class="math inline">\(10\)</span> or more.</p>
+</section><section id="the-sampling-variance" class="level4"><h4 class="anchored" data-anchor-id="the-sampling-variance">2. The sampling variance</h4>
+<p>The real beauty of Fisher’s transformation lies in its sampling variance. After transformation, the sampling variance depends on sample size and nothing else:</p>
+<p><span id="eq-zr-variance"><span class="math display">\[v_i = \text{Var}(Z_{r_i}) = \frac{1}{n_i - 3} \tag{3}\]</span></span></p>
+<p>The effect size has vanished from the variance entirely. Studies are now weighted purely by how much data they collected, which is exactly the assumption meta-analytic models were built on. Symmetry and approximate normality come along for free.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The variance formula assumes bivariate normality
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Fisher’s variance is derived assuming the two variables follow a bivariate normal distribution. When the underlying data are strongly non-normal (heavy tailed) abundance counts, or ratios with a few extreme values, the true sampling variance can be noticeably larger than <span class="math inline">\(1/(n_i - 3)\)</span>, and standard errors will be too optimistic <span class="citation" data-cites="Hawkins1989-zr Kowalski1972-nn">(<a href="#ref-Kowalski1972-nn" role="doc-biblioref">Kowalski 1972</a>, <a href="#ref-Hawkins1989-zr" role="doc-biblioref">Hawkins 1989</a>)</span>. This is a further reason to prefer robust variance estimation (see below) when your evidence base is built on skewed ecological data.</p>
+</div>
+</div>
+</section><section id="back-transformation-to-r" class="level4"><h4 class="anchored" data-anchor-id="back-transformation-to-r">3. Back-transformation to <span class="math inline">\(r\)</span>
+</h4>
+<p>We conduct all statistical modeling, random-effects estimation, and moderator tests in the <span class="math inline">\(Z_r\)</span> metric, but <span class="math inline">\(Z_r\)</span> values are difficult to interpret conceptually. An effect size of <span class="math inline">\(Z_r = 1.1\)</span> means very little to our brain until we convert it back to <span class="math inline">\(r = 0.8\)</span>. We therefore back-transform final pooled estimates and interval boundaries to the intuitive correlation scale using the hyperbolic tangent (<span class="math inline">\(\tanh\)</span>):</p>
+<p><span id="eq-zr-back"><span class="math display">\[r = \tanh(Z_r) = \frac{e^{2 Z_r} - 1}{e^{2 Z_r} + 1} \tag{4}\]</span></span></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Back-transformation is not a neutral operation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Because the conversion from <span class="math inline">\(Z_r\)</span> to <span class="math inline">\(r\)</span> is curved rather than straight, back-transforming a pooled estimate does not return the average of the underlying correlations. It returns something closer to their median, and the gap between the two widens as between-study heterogeneity grows. In ecology and evolution, where heterogeneity is usually substantial, a back-transformed mean will typically exaggerate the magnitude of the true average correlation.</p>
+<p>Three practical consequences:</p>
+<ul>
+<li>
+<strong>Interval bounds back-transform safely.</strong> Because the transformation preserves rank order, converting the two ends of a confidence or prediction interval gives valid bounds on the <span class="math inline">\(r\)</span> scale. So, convert the endpoints, never the standard error.</li>
+<li>
+<strong>Heterogeneity does not back-transform at all.</strong> Report <span class="math inline">\(\tau^2\)</span>, <span class="math inline">\(I^2\)</span>, and prediction intervals on the <span class="math inline">\(Z_r\)</span> scale, or convert the prediction interval endpoints only. There is no meaningful “<span class="math inline">\(\tau^2\)</span> in correlation units.”</li>
+<li>
+<strong>Word your conclusion carefully.</strong> “The pooled effect corresponds to a correlation of 0.42” is defensible; “the average correlation across studies was 0.42” is not, once heterogeneity is appreciable.</li>
+</ul>
+<p>Some authors (notably the Hunter–Schmidt tradition; <span class="citation" data-cites="Hunter2014-hs">Hunter and Schmidt (<a href="#ref-Hunter2014-hs" role="doc-biblioref">2014</a>)</span>; <span class="citation" data-cites="Field2001-cf">Field (<a href="#ref-Field2001-cf" role="doc-biblioref">2001</a>)</span>) respond to this by pooling raw correlations with sample-size weights instead. We use Fisher’s <span class="math inline">\(Z_r\)</span> throughout this guide because it solves three problems at once, but the choice is genuinely contested and worth acknowledging in your methods section.</p>
+</div>
+</div>
+<hr></section></section><section id="code-and-formula-pairing-implementation-in-r" class="level3"><h3 class="anchored" data-anchor-id="code-and-formula-pairing-implementation-in-r">Code and formula pairing: implementation in R</h3>
+<p>Let’s look at how to implement these calculations in R using <code><a href="https://wviechtb.github.io/metafor/reference/escalc.html">metafor::escalc</a></code> and basic math.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Fisher’s <span class="math inline">\(Z\)</span> in <code>metafor</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>metafor</code> package <span class="citation" data-cites="Viechtbauer2010-uq">(<a href="#ref-Viechtbauer2010-uq" role="doc-biblioref">Viechtbauer 2010</a>)</span> implements Fisher’s <span class="math inline">\(Z\)</span> transformation via the measure code <code>"ZCOR"</code>. This is the measure you want for the workflow in this chapter.</p>
+<p>You may also encounter <code>"UCOR"</code>, which applies the Olkin-Pratt correction <span class="citation" data-cites="Olkin1958-op">(<a href="#ref-Olkin1958-op" role="doc-biblioref">Olkin and Pratt 1958</a>)</span> for the small-sample shrinkage described above. Be aware that <code>"UCOR"</code> returns a corrected <em>raw</em> correlation, not a transformed one. So it fixes the shrinkage while leaving the variance-effect entanglement fully intact. It is not an upgraded version of <code>"ZCOR"</code>, and the two should not be mixed within a single analysis.</p>
+</div>
+</div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>ri <span class="op">=</span> <span class="fl">0.7</span>, ni <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>       measure <span class="op">=</span> <span class="st">"ZCOR"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Simple demonstration of Zr transformation and back-transformation in R</span></span>
+<span></span>
+<span><span class="co"># Let's say we have extracted a correlation of r = 0.6 from a study of n = 50</span></span>
+<span><span class="va">r_val</span> <span class="op">&lt;-</span> <span class="fl">0.6</span></span>
+<span><span class="va">n_val</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
+<span></span>
+<span><span class="co"># 1. Manual Fisher's Z transformation</span></span>
+<span><span class="va">z_manual</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="va">r_val</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">r_val</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">var_manual</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="va">n_val</span> <span class="op">-</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Using escalc from metafor</span></span>
+<span><span class="va">dat_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>ri <span class="op">=</span> <span class="va">r_val</span>, ni <span class="op">=</span> <span class="va">n_val</span><span class="op">)</span></span>
+<span><span class="va">dat_zr</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZCOR"</span>, ri <span class="op">=</span> <span class="va">ri</span>, ni <span class="op">=</span> <span class="va">ni</span>, data <span class="op">=</span> <span class="va">dat_example</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Manual Z:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">z_manual</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>
-      yi     vi 
-1 0.8673 0.0833 </code></pre>
+<pre><code>[1] "Manual Z: 0.6931"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"escalc Z (yi):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">dat_zr</span><span class="op">$</span><span class="va">yi</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "escalc Z (yi): 0.6931"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"escalc Z (vi):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">dat_zr</span><span class="op">$</span><span class="va">vi</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "escalc Z (vi): 0.0213"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># 3. Back-transformation using tanh</span></span>
+<span><span class="va">r_back</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span><span class="op">(</span><span class="va">z_manual</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Back-transformed r:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">r_back</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Back-transformed r: 0.6"</code></pre>
 </div>
 </div>
-<p>Zr has among the least biased of point estimate and variance formulas (REF).</p>
-<p><em>What to do about 0/1 or binary outcomes with a continuous predictor?</em></p>
-<div class="callout-question">
-<p><strong>Zr needs Pearson’s correlation coefficient not Spearmans</strong> NEED TO MENTION IN REPORTING OF CORRELATIONS OF DIFFERENT TYPES.</p>
-<p>Also should remind about different correlation types? Pearson’s (2 continuous variables), Spearman’s (1? non-parametric variable), Kendall (???), point-biserial (1 variable truly naturally discrete), biserial (1 variable artificially discretized), techronic (2 variables artificially discretized)</p>
-<p>See <span class="citation" data-cites="Jacobs2017-cv">Jacobs and Viechtbauer (<a href="#ref-Jacobs2017-cv" role="doc-biblioref">2017</a>)</span></p>
-<p>See correlation confusion.png in the <code>notes/</code> directory</p>
-</div>
-<section id="sec-assumptions" class="level2"><h2 class="anchored" data-anchor-id="sec-assumptions">Assumptions</h2>
-<p>Presumably need to be truly continuous, e.g., not ordinal? Can you use directly reported correlation coefficients that aren’t Pearson’s??</p>
-</section><section id="sec-interpretation" class="level2"><h2 class="anchored" data-anchor-id="sec-interpretation">Interpretation</h2>
-<p>Zr effect sizes describe the strength and direction of a relationship between two continuous variables.</p>
-</section><section id="sec-other-correlation-types" class="level2"><h2 class="anchored" data-anchor-id="sec-other-correlation-types">Other correlation types</h2>
-<section id="sec-point-biserial" class="level3"><h3 class="anchored" data-anchor-id="sec-point-biserial">Point-biserial correlations &amp; biserial correlations</h3>
-<p>Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction.</p>
-<p>Point-biserial correlations are for truly distinct predictor variables (e.g., male vs female) while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small or presence versus absence).</p>
-<p><strong>Shouldn’t use male vs female as example of truly discrete variables</strong></p>
-<p>According to <span class="citation" data-cites="Jacobs2017-cv">Jacobs and Viechtbauer (<a href="#ref-Jacobs2017-cv" role="doc-biblioref">2017</a>)</span>, you should not convert point-biserial correlations to correlation coefficients. However, you can convert biserial correlations. <code>escalc</code> provides a shorthand to directly convert these statistics to Zr</p>
+<details><summary>
+Click here to see a visual demonstration of the transformation stretching effect
+</summary><p>Let’s plot how <span class="math inline">\(r\)</span> maps to <span class="math inline">\(Z_r\)</span>. Notice how the relationship is nearly a straight line around zero but curves sharply as it approaches the boundaries of <span class="math inline">\(-1\)</span> and <span class="math inline">\(+1\)</span>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`</span></span>
-<span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZBIS"</span>,</span>
-<span>      m1i <span class="op">=</span> <span class="fl">13.5</span>, m2i <span class="op">=</span> <span class="fl">10.1</span>,</span>
-<span>      sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2.1</span>,</span>
-<span>      n1i <span class="op">=</span> <span class="fl">15</span>, n2i <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-      yi     vi 
-1 1.3330 0.1467 </code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.99</span>, <span class="fl">0.99</span>, by <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span>
+<span><span class="va">zr_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">atanh</a></span><span class="op">(</span><span class="va">r_seq</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">plot_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">r_seq</span>, zr <span class="op">=</span> <span class="va">zr_seq</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">plot_data</span></span>
+<span>  , <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">r</span></span>
+<span>      ,y <span class="op">=</span> <span class="va">zr</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"blue"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Fisher's r-to-Z transformation"</span></span>
+<span>    , x <span class="op">=</span> <span class="st">"Raw correlation (r)"</span></span>
+<span>    , y <span class="op">=</span> <span class="st">"Fisher's Z (Zr)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_hline</span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"gray"</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="2.3-Zr-assumptions_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>In our mind, the biggest advantage of calculating biserial correlations is that they require fewer assumptions to <em>convert</em> to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate biserial correlations for these studies instead of calculating SMD and then <a href="./4.0-converting-effect-sizes.html">converting</a> SMD to Zr.</p>
+</div>
+</details><hr></section><section id="not-all-correlations-are-comparable" class="level3"><h3 class="anchored" data-anchor-id="not-all-correlations-are-comparable">Not all correlations are comparable</h3>
+<p>Before converting anything, check that the correlations you have extracted are estimating the same quantity. Three common mismatches will quietly corrupt an otherwise careful meta-analysis.</p>
+<p><strong>Partial correlations are not zero-order correlations.</strong> A study reporting the association between temperature and growth rate <em>after controlling for</em> body size is reporting a different parameter from a study reporting the raw association. Pooling the two together answers no clear question. If you must include partial correlations, flag them, model them as a moderator, and adjust the sample size to account for the covariates that were controlled for (the variance is closer to <span class="math inline">\(1/(n_i - k_i - 3)\)</span>, where <span class="math inline">\(k_i\)</span> is the number of control variables; <span class="citation" data-cites="Fisher1924-pc">Fisher (<a href="#ref-Fisher1924-pc" role="doc-biblioref">1924</a>)</span>; <span class="citation" data-cites="Aloe2013-pt">Aloe and Thompson (<a href="#ref-Aloe2013-pt" role="doc-biblioref">2013</a>)</span>).</p>
+<p><strong>Range restriction shrinks correlations</strong> <span class="citation" data-cites="Thorndike1949-rr Sackett2000-rr">(<a href="#ref-Thorndike1949-rr" role="doc-biblioref">Thorndike 1949</a>, <a href="#ref-Sackett2000-rr" role="doc-biblioref">Sackett and Yang 2000</a>)</span>. A study sampling across a narrow elevational band will report a weaker correlation than one spanning the full gradient, even if the underlying biology is identical. Where you can, record range or standard deviation of the predictor and use it as a moderator.</p>
+<p><strong>Measurement error shrinks correlations too</strong> <span class="citation" data-cites="Spearman1904-me Hunter2014-hs">(<a href="#ref-Spearman1904-me" role="doc-biblioref">Spearman 1904</a>, <a href="#ref-Hunter2014-hs" role="doc-biblioref">Hunter and Schmidt 2014</a>)</span>. Noise proxies attenuate associations toward zero. If reliability estimates are available for some studies and not others, this becomes a source of heterogeneity you cannot see.</p>
+<hr></section><section id="handling-ranked-correlations-spearmans-rho-and-kendalls-tau" class="level3"><h3 class="anchored" data-anchor-id="handling-ranked-correlations-spearmans-rho-and-kendalls-tau">Handling ranked correlations: Spearman’s <span class="math inline">\(\rho\)</span> and Kendall’s <span class="math inline">\(\tau\)</span>
+</h3>
+<p>When voyaging through the literature, you will inevitably encounter studies that do not report Pearson’s <span class="math inline">\(r\)</span>. Instead, because their data were non-normal or ranked, they reported <strong>Spearman’s rank correlation</strong> (<span class="math inline">\(\rho\)</span> or <span class="math inline">\(r_s\)</span>) or <strong>Kendall’s tau</strong> (<span class="math inline">\(\tau\)</span>).</p>
+<p>Because these metrics are based on ranks rather than raw values, their numeric scales are slightly compressed compared to Pearson’s <span class="math inline">\(r\)</span>. To include these studies in your meta-analysis, you can apply the following transformations to approximate their Pearson equivalents:</p>
+<section id="spearmans-rho-to-pearsons-r" class="level4"><h4 class="anchored" data-anchor-id="spearmans-rho-to-pearsons-r">Spearman’s <span class="math inline">\(\rho\)</span> to Pearson’s <span class="math inline">\(r\)</span>:</h4>
+<p><span id="eq-spearman"><span class="math display">\[r \approx 2 \sin\left(\frac{\pi}{6} \rho\right) \tag{5}\]</span></span></p>
+</section><section id="kendalls-tau-to-pearsons-r" class="level4"><h4 class="anchored" data-anchor-id="kendalls-tau-to-pearsons-r">Kendall’s <span class="math inline">\(\tau\)</span> to Pearson’s <span class="math inline">\(r\)</span>:</h4>
+<p><span id="eq-kendall"><span class="math display">\[r \approx \sin\left(\frac{\pi}{2} \tau\right) \tag{6}\]</span></span></p>
+<p>Both formulas assume the underlying data are bivariate normal <span class="citation" data-cites="Rupinski1996-rd Kendall1948-rk">(<a href="#ref-Kendall1948-rk" role="doc-biblioref">Kendall 1948</a>, <a href="#ref-Rupinski1996-rd" role="doc-biblioref">Rupinski and Dunlap 1996</a>)</span>, which is very often the assumption the original authors doubted when they chose a rank method in the first place. Treat the conversions as approximations.</p>
+<p>A useful refinement: once converted and Fisher-transformed, an effect size originating from Spearman’s <span class="math inline">\(\rho\)</span> is slightly noisier than one originating from Pearson’s <span class="math inline">\(r\)</span>. Because ranks discard some metric information, converted rank correlations have slightly lower statistical efficiency than Pearson correlations, inflating the sampling variance of <span class="math inline">\(Z_r\)</span> by about 6% under bivariate normality <span class="citation" data-cites="Fieller1957-rk Myers2004-rk">(<a href="#ref-Fieller1957-rk" role="doc-biblioref">Fieller et al. 1957</a>, <a href="#ref-Myers2004-rk" role="doc-biblioref">Myers and Sirois 2004</a>)</span>:</p>
+<p><span id="eq-rank-inflation"><span class="math display">\[v_i \approx \frac{1.06}{n_i - 3} \tag{7}\]</span></span></p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Sensitivity analyses as best practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Never treat these conversions as magic solutions. Approximations introduce uncertainty. Always flag converted effect sizes in your dataset (<em>e.g.,</em> <code>is_converted = TRUE</code>) and <strong>run sensitivity analyses</strong>. Specifically, run your meta-analytic models both <em>with</em> and <em>without</em> the converted Spearman and Kendall correlations. If your overall effect size or its uncertainty shifts substantially, you must report this and be cautious in your interpretations.</p>
+</div>
+</div>
+<hr></section></section><section id="the-unit-of-replication-obsession" class="level3"><h3 class="anchored" data-anchor-id="the-unit-of-replication-obsession">The “unit of replication” obsession</h3>
+<p>A central theme of our guide is the <strong>unit of replication</strong>. When calculating and meta-analyzing measures of association, ensuring that the unit of replication aligns across studies is paramount. Mismatches in the level of replication will alter your sample size, your sampling variance, and consequently how much influence each study has on your pooled result.</p>
+<p>Consider a study examining the correlation between soil nitrogen and plant diversity:</p>
+<ul>
+<li>
+<strong>Study A</strong> measures the correlation across <strong>50 individual quadrats</strong> (<span class="math inline">\(n = 50\)</span>).</li>
+<li>
+<strong>Study B</strong> measures the correlation across <strong>5 distinct geographic sites</strong>, where each site represents the pooled average of 10 quadrats (<span class="math inline">\(n = 5\)</span>).</li>
+</ul>
+<p>Even if both studies report an identical correlation of <span class="math inline">\(r = 0.5\)</span>, Study A carries roughly 47 units of weight against Study B’s 2. A difference of more than twentyfold (!), driven entirely by a decision about what counts as a replicate. If site is the true independent unit of replication, treating Study A’s quadrats as independent replicates is pseudoreplication <span class="citation" data-cites="Hurlbert1984-pr">(<a href="#ref-Hurlbert1984-pr" role="doc-biblioref">Hurlbert 1984</a>)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Weights are not simply <span class="math inline">\(n - 3\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The figures above assume a common-effects model, where a study’s weight is one over its sampling variance. In the random-effects and multilevel models you will actually fit, weight is one over the sampling variance <em>plus</em> the between-study variance <span class="math inline">\(\tau^2\)</span>. That extra term acts as a floor on everyone’s uncertainty and compresses the differences between studies considerably: with a moderate <span class="math inline">\(\tau^2\)</span> of <span class="math inline">\(0.1\)</span>, the twentyfold gap above shrinks to roughly fivefold. Large studies still dominate, but far less absolutely than the raw sample sizes suggest.</p>
+</div>
+</div>
+<p>Before running your models:</p>
+<ol type="1">
+<li>Identify the true, independent unit of replication for each study.</li>
+<li>Standardize or aggregate correlations where necessary to avoid inflating sample sizes.</li>
+<li>When in doubt, perform sensitivity analysis by adjusting sample sizes to reflect conservative biological units of replication.</li>
+</ol>
+<hr></section><section id="non-independence-matrices-and-tagging" class="level3"><h3 class="anchored" data-anchor-id="non-independence-matrices-and-tagging">Non-independence, matrices, and tagging</h3>
+<p>Correlation coefficients frequently violate the assumption of independence. Two main traps exist in continuous predictor meta-analyses:</p>
+<section id="pairwise-correlation-matrices-the-melting-trap" class="level4"><h4 class="anchored" data-anchor-id="pairwise-correlation-matrices-the-melting-trap">1. Pairwise correlation matrices (the melting trap)</h4>
+<p>Primary studies often present a correlation matrix comparing multiple traits or environmental factors. Meta-analysts sometimes “melt” these matrices and include all pairwise correlations as separate effect sizes.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Melted matrices cause non-independence that grows quadratically
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If a study measures 5 traits on a single set of individuals, it generates <span class="math inline">\(\frac{5 \times (5-1)}{2} = 10\)</span> pairwise correlations. Those 10 correlations share the exact same subjects. Treating them as independent data points inflates your Type I error rate, because the model behaves as though you had ten times more information than you actually collected.</p>
+</div>
+</div>
+<p>To handle this non-independence:</p>
+<ul>
+<li>Use <strong>multilevel meta-analysis</strong> with a random effect for study or paper identity to absorb shared variance <span class="citation" data-cites="Noble2017-wv">(<a href="#ref-Noble2017-wv" role="doc-biblioref">Noble et al. 2017</a>)</span>.</li>
+<li>Where the same individuals contribute to several correlations, construct an explicit variance-covariance matrix with <code><a href="https://wviechtb.github.io/metafor/reference/rcalc.html">metafor::rcalc</a></code> rather than relying on random effects alone.</li>
+<li>Combine either approach with <strong>robust variance estimation</strong> <span class="citation" data-cites="Hedges2010-rve Pustejovsky2018-cs">(<a href="#ref-Hedges2010-rve" role="doc-biblioref">Hedges et al. 2010</a>, <a href="#ref-Pustejovsky2018-cs" role="doc-biblioref">Pustejovsky and Tipton 2018</a>)</span> (<code><a href="https://wviechtb.github.io/metafor/reference/robust.html">metafor::robust</a></code>, or the <code>clubSandwich</code> package) so that your standard errors remain trustworthy even if the assumed covariance structure is imperfect.</li>
+</ul></section><section id="spatial-and-temporal-flagging" class="level4"><h4 class="anchored" data-anchor-id="spatial-and-temporal-flagging">2. Spatial and temporal flagging</h4>
+<p>Continuous predictors in ecology and evolution often vary across spatial and temporal grains. Always record and flag metadata for:</p>
+<ul>
+<li>
+<strong>Spatial grain:</strong> <em>e.g.,</em> local plot size, regional <span class="math inline">\(\text{km}^2\)</span>.</li>
+<li>
+<strong>Temporal grain:</strong> <em>e.g.,</em> seasonal correlation, decadal trend.</li>
+<li>
+<strong>Flag groupings:</strong> flag studies sharing common study sites, common control subjects, or common experimental treatments.</li>
+</ul>
+<hr></section></section><section id="interpretation-and-benchmarks-what-does-r-mean" class="level3"><h3 class="anchored" data-anchor-id="interpretation-and-benchmarks-what-does-r-mean">Interpretation and benchmarks: what does <span class="math inline">\(r\)</span> mean?</h3>
+<p>When interpreting your pooled effect size, you may encounter the traditional benchmarks proposed by Jacob Cohen <span class="citation" data-cites="Cohen1988-pw">(<a href="#ref-Cohen1988-pw" role="doc-biblioref">1988</a>)</span>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Effect size class</th>
+<th style="text-align: left;">Correlation coefficient (<span class="math inline">\(r\)</span>)</th>
+<th style="text-align: left;">Variance explained (<span class="math inline">\(r^2\)</span>)</th>
+<th style="text-align: left;">Interpretation</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Small</strong></td>
+<td style="text-align: left;"><span class="math inline">\(0.1\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(1\%\)</span></td>
+<td style="text-align: left;">Subtle effect, barely visible to the naked eye.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Medium</strong></td>
+<td style="text-align: left;"><span class="math inline">\(0.3\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(9\%\)</span></td>
+<td style="text-align: left;">Visible to a careful observer; typical of many social and ecological processes.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Large</strong></td>
+<td style="text-align: left;"><span class="math inline">\(0.5\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(25\%\)</span></td>
+<td style="text-align: left;">Prominent relationship; easily detectable.</td>
+</tr>
+</tbody>
+</table>
+<p>These labels were offered by Cohen as a fallback for researchers with no domain knowledge to draw on, and he said so explicitly. The interpretation of effect sizes is highly context-dependent:</p>
+<ul>
+<li>In <strong>evolutionary ecology</strong>, natural selection operates on tiny margins. A correlation of <span class="math inline">\(r = 0.05\)</span>—explaining a quarter of one percent of the variance—can be strongly adaptive and shape survival over generations <span class="citation" data-cites="Kingsolver2001-am Nakagawa2012-ee">(<a href="#ref-Kingsolver2001-am" role="doc-biblioref">Kingsolver et al. 2001</a>, <a href="#ref-Nakagawa2012-ee" role="doc-biblioref">Nakagawa and Santos 2012</a>)</span>.</li>
+<li>In <strong>biomedical research</strong>, regular aspirin consumption has an effect on heart attack risk equivalent to <span class="math inline">\(r = 0.034\)</span>. This explains about one tenth of one percent of the variance, yet translates to thousands of lives saved annually <span class="citation" data-cites="Rosenthal1990-ap">(<a href="#ref-Rosenthal1990-ap" role="doc-biblioref">Rosenthal 1990</a>)</span>.</li>
+</ul>
+<p>Never apply Cohen’s benchmarks blindly. Always interpret your pooled correlations in the context of the biology, the decision costs, and the practical implications of the phenomenon.</p>
+<hr></section><section id="recommended-workflow-for-continuous-predictors" class="level3"><h3 class="anchored" data-anchor-id="recommended-workflow-for-continuous-predictors">Recommended workflow for continuous predictors</h3>
+<p>To ensure your meta-analysis is rigorous, stick to the following workflow:</p>
+<ol type="1">
+<li>
+<strong>Extract raw data:</strong> Record the correlation, its sample size, the type of correlation reported, whether it is zero-order or partial, and the unit of replication.</li>
+<li>
+<strong>Screen for comparability:</strong> Set aside or flag partial correlations, and note any study with obvious range restriction or unreliable measurement.</li>
+<li>
+<strong>Standardize conversions:</strong> Convert any Spearman’s <span class="math inline">\(\rho\)</span> or Kendall’s <span class="math inline">\(\tau\)</span> to Pearson’s <span class="math inline">\(r\)</span> equivalents. Flag these.</li>
+<li>
+<strong>Calculate Fisher’s <span class="math inline">\(Z_r\)</span>:</strong> Transform raw and converted correlations using <code>metafor::escalc(measure = "ZCOR")</code>.</li>
+<li>
+<strong>Address non-independence:</strong> Check for melted matrices and shared subjects. Nest non-independent effect sizes within study using multilevel random effects.</li>
+<li>
+<strong>Run models:</strong> Fit multilevel random-effects models in the <span class="math inline">\(Z_r\)</span> metric, paired with robust variance estimation.</li>
+<li>
+<strong>Test sensitivity:</strong> Re-run models excluding converted metrics, small-sample outliers, or pseudoreplicated studies.</li>
+<li>
+<strong>Back-transform for reporting:</strong> Convert pooled estimates and interval endpoints back to <span class="math inline">\(r\)</span> using <code>tanh</code>. Keep heterogeneity statistics on the <span class="math inline">\(Z_r\)</span> scale, and word your conclusions to reflect what the back-transformed value actually represents.</li>
+</ol>
 
 
 <!-- -->
 
 
-</section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
-<div id="ref-Jacobs2017-cv" class="csl-entry" role="listitem">
-Jacobs, P., and W. Viechtbauer. 2017. Estimation of the biserial correlation and its sampling variance for use in meta-analysis: Biserial correlation. Res. Synth. Methods 8:161–180.
+</section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-Aloe2013-pt" class="csl-entry" role="listitem">
+Aloe, A. M., and C. G. Thompson. 2013. <a href="https://doi.org/10.5243/jsswr.2013.24">The synthesis of partial effect sizes</a>. Journal of the Society for Social Work and Research 4:390–412.
+</div>
+<div id="ref-borenstein2021" class="csl-entry" role="listitem">
+Borenstein, M., L. V. Hedges, J. Higgins, and H. R. Rothstein. 2021. Introduction to meta-analysis. 2nd edition. John Wiley &amp; Sons, Nashville, TN.
+</div>
+<div id="ref-Cohen1988-pw" class="csl-entry" role="listitem">
+Cohen, J. 1988. Statistical power analysis for the behavioral sciences. 2nd edition. Lawrence Erlbaum Associates.
+</div>
+<div id="ref-Field2001-cf" class="csl-entry" role="listitem">
+Field, A. P. 2001. <a href="https://doi.org/10.1037/1082-989x.6.2.161">Meta-analysis of correlation coefficients: A <span>Monte Carlo</span> comparison of fixed-and random-effects methods</a>. Psychological Methods 6:161–180.
+</div>
+<div id="ref-Fieller1957-rk" class="csl-entry" role="listitem">
+Fieller, E. C., H. O. Hartley, and E. S. Pearson. 1957. <a href="https://doi.org/10.2307/2332878">Tests for rank correlation coefficients. <span>I</span></a>. Biometrika 44:470–481.
+</div>
+<div id="ref-Fisher1921-zr" class="csl-entry" role="listitem">
+Fisher, R. A. 1921. On the <span>“probable error”</span> of a coefficient of correlation deduced from a small sample. Metron 1:3–32.
+</div>
+<div id="ref-Fisher1924-pc" class="csl-entry" role="listitem">
+Fisher, R. A. 1924. The distribution of the partial correlation coefficient. Metron 3:329–332.
+</div>
+<div id="ref-Hawkins1989-zr" class="csl-entry" role="listitem">
+Hawkins, D. L. 1989. <a href="https://doi.org/10.1080/00031305.1989.10475667">Using <span><span class="math inline">\(U\)</span></span> statistics to derive the asymptotic distribution of <span class="nocase">Fisher’s</span> <span><span class="math inline">\(Z\)</span></span> statistic</a>. The American Statistician 43:235–237.
+</div>
+<div id="ref-Hedges2010-rve" class="csl-entry" role="listitem">
+Hedges, L. V., E. Tipton, and M. C. Johnson. 2010. <a href="https://doi.org/10.1002/jrsm.5">Robust variance estimation in meta-regression with dependent effect size estimates</a>. Research Synthesis Methods 1:39–56.
+</div>
+<div id="ref-Hunter2014-hs" class="csl-entry" role="listitem">
+Hunter, J. E., and F. L. Schmidt. 2014. Methods of meta-analysis: Correcting error and bias in research findings. 3rd edition. SAGE Publications.
+</div>
+<div id="ref-Hurlbert1984-pr" class="csl-entry" role="listitem">
+Hurlbert, S. H. 1984. <a href="https://doi.org/10.2307/1942661">Pseudoreplication and the design of ecological field experiments</a>. Ecological Monographs 54:187–211.
+</div>
+<div id="ref-Kendall1948-rk" class="csl-entry" role="listitem">
+Kendall, M. G. 1948. Rank correlation methods. Charles Griffin &amp; Company.
+</div>
+<div id="ref-Kingsolver2001-am" class="csl-entry" role="listitem">
+Kingsolver, J. G., H. E. Hoekstra, J. M. Hoekstra, D. Berrigan, S. N. Vignieri, C. E. Hill, A. Hoang, P. Gilbert, and P. Beerli. 2001. <a href="https://doi.org/10.1086/319193">The strength of phenotypic selection in natural populations</a>. The American Naturalist 157:245–261.
+</div>
+<div id="ref-Kowalski1972-nn" class="csl-entry" role="listitem">
+Kowalski, C. J. 1972. <a href="https://doi.org/10.2307/2346598">On the effects of non-normality on the distribution of the sample product-moment correlation coefficient</a>. Journal of the Royal Statistical Society: Series C (Applied Statistics) 21:1–12.
+</div>
+<div id="ref-Myers2004-rk" class="csl-entry" role="listitem">
+Myers, T. A., and F. M. Sirois. 2004. <a href="https://doi.org/10.3200/GENP.131.2.139-149">Determining the statistical significance of <span class="nocase">Fisher’s</span> <span class="math inline">\(z\)</span>-transformed correlation coefficients</a>. The Journal of General Psychology 131:139–149.
+</div>
+<div id="ref-Nakagawa2012-ee" class="csl-entry" role="listitem">
+Nakagawa, S., and E. S. A. Santos. 2012. <a href="https://doi.org/10.1007/s10682-012-9555-5">Methodological issues and advances in conducting meta-analyses in ecology and evolutionary biology</a>. Evolutionary Ecology 26:1253–1274.
+</div>
+<div id="ref-Noble2017-wv" class="csl-entry" role="listitem">
+Noble, D. W. A., M. Lagisz, R. E. O’dea, and S. Nakagawa. 2017. Nonindependence and sensitivity analyses in ecological and evolutionary meta-analyses. Mol. Ecol. 26:2410–2425.
+</div>
+<div id="ref-Olkin1958-op" class="csl-entry" role="listitem">
+Olkin, I., and J. W. Pratt. 1958. <a href="https://doi.org/10.1214/aoms/1177706717">Unbiased estimation of certain correlation coefficients</a>. The Annals of Mathematical Statistics 29:201–211.
+</div>
+<div id="ref-Pustejovsky2018-cs" class="csl-entry" role="listitem">
+Pustejovsky, J. E., and E. Tipton. 2018. <a href="https://doi.org/10.1080/07350015.2016.1247004">Small-sample methods for cluster-robust variance estimation and hypothesis testing in meta-analysis</a>. Journal of Business &amp; Economic Statistics 36:672–683.
+</div>
+<div id="ref-Rosenthal1990-ap" class="csl-entry" role="listitem">
+Rosenthal, R. 1990. <a href="https://doi.org/10.1037/0003-066X.45.6.775">How are we doing in soft psychology?</a> American Psychologist 45:775–777.
+</div>
+<div id="ref-Rupinski1996-rd" class="csl-entry" role="listitem">
+Rupinski, M. T., and W. P. Dunlap. 1996. <a href="https://doi.org/10.1177/0013164496056003004">Approximating <span class="nocase">Pearson’s</span> <span class="math inline">\(r\)</span> from <span class="nocase">Kendall’s</span> tau and <span class="nocase">Spearman’s</span> rho</a>. Educational and Psychological Measurement 56:419–429.
+</div>
+<div id="ref-Sackett2000-rr" class="csl-entry" role="listitem">
+Sackett, P. R., and H. Yang. 2000. <a href="https://doi.org/10.1037/0021-9010.85.1.112">Correction for range restriction: An expanded typology</a>. Journal of Applied Psychology 85:112–118.
+</div>
+<div id="ref-Spearman1904-me" class="csl-entry" role="listitem">
+Spearman, C. 1904. <a href="https://doi.org/10.2307/1412159">The proof and measurement of association between two things</a>. The American Journal of Psychology 15:72–101.
+</div>
+<div id="ref-Thorndike1949-rr" class="csl-entry" role="listitem">
+Thorndike, R. L. 1949. Personnel selection: Test and measurement techniques. John Wiley &amp; Sons.
+</div>
+<div id="ref-Viechtbauer2010-uq" class="csl-entry" role="listitem">
+Viechtbauer, W. 2010. <a href="https://doi.org/10.18637/jss.v036.i03">Conducting meta-analyses in <span>R</span> with the <span class="nocase">metafor</span> package</a>. Journal of Statistical Software 36:1–48.
 </div>
 </div></section></div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -871,143 +1223,348 @@ Jacobs, P., and W. Viechtbauer. 2017. Estimation of the biserial correlation and
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Continuous predictors"</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "The heart of observational data synthesis"</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "2.3-Zr-assumptions.html"</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="an">csl:</span><span class="co"> ecology.csl</span></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"metatools"</span>)) {</span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>  pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"ejlundgren/metatools"</span>)</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metatools"</span>)</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>Zr is the dominant effect size for describing correlations. In particular, cases with a continuous predictor variable and one or two continuous response variables. Zr takes the correlation coefficient ($r$) and sample size as its inputs. The point estimate itself is the arc-tangent of the correlation coefficient (which must be bounded between -1 and 1).</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>&amp;r_{i} \leftarrow \min(1, \max(-1, r_i))<span class="sc">\\</span></span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>&amp;Z_{r_i} = atanh(r_{i})<span class="sc">\\</span></span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>\end{aligned}$${#eq-1}</span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>The sampling variance of Zr depends entirely on sample size and is defined as:</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>&amp;Var(Z_r) = \frac{1}{n-3} <span class="sc">\\</span></span>
-<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>\end{aligned}$${#eq-2}</span>
-<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>As you can see, sampling variance is only calculable if $n&gt;3$.</span>
-<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>, this looks like:</span>
-<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">ri =</span> <span class="fl">0.7</span>, <span class="at">ni =</span> <span class="dv">15</span>,</span>
-<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"ZCOR"</span>)</span>
-<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>Zr has among the least biased of point estimate and variance formulas (REF).</span>
-<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>*What to do about 0/1 or binary outcomes with a continuous predictor?*</span>
-<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>:::callout-question</span>
-<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>**Zr needs Pearson's correlation coefficient not Spearmans** NEED TO MENTION IN REPORTING OF CORRELATIONS OF DIFFERENT TYPES.</span>
-<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>Also should remind about different correlation types? Pearson's (2 continuous variables), Spearman's (1? non-parametric variable), Kendall (???), point-biserial (1 variable truly naturally discrete), biserial (1 variable artificially discretized), techronic (2 variables artificially discretized)</span>
-<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>See @Jacobs2017-cv</span>
-<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>See correlation confusion.png in the <span class="in">`notes/`</span> directory</span>
-<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assumptions {#sec-assumptions}</span></span>
-<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>Presumably need to be truly continuous, e.g., not ordinal? Can you use directly reported correlation coefficients that aren't Pearson's??</span>
-<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpretation {#sec-interpretation}</span></span>
-<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>Zr effect sizes describe the strength and direction of a relationship between two continuous variables.</span>
-<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Other correlation types {#sec-other-correlation-types}</span></span>
-<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a><span class="fu">### Point-biserial correlations &amp; biserial correlations {#sec-point-biserial}</span></span>
-<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>Point-biserial and biserial correlations are oddballs. They are very similar to SMD, in that they are an effect size that summarizes the relationship between a discrete predictor and a continuous outcome variable. However, these effect sizes are a measure of association/correlation and range from -1 to 1, instead of describing the difference in magnitude and direction. </span>
-<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>Point-biserial correlations are for truly distinct predictor variables (e.g., male vs female) while biserial correlations are for continuous variables that have been turned into discrete variables (e.g., large versus small or presence versus absence).</span>
-<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>**Shouldn't use male vs female as example of truly discrete variables**</span>
-<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a>According to @Jacobs2017-cv, you should not convert point-biserial correlations to correlation coefficients. However, you can convert biserial correlations. <span class="in">`escalc`</span> provides a shorthand to directly convert these statistics to Zr</span>
-<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a><span class="co"># For the biserial correlation coefficient (for a continuous predictor that was discretized), directly to `Zr`</span></span>
-<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZBIS"</span>,</span>
-<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>      <span class="at">m1i =</span> <span class="fl">13.5</span>, <span class="at">m2i =</span> <span class="fl">10.1</span>,</span>
-<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>      <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.1</span>,</span>
-<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>      <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
-<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>In our mind, the biggest advantage of calculating biserial correlations is that they require fewer assumptions to *convert* to Zr. For example, if you are doing a meta-analysis where the majority of your data are correlations except for one or two studies that use discrete predictors, it may be better to calculate biserial correlations for these studies instead of calculating SMD and then <span class="co">[</span><span class="ot">converting</span><span class="co">](4-converting-effect-sizes.qmd)</span> SMD to Zr. </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Continuous predictors: assumptions and interpretation"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Fisher's Z-transformed correlation coefficient ($Z_r$)"</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "2.3-Zr-assumptions.html"</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> </span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="co">  - references.bib</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="an">csl:</span><span class="co"> ecology.csl</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- csl: ecology.csl --&gt;</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"metatools"</span>)) {</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>    pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"ejlundgren/metatools"</span>)</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metatools"</span>)</span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>As you have seen so far in this guide, effect sizes are not trivial things. Together, point estimates and sampling variances are small statistical models with their own numerical assumptions, properties, and quirks. Understanding these assumptions is essential if you want to conduct a proper and robust meta-analysis, and if you want to correctly interpret these effect sizes and the outputs of meta-analytic models.</span>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-77"><a href="#cb10-77" aria-hidden="true" tabindex="-1"></a>In this section, we discuss effect sizes for describing the relationship strength between two continuous variables. These are known as measures of association. While the Pearson product-moment correlation coefficient ($r$) is the most intuitive and widely reported metric in primary studies, its mathematical properties make it problematic for direct meta-analytic pooling. Instead, we will dive into the elegant statistical world of **Fisher's Z-transformed correlation coefficient** ($Z_r$), our variance-stabilizing alternative.</span>
+<span id="cb10-78"><a href="#cb10-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-79"><a href="#cb10-79" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-80"><a href="#cb10-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-81"><a href="#cb10-81" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why can't we just pool raw correlations?</span></span>
+<span id="cb10-82"><a href="#cb10-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-83"><a href="#cb10-83" aria-hidden="true" tabindex="-1"></a>When primary studies report their results, they often present Pearson's correlation coefficient ($r$). It is an appealing effect size: it carries no units, so a correlation between body mass and clutch size can be compared directly against one between soil nitrogen and plant diversity (if that makes sense to be compared, which is another question). It runs from $-1$ (a perfect negative linear association) through $0$ (no *linear* association) to $+1$ (a perfect positive linear association).</span>
+<span id="cb10-84"><a href="#cb10-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-85"><a href="#cb10-85" aria-hidden="true" tabindex="-1"></a>Convenient as it is, the raw correlation coefficient has three mathematical properties that sit awkwardly with the assumptions of standard meta-analytic models. All three trace back to a single issue: $r$ is bounded by $-1$ and $+1$, and statistical estimates behave badly near hard limits.</span>
+<span id="cb10-86"><a href="#cb10-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-87"><a href="#cb10-87" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**The estimate gets squeezed against the ceiling.** When the true correlation in the population is near zero, repeated studies scatter symmetrically around it. When the true correlation is strong, say $+0.8$, there is simply less room to overshoot than to undershoot, because no estimate can exceed $+1$. The spread of plausible estimates becomes lopsided, with a long tail on the low side. The practical cost is that confidence intervals calculated the usual way assume a symmetric spread, so they end up miscalibrated and can even extend beyond $1$, which does not make sense. Separately, and through a different route, $r$ is a slightly *shrunken* estimate of the true correlation. It is pulled toward zero, whatever its sign. That shrinkage is small (for a true correlation of $0.5$ measured on $20$ individuals, roughly $0.01$), but it is the reason unbiased alternatives to $r$ exist <span class="co">[</span><span class="ot">@Olkin1958-op</span><span class="co">]</span>.</span>
+<span id="cb10-88"><a href="#cb10-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-89"><a href="#cb10-89" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Precision is tangled up with the result.** Meta-analysis weights each study by its precision, and this only works if precision is governed by something independent of the answer, such as sample size. For correlations it is not. The sampling variance of $r$ is</span>
+<span id="cb10-90"><a href="#cb10-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-91"><a href="#cb10-91" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-92"><a href="#cb10-92" aria-hidden="true" tabindex="-1"></a>v_i = \frac{(1 - r_i^2)^2}{n_i - 1}</span>
+<span id="cb10-93"><a href="#cb10-93" aria-hidden="true" tabindex="-1"></a>$${#eq-r-variance}</span>
+<span id="cb10-94"><a href="#cb10-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-95"><a href="#cb10-95" aria-hidden="true" tabindex="-1"></a>which contains the correlation itself. The larger the correlation a study happens to report, the smaller its variance and the heavier its weight. A study that overestimated the correlation by chance is therefore rewarded with extra influence, and the pooled estimate is dragged away from zero. Notice that this pushes in the *opposite* direction to the shrinkage in point 1, above. The same entanglement distorts funnel plots and inflates the false-positive rate of Egger's test for funnel asymmetry. The scatter narrows toward large correlations for reasons that have nothing to do with genuine precision.</span>
+<span id="cb10-96"><a href="#cb10-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-97"><a href="#cb10-97" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Small samples make matters worse.** Meta-analytic models assume each study's estimate is drawn from a bell-shaped distribution around the true value. For correlations, that approximation holds up well with large samples and modest effects, and it breaks down when the sample is small *and* the correlation is strong—the combination most familiar to anyone working with a dozen populations or a handful of species.</span>
+<span id="cb10-98"><a href="#cb10-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-99"><a href="#cb10-99" aria-hidden="true" tabindex="-1"></a>To solve these issues, Fisher proposed a variance-stabilizing, normalizing transformation <span class="co">[</span><span class="ot">@Fisher1921-zr; @borenstein2021</span><span class="co">]</span>.</span>
+<span id="cb10-100"><a href="#cb10-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-101"><a href="#cb10-101" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-102"><a href="#cb10-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-103"><a href="#cb10-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### The statistical mechanics of $Z_r$</span></span>
+<span id="cb10-104"><a href="#cb10-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-105"><a href="#cb10-105" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Fisher's $Z$ transformation (the point estimate)</span></span>
+<span id="cb10-106"><a href="#cb10-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-107"><a href="#cb10-107" aria-hidden="true" tabindex="-1"></a>Fisher's transformation stretches the bounded $<span class="co">[</span><span class="ot">-1, +1</span><span class="co">]</span>$ interval across the entire number line, pushing the ceilings out to infinity so that estimates are no longer squeezed against them. Formally, it is the inverse hyperbolic tangent ($\text{atanh}$):</span>
+<span id="cb10-108"><a href="#cb10-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-109"><a href="#cb10-109" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb10-110"><a href="#cb10-110" aria-hidden="true" tabindex="-1"></a>y_i = Z_{r_i} = \text{atanh}(r_i) = \frac{1}{2} \ln\left(\frac{1 + r_i}{1 - r_i}\right)</span>
+<span id="cb10-111"><a href="#cb10-111" aria-hidden="true" tabindex="-1"></a>$${#eq-zr-point}</span>
+<span id="cb10-112"><a href="#cb10-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-113"><a href="#cb10-113" aria-hidden="true" tabindex="-1"></a>Correlations near zero barely move. Correlations near the boundaries are stretched dramatically. The result is a distribution that is close to symmetric and close to normal for samples of roughly $10$ or more.</span>
+<span id="cb10-114"><a href="#cb10-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-115"><a href="#cb10-115" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. The sampling variance</span></span>
+<span id="cb10-116"><a href="#cb10-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-117"><a href="#cb10-117" aria-hidden="true" tabindex="-1"></a>The real beauty of Fisher's transformation lies in its sampling variance. After transformation, the sampling variance depends on sample size and nothing else:</span>
+<span id="cb10-118"><a href="#cb10-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-119"><a href="#cb10-119" aria-hidden="true" tabindex="-1"></a>$$v_i = \text{Var}(Z_{r_i}) = \frac{1}{n_i - 3}$${#eq-zr-variance}</span>
+<span id="cb10-120"><a href="#cb10-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-121"><a href="#cb10-121" aria-hidden="true" tabindex="-1"></a>The effect size has vanished from the variance entirely. Studies are now weighted purely by how much data they collected, which is exactly the assumption meta-analytic models were built on. Symmetry and approximate normality come along for free.</span>
+<span id="cb10-122"><a href="#cb10-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-123"><a href="#cb10-123" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb10-124"><a href="#cb10-124" aria-hidden="true" tabindex="-1"></a><span class="fu">##### The variance formula assumes bivariate normality</span></span>
+<span id="cb10-125"><a href="#cb10-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-126"><a href="#cb10-126" aria-hidden="true" tabindex="-1"></a>Fisher's variance is derived assuming the two variables follow a bivariate normal distribution. When the underlying data are strongly non-normal (heavy tailed) abundance counts, or ratios with a few extreme values, the true sampling variance can be noticeably larger than $1/(n_i - 3)$, and standard errors will be too optimistic <span class="co">[</span><span class="ot">@Hawkins1989-zr; @Kowalski1972-nn</span><span class="co">]</span>. This is a further reason to prefer robust variance estimation (see below) when your evidence base is built on skewed ecological data.</span>
+<span id="cb10-127"><a href="#cb10-127" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-128"><a href="#cb10-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-129"><a href="#cb10-129" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 3. Back-transformation to $r$</span></span>
+<span id="cb10-130"><a href="#cb10-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-131"><a href="#cb10-131" aria-hidden="true" tabindex="-1"></a>We conduct all statistical modeling, random-effects estimation, and moderator tests in the $Z_r$ metric, but $Z_r$ values are difficult to interpret conceptually. An effect size of $Z_r = 1.1$ means very little to our brain until we convert it back to $r = 0.8$. We therefore back-transform final pooled estimates and interval boundaries to the intuitive correlation scale using the hyperbolic tangent ($\tanh$):</span>
+<span id="cb10-132"><a href="#cb10-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-133"><a href="#cb10-133" aria-hidden="true" tabindex="-1"></a>$$r = \tanh(Z_r) = \frac{e^{2 Z_r} - 1}{e^{2 Z_r} + 1}$${#eq-zr-back}</span>
+<span id="cb10-134"><a href="#cb10-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-135"><a href="#cb10-135" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
+<span id="cb10-136"><a href="#cb10-136" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Back-transformation is not a neutral operation</span></span>
+<span id="cb10-137"><a href="#cb10-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-138"><a href="#cb10-138" aria-hidden="true" tabindex="-1"></a>Because the conversion from $Z_r$ to $r$ is curved rather than straight, back-transforming a pooled estimate does not return the average of the underlying correlations. It returns something closer to their median, and the gap between the two widens as between-study heterogeneity grows. In ecology and evolution, where heterogeneity is usually substantial, a back-transformed mean will typically exaggerate the magnitude of the true average correlation.</span>
+<span id="cb10-139"><a href="#cb10-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-140"><a href="#cb10-140" aria-hidden="true" tabindex="-1"></a>Three practical consequences:</span>
+<span id="cb10-141"><a href="#cb10-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-142"><a href="#cb10-142" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Interval bounds back-transform safely.** Because the transformation preserves rank order, converting the two ends of a confidence or prediction interval gives valid bounds on the $r$ scale. So, convert the endpoints, never the standard error.</span>
+<span id="cb10-143"><a href="#cb10-143" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Heterogeneity does not back-transform at all.** Report $\tau^2$, $I^2$, and prediction intervals on the $Z_r$ scale, or convert the prediction interval endpoints only. There is no meaningful "$\tau^2$ in correlation units."</span>
+<span id="cb10-144"><a href="#cb10-144" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Word your conclusion carefully.** "The pooled effect corresponds to a correlation of 0.42" is defensible; "the average correlation across studies was 0.42" is not, once heterogeneity is appreciable.</span>
+<span id="cb10-145"><a href="#cb10-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-146"><a href="#cb10-146" aria-hidden="true" tabindex="-1"></a>Some authors (notably the Hunter–Schmidt tradition; @Hunter2014-hs; @Field2001-cf) respond to this by pooling raw correlations with sample-size weights instead. We use Fisher's $Z_r$ throughout this guide because it solves three problems at once, but the choice is genuinely contested and worth acknowledging in your methods section.</span>
+<span id="cb10-147"><a href="#cb10-147" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-148"><a href="#cb10-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-149"><a href="#cb10-149" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-150"><a href="#cb10-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-151"><a href="#cb10-151" aria-hidden="true" tabindex="-1"></a><span class="fu">### Code and formula pairing: implementation in R</span></span>
+<span id="cb10-152"><a href="#cb10-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-153"><a href="#cb10-153" aria-hidden="true" tabindex="-1"></a>Let's look at how to implement these calculations in R using <span class="in">`metafor::escalc`</span> and basic math.</span>
+<span id="cb10-154"><a href="#cb10-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-155"><a href="#cb10-155" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb10-156"><a href="#cb10-156" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Fisher's $Z$ in `metafor`</span></span>
+<span id="cb10-157"><a href="#cb10-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-158"><a href="#cb10-158" aria-hidden="true" tabindex="-1"></a>The <span class="in">`metafor`</span> package <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span> implements Fisher's $Z$ transformation via the measure code <span class="in">`"ZCOR"`</span>. This is the measure you want for the workflow in this chapter.</span>
+<span id="cb10-159"><a href="#cb10-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-160"><a href="#cb10-160" aria-hidden="true" tabindex="-1"></a>You may also encounter <span class="in">`"UCOR"`</span>, which applies the Olkin-Pratt correction <span class="co">[</span><span class="ot">@Olkin1958-op</span><span class="co">]</span> for the small-sample shrinkage described above. Be aware that <span class="in">`"UCOR"`</span> returns a corrected *raw* correlation, not a transformed one. So it fixes the shrinkage while leaving the variance-effect entanglement fully intact. It is not an upgraded version of <span class="in">`"ZCOR"`</span>, and the two should not be mixed within a single analysis.</span>
+<span id="cb10-161"><a href="#cb10-161" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-162"><a href="#cb10-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-165"><a href="#cb10-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-166"><a href="#cb10-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-167"><a href="#cb10-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb10-168"><a href="#cb10-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-169"><a href="#cb10-169" aria-hidden="true" tabindex="-1"></a><span class="co"># Simple demonstration of Zr transformation and back-transformation in R</span></span>
+<span id="cb10-170"><a href="#cb10-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-171"><a href="#cb10-171" aria-hidden="true" tabindex="-1"></a><span class="co"># Let's say we have extracted a correlation of r = 0.6 from a study of n = 50</span></span>
+<span id="cb10-172"><a href="#cb10-172" aria-hidden="true" tabindex="-1"></a>r_val <span class="ot">&lt;-</span> <span class="fl">0.6</span></span>
+<span id="cb10-173"><a href="#cb10-173" aria-hidden="true" tabindex="-1"></a>n_val <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb10-174"><a href="#cb10-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-175"><a href="#cb10-175" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Manual Fisher's Z transformation</span></span>
+<span id="cb10-176"><a href="#cb10-176" aria-hidden="true" tabindex="-1"></a>z_manual <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">log</span>((<span class="dv">1</span> <span class="sc">+</span> r_val) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> r_val))</span>
+<span id="cb10-177"><a href="#cb10-177" aria-hidden="true" tabindex="-1"></a>var_manual <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (n_val <span class="sc">-</span> <span class="dv">3</span>)</span>
+<span id="cb10-178"><a href="#cb10-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-179"><a href="#cb10-179" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Using escalc from metafor</span></span>
+<span id="cb10-180"><a href="#cb10-180" aria-hidden="true" tabindex="-1"></a>dat_example <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">ri =</span> r_val, <span class="at">ni =</span> n_val)</span>
+<span id="cb10-181"><a href="#cb10-181" aria-hidden="true" tabindex="-1"></a>dat_zr <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZCOR"</span>, <span class="at">ri =</span> ri, <span class="at">ni =</span> ni, <span class="at">data =</span> dat_example)</span>
+<span id="cb10-182"><a href="#cb10-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-183"><a href="#cb10-183" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Manual Z:"</span>, <span class="fu">round</span>(z_manual, <span class="dv">4</span>)))</span>
+<span id="cb10-184"><a href="#cb10-184" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"escalc Z (yi):"</span>, <span class="fu">round</span>(dat_zr<span class="sc">$</span>yi[<span class="dv">1</span>], <span class="dv">4</span>)))</span>
+<span id="cb10-185"><a href="#cb10-185" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"escalc Z (vi):"</span>, <span class="fu">round</span>(dat_zr<span class="sc">$</span>vi[<span class="dv">1</span>], <span class="dv">4</span>)))</span>
+<span id="cb10-186"><a href="#cb10-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-187"><a href="#cb10-187" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Back-transformation using tanh</span></span>
+<span id="cb10-188"><a href="#cb10-188" aria-hidden="true" tabindex="-1"></a>r_back <span class="ot">&lt;-</span> <span class="fu">tanh</span>(z_manual)</span>
+<span id="cb10-189"><a href="#cb10-189" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Back-transformed r:"</span>, <span class="fu">round</span>(r_back, <span class="dv">4</span>)))</span>
+<span id="cb10-190"><a href="#cb10-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-191"><a href="#cb10-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-192"><a href="#cb10-192" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb10-193"><a href="#cb10-193" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;</span>Click here to see a visual demonstration of the transformation stretching effect<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
+<span id="cb10-194"><a href="#cb10-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-195"><a href="#cb10-195" aria-hidden="true" tabindex="-1"></a>Let's plot how $r$ maps to $Z_r$. Notice how the relationship is nearly a straight line around zero but curves sharply as it approaches the boundaries of $-1$ and $+1$:</span>
+<span id="cb10-196"><a href="#cb10-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-199"><a href="#cb10-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb10-200"><a href="#cb10-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-201"><a href="#cb10-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb10-202"><a href="#cb10-202" aria-hidden="true" tabindex="-1"></a>r_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.99</span>, <span class="fl">0.99</span>, <span class="at">by =</span> <span class="fl">0.01</span>)</span>
+<span id="cb10-203"><a href="#cb10-203" aria-hidden="true" tabindex="-1"></a>zr_seq <span class="ot">&lt;-</span> <span class="fu">atanh</span>(r_seq)</span>
+<span id="cb10-204"><a href="#cb10-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-205"><a href="#cb10-205" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">r =</span> r_seq, <span class="at">zr =</span> zr_seq)</span>
+<span id="cb10-206"><a href="#cb10-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-207"><a href="#cb10-207" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_data</span>
+<span id="cb10-208"><a href="#cb10-208" aria-hidden="true" tabindex="-1"></a>  , <span class="fu">aes</span>(<span class="at">x =</span> r</span>
+<span id="cb10-209"><a href="#cb10-209" aria-hidden="true" tabindex="-1"></a>      ,<span class="at">y =</span> zr)</span>
+<span id="cb10-210"><a href="#cb10-210" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-211"><a href="#cb10-211" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb10-212"><a href="#cb10-212" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb10-213"><a href="#cb10-213" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Fisher's r-to-Z transformation"</span></span>
+<span id="cb10-214"><a href="#cb10-214" aria-hidden="true" tabindex="-1"></a>    , <span class="at">x =</span> <span class="st">"Raw correlation (r)"</span></span>
+<span id="cb10-215"><a href="#cb10-215" aria-hidden="true" tabindex="-1"></a>    , <span class="at">y =</span> <span class="st">"Fisher's Z (Zr)"</span>) <span class="sc">+</span></span>
+<span id="cb10-216"><a href="#cb10-216" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
+<span id="cb10-217"><a href="#cb10-217" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray"</span>)</span>
+<span id="cb10-218"><a href="#cb10-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb10-219"><a href="#cb10-219" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb10-220"><a href="#cb10-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-221"><a href="#cb10-221" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-222"><a href="#cb10-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-223"><a href="#cb10-223" aria-hidden="true" tabindex="-1"></a><span class="fu">### Not all correlations are comparable</span></span>
+<span id="cb10-224"><a href="#cb10-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-225"><a href="#cb10-225" aria-hidden="true" tabindex="-1"></a>Before converting anything, check that the correlations you have extracted are estimating the same quantity. Three common mismatches will quietly corrupt an otherwise careful meta-analysis.</span>
+<span id="cb10-226"><a href="#cb10-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-227"><a href="#cb10-227" aria-hidden="true" tabindex="-1"></a>**Partial correlations are not zero-order correlations.** A study reporting the association between temperature and growth rate *after controlling for* body size is reporting a different parameter from a study reporting the raw association. Pooling the two together answers no clear question. If you must include partial correlations, flag them, model them as a moderator, and adjust the sample size to account for the covariates that were controlled for (the variance is closer to $1/(n_i - k_i - 3)$, where $k_i$ is the number of control variables; @Fisher1924-pc; @Aloe2013-pt).</span>
+<span id="cb10-228"><a href="#cb10-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-229"><a href="#cb10-229" aria-hidden="true" tabindex="-1"></a>**Range restriction shrinks correlations** <span class="co">[</span><span class="ot">@Thorndike1949-rr; @Sackett2000-rr</span><span class="co">]</span>. A study sampling across a narrow elevational band will report a weaker correlation than one spanning the full gradient, even if the underlying biology is identical. Where you can, record range or standard deviation of the predictor and use it as a moderator.</span>
+<span id="cb10-230"><a href="#cb10-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-231"><a href="#cb10-231" aria-hidden="true" tabindex="-1"></a>**Measurement error shrinks correlations too** <span class="co">[</span><span class="ot">@Spearman1904-me; @Hunter2014-hs</span><span class="co">]</span>. Noise proxies attenuate associations toward zero. If reliability estimates are available for some studies and not others, this becomes a source of heterogeneity you cannot see.</span>
+<span id="cb10-232"><a href="#cb10-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-233"><a href="#cb10-233" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-234"><a href="#cb10-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-235"><a href="#cb10-235" aria-hidden="true" tabindex="-1"></a><span class="fu">### Handling ranked correlations: Spearman's $\rho$ and Kendall's $\tau$</span></span>
+<span id="cb10-236"><a href="#cb10-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-237"><a href="#cb10-237" aria-hidden="true" tabindex="-1"></a>When voyaging through the literature, you will inevitably encounter studies that do not report Pearson's $r$. Instead, because their data were non-normal or ranked, they reported **Spearman's rank correlation** ($\rho$ or $r_s$) or **Kendall's tau** ($\tau$).</span>
+<span id="cb10-238"><a href="#cb10-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-239"><a href="#cb10-239" aria-hidden="true" tabindex="-1"></a>Because these metrics are based on ranks rather than raw values, their numeric scales are slightly compressed compared to Pearson's $r$. To include these studies in your meta-analysis, you can apply the following transformations to approximate their Pearson equivalents:</span>
+<span id="cb10-240"><a href="#cb10-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-241"><a href="#cb10-241" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Spearman's $\rho$ to Pearson's $r$:</span></span>
+<span id="cb10-242"><a href="#cb10-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-243"><a href="#cb10-243" aria-hidden="true" tabindex="-1"></a>$$r \approx 2 \sin\left(\frac{\pi}{6} \rho\right)$${#eq-spearman}</span>
+<span id="cb10-244"><a href="#cb10-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-245"><a href="#cb10-245" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Kendall's $\tau$ to Pearson's $r$:</span></span>
+<span id="cb10-246"><a href="#cb10-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-247"><a href="#cb10-247" aria-hidden="true" tabindex="-1"></a>$$r \approx \sin\left(\frac{\pi}{2} \tau\right)$${#eq-kendall}</span>
+<span id="cb10-248"><a href="#cb10-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-249"><a href="#cb10-249" aria-hidden="true" tabindex="-1"></a>Both formulas assume the underlying data are bivariate normal <span class="co">[</span><span class="ot">@Rupinski1996-rd; @Kendall1948-rk</span><span class="co">]</span>, which is very often the assumption the original authors doubted when they chose a rank method in the first place. Treat the conversions as approximations.</span>
+<span id="cb10-250"><a href="#cb10-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-251"><a href="#cb10-251" aria-hidden="true" tabindex="-1"></a>A useful refinement: once converted and Fisher-transformed, an effect size originating from Spearman's $\rho$ is slightly noisier than one originating from Pearson's $r$. Because ranks discard some metric information, converted rank correlations have slightly lower statistical efficiency than Pearson correlations, inflating the sampling variance of $Z_r$ by about 6% under bivariate normality <span class="co">[</span><span class="ot">@Fieller1957-rk; @Myers2004-rk</span><span class="co">]</span>: </span>
+<span id="cb10-252"><a href="#cb10-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-253"><a href="#cb10-253" aria-hidden="true" tabindex="-1"></a>$$v_i \approx \frac{1.06}{n_i - 3}$${#eq-rank-inflation}</span>
+<span id="cb10-254"><a href="#cb10-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb10-256"><a href="#cb10-256" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Sensitivity analyses as best practice</span></span>
+<span id="cb10-257"><a href="#cb10-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-258"><a href="#cb10-258" aria-hidden="true" tabindex="-1"></a>Never treat these conversions as magic solutions. Approximations introduce uncertainty. Always flag converted effect sizes in your dataset (*e.g.,* `is_converted = TRUE`) and **run sensitivity analyses**. Specifically, run your meta-analytic models both *with* and *without* the converted Spearman and Kendall correlations. If your overall effect size or its uncertainty shifts substantially, you must report this and be cautious in your interpretations.</span>
+<span id="cb10-259"><a href="#cb10-259" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-260"><a href="#cb10-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-261"><a href="#cb10-261" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-262"><a href="#cb10-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-263"><a href="#cb10-263" aria-hidden="true" tabindex="-1"></a><span class="fu">### The "unit of replication" obsession</span></span>
+<span id="cb10-264"><a href="#cb10-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-265"><a href="#cb10-265" aria-hidden="true" tabindex="-1"></a>A central theme of our guide is the **unit of replication**. When calculating and meta-analyzing measures of association, ensuring that the unit of replication aligns across studies is paramount. Mismatches in the level of replication will alter your sample size, your sampling variance, and consequently how much influence each study has on your pooled result.</span>
+<span id="cb10-266"><a href="#cb10-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-267"><a href="#cb10-267" aria-hidden="true" tabindex="-1"></a>Consider a study examining the correlation between soil nitrogen and plant diversity:</span>
+<span id="cb10-268"><a href="#cb10-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-269"><a href="#cb10-269" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Study A** measures the correlation across **50 individual quadrats** ($n = 50$).</span>
+<span id="cb10-270"><a href="#cb10-270" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Study B** measures the correlation across **5 distinct geographic sites**, where each site represents the pooled average of 10 quadrats ($n = 5$).</span>
+<span id="cb10-271"><a href="#cb10-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-272"><a href="#cb10-272" aria-hidden="true" tabindex="-1"></a>Even if both studies report an identical correlation of $r = 0.5$, Study A carries roughly 47 units of weight against Study B's 2. A difference of more than twentyfold (!), driven entirely by a decision about what counts as a replicate. If site is the true independent unit of replication, treating Study A's quadrats as independent replicates is pseudoreplication <span class="co">[</span><span class="ot">@Hurlbert1984-pr</span><span class="co">]</span>.</span>
+<span id="cb10-273"><a href="#cb10-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-274"><a href="#cb10-274" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb10-275"><a href="#cb10-275" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Weights are not simply $n - 3$</span></span>
+<span id="cb10-276"><a href="#cb10-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-277"><a href="#cb10-277" aria-hidden="true" tabindex="-1"></a>The figures above assume a common-effects model, where a study's weight is one over its sampling variance. In the random-effects and multilevel models you will actually fit, weight is one over the sampling variance *plus* the between-study variance $\tau^2$. That extra term acts as a floor on everyone's uncertainty and compresses the differences between studies considerably: with a moderate $\tau^2$ of $0.1$, the twentyfold gap above shrinks to roughly fivefold. Large studies still dominate, but far less absolutely than the raw sample sizes suggest.</span>
+<span id="cb10-278"><a href="#cb10-278" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-279"><a href="#cb10-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-280"><a href="#cb10-280" aria-hidden="true" tabindex="-1"></a>Before running your models:</span>
+<span id="cb10-281"><a href="#cb10-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-282"><a href="#cb10-282" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Identify the true, independent unit of replication for each study.</span>
+<span id="cb10-283"><a href="#cb10-283" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Standardize or aggregate correlations where necessary to avoid inflating sample sizes.</span>
+<span id="cb10-284"><a href="#cb10-284" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>When in doubt, perform sensitivity analysis by adjusting sample sizes to reflect conservative biological units of replication.</span>
+<span id="cb10-285"><a href="#cb10-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-286"><a href="#cb10-286" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-287"><a href="#cb10-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-288"><a href="#cb10-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### Non-independence, matrices, and tagging</span></span>
+<span id="cb10-289"><a href="#cb10-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-290"><a href="#cb10-290" aria-hidden="true" tabindex="-1"></a>Correlation coefficients frequently violate the assumption of independence. Two main traps exist in continuous predictor meta-analyses:</span>
+<span id="cb10-291"><a href="#cb10-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-292"><a href="#cb10-292" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 1. Pairwise correlation matrices (the melting trap)</span></span>
+<span id="cb10-293"><a href="#cb10-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-294"><a href="#cb10-294" aria-hidden="true" tabindex="-1"></a>Primary studies often present a correlation matrix comparing multiple traits or environmental factors. Meta-analysts sometimes "melt" these matrices and include all pairwise correlations as separate effect sizes.</span>
+<span id="cb10-295"><a href="#cb10-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-296"><a href="#cb10-296" aria-hidden="true" tabindex="-1"></a>::: callout-warning</span>
+<span id="cb10-297"><a href="#cb10-297" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Melted matrices cause non-independence that grows quadratically</span></span>
+<span id="cb10-298"><a href="#cb10-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-299"><a href="#cb10-299" aria-hidden="true" tabindex="-1"></a>If a study measures 5 traits on a single set of individuals, it generates $\frac{5 \times (5-1)}{2} = 10$ pairwise correlations. Those 10 correlations share the exact same subjects. Treating them as independent data points inflates your Type I error rate, because the model behaves as though you had ten times more information than you actually collected.</span>
+<span id="cb10-300"><a href="#cb10-300" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb10-301"><a href="#cb10-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-302"><a href="#cb10-302" aria-hidden="true" tabindex="-1"></a>To handle this non-independence:</span>
+<span id="cb10-303"><a href="#cb10-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-304"><a href="#cb10-304" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Use **multilevel meta-analysis** with a random effect for study or paper identity to absorb shared variance <span class="co">[</span><span class="ot">@Noble2017-wv</span><span class="co">]</span>.</span>
+<span id="cb10-305"><a href="#cb10-305" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Where the same individuals contribute to several correlations, construct an explicit variance-covariance matrix with <span class="in">`metafor::rcalc`</span> rather than relying on random effects alone.</span>
+<span id="cb10-306"><a href="#cb10-306" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>Combine either approach with **robust variance estimation** <span class="co">[</span><span class="ot">@Hedges2010-rve; @Pustejovsky2018-cs</span><span class="co">]</span> (<span class="in">`metafor::robust`</span>, or the <span class="in">`clubSandwich`</span> package) so that your standard errors remain trustworthy even if the assumed covariance structure is imperfect.</span>
+<span id="cb10-307"><a href="#cb10-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-308"><a href="#cb10-308" aria-hidden="true" tabindex="-1"></a><span class="fu">#### 2. Spatial and temporal flagging</span></span>
+<span id="cb10-309"><a href="#cb10-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-310"><a href="#cb10-310" aria-hidden="true" tabindex="-1"></a>Continuous predictors in ecology and evolution often vary across spatial and temporal grains. Always record and flag metadata for: </span>
+<span id="cb10-311"><a href="#cb10-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-312"><a href="#cb10-312" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Spatial grain:** *e.g.,* local plot size, regional $\text{km}^2$.</span>
+<span id="cb10-313"><a href="#cb10-313" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Temporal grain:** *e.g.,* seasonal correlation, decadal trend.</span>
+<span id="cb10-314"><a href="#cb10-314" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>**Flag groupings:** flag studies sharing common study sites, common control subjects, or common experimental treatments.</span>
+<span id="cb10-315"><a href="#cb10-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-316"><a href="#cb10-316" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-317"><a href="#cb10-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-318"><a href="#cb10-318" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation and benchmarks: what does $r$ mean?</span></span>
+<span id="cb10-319"><a href="#cb10-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-320"><a href="#cb10-320" aria-hidden="true" tabindex="-1"></a>When interpreting your pooled effect size, you may encounter the traditional benchmarks proposed by Jacob Cohen <span class="co">[</span><span class="ot">-@Cohen1988-pw</span><span class="co">]</span>:</span>
+<span id="cb10-321"><a href="#cb10-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-322"><a href="#cb10-322" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Effect size class <span class="pp">|</span> Correlation coefficient ($r$) <span class="pp">|</span> Variance explained ($r^2$) <span class="pp">|</span> Interpretation <span class="pp">|</span></span>
+<span id="cb10-323"><a href="#cb10-323" aria-hidden="true" tabindex="-1"></a><span class="pp">| :---</span> <span class="pp">| :---</span> <span class="pp">| :---</span> <span class="pp">| :---</span> <span class="pp">|</span></span>
+<span id="cb10-324"><a href="#cb10-324" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Small** <span class="pp">|</span> $0.1$ <span class="pp">|</span> $1\%$ <span class="pp">|</span> Subtle effect, barely visible to the naked eye. <span class="pp">|</span></span>
+<span id="cb10-325"><a href="#cb10-325" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Medium** <span class="pp">|</span> $0.3$ <span class="pp">|</span> $9\%$ <span class="pp">|</span> Visible to a careful observer; typical of many social and ecological processes. <span class="pp">|</span></span>
+<span id="cb10-326"><a href="#cb10-326" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Large** <span class="pp">|</span> $0.5$ <span class="pp">|</span> $25\%$ <span class="pp">|</span> Prominent relationship; easily detectable. <span class="pp">|</span></span>
+<span id="cb10-327"><a href="#cb10-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-328"><a href="#cb10-328" aria-hidden="true" tabindex="-1"></a>These labels were offered by Cohen as a fallback for researchers with no domain knowledge to draw on, and he said so explicitly. The interpretation of effect sizes is highly context-dependent:</span>
+<span id="cb10-329"><a href="#cb10-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-330"><a href="#cb10-330" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>In **evolutionary ecology**, natural selection operates on tiny margins. A correlation of $r = 0.05$---explaining a quarter of one percent of the variance---can be strongly adaptive and shape survival over generations <span class="co">[</span><span class="ot">@Kingsolver2001-am; @Nakagawa2012-ee</span><span class="co">]</span>.</span>
+<span id="cb10-331"><a href="#cb10-331" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>In **biomedical research**, regular aspirin consumption has an effect on heart attack risk equivalent to $r = 0.034$. This explains about one tenth of one percent of the variance, yet translates to thousands of lives saved annually <span class="co">[</span><span class="ot">@Rosenthal1990-ap</span><span class="co">]</span>.</span>
+<span id="cb10-332"><a href="#cb10-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-333"><a href="#cb10-333" aria-hidden="true" tabindex="-1"></a>Never apply Cohen's benchmarks blindly. Always interpret your pooled correlations in the context of the biology, the decision costs, and the practical implications of the phenomenon.</span>
+<span id="cb10-334"><a href="#cb10-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-335"><a href="#cb10-335" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb10-336"><a href="#cb10-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-337"><a href="#cb10-337" aria-hidden="true" tabindex="-1"></a><span class="fu">### Recommended workflow for continuous predictors</span></span>
+<span id="cb10-338"><a href="#cb10-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-339"><a href="#cb10-339" aria-hidden="true" tabindex="-1"></a>To ensure your meta-analysis is rigorous, stick to the following workflow:</span>
+<span id="cb10-340"><a href="#cb10-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-341"><a href="#cb10-341" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Extract raw data:** Record the correlation, its sample size, the type of correlation reported, whether it is zero-order or partial, and the unit of replication.</span>
+<span id="cb10-342"><a href="#cb10-342" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Screen for comparability:** Set aside or flag partial correlations, and note any study with obvious range restriction or unreliable measurement.</span>
+<span id="cb10-343"><a href="#cb10-343" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Standardize conversions:** Convert any Spearman's $\rho$ or Kendall's $\tau$ to Pearson's $r$ equivalents. Flag these.</span>
+<span id="cb10-344"><a href="#cb10-344" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Calculate Fisher's $Z_r$:** Transform raw and converted correlations using <span class="in">`metafor::escalc(measure = "ZCOR")`</span>.</span>
+<span id="cb10-345"><a href="#cb10-345" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Address non-independence:** Check for melted matrices and shared subjects. Nest non-independent effect sizes within study using multilevel random effects.</span>
+<span id="cb10-346"><a href="#cb10-346" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Run models:** Fit multilevel random-effects models in the $Z_r$ metric, paired with robust variance estimation.</span>
+<span id="cb10-347"><a href="#cb10-347" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Test sensitivity:** Re-run models excluding converted metrics, small-sample outliers, or pseudoreplicated studies.</span>
+<span id="cb10-348"><a href="#cb10-348" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>**Back-transform for reporting:** Convert pooled estimates and interval endpoints back to $r$ using <span class="in">`tanh`</span>. Keep heterogeneity statistics on the $Z_r$ scale, and word your conclusions to reflect what the back-transformed value actually represents.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

@@ -416,7 +416,12 @@ eff_size(x1 = -8.11, sd1 = 1.27,
 
 **I don't even remember writing this section..**
 
-Some studies report the ratio of the control group to the treatment group, instead of subtracting the samples from each other and reporting the mean±error of the difference.
+Some studies report the ratio of the control group to the treatment group directly, without calculating a measurement of error.
+
+For example, imagine you have paired control and experimental plots. Each of which is measured one time---e.g., percent cover. There is no measurement of error because the authors analyze the ratio or difference between the two measurements. What the hell should you do?
+
+BLAH BLAH BLAH
+I'm confused again.
 
 In other words, they report the response ratio (which might be logged or unlogged). This data, depending on how it was calculated, be used to calculate lnRoM effect sizes. These can then be converted to SMD, if that is your dominant effect size (see our section on effect size [conversions](4-converting-effect-sizes.qmd))
 
@@ -920,7 +925,9 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-If the sample size associated with each point is known (e.g., reported in text), then you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from the figure. 
+There is no way to pair any of these samples except for the final measurement for the first treatment ("Present") and the first measurement of the second treatment ("Eradicated"). This is defensible.
+
+Alternatively, you can *draw* the underlying data based on sample size, group mean, and standard deviation extracted from the figure. This presents its own problems but is maybe better than giving up (which you should probably do. Go take a nap, sweet boy).
 
 This should use the underlying data generating process of the response. If the response is normally distributed, or close enough, then you can use the `R` base function `rnorm`. If the data is not normally distributed then you can do a similar process, generating data from the underlying data generating process (see [here](7-simulating-non-gaussian-responses.qmd)). 
 
