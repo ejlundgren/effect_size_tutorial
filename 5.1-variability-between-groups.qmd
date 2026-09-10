@@ -71,17 +71,17 @@ library("crayon")
 
 **PASTED TOGETHER CONTENT FROM SEPARATE PAGES. NOT EDITED**
 
-# Add a separate analysis of variability {#sec-lnrom-with-variability}
+The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce variation [@Crispo2007-nf]. 
 
-A treatment can change both the **mean** and the **variability** of a biological response [@Nakagawa2015-tq]. An lnRoM analysis describes the proportional change in the group means, but it does not tell us whether observations became more or less variable within the groups.
+There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
 
-When variability is biologically relevant, we recommend adding a separate analysis using the **log variability ratio (lnVR)**:
+## lnVR
 
 $$
-\mathrm{lnVR}=\ln\left(\frac{s_1}{s_2}\right),
+\mathrm{lnVR}=\ln\left(\frac{sd_1}{sd_2}\right),
 $${#eq-lnvr}
 
-where $s_1$ is the treatment-group standard deviation and $s_2$ is the control-group standard deviation. With the direction used throughout this chapter:
+where $sd_1$ is the treatment-group standard deviation and $sd_2$ is the control-group standard deviation. With the direction used throughout this chapter:
 
 - $\mathrm{lnVR}>0$: the treatment group is more variable;
 
@@ -134,10 +134,6 @@ That relationship differs among data types:
 
 For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. Otherwise, report lnVR alongside lnRoM, examine the mean–variance relationship directly, or consider an arm-based model of means and standard deviations.
 :::
-## Differences in variability {#sec-two-group-variability}
-The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce variation [@Crispo2007-nf]. 
-
-There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
 
 ### lnVR {#sec-lnVR}
 **lnVR** is the *log-transformed variability ratio*, defined as $log(\frac{sd_1}{sd_2})$. This effect size is **not** standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable. 
@@ -167,7 +163,9 @@ escalc(measure = "VRC",
 ```
 
 ### lnCVR {#sec-lnCVR}
-**lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.
+**lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. **SO THIS ISN"T TRUE?!** 
+
+However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.
 
 This can be calculated in `escalc` with the measure = "CVR". This effect size requires the same statistical ingredients as SMD and lnRoM:
 

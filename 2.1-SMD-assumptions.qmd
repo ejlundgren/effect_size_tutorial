@@ -230,6 +230,7 @@ $$
 This value of 0.76 equates to a moderately strong effect: a change in 0.76 standard deviations between the control and treatment groups.
 
 This can all be done in `R`, using `metafor`'s `escalc` function: 
+
 ```{r}
 #| eval: true
 #| echo: true
@@ -672,9 +673,9 @@ It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produce
 
 ## Heteroscedasticity {#sec-heteroscedasticity}
 
-Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity [@Bonett2009-sf]. This is available as the measure 'SMDH' in `metafor::escalc`.
+Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity [@Bonett2009-sf]. This is available as the measure 'SMDH' in `metafor::escalc`. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset---instead of comparing SMD estimates to SMDH estimates. **IS THIS TRUE?**
 
-For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator.
+For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator. However, this is a topic that has been little explored and is a subject for future research. **DOUBLE CHECK**
 
 # Conclusion---which effect size should you use?
 
@@ -714,18 +715,11 @@ Note that some extraction challenges may also influence your choice of effect si
 
 :::
 
-
 # Alternative estimators {#sec-alternative-estimators}
 
 ## Paired designs {#sec-paired-designs}
 
-There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. 
-
-In some cases, effect sizes derived from paired designs can be compared directly to those from unpaired designs. However, this is not always clear. There are a myriad of estimators for SMD-style effect sizes that account for pre-post treatment designs (see our `escalc` [cheatsheet](6-escalc-cheatsheet.qmd)). These options may preferable if your meta-analysis focuses only on these types of experiments.
-
-Of these, 
-
-However, these estimators are **not** comparable to normal, unpaired SMD estimators. Our `eff_size` function provides a paired option for SMD that is comparable to unpaired SMD estimates, which we demonstrate below. `escalc` (as well as `eff_size`) provides an paired lnRoM estimator that is comparable to the standard unpaired estimator, which we also demonstrate below.
+There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. For the most part, these paired estimators *reduce* the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the correlated variance between your treatment groups.
 
 In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals, which is pronounced "rho" and symbolized as `r` in most `R` code. Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.
 
@@ -737,70 +731,101 @@ The correlation between groups, $\rho$ (`ri` in `escalc` and `r` in `eff_size`) 
 Be sure to always conduct sensitivity analyses on these choices, to ensure that they aren't unduly changing your model estimates.
 :::
 
-If groups 1 and 2 are paired (e.g., in a before-after design), you can calculate a paired lnRoM with the following code. Note that you only supply a single value for sample size (`ni`) instead of `n1i` and `n2i` because a paired design must by definition have equal sample sizes in each treatment. Paired lnRoMs will have the same point estimate (yi) as their unpaired flavor but will have lower variance and thus higher weight in your meta-analytic models.
+### SMD paired designs
+For SMD, the measure "SMCRP" [@Cousineau2020-jf] is likely safe to use in a dataset alongside unpaired "SMD" estimates, even though this formulation changes the point estimate slightly. If your data is heteroscedastic, you can use the measure "SMCRPH" [@Bonett2008-ni]. 
+
+In `R` we can compare the results of SMD and SMCRP. Note that you only supply a single value for sample size (`ni`) instead of `n1i` and `n2i` because a paired design must by definition have equal sample sizes in each treatment. 
+```{r}
+#| eval: true
+#| echo: true
+
+unpaired <- escalc(m1i = 12, sd1i = 3,
+                   m2i = 10, sd2i = 2, 
+                   n1i = 20, n2i = 20,
+                   measure = "SMD")
+
+paired <- escalc(m1i = 12, sd1i = 3,
+                 m2i = 10, sd2i = 2, 
+                 ni = 20, ri = 0.5,
+                 measure = "SMCRP")
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
+```
+As you can see, the point estimates differ slightly, but the sampling variance was reduced by nearly half---which means the paired estimates have considerably more influence in your models.
+
+Our `eff_size` function provides a different paired option for SMD and SMDH that produce almost identical point estimates but also much lower sampling variance estimates:
+
+```{r}
+#| eval: true
+#| echo: true
+
+unpaired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2, 
+                     n1 = 20, n2 = 20,
+                     effect_type = "SMD",
+                     verbose = FALSE,
+                     paired = FALSE) # paired = FALSE is default
+
+paired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2, 
+                     n = 20, r = 0.5,
+                     effect_type = "SMD",
+                     verbose = FALSE,
+                     paired = TRUE)
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
+```
+It is unclear whether SMCRP or the version in `eff_size` are better alternatives. **??????**
+
+We note that there are several other paired estimators for SMD-style effect sizes in the function `escalc` that account for alternative correlated treatment designs (see our `escalc` [cheatsheet](6-escalc-cheatsheet.qmd)). These options may preferable if your meta-analysis focuses only on these types of experiments but these, to the best of our knowledge are not comparable to normal, unpaired SMD estimates
+
+### lnRoM paired designs
+For lnRoM, both `escalc` and `eff_size` provide paired formulas: 
 
 ```{r}
 #| echo: true
 #| eval: false
 
 # First, unpaired:
-unpaired <- escalc(m1i = 7, sd1i = 1.2, 
-                    m2i = 12, sd2i = 0.9,
-                    n1i = 15, n2i = 15,
-                    measure = "ROM",
-                    var.names = c("yi_unpaired", "vi_unpaired"))
+unpaired <- escalc(m1i = 12, sd1i = 3,
+                   m2i = 10, sd2i = 2, 
+                   n1i = 20, n2i = 20,
+                    measure = "ROM")
 
 
 # Now, the paired version:
-paired <- escalc(m1i = 7, sd1i = 1.2, 
-                  m2i = 12, sd2i = 0.9,
-                  ni = 15, ri = 0.8,
-                  measure = "ROMC",
-                  var.names = c("yi_paired", "vi_paired"))
+paired <- escalc(m1i = 12, sd1i = 3,
+                 m2i = 10, sd2i = 2, 
+                 ni = 20, ri = 0.5,
+                  measure = "ROMC")
 
-cbind(unpaired, paired)
-
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
 ```
 
 As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to a stronger influence in the meta-analytic models.
 
-To calculate a paired SMD estimate, you need to use our function. Here we'll calculate paired and unpaired estimates:
-
+And in `eff_size`:
 ```{r}
 #| echo: true
 #| eval: false
 
-unpaired <- eff_size(x1 = 7, sd1 = 1.2, 
-                      x2 = 12, sd2 = 0.9, 
-                      n1 = 15, n2 = 15,
-                      paired = FALSE,
-                      verbose = FALSE,
-                      effect_type = "SMD")
-setnames(unpaired, c("yi", "vi"), c("yi_unpaired", "vi_unpaired"))
+unpaired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2, 
+                     n1 = 20, n2 = 20,
+                     effect_type = "lnRoM",
+                     verbose = FALSE,
+                     paired = FALSE) # paired = FALSE is default
 
-paired <- eff_size(x1 = 7, sd1 = 1.2, 
-                    x2 = 12, sd2 = 0.9, 
-                    n = 15, r = 0.5,
-                    paired = TRUE,
-                    verbose = FALSE,
-                    effect_type = "SMD")
-setnames(paired, c("yi", "vi"), c("yi_paired", "vi_paired"))
-
-cbind(unpaired, paired)
+paired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2, 
+                     n = 20, r = 0.5,
+                     effect_type = "lnRoM",
+                     verbose = FALSE,
+                     paired = TRUE)
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
 
 ```
-
-As you can see, the paired version reduced the sampling variance but not the point estimate. The formula for paired SMD point estimates and sampling variance we used in `eff_size` are here:
-
-$$
-\begin{aligned}
-&J = 1 - \frac{3}{4 * (2n - 2) - 1} \\
-&sd_{pooled} = \sqrt{\frac{sd_1^2(n-1) + sd_2^2(n-1)}{2n - 2}} \\
-&d = \frac{m_1 - m_2}{sd_{pooled}} \\
-&g = J * d \\
-&Var(g) = \frac{2 * (1-r)}{n} + \frac{d^2}{2 * (n-1)} \\
-\end{aligned}
-$${#eq-9}
-
 
 
