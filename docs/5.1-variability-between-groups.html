@@ -5,7 +5,7 @@
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2026-09-09">
-<title>Discrete outcomes between two groups – A user’s guide to effect sizes</title>
+<title>Variability between groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -155,7 +155,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1-SMD-assumptions.html">Effect size assumptions &amp; interpretation</a></li><li class="breadcrumb-item"><a href="./2.2-lnOR-assumptions.html">Discrete outcomes between two groups</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./5.1-variability-between-groups.html">Less common effect sizes</a></li><li class="breadcrumb-item"><a href="./5.1-variability-between-groups.html">Variability between groups</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -216,7 +216,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./2.2-lnOR-assumptions.html" class="sidebar-item-text sidebar-link active">
+  <a href="./2.2-lnOR-assumptions.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Discrete outcomes between two groups</span></a>
   </div>
 </li>
@@ -286,7 +286,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./5.1-variability-between-groups.html" class="sidebar-item-text sidebar-link">
+  <a href="./5.1-variability-between-groups.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Variability between groups</span></a>
   </div>
 </li>
@@ -351,32 +351,23 @@ window.Quarto = {
    
   <ul>
 <li>
-<a href="#sec-lnOR" id="toc-sec-lnOR" class="nav-link active" data-scroll-target="#sec-lnOR">log Odds Ratio (lnOR)</a>
+<a href="#sec-lnrom-with-variability" id="toc-sec-lnrom-with-variability" class="nav-link active" data-scroll-target="#sec-lnrom-with-variability">Add a separate analysis of variability</a>
   <ul>
-<li><a href="#sec-lnOR-assumptions" id="toc-sec-lnOR-assumptions" class="nav-link" data-scroll-target="#sec-lnOR-assumptions">Assumptions</a></li>
-  <li><a href="#sec-lnOR-interpretation" id="toc-sec-lnOR-interpretation" class="nav-link" data-scroll-target="#sec-lnOR-interpretation">Interpretation</a></li>
+<li>
+<a href="#sec-two-group-variability" id="toc-sec-two-group-variability" class="nav-link" data-scroll-target="#sec-two-group-variability">Differences in variability</a>
+  <ul>
+<li><a href="#sec-lnVR" id="toc-sec-lnVR" class="nav-link" data-scroll-target="#sec-lnVR">lnVR</a></li>
+  <li><a href="#sec-lnCVR" id="toc-sec-lnCVR" class="nav-link" data-scroll-target="#sec-lnCVR">lnCVR</a></li>
   </ul>
 </li>
-  <li>
-<a href="#sec-lnRR" id="toc-sec-lnRR" class="nav-link" data-scroll-target="#sec-lnRR">log Risk Ratio (lnRR)</a>
-  <ul>
-<li><a href="#assumptions" id="toc-assumptions" class="nav-link" data-scroll-target="#assumptions">Assumptions</a></li>
-  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a></li>
   </ul>
 </li>
-  <li>
-<a href="#should-i-use-lnor-or-lnrr" id="toc-should-i-use-lnor-or-lnrr" class="nav-link" data-scroll-target="#should-i-use-lnor-or-lnrr">Should I use lnOR or lnRR?</a>
-  <ul>
-<li><a href="#sec-continuity-corrections" id="toc-sec-continuity-corrections" class="nav-link" data-scroll-target="#sec-continuity-corrections">Continuity corrections</a></li>
-  </ul>
-</li>
-  <li><a href="#alternative-versions" id="toc-alternative-versions" class="nav-link" data-scroll-target="#alternative-versions">Alternative versions</a></li>
   </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./2.1-SMD-assumptions.html">Effect size assumptions &amp; interpretation</a></li><li class="breadcrumb-item"><a href="./2.2-lnOR-assumptions.html">Discrete outcomes between two groups</a></li></ol></nav><div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Discrete outcomes between two groups</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-<p class="subtitle lead">Sometimes it is just black and white</p>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./5.1-variability-between-groups.html">Less common effect sizes</a></li><li class="breadcrumb-item"><a href="./5.1-variability-between-groups.html">Variability between groups</a></li></ol></nav><div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Variability between groups</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Beyond the mean</p>
 </div>
 
 
@@ -396,130 +387,121 @@ window.Quarto = {
   
 
 
-</header><p>The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.</p>
-<table class="caption-top table">
-<thead><tr class="header">
-<th></th>
-<th>Alive</th>
-<th>Dead</th>
-<th>Total</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Drug</td>
-<td><span class="math inline">\(a\)</span></td>
-<td><span class="math inline">\(b\)</span></td>
-<td><span class="math inline">\(n1 = a+b\)</span></td>
-</tr>
-<tr class="even">
-<td>Placebo</td>
-<td><span class="math inline">\(c\)</span></td>
-<td><span class="math inline">\(d\)</span></td>
-<td><span class="math inline">\(n2 = c+d\)</span></td>
-</tr>
-</tbody>
-</table>
-<p>These outcomes are binomial, i.e., are discrete processes with binary outcomes that occur to individuals. Individuals can be both individual organisms as well as individual sites/islands/plots, i.e., in terms of presence or absence of some binary condition.</p>
-<p>Tertiary outcomes binomial outcomes are also possible and need to be handled with alternative effect sizes. For example, the frequency of alleles (AA, Aa, aa) in a population can be described with the Hardy-Weinburg Equilibrium effect size <span class="citation" data-cites="Wellek2010-jp">(<a href="#ref-Wellek2010-jp" role="doc-biblioref">Wellek et al. 2010</a>)</span>. These are not discussed in this tutorial.</p>
-<section id="sec-lnOR" class="level2"><h2 class="anchored" data-anchor-id="sec-lnOR">log Odds Ratio (lnOR)</h2>
-<p>The log odds ratio is the ratio of two odds:</p>
-<p><span id="eq-1"><span class="math display">\[
-\begin{aligned}
-&amp;lnOR = log(\frac{a * d}{b * c}) \\
-\end{aligned}
+</header><p><strong>PASTED TOGETHER CONTENT FROM SEPARATE PAGES. NOT EDITED</strong></p>
+<section id="sec-lnrom-with-variability" class="level1"><h1>Add a separate analysis of variability</h1>
+<p>A treatment can change both the <strong>mean</strong> and the <strong>variability</strong> of a biological response <span class="citation" data-cites="Nakagawa2015-tq">(<a href="#ref-Nakagawa2015-tq" role="doc-biblioref">Nakagawa et al. 2015</a>)</span>. An lnRoM analysis describes the proportional change in the group means, but it does not tell us whether observations became more or less variable within the groups.</p>
+<p>When variability is biologically relevant, we recommend adding a separate analysis using the <strong>log variability ratio (lnVR)</strong>:</p>
+<p><span id="eq-lnvr"><span class="math display">\[
+\mathrm{lnVR}=\ln\left(\frac{s_1}{s_2}\right),
 \tag{1}\]</span></span></p>
-<section id="sec-lnOR-assumptions" class="level3"><h3 class="anchored" data-anchor-id="sec-lnOR-assumptions">Assumptions</h3>
-<p>Blah blah blah</p>
-</section><section id="sec-lnOR-interpretation" class="level3"><h3 class="anchored" data-anchor-id="sec-lnOR-interpretation">Interpretation</h3>
-<p>To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.</p>
-<table class="caption-top table">
-<thead><tr class="header">
-<th></th>
-<th>Alive</th>
-<th>Dead</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Drug</td>
-<td>35</td>
-<td>12</td>
-</tr>
-<tr class="even">
-<td>Placebo</td>
-<td>15</td>
-<td>21</td>
-</tr>
-</tbody>
-</table>
-<p>lnOR can be calculated by plugging these values into escalc:</p>
+<p>where <span class="math inline">\(s_1\)</span> is the treatment-group standard deviation and <span class="math inline">\(s_2\)</span> is the control-group standard deviation. With the direction used throughout this chapter:</p>
+<ul>
+<li><p><span class="math inline">\(\mathrm{lnVR}&gt;0\)</span>: the treatment group is more variable;</p></li>
+<li><p><span class="math inline">\(\mathrm{lnVR}=0\)</span>: the groups have equal standard deviations;</p></li>
+<li><p><span class="math inline">\(\mathrm{lnVR}&lt;0\)</span>: the treatment group is less variable.</p></li>
+</ul>
+<p>For the plant-biomass example:</p>
+<p><span class="math display">\[
+\mathrm{lnVR}=\ln\left(\frac{3}{2}\right)\approx0.405.
+\]</span></p>
+<p>Back-transforming gives <span class="math inline">\(e^{0.405}\approx1.5\)</span>, so the standard deviation is approximately 50% higher under warming. The lnRoM and lnVR analyses together provide a more complete biological description: warming increased mean biomass by 20% and was also associated with greater variation among plants.</p>
+<p>Calculate lnVR as a separate outcome rather than combining lnRoM and lnVR values in one univariate model:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"OR"</span>,</span>
-<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"VR"</span>,</span>
+<span>       sd1i <span class="op">=</span> <span class="fl">3</span>, n1i <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>       sd2i <span class="op">=</span> <span class="fl">2</span>, n2i <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.4069 0.2262 </code></pre>
+1 0.4055 0.0526 </code></pre>
 </div>
 </div>
-<p>To interpret this log odds ratio (<span class="math inline">\(lnOR\)</span>), you should first convert it to an odds ratio (<span class="math inline">\(OR\)</span>):</p>
-<p><span id="eq-2"><span class="math display">\[
-OR = e^{lnOR}
+<p>Interpret the two analyses separately. They address related but distinct questions: lnRoM concerns proportional differences in means, whereas lnVR concerns ratios of standard deviations.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Use lnCVR carefully: its value depends directly on the means
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>log coefficient of variation ratio (lnCVR)</strong> compares standard deviations after dividing each one by its group mean <span class="citation" data-cites="Nakagawa2015-tq">(<a href="#ref-Nakagawa2015-tq" role="doc-biblioref">Nakagawa et al. 2015</a>)</span>:</p>
+<p><span id="eq-lncvr-relationship"><span class="math display">\[
+\mathrm{lnCVR}
+=\ln\left(\frac{s_1/m_1}{s_2/m_2}\right)
+=\mathrm{lnVR}-\mathrm{lnRoM},
 \tag{2}\]</span></span></p>
-<p>In <code>R</code>:</p>
+<p>before any small-sample bias corrections. Because the means occur directly in this formula, a change in lnCVR can arise from a change in the standard deviations, a change in the means, or both.</p>
+<p>lnCVR is intended to account for a common biological pattern: groups with larger means often also have larger variances. However, dividing by the mean makes an implicit scaling assumption. In simple terms, it works most naturally when the standard deviation increases roughly in proportion to the mean. Equivalently, variance then increases roughly with the square of the mean.</p>
+<p>That relationship differs among data types:</p>
+<ul>
+<li><p><strong>Approximately normal data with constant variance:</strong> the standard deviation may stay similar as the mean changes. The coefficient of variation will then change mechanically with the mean.</p></li>
+<li><p><strong>Poisson count data:</strong> variance equals the mean, so standard deviation increases with the square root of the mean rather than directly with the mean. The coefficient of variation therefore decreases as the mean increases.</p></li>
+<li><p><strong>Negative-binomial count data:</strong> variance can increase much faster than the mean. At large means, the standard deviation may be close to proportional to the mean, but the relationship depends on the dispersion parameter.</p></li>
+<li><p><strong>Proportions and other bounded responses:</strong> variance is constrained by the mean and commonly shrinks near the boundaries. The mean–variance relationship can therefore be strong and nonlinear.</p></li>
+</ul>
+<p>For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when <em>relative variability</em> is the intended estimand and its assumed mean–variance scaling is plausible. Otherwise, report lnVR alongside lnRoM, examine the mean–variance relationship directly, or consider an arm-based model of means and standard deviations.</p>
+</div>
+</div>
+<section id="sec-two-group-variability" class="level2"><h2 class="anchored" data-anchor-id="sec-two-group-variability">Differences in variability</h2>
+<p>The most commonly used effect sizes concern <em>mean</em> relationships. However, <em>variability</em> is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning <span class="citation" data-cites="Stein2014-gj Levine2016-hb">(<a href="#ref-Stein2014-gj" role="doc-biblioref">Stein et al. 2014</a>, <a href="#ref-Levine2016-hb" role="doc-biblioref">Levine et al. 2016</a>)</span>. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation <span class="citation" data-cites="Buckley2016-sn O-Dea2016-jy">(<a href="#ref-Buckley2016-sn" role="doc-biblioref">Buckley and Huey 2016</a>, <a href="#ref-O-Dea2016-jy" role="doc-biblioref">O’Dea et al. 2016</a>)</span> or reduce variation <span class="citation" data-cites="Crispo2007-nf">(<a href="#ref-Crispo2007-nf" role="doc-biblioref">Crispo 2007</a>)</span>.</p>
+<p>There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): <strong>lnVR</strong> and <strong>lnCVR</strong> <span class="citation" data-cites="Nakagawa2015-tq">(<a href="#ref-Nakagawa2015-tq" role="doc-biblioref">Nakagawa et al. 2015</a>)</span>.</p>
+<section id="sec-lnVR" class="level3"><h3 class="anchored" data-anchor-id="sec-lnVR">lnVR</h3>
+<p><strong>lnVR</strong> is the <em>log-transformed variability ratio</em>, defined as <span class="math inline">\(log(\frac{sd_1}{sd_2})\)</span>. This effect size is <strong>not</strong> standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable.</p>
+<p>This can be calculated in <code>escalc</code> with the measure = “VR”.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fl">1.4069</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 4</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"VR"</span>,</span>
+<span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>       n1i <span class="op">=</span> <span class="fl">15</span>, n2i <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</div>
-<p>An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.</p>
-</section></section><section id="sec-lnRR" class="level2"><h2 class="anchored" data-anchor-id="sec-lnRR">log Risk Ratio (lnRR)</h2>
-<p>The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in many cases <span class="citation" data-cites="borenstein2021">(<a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>)</span>.</p>
-<p>lnRR is defined as:</p>
-<p><span id="eq-3"><span class="math display">\[\begin{aligned}
-&amp;p1 = a/n1 \\
-&amp;p2 = c/n2 \\
-&amp;lnRR = log(p1/p2) \\
-\end{aligned} \tag{3}\]</span></span></p>
-<section id="assumptions" class="level3"><h3 class="anchored" data-anchor-id="assumptions">Assumptions</h3>
-<p>KYLE</p>
-</section><section id="interpretation" class="level3"><h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
-<p>To interpret lnRR, we will also exponentiate it to convert it from log scale:</p>
+<p>There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it’s unreported (which is typical, see <a href="./2.1-SMD-assumptions.html#sec-paired-designs">here</a>):</p>
+<p>In <code>escalc</code> this is specified with the “VRC” measure:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"RR"</span>,</span>
-<span>       ai <span class="op">=</span> <span class="fl">35</span>, bi <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>       ci <span class="op">=</span> <span class="fl">15</span>, di <span class="op">=</span> <span class="fl">21</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">yi</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1.787234</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"VRC"</span>,</span>
+<span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>       ni <span class="op">=</span> <span class="fl">15</span>, ri <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section><section id="sec-lnCVR" class="level3"><h3 class="anchored" data-anchor-id="sec-lnCVR">lnCVR</h3>
+<p><strong>lnCVR</strong> is the <em>log-transformed coefficient of variation ratio</em>, defined as <span class="math inline">\(log(\frac{sd_1/m_1}{sd_2/m_2})\)</span>. This effect size <strong>is</strong> standardized by the mean allowing you to compare groups with different means. However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.</p>
+<p>This can be calculated in <code>escalc</code> with the measure = “CVR”. This effect size requires the same statistical ingredients as SMD and lnRoM:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"CVR"</span>,</span>
+<span>       m1i <span class="op">=</span> <span class="fl">15</span>, m2i <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>       n1i <span class="op">=</span> <span class="fl">15</span>, n2i <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Kyle, can you help with this?</strong></p>
-<p>A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.</p>
-<p><strong>Not sure I am correctly interpreting these</strong></p>
-</section></section><section id="should-i-use-lnor-or-lnrr" class="level1"><h1>Should I use lnOR or lnRR?</h1>
-<p>KYLE</p>
-<section id="sec-continuity-corrections" class="level2"><h2 class="anchored" data-anchor-id="sec-continuity-corrections">Continuity corrections</h2>
-<p>lnOR breaks down whenever <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span>, or <span class="math inline">\(d\)</span> equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0.</p>
-<p>lnRR breaks down when <span class="math inline">\(a\)</span> or <span class="math inline">\(c\)</span> equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</p>
-<p>These continuity corrections are applied by <code>escalc</code> by default.</p>
-</section></section><section id="alternative-versions" class="level1"><h1>Alternative versions</h1>
-<p>There are alternative estimators for similar data that take into account longitudinal pairing (e.g., through time) or matched pairs of subjects. These are broadly referred to as matched pairs contingency table effect sizes by <code>escalc</code>.</p>
-<p>Extraction for these effect sizes is similar to lnOR and lnRR except that they take an additional parameter: <span class="math inline">\(rho\)</span>, or the correlation between subjects—which is likely unreported and needs to be guessed. Unlike paired versions of SMD/lnRoM/Zmu, these do not appear to be comparable to unpaired estimators of lnOR and lnRR, nor are they widely used in ecology and evolution (REF TO THAT NAKAGAWA PAPER).</p>
-<p>The measurement arguments for these effect sizes are given <a href="./6-escalc-cheatsheet.html">here</a></p>
+<p>There is a paired version of lnCVR as well. In <code>escalc</code> this is specified with the “CVRC” measure:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"CVRC"</span>,</span>
+<span>        m1i <span class="op">=</span> <span class="fl">15</span>, m2i <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2.5</span>,</span>
+<span>       ni <span class="op">=</span> <span class="fl">15</span>, ri <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 
 
 <!-- -->
 
 
-</section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
-<div id="ref-borenstein2021" class="csl-entry" role="listitem">
-Borenstein, M., L. V. Hedges, J. Higgins, and H. R. Rothstein. 2021. Introduction to meta-analysis. 2nd edition. John Wiley &amp; Sons, Nashville, TN.
+</section></section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-Buckley2016-sn" class="csl-entry" role="listitem">
+Buckley, L. B., and R. B. Huey. 2016. How extreme temperatures impact organisms and the evolution of their thermal tolerance. Integrative and comparative biology 56:98–109.
 </div>
-<div id="ref-Wellek2010-jp" class="csl-entry" role="listitem">
-Wellek, S., K. A. B. Goddard, and A. Ziegler. 2010. A confidence-limit-based approach to the assessment of hardy-weinberg equilibrium. Biom. J. 52:253–270.
+<div id="ref-Crispo2007-nf" class="csl-entry" role="listitem">
+Crispo, E. 2007. The baldwin effect and genetic assimilation: Revisiting two mechanisms of evolutionary change mediated by phenotypic plasticity. Evolution 61:2469–2479.
+</div>
+<div id="ref-Levine2016-hb" class="csl-entry" role="listitem">
+Levine, N. M., K. Zhang, M. Longo, A. Baccini, O. L. Phillips, S. L. Lewis, E. Alvarez-Dávila, A. C. Segalin de Andrade, R. J. W. Brienen, T. L. Erwin, T. R. Feldpausch, A. L. Monteagudo Mendoza, P. Nuñez Vargas, A. Prieto, J. E. Silva-Espejo, Y. Malhi, and P. R. Moorcroft. 2016. Ecosystem heterogeneity determines the ecological resilience of the amazon to climate change. Proc. Natl. Acad. Sci. U. S. A. 113:793–797.
+</div>
+<div id="ref-Nakagawa2015-tq" class="csl-entry" role="listitem">
+Nakagawa, S., R. Poulin, K. Mengersen, K. Reinhold, L. Engqvist, M. Lagisz, and A. M. Senior. 2015. Meta‐analysis of variation: Ecological and evolutionary applications and beyond. Methods Ecol. Evol. 6:143–152.
+</div>
+<div id="ref-O-Dea2016-jy" class="csl-entry" role="listitem">
+O’Dea, R. E., D. W. A. Noble, S. L. Johnson, D. Hesselson, and S. Nakagawa. 2016. The role of non-genetic inheritance in evolutionary rescue: Epigenetic buffering, heritable bet hedging and epigenetic traps. Environ. Epigenet. 2:dvv014.
+</div>
+<div id="ref-Stein2014-gj" class="csl-entry" role="listitem">
+Stein, A., K. Gerstner, and H. Kreft. 2014. Environmental heterogeneity as a universal driver of species richness across taxa, biomes and spatial scales. Ecol. Lett. 17:866–880.
 </div>
 </div></section></div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -973,8 +955,8 @@ Wellek, S., K. A. B. Goddard, and A. Ziegler. 2010. A confidence-limit-based app
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Discrete outcomes between two groups"</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Sometimes it is just black and white"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Variability between groups"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Beyond the mean"</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
@@ -984,7 +966,7 @@ Wellek, S., K. A. B. Goddard, and A. Ziegler. 2010. A confidence-limit-based app
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "2.2-lnOR-assumptions.html"</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "5.1-variability-between-groups.html"</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
@@ -1018,10 +1000,10 @@ Wellek, S., K. A. B. Goddard, and A. Ziegler. 2010. A confidence-limit-based app
 <span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="an">csl:</span><span class="co"> ecology.csl</span></span>
 <span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
 <span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
 <span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
@@ -1043,128 +1025,131 @@ Wellek, S., K. A. B. Goddard, and A. Ziegler. 2010. A confidence-limit-based app
 <span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>The log odds ratio (lnOR) and risk ratio (lnRR) effect sizes are based on two-group contingency tables. These study designs use a discrete treatment and have a discrete binary outcome. Are they dead or alive, did they breed or not, etc. Such data looks like this, where a, b, c, d are integer count values.</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>**PASTED TOGETHER CONTENT FROM SEPARATE PAGES. NOT EDITED**</span>
 <span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>         <span class="pp">|</span> Alive <span class="pp">|</span> Dead <span class="pp">|</span> Total      <span class="pp">|</span></span>
-<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------|------|------------|</span></span>
-<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Drug    <span class="pp">|</span> $a$   <span class="pp">|</span> $b$  <span class="pp">|</span> $n1 = a+b$ <span class="pp">|</span></span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Placebo <span class="pp">|</span> $c$   <span class="pp">|</span> $d$  <span class="pp">|</span> $n2 = c+d$ <span class="pp">|</span></span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>These outcomes are binomial, i.e., are discrete processes with binary outcomes that occur to individuals. Individuals can be both individual organisms as well as individual sites/islands/plots, i.e., in terms of presence or absence of some binary condition.</span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>Tertiary outcomes binomial outcomes are also possible and need to be handled with alternative effect sizes. For example, the frequency of alleles (AA, Aa, aa) in a population can be described with the Hardy-Weinburg Equilibrium effect size <span class="co">[</span><span class="ot">@Wellek2010-jp</span><span class="co">]</span>. These are not discussed in this tutorial. </span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="fu">## log Odds Ratio (lnOR) {#sec-lnOR}</span></span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>The log odds ratio is the ratio of two odds:</span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>&amp;lnOR = log(\frac{a * d}{b * c}) <span class="sc">\\</span></span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>$${#eq-1}</span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assumptions {#sec-lnOR-assumptions}</span></span>
-<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>Blah blah blah</span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation {#sec-lnOR-interpretation}</span></span>
-<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>To give an example, imagine a study reported on survivorship outcomes of rodents based on a drug versus of a placebo, as follows.</span>
-<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>         <span class="pp">|</span> Alive <span class="pp">|</span> Dead <span class="pp">|</span></span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-------|------|</span></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Drug    <span class="pp">|</span> 35    <span class="pp">|</span> 12   <span class="pp">|</span></span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Placebo <span class="pp">|</span> 15    <span class="pp">|</span> 21   <span class="pp">|</span></span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>lnOR can be calculated by plugging these values into escalc:</span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="fu"># Add a separate analysis of variability {#sec-lnrom-with-variability}</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>A treatment can change both the **mean** and the **variability** of a biological response <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>. An lnRoM analysis describes the proportional change in the group means, but it does not tell us whether observations became more or less variable within the groups.</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>When variability is biologically relevant, we recommend adding a separate analysis using the **log variability ratio (lnVR)**:</span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>\mathrm{lnVR}=\ln\left(\frac{s_1}{s_2}\right),</span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>$${#eq-lnvr}</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a>where $s_1$ is the treatment-group standard deviation and $s_2$ is the control-group standard deviation. With the direction used throughout this chapter:</span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\mathrm{lnVR}&gt;0$: the treatment group is more variable;</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\mathrm{lnVR}=0$: the groups have equal standard deviations;</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\mathrm{lnVR}&lt;0$: the treatment group is less variable.</span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>For the plant-biomass example:</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>\mathrm{lnVR}=\ln\left(\frac{3}{2}\right)\approx0.405.</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>Back-transforming gives $e^{0.405}\approx1.5$, so the standard deviation is approximately 50% higher under warming. The lnRoM and lnVR analyses together provide a more complete biological description: warming increased mean biomass by 20% and was also associated with greater variation among plants.</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>Calculate lnVR as a separate outcome rather than combining lnRoM and lnVR values in one univariate model:</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VR"</span>,</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="dv">3</span>, <span class="at">n1i =</span> <span class="dv">20</span>,</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd2i =</span> <span class="dv">2</span>, <span class="at">n2i =</span> <span class="dv">20</span>)</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>Interpret the two analyses separately. They address related but distinct questions: lnRoM concerns proportional differences in means, whereas lnVR concerns ratios of standard deviations.</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>:::callout-warning</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="fu">### Use lnCVR carefully: its value depends directly on the means</span></span>
 <span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>To interpret this log odds ratio ($lnOR$), you should first convert it to an odds ratio ($OR$):</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>The **log coefficient of variation ratio (lnCVR)** compares standard deviations after dividing each one by its group mean <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>:</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>\mathrm{lnCVR}</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>=\ln\left(\frac{s_1/m_1}{s_2/m_2}\right)</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>=\mathrm{lnVR}-\mathrm{lnRoM},</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>$${#eq-lncvr-relationship}</span>
 <span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>OR = e^{lnOR}</span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>$${#eq-2}</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>before any small-sample bias corrections. Because the means occur directly in this formula, a change in lnCVR can arise from a change in the standard deviations, a change in the means, or both.</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>lnCVR is intended to account for a common biological pattern: groups with larger means often also have larger variances. However, dividing by the mean makes an implicit scaling assumption. In simple terms, it works most naturally when the standard deviation increases roughly in proportion to the mean. Equivalently, variance then increases roughly with the square of the mean.</span>
 <span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span>:</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>That relationship differs among data types:</span>
 <span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fl">1.4069</span>) <span class="sc">|&gt;</span> <span class="fu">round</span>()</span>
-<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>An odds ratio of 4 indicates that the odds of a rodent dying are 4 times as high when given the placebo instead of the drug. An odds ratio of 1 indicates that the odds of mortality are identical between the two treatments.</span>
-<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a><span class="fu">## log Risk Ratio (lnRR) {#sec-lnRR}</span></span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Approximately normal data with constant variance:** the standard deviation may stay similar as the mean changes. The coefficient of variation will then change mechanically with the mean.</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Poisson count data:** variance equals the mean, so standard deviation increases with the square root of the mean rather than directly with the mean. The coefficient of variation therefore decreases as the mean increases.</span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Negative-binomial count data:** variance can increase much faster than the mean. At large means, the standard deviation may be close to proportional to the mean, but the relationship depends on the dispersion parameter.</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Proportions and other bounded responses:** variance is constrained by the mean and commonly shrinks near the boundaries. The mean–variance relationship can therefore be strong and nonlinear.</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. Otherwise, report lnVR alongside lnRoM, examine the mean–variance relationship directly, or consider an arm-based model of means and standard deviations.</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Differences in variability {#sec-two-group-variability}</span></span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning <span class="co">[</span><span class="ot">@Stein2014-gj; @Levine2016-hb</span><span class="co">]</span>. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation <span class="co">[</span><span class="ot">@Buckley2016-sn; @O-Dea2016-jy</span><span class="co">]</span> or reduce variation <span class="co">[</span><span class="ot">@Crispo2007-nf</span><span class="co">]</span>. </span>
 <span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>The risk ratio (or relative risk, lnRR) is similar to lnOR. While lnOR describes the odds of an event occurring, lnRR measures the probability of an event happening in one group relative to the others. The log risk ratio may be more easy to interpret but has numeric properties that make lnOR statistically preferable in many cases <span class="co">[</span><span class="ot">@borenstein2021</span><span class="co">]</span>.</span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>. </span>
 <span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>lnRR is defined as:</span>
-<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
-<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>&amp;p1 = a/n1 <span class="sc">\\</span></span>
-<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>&amp;p2 = c/n2 <span class="sc">\\</span></span>
-<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>&amp;lnRR = log(p1/p2) <span class="sc">\\</span></span>
-<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>\end{aligned}$${#eq-3}</span>
-<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assumptions</span></span>
-<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>KYLE</span>
-<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation</span></span>
-<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>To interpret lnRR, we will also exponentiate it to convert it from log scale:</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnVR {#sec-lnVR}</span></span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a>**lnVR** is the *log-transformed variability ratio*, defined as $log(\frac{sd_1}{sd_2})$. This effect size is **not** standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable. </span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with the measure = "VR".</span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VR"</span>,</span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"RR"</span>,</span>
-<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">35</span>, <span class="at">bi =</span> <span class="dv">12</span>,</span>
-<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">15</span>, <span class="at">di =</span> <span class="dv">21</span>)</span>
-<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(out<span class="sc">$</span>yi[<span class="dv">1</span>])</span>
-<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it's unreported (which is typical, see <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-paired-designs)</span>):</span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span> this is specified with the "VRC" measure:</span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"VRC"</span>,</span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
 <span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>**Kyle, can you help with this?**</span>
-<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>A risk ratio of 1.79 indicates that the risk of mortality in the placebo group is 1.79 times greater than for the rodents that received the drug.</span>
-<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a>**Not sure I am correctly interpreting these**</span>
-<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a><span class="fu"># Should I use lnOR or lnRR?</span></span>
-<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>KYLE</span>
-<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a><span class="fu">## Continuity corrections {#sec-continuity-corrections}</span></span>
-<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>lnOR breaks down whenever $a$, $b$, $c$, or $d$ equal 0. To overcome this, we apply a continuity correction (Yates 1934) by adding 0.5 to all cells if any cell equals 0. </span>
-<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnCVR {#sec-lnCVR}</span></span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>**lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with the measure = "CVR". This effect size requires the same statistical ingredients as SMD and lnRoM:</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVR"</span>,</span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>These continuity corrections are applied by <span class="in">`escalc`</span> by default.</span>
-<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a><span class="fu"># Alternative versions</span></span>
-<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>There are alternative estimators for similar data that take into account longitudinal pairing (e.g., through time) or matched pairs of subjects. These are broadly referred to as matched pairs contingency table effect sizes by <span class="in">`escalc`</span>.</span>
-<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>Extraction for these effect sizes is similar to lnOR and lnRR except that they take an additional parameter: $rho$, or the correlation between subjects---which is likely unreported and needs to be guessed. Unlike paired versions of SMD/lnRoM/Zmu, these do not appear to be comparable to unpaired estimators of lnOR and lnRR, nor are they widely used in ecology and evolution (REF TO THAT NAKAGAWA PAPER). </span>
-<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>The measurement arguments for these effect sizes are given <span class="co">[</span><span class="ot">here</span><span class="co">](6-escalc-cheatsheet.qmd)</span></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnCVR as well. In <span class="in">`escalc`</span> this is specified with the "CVRC" measure:</span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVRC"</span>,</span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>        <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

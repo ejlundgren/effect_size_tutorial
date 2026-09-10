@@ -1,0 +1,182 @@
+---
+title: "Differences in magnitude between two groups"
+subtitle: "Beyond the mean"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "5.0-differences-in-magnitude.qmd"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+
+```{r}
+#| eval: true
+#| echo: false
+
+rm(list = ls())
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+```
+
+The effect sizes that we've described in depth in this tutorial have concerned the direction and magnitude of *mean* relationships between two variables.
+
+However, there are also effect sizes to describe the absolute magnitude of differences between groups (**lnM**), to describe differences in variability (or heteroscedasticity) between two groups (**lnVR** and **lnCVR**) and effect sizes to summarize single-group means and proportions. Extracting data for these effect sizes should be fundamentally similar as the other effect size types that this tutorial was dedicated to. We here briefly discuss these effect sizes, their assumptions, and how to calculate them in `R`.
+
+# Differences between groups {#sec-differences-between-groups}
+
+## Differences in magnitude {#sec-lnM}
+**lnM** is an effect size that describes the absolute difference between two groups, which is often relevant in evolutionary research where the direction of difference between two populations or species is not of interest relative to absolute magnitude of differences [@Nakagawa2026-wn]. This effect size replaces earlier efforts which took the absolute value of SMD (or 'folded-normal SMD'). 
+
+To calculate lnM, you need the sample sizes ($n_1$, $n_2$), means ($m_1$, $m_2$), and standard deviations ($sd_1$, $sd_2$) for two discrete groups, similar as when calculating SMD or lnRoM effect sizes. Note that there is also a paired version of lnM that requires only 1 sample size ($n$) and $rho$---the estimated correlation between the two groups. As with other [paired effect sizes](2.1-SMD-assumptions.qmd#sec-paired-designs), since $rho$ is usually unreported, you can use values of 0.5 or 0.8 (and conduct sensitivity analyses!).
+
+### Assumptions {#sec-lnM-assumptions}
+Blah blah blah. SANTI
+
+### Interpretation {#sec-lnM-interpretation}
+Complicated and weird. Need to subtract something from it. Blah blah blah. SANTI
+
+### How to calculate {#sec-lnM-how-to}
+The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should be calculated with SAFE bootstrapping [@Nakagawa2025-do].
+
+Here we'll calculate lnM with `metatools::eff_size`. Be sure to set `SAFE=TRUE` in the function arguments. The `SAFE_boots` argument indicates how many bootstraps to run (1e6 is default and [appears](https://ejlundgren.github.io/SAFE/) to be a good compromise between accuracy nd speed). `SAFE_max_secs` is the number of seconds to run before timing out per effect size calculation.
+
+```{r}
+# TESTING:
+dat <- data.table(x1 = c(15, 15), x2 = c(15.5, 20),
+                  sd1 = c(2, 2), sd2 = c(2, 2),
+                  n1 = c(15, 15), n2 = c(15, 15))
+
+out <- eff_size(x1 = x1, x2 = x2, 
+         sd1 = sd1, sd2 = sd2,
+         n1 = n1, n2 = n2,
+         data = dat,
+         bind = TRUE,
+         effect_type = "lnM",
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 15)
+
+out[, .(yi_safe, vi_safe, x1, x2, sd1, sd2, n1, n2)]
+
+library("orchaRd")
+
+orchaRd:::.safe_lnM_indep(x1bar = dat$x1[1], x2bar = dat$x2[1],
+                          sd1 = dat$sd1[1], sd2 = dat$sd2[1],
+                          n1 = dat$n1[1], n2 = dat$n2[1])
+
+eff_size(x1 = x1, x2 = x2, 
+         sd1 = sd1, sd2 = sd2,
+         n = n1, r = 0.5,
+         data = dat[1, ],
+         bind = TRUE,
+         effect_type = "lnM",
+         paired = TRUE,
+         SAFE = TRUE,
+         SAFE_boots = 1e5,
+         SAFE_max_secs = 15)
+
+
+```
+
+
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+eff_size(x1 = 15, x2 = 10, 
+         sd1 = 1.5, sd2 = 2,
+         n1 = 15, n2 = 15,
+         effect_type = "lnM",
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 15)
+
+```
+
+This function returns `yi` and `vi`, which are the plugin-estimates of the lnM point estimate and sampling variance, respectively. The `yi_safe`, `vi_safe`, and `SE_safe` are the SAFE estimates. 
+
+:::callout-note
+lnM is incalculable with standard algebra when the means and standard deviations of the two groups are similar. However, SAFE allows us to circumvent this by bootstrapping simulated values. However, cases where the values are very similar may take increasing run times for enough SAFE bootstraps to successfully run. Increase `SAFE_max_secs` and reduce `SAFE_boots` until your dataset produces finalized SAFE estimates.
+
+To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
+:::
+
+For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call above.
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+eff_size(x1 = 15, x2 = 10, 
+         sd1 = 1.5, sd2 = 2,
+         n = 15, r = 0.8,
+         effect_type = "lnM",
+         paired = TRUE,
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 60)
+
+
+```
+
+
+Please see the following tutorial for more information about lnM [link](https://itchyshin.github.io/meta-analysis_of_magnitude/).

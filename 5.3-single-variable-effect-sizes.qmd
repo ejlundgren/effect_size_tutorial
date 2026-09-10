@@ -1,0 +1,185 @@
+---
+title: "Single-group effect sizes"
+subtitle: "An overlooked but powerful category"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "5.3-single-group-effect-sizes.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+
+
+```{r}
+#| eval: true
+#| echo: false
+
+rm(list = ls())
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+```
+
+While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we're interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.
+
+For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock [@Dhungana2026-qv]. These single-group proportions can be converted to effect sizes (so that they obtain a sampling variance estimation). You can then use metaregression to evaluate the influence of various moderators (e.g., human density, elevation, prey density) on predator depredation rates of livestock.
+
+:::callout-important
+In some situations, even experimental comparisons may potentially be better to analyze as a single-group effect size. For example, if most studies used >2 experimental groups or if experimental treatments were extremely different than each other. 
+
+Such cases may include separate temperature treatments, different predator densities.
+
+For example, instead of calculating two-group effect sizes between each experimental treatment and the control (e.g., SMD, lnRoM, or lnOR, lnRR), you could calculate single group effect sizes for each group, and then use the various experimental groups as predictors in a metaregression. 
+:::
+
+# Continuous data (means ± SD) {#sec-continuous-data}
+The single-group corollary to SMD and lnRoM consist of continuous data summarized into a mean and measurement of error (e.g. standard deviation, standard error). 
+
+There are two main effect sizes that can be calculated from these types of data: *single-group standardized means* and *log-transformed means*. 
+
+## Single group means {#sec-standardized-mean}
+The *single group standardized mean* is the mean divided by standard deviation to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.
+
+In `escalc`:
+```{r}
+#| eval: false
+#| echo: true
+#| out-width: "70%"
+
+escalc(measure = "SMN",
+       mi = 10,
+       sdi = 1.5,
+       ni = 15)
+```
+This, like SMD, can be interpreted as the number of standard deviations the mean is from 0. Given that standard deviation influences the mean, this effect size may be less preferred with overdispersed data (as with SMD). See [here](2.1-SMD-assumptions.qmd#sec-overdispersion), where we discuss how to diagnose overdispersion in your data.
+
+## Log-transformed mean {#sec-log-mean}
+The *log-transformed mean* is a single group corollary to lnRoM. This effect size cannot accept negative values. [As with lnRoM](2.1-SMD-assumptions.qmd), the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.
+
+In `escalc`:
+```{r}
+#| eval: false
+#| echo: true
+#| out-width: "70%"
+
+escalc(measure = "MNLN",
+       mi = 10,
+       sdi = 1.5,
+       ni = 15)
+```
+
+As such, this effect size is likely better suited for [overdispersed](2.1-SMD-assumptions.qmd#sec-overdispersion) data. 
+
+# Single group variability {#sec-single-group-variability}
+Much as we can meta-analyze differences in variability between two groups with the lnVR and lnCVR effect sizes, we can also summarize the variability of single groups with the *log-transformed standard deviation* and *log-transformed coefficient of variation* effect sizes. 
+
+As with [lnVR](#sec-lnVR), *log-transformed standard deviation* is not standardized by the mean and thus must be compared to studies using the same units of measurement. 
+
+To calculate *log-transformed standard deviation* in `R`:
+```{r}
+#| eval: false
+#| echo: true
+#| out-width: "70%"
+
+escalc(measure = "SDLN",
+       sdi = 1.5,
+       ni = 15)
+```
+
+The *log-transformed coefficient of variation* is standardized by the mean, just like [lnCVR](#sec-lnCVR), and can thus be used to compare data with different units of measurements. In `R`:
+```{r}
+#| eval: false
+#| echo: true
+#| out-width: "70%"
+
+escalc(measure = "CVLN",
+       sdi = 1.5,
+       mi = 15,
+       ni = 15)
+```
+
+
+# Single group proportions {#sec-proportions}
+The single group measurements so far pertained to normal data (or at least quasi-normal data). However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to [lnOR and lnRR](2.2-lnOR-assumptions.qmd) type effect sizes.
+
+These effect sizes take into account the total number of individuals and the number of individuals that experienced the binary outcome (e.g., mortality). There are several options for single group proportional data like this in `escalc` of which it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* are the most numerically stable.
+
+These different versions have different numeric assumptions
+
+**I'm basically taking this from Gemini, which I really don't like doing....because it's so often wrong**
+
+- *log-transformed proportion*: This effect size appears to be best when proportions are low (e.g., p < 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with `exp(value)`). Specified with "PLN" in `escalc`. 
+
+- *logit-transformed proportion*: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for [lnOR](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation) after exponentiating (`exp(value)`). Specified with "PLO" in `escalc`.
+
+- *probit-transformed proportion*: This effect size is often used for toxicological or dose-response models, like [LC50](3.3-lnOR-challenges.qmd#sec-lc50), and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in `escalc`.
+
+We recommend that in many cases, the *logit-transformed proportion* is the effect size choice with proportion data. **I'd love to have this confirmed**
+
+For all of these effect sizes, `xi` is the number of individuals experiencing the event of interest and `ni` is the total number of individuals:
+
+```{r}
+#| eval: false
+#| echo: true
+#| out-width: "70%"
+
+escalc(measure = "PLO",
+       ni = 15,
+       xi = 10)
+```
+
+## Event counts {#sec-event-counts}
+**I'm not sure I understand this versus binary outcomes...It seems to take the same exact inputs except `ti` = total person-times at risk (equivalent to `ni`)...**
+
+
+

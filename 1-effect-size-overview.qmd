@@ -68,10 +68,6 @@ Meta-analytic effect sizes have two parts: the **point estimate** and **sampling
 
 We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable between two groups (e.g., a categorical variable) or in relationship to a continuous predictor variable. 
 
-There are other effect sizes for other types of questions, such as estimating differences in heterogeneity between two groups [lnCVR, [@Nakagawa2015-tq]], difference in magnitude regardless of direction [lnM, [@Nakagawa2026-wn]], and heterozygosity in population genetics [HWE, [@Wellek2010-jp]]. 
-
-These, alongside other, effect sizes for single-group descriptive statistics are described in the [appendix](5-less-common-effect-sizes.qmd). There are also methods for creating custom effect sizes which are covered in a separate [tutorial](https://ejlundgren.github.io/SAFE/) [@Nakagawa2025-do] and are discussed [below](#sec-custom-effect-sizes).
-
 :::callout-note
 ### Standardized and unstandardized effect sizes
 The effect sizes in this tutorial in this tutorial are **standardized**, which allows comparison across different units of measurement. However, in some disciplines, it is customary to use unstandardized effect sizes (such as mean difference), because standardized research protocols ensure that all studies use the same scale of measurement. 
@@ -101,7 +97,9 @@ If the predictor is discrete (control versus treatment) and the response is a bi
 
 The correlation between a continuous or discrete response variable and a continuous predictor is analyzed as the r-t-z-transformed correlation coefficient (**Zr**). This is the workhorse for meta-analyses based on observational data.
 
-Finally, it is also possible to convert between these main effect size types, which we discuss at the [end](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data [@borenstein2021] or splitting your data into many separate models, each of which lack statistical power. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
+Finally, it is also possible to convert between these main effect size types, which we discuss [here](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data [@borenstein2021] or splitting your data into many separate models, each of which lack statistical power. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
+
+Finally, we note that there are other effect size types that may be complimentary or alternatives to the effect sizes we describe above. These include effect sizes for estimating differences in variability between two groups [(lnCVR)](5.1-variability-between-groups.qmd) [@Nakagawa2015-tq], differences in magnitude between two groups regardless of direction [(lnM)](5.2-differences-in-magnitude.qmd) [@Nakagawa2026-wn], and effect sizes for [single-group descriptive statistics](5.3-single-group-effect-sizes.qmd). 
 
 :::callout-important
 ### Effect size types are not always clearcut {#sec-effect-size-options}
@@ -116,7 +114,7 @@ An alternative is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coeffici
 
 In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used >2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or different predator densities). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the various experimental groups (e.g., the temperature of each treatment) as predictors in your meta-analytic model. **Are there statistical reasons not to? E.g., inflating sample size or something?**
 
-This applies both to continuous data summarized by mean±sd as well as binary outcome data, which can be summarized as proportions. We describe single-group effect sizes for means and proportions in the appendix, [here](5-less-common-effect-sizes.qmd#sec-single-group).
+This applies both to continuous data summarized by mean±sd as well as binary outcome data, which can be summarized as proportions. We describe single-group effect sizes for means and proportions in the appendix, [here](5.3-single-group-effect-sizes.qmd).
 
 Finally, it is also possible to formulate custom effect sizes that may help simplify these situations by explicitly including sources of nuisance heterogeneity in your effect size calculation. See our section [below](#sec-custom-effect-sizes) and @Noble2022-pl for discussion about the potential to formulate custom effect sizes.
 :::
@@ -256,15 +254,13 @@ You'll see in future sections that certain data types should use alternative est
 
 ## Alternative estimators {#sec-alternative-estimators}
 
-You'll also notice, for example if looking at the documentation of `escalc`, that there are many many effect size estimators based on different study designs or numeric properties of the data. For example, there are estimators for heteroscedastic data, estimators for paired study designs, for correlation data that has been discretized (e.g., into two groups, high vs low), and others of which we describe some in the [appendix](6-escalc-cheatsheet.qmd) and [here](5-less-common-effect-sizes.qmd).
+You'll also notice, for example if looking at the documentation of `escalc`, that there are many many effect size estimators that are similar to the primary effect size flavors covered here yet have small differences that can be difficult to disentangle. These are often rarely used despite their potential utility to meta-analyses.
 
 Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate.
 
-One of the most statistically important alternative flavors are for paired designs. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account the non-independence between the control and treatment groups.
+One of the most statistically important alternative flavors account for paired designs---i.e., non-independence between control and experimental groups. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account for this non-independence.
 
-Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.
-
-However, there are also paired design formulations that are *NOT* comparable to unpaired formulas. These take into account the pairing in the *point estimate* formula and produce effect size estimates that need to be analyzed separately.
+Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same, or nearly the same, regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.
 
 We try to clear up this confusion in the [appendix](6-escalc-cheatsheet.qmd) with some charts of compatibility between the different estimators in `escalc`.
 
@@ -274,19 +270,17 @@ You may be working on a question that requires a custom effect size. For example
 
 However, custom effect sizes (or at least rare effect sizes) can also be useful even with data that is readily synthesizable with the effect sizes we discussed above. 
 
-For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator.
+For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator (while accounting for the shared control in your random effects).
 
 However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.
 
 Another way of solving this problem is to use an effect size that explicitly includes the temperature difference [@Noble2022-pl]. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$): 
-
 
 $$
 \begin{aligned}
 &Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}\\
 \end{aligned}
 $${#eq-3}
-
 
 Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by @havird2020 using the Delta method) or with the [SAFE method](https://ejlundgren.github.io/SAFE/) [@Nakagawa2025-do]. These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). 
 
