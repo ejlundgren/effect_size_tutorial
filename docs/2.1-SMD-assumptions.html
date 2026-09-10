@@ -1791,497 +1791,677 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb26-159"><a href="#cb26-159" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb26-160"><a href="#cb26-160" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-161"><a href="#cb26-161" aria-hidden="true" tabindex="-1"></a><span class="fu"># Interpretation</span></span>
-<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a>We'll walk you through the use and interpretation of these effect sizes with a running biological example. </span>
-<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-164"><a href="#cb26-164" aria-hidden="true" tabindex="-1"></a>Imagine a warming experiment that measures plant biomass after one growing season:</span>
-<span id="cb26-165"><a href="#cb26-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Group <span class="pp">|</span> Mean biomass <span class="pp">|</span> Standard deviation <span class="pp">|</span> Sample size <span class="pp">|</span></span>
-<span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|</span></span>
-<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ambient control <span class="pp">|</span> 10 g <span class="pp">|</span> 2 g <span class="pp">|</span> 20 plants <span class="pp">|</span></span>
-<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Warming treatment <span class="pp">|</span> 12 g <span class="pp">|</span> 3 g <span class="pp">|</span> 20 plants <span class="pp">|</span></span>
-<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a>The treatment mean is 2 g higher than the control mean. SMD will express that difference relative to variation among plants, whereas lnRoM will express it as a proportional change. We will use this example to develop and interpret both measures side by side.</span>
-<span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a><span class="fu">## Standardized Mean Difference (SMD)</span></span>
-<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a>**SMD** is akin to a test statistic: it is the ratio of *signal* (the mean difference between two groups) and *noise* (the pooled standard deviation of those groups). You can see this in the point estimate formula for the definition formula of SMD (called Cohen's d):</span>
-<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a>d = \frac{m_1 - m_2}{sd_{pooled}}</span>
-<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-180"><a href="#cb26-180" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-181"><a href="#cb26-181" aria-hidden="true" tabindex="-1"></a>with $sd_{pooled}$ defined as:</span>
-<span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-183"><a href="#cb26-183" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-184"><a href="#cb26-184" aria-hidden="true" tabindex="-1"></a>sd_{pooled}= \sqrt{ \frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}}<span class="sc">\\</span></span>
-<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a>The formula above, for $d$, returns values between $-\infty$ and $\infty$. These values describe the number of pooled standard deviations between groups 1 and 2 and are generally interpreted with the following rules of thumb:</span>
-<span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-188"><a href="#cb26-188" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$SMD \approx |0.2|$ is a weak effect</span>
-<span id="cb26-189"><a href="#cb26-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$SMD \approx |0.5|$ is a moderate effect</span>
-<span id="cb26-191"><a href="#cb26-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-192"><a href="#cb26-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$SMD \approx |0.8|$ is a strong effect</span>
+<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a>SMD and lnRoM have very different interpretations. These are borne from their mathematical formulations and can be summarized here:</span>
+<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Data property <span class="pp">|</span> SMD <span class="pp">|</span> lnRoM <span class="pp">|</span></span>
+<span id="cb26-164"><a href="#cb26-164" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb26-165"><a href="#cb26-165" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Are group standard deviations part of the point estimate? <span class="pp">|</span> Yes <span class="pp">|</span> No, except in the small-sample bias correction <span class="pp">|</span></span>
+<span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Must the response have a meaningful zero? <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Must both group means be positive? <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can the estimates be back-transformed directly to a percentage? <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a>We'll walk you through the use and interpretation of these effect sizes with a running biological example. Imagine a warming experiment that measures plant biomass after one growing season:</span>
+<span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Group <span class="pp">|</span> Mean biomass <span class="pp">|</span> Standard deviation <span class="pp">|</span> Sample size <span class="pp">|</span></span>
+<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---:|---:|---:|</span></span>
+<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Ambient control <span class="pp">|</span> 10 g <span class="pp">|</span> 2 g <span class="pp">|</span> 20 plants <span class="pp">|</span></span>
+<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Warming treatment <span class="pp">|</span> 12 g <span class="pp">|</span> 3 g <span class="pp">|</span> 20 plants <span class="pp">|</span></span>
+<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a>The treatment mean is 2 g higher than the control mean. SMD will express that difference relative to variation among plants, whereas lnRoM will express it as a proportional change. We will use this example to develop and interpret both measures side by side.</span>
+<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a><span class="fu">## Standardized Mean Difference (SMD)</span></span>
+<span id="cb26-180"><a href="#cb26-180" aria-hidden="true" tabindex="-1"></a>**SMD** is akin to a test statistic: it is the ratio of *signal* (the mean difference between two groups) and *noise* (the pooled standard deviation of those groups). You can see this in the point estimate formula for the definition formula of SMD (called Cohen's d):</span>
+<span id="cb26-181"><a href="#cb26-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-183"><a href="#cb26-183" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-184"><a href="#cb26-184" aria-hidden="true" tabindex="-1"></a>d = \frac{m_1 - m_2}{sd_{pooled}}</span>
+<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a>with $sd_{pooled}$ defined as:</span>
+<span id="cb26-188"><a href="#cb26-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-189"><a href="#cb26-189" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a>sd_{pooled}= \sqrt{ \frac{(n_1-1)s_1^2+(n_2-1)s_2^2}{n_1+n_2-2}}<span class="sc">\\</span></span>
+<span id="cb26-191"><a href="#cb26-191" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-192"><a href="#cb26-192" aria-hidden="true" tabindex="-1"></a>The formula above, for $d$, returns values between $-\infty$ and $\infty$. These values describe the number of pooled standard deviations between groups 1 and 2 and are generally interpreted with the following rules of thumb:</span>
 <span id="cb26-193"><a href="#cb26-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-194"><a href="#cb26-194" aria-hidden="true" tabindex="-1"></a>For our running biological example, we can plug our values in and produce:</span>
-<span id="cb26-195"><a href="#cb26-195" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a>sd_{pooled}=</span>
-<span id="cb26-198"><a href="#cb26-198" aria-hidden="true" tabindex="-1"></a>\sqrt{\frac{19(3^2)+19(2^2)}{38}}</span>
-<span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a>=\sqrt{6.5}</span>
-<span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a>\approx 2.55\ \mathrm{g}.</span>
-<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a>And a Cohen's d value of:</span>
-<span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-205"><a href="#cb26-205" aria-hidden="true" tabindex="-1"></a>d=\frac{12-10}{2.55}\approx 0.78.</span>
-<span id="cb26-206"><a href="#cb26-206" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-207"><a href="#cb26-207" aria-hidden="true" tabindex="-1"></a>However, Cohen's d is *biased* at low sample sizes. For that reason, we apply a small sample size correction factor ($J$) developed by Hedges' <span class="co">[</span><span class="ot">@Hedges1981-bt</span><span class="co">]</span>. $J$ approaches 1 as sample size increases, which means that with high sample sizes, Hedges' g becomes indistinguishable from from Cohen's d:</span>
-<span id="cb26-208"><a href="#cb26-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-209"><a href="#cb26-209" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-210"><a href="#cb26-210" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-211"><a href="#cb26-211" aria-hidden="true" tabindex="-1"></a>&amp;df = n_1+n_2-2<span class="sc">\\</span></span>
-<span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a>&amp;J \approx 1-\frac{3}{4df-1}<span class="sc">\\</span></span>
-<span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a>&amp;g = Jd</span>
-<span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-194"><a href="#cb26-194" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$SMD \approx |0.2|$ is a weak effect</span>
+<span id="cb26-195"><a href="#cb26-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$SMD \approx |0.5|$ is a moderate effect</span>
+<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-198"><a href="#cb26-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$SMD \approx |0.8|$ is a strong effect</span>
+<span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a>For our running biological example, we can plug our values in and produce:</span>
+<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a>sd_{pooled}=</span>
+<span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a>\sqrt{\frac{19(3^2)+19(2^2)}{38}}</span>
+<span id="cb26-205"><a href="#cb26-205" aria-hidden="true" tabindex="-1"></a>=\sqrt{6.5}</span>
+<span id="cb26-206"><a href="#cb26-206" aria-hidden="true" tabindex="-1"></a>\approx 2.55\ \mathrm{g}.</span>
+<span id="cb26-207"><a href="#cb26-207" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-208"><a href="#cb26-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-209"><a href="#cb26-209" aria-hidden="true" tabindex="-1"></a>And a Cohen's d value of:</span>
+<span id="cb26-210"><a href="#cb26-210" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-211"><a href="#cb26-211" aria-hidden="true" tabindex="-1"></a>d=\frac{12-10}{2.55}\approx 0.78.</span>
+<span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a>However, Cohen's d is *biased* at low sample sizes. For that reason, we apply a small sample size correction factor ($J$) developed by Hedges' <span class="co">[</span><span class="ot">@Hedges1981-bt</span><span class="co">]</span>. $J$ approaches 1 as sample size increases, which means that with high sample sizes, Hedges' g becomes indistinguishable from from Cohen's d:</span>
+<span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a>As such, our final SMD value for our running biological example is:</span>
-<span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-218"><a href="#cb26-218" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-219"><a href="#cb26-219" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-220"><a href="#cb26-220" aria-hidden="true" tabindex="-1"></a>&amp;df = 20+20-2 </span>
-<span id="cb26-221"><a href="#cb26-221" aria-hidden="true" tabindex="-1"></a>= 38<span class="sc">\\</span></span>
-<span id="cb26-222"><a href="#cb26-222" aria-hidden="true" tabindex="-1"></a>&amp;J \approx 1-\frac{3}{4df-1} \approx 0.98<span class="sc">\\</span></span>
-<span id="cb26-223"><a href="#cb26-223" aria-hidden="true" tabindex="-1"></a>&amp;g = Jd = 0.98 * 0.78 = 0.76</span>
-<span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-226"><a href="#cb26-226" aria-hidden="true" tabindex="-1"></a>This value of 0.76 equates to a moderately strong effect: a change in 0.76 standard deviations between the control and treatment groups.</span>
-<span id="cb26-227"><a href="#cb26-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-228"><a href="#cb26-228" aria-hidden="true" tabindex="-1"></a>This can all be done in <span class="in">`R`</span>, using <span class="in">`metafor`</span>'s <span class="in">`escalc`</span> function: </span>
-<span id="cb26-231"><a href="#cb26-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-232"><a href="#cb26-232" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-233"><a href="#cb26-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-234"><a href="#cb26-234" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> )</span>
+<span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a>&amp;df = n_1+n_2-2<span class="sc">\\</span></span>
+<span id="cb26-218"><a href="#cb26-218" aria-hidden="true" tabindex="-1"></a>&amp;J \approx 1-\frac{3}{4df-1}<span class="sc">\\</span></span>
+<span id="cb26-219"><a href="#cb26-219" aria-hidden="true" tabindex="-1"></a>&amp;g = Jd</span>
+<span id="cb26-220"><a href="#cb26-220" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-221"><a href="#cb26-221" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-222"><a href="#cb26-222" aria-hidden="true" tabindex="-1"></a>As such, our final SMD value for our running biological example is:</span>
+<span id="cb26-223"><a href="#cb26-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-226"><a href="#cb26-226" aria-hidden="true" tabindex="-1"></a>&amp;df = 20+20-2 </span>
+<span id="cb26-227"><a href="#cb26-227" aria-hidden="true" tabindex="-1"></a>= 38<span class="sc">\\</span></span>
+<span id="cb26-228"><a href="#cb26-228" aria-hidden="true" tabindex="-1"></a>&amp;J \approx 1-\frac{3}{4df-1} \approx 0.98<span class="sc">\\</span></span>
+<span id="cb26-229"><a href="#cb26-229" aria-hidden="true" tabindex="-1"></a>&amp;g = Jd = 0.98 * 0.78 = 0.76</span>
+<span id="cb26-230"><a href="#cb26-230" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-231"><a href="#cb26-231" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-232"><a href="#cb26-232" aria-hidden="true" tabindex="-1"></a>This value of 0.76 equates to a moderately strong effect: a change in 0.76 standard deviations between the control and treatment groups.</span>
+<span id="cb26-233"><a href="#cb26-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-234"><a href="#cb26-234" aria-hidden="true" tabindex="-1"></a>This can all be done in <span class="in">`R`</span>, using <span class="in">`metafor`</span>'s <span class="in">`escalc`</span> function: </span>
 <span id="cb26-235"><a href="#cb26-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-236"><a href="#cb26-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-237"><a href="#cb26-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## lnRoM</span></span>
-<span id="cb26-238"><a href="#cb26-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-239"><a href="#cb26-239" aria-hidden="true" tabindex="-1"></a>**lnRoM** is the log-transformed ratio of means---which means that the effect size point estimate only describes the differences between means, without accounting for variation:</span>
-<span id="cb26-240"><a href="#cb26-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-241"><a href="#cb26-241" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-242"><a href="#cb26-242" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-243"><a href="#cb26-243" aria-hidden="true" tabindex="-1"></a>lnRoM = \ln(\frac{m_1}{m_2})</span>
-<span id="cb26-244"><a href="#cb26-244" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-245"><a href="#cb26-245" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-238"><a href="#cb26-238" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-239"><a href="#cb26-239" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-240"><a href="#cb26-240" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-241"><a href="#cb26-241" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>, <span class="at">n1i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-242"><a href="#cb26-242" aria-hidden="true" tabindex="-1"></a>       <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-243"><a href="#cb26-243" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"SMD"</span>)</span>
+<span id="cb26-244"><a href="#cb26-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-245"><a href="#cb26-245" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-246"><a href="#cb26-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-247"><a href="#cb26-247" aria-hidden="true" tabindex="-1"></a>The natural logarithm makes equal proportional increases and decreases comparable around zero. A ratio of 1 becomes $\ln(1)=0$; reciprocal ratios have equal magnitudes and opposite signs.</span>
-<span id="cb26-248"><a href="#cb26-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-249"><a href="#cb26-249" aria-hidden="true" tabindex="-1"></a>Using our example biological data:</span>
-<span id="cb26-250"><a href="#cb26-250" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-251"><a href="#cb26-251" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-252"><a href="#cb26-252" aria-hidden="true" tabindex="-1"></a>\ln(\frac{m_1}{m_2})=\ln(\frac{12}{10})=0.18</span>
-<span id="cb26-253"><a href="#cb26-253" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-254"><a href="#cb26-254" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-255"><a href="#cb26-255" aria-hidden="true" tabindex="-1"></a>The lnRoM point estimate of 0.18 can be interpreted by converting it back to % change. This means that if you're fitting meta-analytic models on an lnRoM dataset, you can convert your model estimates to % change, which can dramatically improve your communication ability in plain language This is one the great advantages of lnRoM. To convert to percent change, you merely undo the natural logarithm and multiply by 100:</span>
-<span id="cb26-256"><a href="#cb26-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-257"><a href="#cb26-257" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-258"><a href="#cb26-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-259"><a href="#cb26-259" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-260"><a href="#cb26-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-261"><a href="#cb26-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-262"><a href="#cb26-262" aria-hidden="true" tabindex="-1"></a>As such, lnRoM tells a very different story than SMD, depending on the variability of your dataset. For example, if all of the studies in your dataset found non-significant differences between a control and experimental treatment, an SMD-based meta-analysis is likely to also find weak differences between those groups. </span>
-<span id="cb26-263"><a href="#cb26-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-264"><a href="#cb26-264" aria-hidden="true" tabindex="-1"></a>However, an lnRoM-based meta-analysis may find strong and significant differences because the **lnRoM** *point estimate* only accounts for the mean, and not for variation. Instead, variability is captured by lnRoM's *sampling variance* estimates---which influence the *relative* weight of each effect size in your models.</span>
-<span id="cb26-265"><a href="#cb26-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-266"><a href="#cb26-266" aria-hidden="true" tabindex="-1"></a>lnRoM is intended for measurements on a **ratio scale**, which means the group means must be positive and greater than zero. It is not suitable when the means have opposite signs, which may happen when dealing with <span class="co">[</span><span class="ot">before-after-control-impact</span><span class="co">](3.2-smd-challenges#sec-BACI)</span> experimental designs.</span>
-<span id="cb26-267"><a href="#cb26-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-268"><a href="#cb26-268" aria-hidden="true" tabindex="-1"></a>One of the greatest advantages of lnRoM is that the resulting point estimates can be converted to % change.</span>
+<span id="cb26-247"><a href="#cb26-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## Log-transformed ratio of means (lnRoM)</span></span>
+<span id="cb26-248"><a href="#cb26-248" aria-hidden="true" tabindex="-1"></a>lnRoM is intended for measurements on a **ratio scale**, which means the group means must be positive and greater than zero. It is not suitable when the means have opposite signs, which may happen when dealing with <span class="co">[</span><span class="ot">before-after-control-impact</span><span class="co">](3.2-smd-challenges#sec-BACI)</span> experimental designs.</span>
+<span id="cb26-249"><a href="#cb26-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-250"><a href="#cb26-250" aria-hidden="true" tabindex="-1"></a>lnRoM can tell a very different story than SMD, which depends on the variability of your dataset. For example, if all of the studies in your dataset found non-significant differences between a control and experimental treatment, an SMD-based meta-analysis is likely to also find weak differences between those groups. </span>
+<span id="cb26-251"><a href="#cb26-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-252"><a href="#cb26-252" aria-hidden="true" tabindex="-1"></a>However, an lnRoM-based meta-analysis may find strong and significant differences because the **lnRoM** *point estimate* only accounts for the mean, and not for variation. Instead, variability is captured by lnRoM's *sampling variance* estimates---which influence the *relative* weight of each effect size in your models.</span>
+<span id="cb26-253"><a href="#cb26-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-254"><a href="#cb26-254" aria-hidden="true" tabindex="-1"></a>The point estimate definition formula for lnRoM makes it clear why:</span>
+<span id="cb26-255"><a href="#cb26-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-256"><a href="#cb26-256" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-257"><a href="#cb26-257" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-258"><a href="#cb26-258" aria-hidden="true" tabindex="-1"></a>lnRoM = \ln(\frac{m_1}{m_2})</span>
+<span id="cb26-259"><a href="#cb26-259" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-260"><a href="#cb26-260" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-261"><a href="#cb26-261" aria-hidden="true" tabindex="-1"></a>As you can see, this formula does not account for variability. The point estimate simply describes the ratio of means, with the natural logarithm making this comparable around zero. A ratio of 1 becomes $\ln(1)=0$; reciprocal ratios have equal magnitudes and opposite signs.</span>
+<span id="cb26-262"><a href="#cb26-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-263"><a href="#cb26-263" aria-hidden="true" tabindex="-1"></a>Using our example biological data:</span>
+<span id="cb26-264"><a href="#cb26-264" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-265"><a href="#cb26-265" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-266"><a href="#cb26-266" aria-hidden="true" tabindex="-1"></a>\ln(\frac{m_1}{m_2})=\ln(\frac{12}{10})=0.18</span>
+<span id="cb26-267"><a href="#cb26-267" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-268"><a href="#cb26-268" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb26-269"><a href="#cb26-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-270"><a href="#cb26-270" aria-hidden="true" tabindex="-1"></a><span class="fu"># Assumptions</span></span>
-<span id="cb26-271"><a href="#cb26-271" aria-hidden="true" tabindex="-1"></a>The following properties help determine whether each interpretation is mathematically appropriate:</span>
-<span id="cb26-272"><a href="#cb26-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-273"><a href="#cb26-273" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Data property <span class="pp">|</span> SMD <span class="pp">|</span> lnRoM <span class="pp">|</span></span>
-<span id="cb26-274"><a href="#cb26-274" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
-<span id="cb26-275"><a href="#cb26-275" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Are group standard deviations part of the point estimate? <span class="pp">|</span> Yes <span class="pp">|</span> No, except in the small-sample bias correction <span class="pp">|</span></span>
-<span id="cb26-276"><a href="#cb26-276" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Must the response have a meaningful zero? <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb26-277"><a href="#cb26-277" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Must both group means be positive? <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb26-278"><a href="#cb26-278" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can the estimates be back-transformed directly to a percentage? <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb26-279"><a href="#cb26-279" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Extracting data from summary statistics or converting from other effect size types <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb26-270"><a href="#cb26-270" aria-hidden="true" tabindex="-1"></a>The lnRoM point estimate of 0.18 can be interpreted by converting it back to % change. This means that if you're fitting meta-analytic models on an lnRoM dataset, you can convert your model estimates to % change, which can dramatically improve your communication ability in plain language This is one the great advantages of lnRoM. </span>
+<span id="cb26-271"><a href="#cb26-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-272"><a href="#cb26-272" aria-hidden="true" tabindex="-1"></a>To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100:</span>
+<span id="cb26-273"><a href="#cb26-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-274"><a href="#cb26-274" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-275"><a href="#cb26-275" aria-hidden="true" tabindex="-1"></a>100(e^{0.18} - 1) \approx 0.20</span>
+<span id="cb26-276"><a href="#cb26-276" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-277"><a href="#cb26-277" aria-hidden="true" tabindex="-1"></a>This means that the treatment led to a 20% increase relative to the control (or 20% higher biomass).</span>
+<span id="cb26-278"><a href="#cb26-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-279"><a href="#cb26-279" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span>, we can calculate lnRoM as follows:</span>
 <span id="cb26-280"><a href="#cb26-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-281"><a href="#cb26-281" aria-hidden="true" tabindex="-1"></a>The remaining sections examine other considerations---including bounded responses, dimensionality, non-normality, overdispersion, heteroscedasticity, and missing standard deviations---all of which should guide your decisions and thus your interpretations of your results.</span>
-<span id="cb26-282"><a href="#cb26-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-283"><a href="#cb26-283" aria-hidden="true" tabindex="-1"></a><span class="fu"># When are SMD and lnRoM appropriate? {#sec-assumptions-and-properties}</span></span>
-<span id="cb26-284"><a href="#cb26-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-285"><a href="#cb26-285" aria-hidden="true" tabindex="-1"></a><span class="fu">## Values ≤ 0</span></span>
-<span id="cb26-286"><a href="#cb26-286" aria-hidden="true" tabindex="-1"></a>A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of <span class="co">[</span><span class="ot">before-after-control-impact</span><span class="co">](3.2-smd-challenges.qmd#sec-BACI)</span> experimental designs or other data presentation formats. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.</span>
-<span id="cb26-287"><a href="#cb26-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-288"><a href="#cb26-288" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb26-289"><a href="#cb26-289" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Data bounded between 0 and 1 {#sec-zero-one-bounded}</span></span>
+<span id="cb26-283"><a href="#cb26-283" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-284"><a href="#cb26-284" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-285"><a href="#cb26-285" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-286"><a href="#cb26-286" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>, <span class="at">n1i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-287"><a href="#cb26-287" aria-hidden="true" tabindex="-1"></a>       <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-288"><a href="#cb26-288" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"ROM"</span>)</span>
+<span id="cb26-289"><a href="#cb26-289" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-290"><a href="#cb26-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-291"><a href="#cb26-291" aria-hidden="true" tabindex="-1"></a>Means±SD bounded between 0 and 1 are challenged by their numeric properties: variance tends to retreat to zero when the mean approaches 0 or 1 <span class="co">[</span><span class="ot">@Macartney2022-ik</span><span class="co">]</span>.</span>
+<span id="cb26-291"><a href="#cb26-291" aria-hidden="true" tabindex="-1"></a>And to convert to % change:</span>
 <span id="cb26-292"><a href="#cb26-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-293"><a href="#cb26-293" aria-hidden="true" tabindex="-1"></a>To resolve this for SMD and lnRoM effect sizes, you need to transform both the means and the standard deviations, using an arcsin-square root transformation on the mean and an equation derived using the delta method to standardize the standard deviation (see @Macartney2022-ik). </span>
-<span id="cb26-294"><a href="#cb26-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-295"><a href="#cb26-295" aria-hidden="true" tabindex="-1"></a>We cover this transformation in our extraction challenges page <span class="co">[</span><span class="ot">here</span><span class="co">](3.2-smd-challenges.qmd#sec-proportion-data-with-error)</span> </span>
-<span id="cb26-296"><a href="#cb26-296" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-297"><a href="#cb26-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-298"><a href="#cb26-298" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dimensionality {#sec-dimensionality}</span></span>
-<span id="cb26-299"><a href="#cb26-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-300"><a href="#cb26-300" aria-hidden="true" tabindex="-1"></a>The effect sizes in this section are standardized, which allow us to compare results across studies even if their units were different. However, what if one study measured a response in meters but another study measured it in area ($meter^2$) and a third study measured the same response in volume ($meter^3$)? </span>
-<span id="cb26-301"><a href="#cb26-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-302"><a href="#cb26-302" aria-hidden="true" tabindex="-1"></a>Imagine vegetation studies or morphological measurements of an organism or the size of a tumor. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.</span>
+<span id="cb26-295"><a href="#cb26-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-296"><a href="#cb26-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-297"><a href="#cb26-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-298"><a href="#cb26-298" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (<span class="fu">exp</span>(<span class="fl">0.18</span>) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb26-299"><a href="#cb26-299" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-300"><a href="#cb26-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-301"><a href="#cb26-301" aria-hidden="true" tabindex="-1"></a><span class="fu">## The small-sample size correction {#sec-lnrom-correction}</span></span>
+<span id="cb26-302"><a href="#cb26-302" aria-hidden="true" tabindex="-1"></a>With SMD, we used $J$ to correct for bias at low sample sizes. A similar second-order bias correction exists for lnRoM <span class="co">[</span><span class="ot">@Lajeunesse2015-gw</span><span class="co">]</span>. This correction is important **if** your dataset has small sample sizes and is **not** overdispersed (which we'll discuss further <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-overdispersion)</span>). </span>
 <span id="cb26-303"><a href="#cb26-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-304"><a href="#cb26-304" aria-hidden="true" tabindex="-1"></a>For lnRoM, this is a very serious problem---the estimated effect at dimension 1 will double at dimension two!</span>
+<span id="cb26-304"><a href="#cb26-304" aria-hidden="true" tabindex="-1"></a>This correction changes the lnRoM point estimate formula to:</span>
 <span id="cb26-305"><a href="#cb26-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-306"><a href="#cb26-306" aria-hidden="true" tabindex="-1"></a>For this reason, we suggest that if you are committed to using an lnRoM effect size, that you must record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was across 2 dimensions ($m^2$) then divide by 2 and if across 3 dimensions ($m^3$), divide by 3. </span>
-<span id="cb26-307"><a href="#cb26-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-308"><a href="#cb26-308" aria-hidden="true" tabindex="-1"></a>However, there may be many cases where the number of dimensions of the measurement may be unclear. In this case, you must use SMD. We demonstrate this in the hidden code block below.</span>
-<span id="cb26-309"><a href="#cb26-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-310"><a href="#cb26-310" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
-<span id="cb26-311"><a href="#cb26-311" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;</span>Click to see a demonstration of dimensionality<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
-<span id="cb26-312"><a href="#cb26-312" aria-hidden="true" tabindex="-1"></a>Let us demonstrate. We'll create a starting dataset at one dimension and then we'll increase the dimensions from 1 to 2 and 3, by recreating the underlying distribution, recalculating our summary statistics, and calculating SMD or lnRoM effect sizes:</span>
-<span id="cb26-313"><a href="#cb26-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-316"><a href="#cb26-316" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-317"><a href="#cb26-317" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data for two groups</span></span>
-<span id="cb26-318"><a href="#cb26-318" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="fl">1e8</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> .<span class="dv">6</span>)</span>
-<span id="cb26-319"><a href="#cb26-319" aria-hidden="true" tabindex="-1"></a>sim2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="fl">1e8</span>, <span class="at">mean =</span> <span class="dv">13</span>, <span class="at">sd =</span> .<span class="dv">7</span>)</span>
-<span id="cb26-320"><a href="#cb26-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-321"><a href="#cb26-321" aria-hidden="true" tabindex="-1"></a><span class="co"># First dimension:</span></span>
-<span id="cb26-322"><a href="#cb26-322" aria-hidden="true" tabindex="-1"></a>dim1<span class="fl">.1</span> <span class="ot">&lt;-</span> sim1</span>
-<span id="cb26-323"><a href="#cb26-323" aria-hidden="true" tabindex="-1"></a>dim1<span class="fl">.2</span> <span class="ot">&lt;-</span> sim2</span>
-<span id="cb26-324"><a href="#cb26-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-325"><a href="#cb26-325" aria-hidden="true" tabindex="-1"></a><span class="co"># Second dimension simulated data for groups 1 and 2</span></span>
-<span id="cb26-326"><a href="#cb26-326" aria-hidden="true" tabindex="-1"></a>dim2<span class="fl">.1</span> <span class="ot">&lt;-</span> sim1<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb26-327"><a href="#cb26-327" aria-hidden="true" tabindex="-1"></a>dim2<span class="fl">.2</span> <span class="ot">&lt;-</span> sim2<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb26-306"><a href="#cb26-306" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-307"><a href="#cb26-307" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-308"><a href="#cb26-308" aria-hidden="true" tabindex="-1"></a>\ln\left(\frac{m_1}{m_2}\right)</span>
+<span id="cb26-309"><a href="#cb26-309" aria-hidden="true" tabindex="-1"></a>+\frac{1}{2}</span>
+<span id="cb26-310"><a href="#cb26-310" aria-hidden="true" tabindex="-1"></a>\left(</span>
+<span id="cb26-311"><a href="#cb26-311" aria-hidden="true" tabindex="-1"></a>\frac{sd_1^2}{n_1m_1^2}</span>
+<span id="cb26-312"><a href="#cb26-312" aria-hidden="true" tabindex="-1"></a>-\frac{sd_2^2}{n_2m_2^2}</span>
+<span id="cb26-313"><a href="#cb26-313" aria-hidden="true" tabindex="-1"></a>\right).</span>
+<span id="cb26-314"><a href="#cb26-314" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-315"><a href="#cb26-315" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-316"><a href="#cb26-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-317"><a href="#cb26-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-318"><a href="#cb26-318" aria-hidden="true" tabindex="-1"></a>If your data *is* overdispersed, then this small sample size correction can increase the bias of your dataset, because the point estimate now incorporates standard deviation. In that case, you should use the uncorrected, first-order formula for lnRoM.</span>
+<span id="cb26-319"><a href="#cb26-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-320"><a href="#cb26-320" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>, you can do this by toggling the <span class="in">`correct=TRUE`</span> to <span class="in">`FALSE`</span>:</span>
+<span id="cb26-323"><a href="#cb26-323" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-324"><a href="#cb26-324" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias-corrected version, the default:</span></span>
+<span id="cb26-325"><a href="#cb26-325" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>, <span class="at">n1i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-326"><a href="#cb26-326" aria-hidden="true" tabindex="-1"></a>       <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-327"><a href="#cb26-327" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"ROM"</span>)</span>
 <span id="cb26-328"><a href="#cb26-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-329"><a href="#cb26-329" aria-hidden="true" tabindex="-1"></a><span class="co"># Third dimension simulated data for groups 1 and 2</span></span>
-<span id="cb26-330"><a href="#cb26-330" aria-hidden="true" tabindex="-1"></a>dim3<span class="fl">.1</span> <span class="ot">&lt;-</span> sim1<span class="sc">^</span><span class="dv">3</span></span>
-<span id="cb26-331"><a href="#cb26-331" aria-hidden="true" tabindex="-1"></a>dim3<span class="fl">.2</span> <span class="ot">&lt;-</span> sim2<span class="sc">^</span><span class="dv">3</span></span>
-<span id="cb26-332"><a href="#cb26-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-333"><a href="#cb26-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data.table of the summary statistics:</span></span>
-<span id="cb26-334"><a href="#cb26-334" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">m1 =</span> <span class="fu">c</span>(<span class="fu">mean</span>(dim1<span class="fl">.1</span>), <span class="fu">mean</span>(dim2<span class="fl">.1</span>), <span class="fu">mean</span>(dim3<span class="fl">.1</span>)),</span>
-<span id="cb26-335"><a href="#cb26-335" aria-hidden="true" tabindex="-1"></a>                  <span class="at">m2 =</span> <span class="fu">c</span>(<span class="fu">mean</span>(dim1<span class="fl">.2</span>), <span class="fu">mean</span>(dim2<span class="fl">.2</span>), <span class="fu">mean</span>(dim3<span class="fl">.2</span>)),</span>
-<span id="cb26-336"><a href="#cb26-336" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd1 =</span> <span class="fu">c</span>(<span class="fu">sd</span>(dim1<span class="fl">.1</span>), <span class="fu">sd</span>(dim2<span class="fl">.1</span>), <span class="fu">sd</span>(dim3<span class="fl">.1</span>)),</span>
-<span id="cb26-337"><a href="#cb26-337" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd2 =</span> <span class="fu">c</span>(<span class="fu">sd</span>(dim1<span class="fl">.2</span>), <span class="fu">sd</span>(dim2<span class="fl">.2</span>), <span class="fu">sd</span>(dim3<span class="fl">.2</span>)),</span>
-<span id="cb26-338"><a href="#cb26-338" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n1 =</span> <span class="dv">50</span>,</span>
-<span id="cb26-339"><a href="#cb26-339" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n2 =</span> <span class="dv">50</span>,</span>
-<span id="cb26-340"><a href="#cb26-340" aria-hidden="true" tabindex="-1"></a>                  <span class="at">dimensions =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span>
-<span id="cb26-341"><a href="#cb26-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-342"><a href="#cb26-342" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>,</span>
-<span id="cb26-343"><a href="#cb26-343" aria-hidden="true" tabindex="-1"></a>              <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
-<span id="cb26-344"><a href="#cb26-344" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
-<span id="cb26-345"><a href="#cb26-345" aria-hidden="true" tabindex="-1"></a>              <span class="at">n1i =</span> n1, <span class="at">n2i =</span> n2,</span>
-<span id="cb26-346"><a href="#cb26-346" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat,</span>
-<span id="cb26-347"><a href="#cb26-347" aria-hidden="true" tabindex="-1"></a>              <span class="at">var.names =</span> <span class="fu">c</span>(<span class="st">"yi_rom"</span>, <span class="st">"vi_rom"</span>))</span>
+<span id="cb26-329"><a href="#cb26-329" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncorrected:</span></span>
+<span id="cb26-330"><a href="#cb26-330" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>, <span class="at">n1i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-331"><a href="#cb26-331" aria-hidden="true" tabindex="-1"></a>       <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-332"><a href="#cb26-332" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"ROM"</span>, <span class="at">correct =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-333"><a href="#cb26-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-334"><a href="#cb26-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-335"><a href="#cb26-335" aria-hidden="true" tabindex="-1"></a>Or in <span class="in">`eff_size`</span>:</span>
+<span id="cb26-338"><a href="#cb26-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-339"><a href="#cb26-339" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>, <span class="at">n1 =</span> <span class="dv">20</span>,</span>
+<span id="cb26-340"><a href="#cb26-340" aria-hidden="true" tabindex="-1"></a>         <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
+<span id="cb26-341"><a href="#cb26-341" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb26-342"><a href="#cb26-342" aria-hidden="true" tabindex="-1"></a>         <span class="at">default_formulas =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-343"><a href="#cb26-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-344"><a href="#cb26-344" aria-hidden="true" tabindex="-1"></a>with <span class="in">`_first`</span> and <span class="in">`_second`</span> referring to uncorrected definition formula and second-order, bias-corrected estimators respectively.</span>
+<span id="cb26-345"><a href="#cb26-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-346"><a href="#cb26-346" aria-hidden="true" tabindex="-1"></a><span class="fu"># Assumptions</span></span>
+<span id="cb26-347"><a href="#cb26-347" aria-hidden="true" tabindex="-1"></a>As we describe above, SMD and lnRoM have very different interpretations. They also have different mathematical assumptions which, regardless of which interpretation you prefer, may shape your decision about which effect size to use.</span>
 <span id="cb26-348"><a href="#cb26-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-349"><a href="#cb26-349" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-350"><a href="#cb26-350" aria-hidden="true" tabindex="-1"></a>              <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
-<span id="cb26-351"><a href="#cb26-351" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
-<span id="cb26-352"><a href="#cb26-352" aria-hidden="true" tabindex="-1"></a>              <span class="at">n1i =</span> n1, <span class="at">n2i =</span> n2,</span>
-<span id="cb26-353"><a href="#cb26-353" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat,</span>
-<span id="cb26-354"><a href="#cb26-354" aria-hidden="true" tabindex="-1"></a>              <span class="at">var.names =</span> <span class="fu">c</span>(<span class="st">"yi_smd"</span>, <span class="st">"vi_smd"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb26-355"><a href="#cb26-355" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setDT</span>()</span>
-<span id="cb26-356"><a href="#cb26-356" aria-hidden="true" tabindex="-1"></a><span class="co"># dat</span></span>
-<span id="cb26-357"><a href="#cb26-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-358"><a href="#cb26-358" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert ROM to % change:</span></span>
-<span id="cb26-359"><a href="#cb26-359" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb26-360"><a href="#cb26-360" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent_change =</span> (<span class="fu">exp</span>(yi_rom) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>)</span>
-<span id="cb26-361"><a href="#cb26-361" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb26-362"><a href="#cb26-362" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, </span>
-<span id="cb26-363"><a href="#cb26-363" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> yi_rom))<span class="sc">+</span></span>
-<span id="cb26-364"><a href="#cb26-364" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb26-365"><a href="#cb26-365" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb26-366"><a href="#cb26-366" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"lnRoM point estimate"</span>)<span class="sc">+</span></span>
-<span id="cb26-367"><a href="#cb26-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
-<span id="cb26-368"><a href="#cb26-368" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb26-369"><a href="#cb26-369" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb26-370"><a href="#cb26-370" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
-<span id="cb26-371"><a href="#cb26-371" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-372"><a href="#cb26-372" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, </span>
-<span id="cb26-373"><a href="#cb26-373" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> percent_change))<span class="sc">+</span></span>
-<span id="cb26-374"><a href="#cb26-374" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb26-375"><a href="#cb26-375" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb26-376"><a href="#cb26-376" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Estimated % change"</span>)<span class="sc">+</span></span>
-<span id="cb26-377"><a href="#cb26-377" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
-<span id="cb26-378"><a href="#cb26-378" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb26-379"><a href="#cb26-379" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb26-380"><a href="#cb26-380" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb26-349"><a href="#cb26-349" aria-hidden="true" tabindex="-1"></a>The following properties help determine whether SMD or lnRoM are mathematically appropriate:</span>
+<span id="cb26-350"><a href="#cb26-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-351"><a href="#cb26-351" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Assumption <span class="pp">|</span> SMD <span class="pp">|</span> lnRoM <span class="pp">|</span></span>
+<span id="cb26-352"><a href="#cb26-352" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-----|-------|</span></span>
+<span id="cb26-353"><a href="#cb26-353" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Accepts values ≤ 0 <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb26-354"><a href="#cb26-354" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Multiple dimensions <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb26-355"><a href="#cb26-355" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Overdispersed data <span class="pp">|</span> Sensitive <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb26-356"><a href="#cb26-356" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Heteroscedasticity <span class="pp">|</span> Use SMDH <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb26-357"><a href="#cb26-357" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Missing error bars <span class="pp">|</span> No <span class="pp">|</span> Can be imputed <span class="pp">|</span></span>
+<span id="cb26-358"><a href="#cb26-358" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Converting model test statistics <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb26-359"><a href="#cb26-359" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Converting between other effect sizes <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb26-360"><a href="#cb26-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-361"><a href="#cb26-361" aria-hidden="true" tabindex="-1"></a>The remaining sections examine other considerations---including negative values, dimensionality, overdispersion, heteroscedasticity, and missing standard deviations---all of which should guide your decision about whether to use SMD or lnRoM.</span>
+<span id="cb26-362"><a href="#cb26-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-363"><a href="#cb26-363" aria-hidden="true" tabindex="-1"></a><span class="fu"># When are SMD and lnRoM appropriate? {#sec-assumptions-and-properties}</span></span>
+<span id="cb26-364"><a href="#cb26-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-365"><a href="#cb26-365" aria-hidden="true" tabindex="-1"></a><span class="fu">## Values ≤ 0</span></span>
+<span id="cb26-366"><a href="#cb26-366" aria-hidden="true" tabindex="-1"></a>A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of <span class="co">[</span><span class="ot">before-after-control-impact</span><span class="co">](3.2-smd-challenges.qmd#sec-BACI)</span> experimental designs or other data presentation formats. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.</span>
+<span id="cb26-367"><a href="#cb26-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-368"><a href="#cb26-368" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb26-369"><a href="#cb26-369" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Data bounded between 0 and 1 {#sec-zero-one-bounded}</span></span>
+<span id="cb26-370"><a href="#cb26-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-371"><a href="#cb26-371" aria-hidden="true" tabindex="-1"></a>Means±SD bounded between 0 and 1 are challenged by their numeric properties: variance tends to retreat to zero when the mean approaches 0 or 1 <span class="co">[</span><span class="ot">@Macartney2022-ik</span><span class="co">]</span>.</span>
+<span id="cb26-372"><a href="#cb26-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-373"><a href="#cb26-373" aria-hidden="true" tabindex="-1"></a>To resolve this for SMD and lnRoM effect sizes, you need to transform both the means and the standard deviations, using an arcsin-square root transformation on the mean and an equation derived using the delta method to standardize the standard deviation (see @Macartney2022-ik). </span>
+<span id="cb26-374"><a href="#cb26-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-375"><a href="#cb26-375" aria-hidden="true" tabindex="-1"></a>We cover this transformation in our extraction challenges page <span class="co">[</span><span class="ot">here</span><span class="co">](3.2-smd-challenges.qmd#sec-proportion-data-with-error)</span> </span>
+<span id="cb26-376"><a href="#cb26-376" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-377"><a href="#cb26-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-378"><a href="#cb26-378" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dimensionality {#sec-dimensionality}</span></span>
+<span id="cb26-379"><a href="#cb26-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-380"><a href="#cb26-380" aria-hidden="true" tabindex="-1"></a>The effect sizes in this section are standardized, which allow us to compare results across studies even if their units were different. However, what if one study measured a response in meters but another study measured it in area ($meter^2$) and a third study measured the same response in volume ($meter^3$)? </span>
 <span id="cb26-381"><a href="#cb26-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-382"><a href="#cb26-382" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span>
+<span id="cb26-382"><a href="#cb26-382" aria-hidden="true" tabindex="-1"></a>Imagine vegetation studies or morphological measurements of an organism or the size of a tumor. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.</span>
 <span id="cb26-383"><a href="#cb26-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-384"><a href="#cb26-384" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-384"><a href="#cb26-384" aria-hidden="true" tabindex="-1"></a>For lnRoM, this is a very serious problem---the estimated effect at dimension 1 will double at the second dimension!</span>
 <span id="cb26-385"><a href="#cb26-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-386"><a href="#cb26-386" aria-hidden="true" tabindex="-1"></a>As you can see, the lnRoM effect size doubled and then tripled as the dimensions increased. In ecology and evolutionary biology, which commonly pool measurements at different dimensions, this is obviously a huge problem!</span>
+<span id="cb26-386"><a href="#cb26-386" aria-hidden="true" tabindex="-1"></a>Let us demonstrate. We'll create a starting dataset at one dimension and then we'll increase the dimensions from 1 to 2 and 3, by recreating the underlying distribution, recalculating our summary statistics, and calculating SMD or lnRoM effect sizes:</span>
 <span id="cb26-387"><a href="#cb26-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-388"><a href="#cb26-388" aria-hidden="true" tabindex="-1"></a>Now let's look at SMD. Since the y axis values are not comparable, we'll plot the raw SMD as well as the difference of each dimension to the first dimension, to indicate how large of an effect dimensionality had on the strength of the SMD estimate in reference to our <span class="co">[</span><span class="ot">rules of thumb</span><span class="co">](#sec-interpretation)</span></span>
-<span id="cb26-389"><a href="#cb26-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-392"><a href="#cb26-392" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-393"><a href="#cb26-393" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-394"><a href="#cb26-394" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-395"><a href="#cb26-395" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-396"><a href="#cb26-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-397"><a href="#cb26-397" aria-hidden="true" tabindex="-1"></a>first_dimension <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dimensions <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(yi_smd)</span>
-<span id="cb26-398"><a href="#cb26-398" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb26-399"><a href="#cb26-399" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">smd_diff =</span> (first_dimension <span class="sc">-</span> yi_smd) <span class="sc">/</span> first_dimension <span class="sc">*</span> <span class="dv">100</span> )</span>
-<span id="cb26-400"><a href="#cb26-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-401"><a href="#cb26-401" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> yi_smd))<span class="sc">+</span></span>
-<span id="cb26-402"><a href="#cb26-402" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb26-403"><a href="#cb26-403" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb26-404"><a href="#cb26-404" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Effect size point estimate (yi)"</span>)<span class="sc">+</span></span>
-<span id="cb26-405"><a href="#cb26-405" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
-<span id="cb26-406"><a href="#cb26-406" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb26-407"><a href="#cb26-407" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb26-408"><a href="#cb26-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-409"><a href="#cb26-409" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> smd_diff))<span class="sc">+</span></span>
-<span id="cb26-410"><a href="#cb26-410" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
-<span id="cb26-411"><a href="#cb26-411" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb26-412"><a href="#cb26-412" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"% change in SMD estimate"</span>)<span class="sc">+</span></span>
-<span id="cb26-413"><a href="#cb26-413" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>))<span class="sc">+</span></span>
-<span id="cb26-414"><a href="#cb26-414" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
-<span id="cb26-415"><a href="#cb26-415" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb26-416"><a href="#cb26-416" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
-<span id="cb26-417"><a href="#cb26-417" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span>
+<span id="cb26-390"><a href="#cb26-390" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-391"><a href="#cb26-391" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-392"><a href="#cb26-392" aria-hidden="true" tabindex="-1"></a><span class="co">#| codefold: show</span></span>
+<span id="cb26-393"><a href="#cb26-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-394"><a href="#cb26-394" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data for two groups</span></span>
+<span id="cb26-395"><a href="#cb26-395" aria-hidden="true" tabindex="-1"></a>sim1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="fl">1e8</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> .<span class="dv">6</span>)</span>
+<span id="cb26-396"><a href="#cb26-396" aria-hidden="true" tabindex="-1"></a>sim2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="fl">1e8</span>, <span class="at">mean =</span> <span class="dv">13</span>, <span class="at">sd =</span> .<span class="dv">7</span>)</span>
+<span id="cb26-397"><a href="#cb26-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-398"><a href="#cb26-398" aria-hidden="true" tabindex="-1"></a><span class="co"># First dimension:</span></span>
+<span id="cb26-399"><a href="#cb26-399" aria-hidden="true" tabindex="-1"></a>dim1<span class="fl">.1</span> <span class="ot">&lt;-</span> sim1</span>
+<span id="cb26-400"><a href="#cb26-400" aria-hidden="true" tabindex="-1"></a>dim1<span class="fl">.2</span> <span class="ot">&lt;-</span> sim2</span>
+<span id="cb26-401"><a href="#cb26-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-402"><a href="#cb26-402" aria-hidden="true" tabindex="-1"></a><span class="co"># Second dimension simulated data for groups 1 and 2</span></span>
+<span id="cb26-403"><a href="#cb26-403" aria-hidden="true" tabindex="-1"></a>dim2<span class="fl">.1</span> <span class="ot">&lt;-</span> sim1<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb26-404"><a href="#cb26-404" aria-hidden="true" tabindex="-1"></a>dim2<span class="fl">.2</span> <span class="ot">&lt;-</span> sim2<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb26-405"><a href="#cb26-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-406"><a href="#cb26-406" aria-hidden="true" tabindex="-1"></a><span class="co"># Third dimension simulated data for groups 1 and 2</span></span>
+<span id="cb26-407"><a href="#cb26-407" aria-hidden="true" tabindex="-1"></a>dim3<span class="fl">.1</span> <span class="ot">&lt;-</span> sim1<span class="sc">^</span><span class="dv">3</span></span>
+<span id="cb26-408"><a href="#cb26-408" aria-hidden="true" tabindex="-1"></a>dim3<span class="fl">.2</span> <span class="ot">&lt;-</span> sim2<span class="sc">^</span><span class="dv">3</span></span>
+<span id="cb26-409"><a href="#cb26-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-410"><a href="#cb26-410" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data.table of the summary statistics:</span></span>
+<span id="cb26-411"><a href="#cb26-411" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">m1 =</span> <span class="fu">c</span>(<span class="fu">mean</span>(dim1<span class="fl">.1</span>), <span class="fu">mean</span>(dim2<span class="fl">.1</span>), <span class="fu">mean</span>(dim3<span class="fl">.1</span>)),</span>
+<span id="cb26-412"><a href="#cb26-412" aria-hidden="true" tabindex="-1"></a>                  <span class="at">m2 =</span> <span class="fu">c</span>(<span class="fu">mean</span>(dim1<span class="fl">.2</span>), <span class="fu">mean</span>(dim2<span class="fl">.2</span>), <span class="fu">mean</span>(dim3<span class="fl">.2</span>)),</span>
+<span id="cb26-413"><a href="#cb26-413" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd1 =</span> <span class="fu">c</span>(<span class="fu">sd</span>(dim1<span class="fl">.1</span>), <span class="fu">sd</span>(dim2<span class="fl">.1</span>), <span class="fu">sd</span>(dim3<span class="fl">.1</span>)),</span>
+<span id="cb26-414"><a href="#cb26-414" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sd2 =</span> <span class="fu">c</span>(<span class="fu">sd</span>(dim1<span class="fl">.2</span>), <span class="fu">sd</span>(dim2<span class="fl">.2</span>), <span class="fu">sd</span>(dim3<span class="fl">.2</span>)),</span>
+<span id="cb26-415"><a href="#cb26-415" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n1 =</span> <span class="dv">50</span>,</span>
+<span id="cb26-416"><a href="#cb26-416" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n2 =</span> <span class="dv">50</span>,</span>
+<span id="cb26-417"><a href="#cb26-417" aria-hidden="true" tabindex="-1"></a>                  <span class="at">dimensions =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))</span>
 <span id="cb26-418"><a href="#cb26-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-419"><a href="#cb26-419" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-420"><a href="#cb26-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-421"><a href="#cb26-421" aria-hidden="true" tabindex="-1"></a>SMD is still somewhat affected by the change in dimensions but to a far lesser extent.</span>
-<span id="cb26-422"><a href="#cb26-422" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-423"><a href="#cb26-423" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
-<span id="cb26-424"><a href="#cb26-424" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb26-425"><a href="#cb26-425" aria-hidden="true" tabindex="-1"></a>The dimensionality problem of lnRoM is quite perilous given that lnRoM is the dominant effect size used in ecology and evolution. It may be that the majority of ecological meta-analyses need to be redone.</span>
-<span id="cb26-426"><a href="#cb26-426" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-427"><a href="#cb26-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-428"><a href="#cb26-428" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overdispersion {#sec-overdispersion}</span></span>
-<span id="cb26-429"><a href="#cb26-429" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-430"><a href="#cb26-430" aria-hidden="true" tabindex="-1"></a>SMD and lnRoM assume that the underlying data generation process is normal. This assumption can be broken if the data is overdispersed---which is remarkably common in ecology and evolution, especially with abundance or count data. This can lead to biased point and sampling variance estimates.</span>
-<span id="cb26-431"><a href="#cb26-431" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-432"><a href="#cb26-432" aria-hidden="true" tabindex="-1"></a>There are as yet no effect sizes formulated for overdispersed data. As such, if there is overdispersed data in your dataset, you should:</span>
-<span id="cb26-433"><a href="#cb26-433" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Exclude effect sizes that are overdispersed based on rules of thumb we'll give below as a sensitivity analysis in comparison to your full dataset</span>
-<span id="cb26-435"><a href="#cb26-435" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-436"><a href="#cb26-436" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use the inverse of effective sample size as your meta-analytic weight, instead of sampling variance, as an additional sensitivity analysis.</span>
-<span id="cb26-437"><a href="#cb26-437" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-438"><a href="#cb26-438" aria-hidden="true" tabindex="-1"></a>As you'll see throughout this tutorial, sensitivity tests are the annoying reality of meta-analysis.</span>
-<span id="cb26-439"><a href="#cb26-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-440"><a href="#cb26-440" aria-hidden="true" tabindex="-1"></a>Testing for overdispersion should be part of your analytic <span class="co">[</span><span class="ot">workflow</span><span class="co">](3.0-starting-extraction.qmd)</span>. The easiest way to test for overdispersion is to calculate the coefficient of variation ($CV$) for your control and treatment groups. $CV$ is the ratio of standard deviation to the mean ($sd/x$).</span>
-<span id="cb26-441"><a href="#cb26-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-442"><a href="#cb26-442" aria-hidden="true" tabindex="-1"></a>We consider a $CV&gt;2$ to be indicative of overdispersion. However, for lnRoM, @Lajeunesse2015-gw suggested a small sample-size corrected threshold based on the standardized mean, derived from the Geary test <span class="co">[</span><span class="ot">@Geary1930-yf, @Hedges1999-al</span><span class="co">]</span>. Let $m$ be the group mean, $sd$ be the standard deviation and $n$ be your group sample size:</span>
-<span id="cb26-443"><a href="#cb26-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-444"><a href="#cb26-444" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-445"><a href="#cb26-445" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-446"><a href="#cb26-446" aria-hidden="true" tabindex="-1"></a>G' = \frac{m}{sd}*\frac{4*n^{3/2}}{1+4*n}</span>
-<span id="cb26-447"><a href="#cb26-447" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-448"><a href="#cb26-448" aria-hidden="true" tabindex="-1"></a>$${#eq-7}</span>
-<span id="cb26-449"><a href="#cb26-449" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-450"><a href="#cb26-450" aria-hidden="true" tabindex="-1"></a>There are several suggested thresholds for this value that can be used to exclude potentially overdispersed and problematic data. Lajuennesse suggested excluding values ≥3. </span>
-<span id="cb26-451"><a href="#cb26-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-452"><a href="#cb26-452" aria-hidden="true" tabindex="-1"></a>If a lot of your data is overdispersed, one option is to compare the bias-corrected and uncorrected lnRoM estimators as a sensitivity analysis. In current versions of <span class="in">`metafor`</span>, request the uncorrected estimator with <span class="in">`correct = FALSE`</span>; it is not the default. We also recommend conducting sensitivity analyses that exclude data identified as potentially problematic using clearly specified criteria, and comparing sampling-variance weights with effective-sample-size weights when justified <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
-<span id="cb26-453"><a href="#cb26-453" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-454"><a href="#cb26-454" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
-<span id="cb26-455"><a href="#cb26-455" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;</span>Click to see a demonstration of overdispersion<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
-<span id="cb26-456"><a href="#cb26-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-457"><a href="#cb26-457" aria-hidden="true" tabindex="-1"></a>Let's do this in <span class="in">`R`</span> with a $CV&gt;2$ threshold and the Geary-Lajuennesse threshold of 3, using a dataset provided by the <span class="in">`metafor`</span> package:</span>
+<span id="cb26-419"><a href="#cb26-419" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>,</span>
+<span id="cb26-420"><a href="#cb26-420" aria-hidden="true" tabindex="-1"></a>              <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
+<span id="cb26-421"><a href="#cb26-421" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
+<span id="cb26-422"><a href="#cb26-422" aria-hidden="true" tabindex="-1"></a>              <span class="at">n1i =</span> n1, <span class="at">n2i =</span> n2,</span>
+<span id="cb26-423"><a href="#cb26-423" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat,</span>
+<span id="cb26-424"><a href="#cb26-424" aria-hidden="true" tabindex="-1"></a>              <span class="at">var.names =</span> <span class="fu">c</span>(<span class="st">"yi_rom"</span>, <span class="st">"vi_rom"</span>))</span>
+<span id="cb26-425"><a href="#cb26-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-426"><a href="#cb26-426" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb26-427"><a href="#cb26-427" aria-hidden="true" tabindex="-1"></a>              <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
+<span id="cb26-428"><a href="#cb26-428" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
+<span id="cb26-429"><a href="#cb26-429" aria-hidden="true" tabindex="-1"></a>              <span class="at">n1i =</span> n1, <span class="at">n2i =</span> n2,</span>
+<span id="cb26-430"><a href="#cb26-430" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat,</span>
+<span id="cb26-431"><a href="#cb26-431" aria-hidden="true" tabindex="-1"></a>              <span class="at">var.names =</span> <span class="fu">c</span>(<span class="st">"yi_smd"</span>, <span class="st">"vi_smd"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb26-432"><a href="#cb26-432" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setDT</span>()</span>
+<span id="cb26-433"><a href="#cb26-433" aria-hidden="true" tabindex="-1"></a><span class="co"># dat</span></span>
+<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-435"><a href="#cb26-435" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert ROM to % change:</span></span>
+<span id="cb26-436"><a href="#cb26-436" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb26-437"><a href="#cb26-437" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percent_change =</span> (<span class="fu">exp</span>(yi_rom) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb26-438"><a href="#cb26-438" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb26-439"><a href="#cb26-439" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, </span>
+<span id="cb26-440"><a href="#cb26-440" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> yi_rom))<span class="sc">+</span></span>
+<span id="cb26-441"><a href="#cb26-441" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb26-442"><a href="#cb26-442" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb26-443"><a href="#cb26-443" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"lnRoM point estimate"</span>)<span class="sc">+</span></span>
+<span id="cb26-444"><a href="#cb26-444" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
+<span id="cb26-445"><a href="#cb26-445" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb26-446"><a href="#cb26-446" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb26-447"><a href="#cb26-447" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb26-448"><a href="#cb26-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-449"><a href="#cb26-449" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, </span>
+<span id="cb26-450"><a href="#cb26-450" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> percent_change))<span class="sc">+</span></span>
+<span id="cb26-451"><a href="#cb26-451" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb26-452"><a href="#cb26-452" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb26-453"><a href="#cb26-453" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Estimated % change"</span>)<span class="sc">+</span></span>
+<span id="cb26-454"><a href="#cb26-454" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
+<span id="cb26-455"><a href="#cb26-455" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb26-456"><a href="#cb26-456" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb26-457"><a href="#cb26-457" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
 <span id="cb26-458"><a href="#cb26-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-461"><a href="#cb26-461" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-462"><a href="#cb26-462" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-463"><a href="#cb26-463" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-459"><a href="#cb26-459" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span>
+<span id="cb26-460"><a href="#cb26-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-461"><a href="#cb26-461" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-462"><a href="#cb26-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-463"><a href="#cb26-463" aria-hidden="true" tabindex="-1"></a>As you can see, the lnRoM effect size doubled and then tripled as the dimensions increased. In ecology and evolutionary biology, which commonly pool measurements at different dimensions, this is obviously a huge problem!</span>
 <span id="cb26-464"><a href="#cb26-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-465"><a href="#cb26-465" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"dat.gibson2002"</span>)</span>
-<span id="cb26-466"><a href="#cb26-466" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat.gibson2002</span>
-<span id="cb26-467"><a href="#cb26-467" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-468"><a href="#cb26-468" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop NA values for the SMD type effect sizes</span></span>
-<span id="cb26-469"><a href="#cb26-469" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(m1i))</span>
-<span id="cb26-470"><a href="#cb26-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-471"><a href="#cb26-471" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate coefficient of variation:</span></span>
-<span id="cb26-472"><a href="#cb26-472" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb26-473"><a href="#cb26-473" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cv1 =</span> sd1i <span class="sc">/</span> m1i,</span>
-<span id="cb26-474"><a href="#cb26-474" aria-hidden="true" tabindex="-1"></a>         <span class="at">cv2 =</span> sd2i <span class="sc">/</span> m2i)</span>
-<span id="cb26-475"><a href="#cb26-475" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-476"><a href="#cb26-476" aria-hidden="true" tabindex="-1"></a>n_overdispersed <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb26-477"><a href="#cb26-477" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(cv1 <span class="sc">&gt;</span> <span class="dv">2</span> <span class="sc">|</span> cv2 <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb26-478"><a href="#cb26-478" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
-<span id="cb26-479"><a href="#cb26-479" aria-hidden="true" tabindex="-1"></a>n_overdispersed<span class="sc">/</span><span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb26-480"><a href="#cb26-480" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-481"><a href="#cb26-481" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-482"><a href="#cb26-482" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-483"><a href="#cb26-483" aria-hidden="true" tabindex="-1"></a>It looks like 46% of this dataset has a $CV&gt;2$!</span>
-<span id="cb26-484"><a href="#cb26-484" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-487"><a href="#cb26-487" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-488"><a href="#cb26-488" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-489"><a href="#cb26-489" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-490"><a href="#cb26-490" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-491"><a href="#cb26-491" aria-hidden="true" tabindex="-1"></a><span class="co"># With the Geary-Lajuennesse threshold:</span></span>
-<span id="cb26-492"><a href="#cb26-492" aria-hidden="true" tabindex="-1"></a>geary <span class="ot">&lt;-</span> <span class="cf">function</span>(sd, m, n){</span>
-<span id="cb26-493"><a href="#cb26-493" aria-hidden="true" tabindex="-1"></a>  (m<span class="sc">/</span>sd) <span class="sc">*</span> (<span class="dv">4</span><span class="sc">*</span>n<span class="sc">^</span>(<span class="dv">3</span><span class="sc">/</span><span class="dv">2</span>))<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">4</span><span class="sc">*</span>n)</span>
-<span id="cb26-494"><a href="#cb26-494" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-465"><a href="#cb26-465" aria-hidden="true" tabindex="-1"></a>Now let's look at SMD. Since the y axis values are not comparable, we'll plot the raw SMD as well as the difference of each dimension to the first dimension, to indicate how large of an effect dimensionality had on the strength of the SMD estimate in reference to our <span class="co">[</span><span class="ot">rules of thumb</span><span class="co">](#sec-interpretation)</span></span>
+<span id="cb26-466"><a href="#cb26-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-469"><a href="#cb26-469" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-470"><a href="#cb26-470" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-471"><a href="#cb26-471" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb26-472"><a href="#cb26-472" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb26-473"><a href="#cb26-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-474"><a href="#cb26-474" aria-hidden="true" tabindex="-1"></a>first_dimension <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">filter</span>(dimensions <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(yi_smd)</span>
+<span id="cb26-475"><a href="#cb26-475" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb26-476"><a href="#cb26-476" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">smd_diff =</span> (first_dimension <span class="sc">-</span> yi_smd) <span class="sc">/</span> first_dimension <span class="sc">*</span> <span class="dv">100</span> )</span>
+<span id="cb26-477"><a href="#cb26-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-478"><a href="#cb26-478" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> yi_smd))<span class="sc">+</span></span>
+<span id="cb26-479"><a href="#cb26-479" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb26-480"><a href="#cb26-480" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb26-481"><a href="#cb26-481" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Effect size point estimate (yi)"</span>)<span class="sc">+</span></span>
+<span id="cb26-482"><a href="#cb26-482" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
+<span id="cb26-483"><a href="#cb26-483" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb26-484"><a href="#cb26-484" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb26-485"><a href="#cb26-485" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-486"><a href="#cb26-486" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(<span class="at">x =</span> dimensions, <span class="at">y =</span> smd_diff))<span class="sc">+</span></span>
+<span id="cb26-487"><a href="#cb26-487" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>()<span class="sc">+</span></span>
+<span id="cb26-488"><a href="#cb26-488" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb26-489"><a href="#cb26-489" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"% change in SMD estimate"</span>)<span class="sc">+</span></span>
+<span id="cb26-490"><a href="#cb26-490" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb26-491"><a href="#cb26-491" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>))<span class="sc">+</span></span>
+<span id="cb26-492"><a href="#cb26-492" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb26-493"><a href="#cb26-493" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb26-494"><a href="#cb26-494" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span>
 <span id="cb26-495"><a href="#cb26-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-496"><a href="#cb26-496" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb26-497"><a href="#cb26-497" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gl1 =</span> <span class="fu">geary</span>(<span class="at">sd =</span> sd1i, <span class="at">m =</span> m1i, <span class="at">n =</span> n1i),</span>
-<span id="cb26-498"><a href="#cb26-498" aria-hidden="true" tabindex="-1"></a>         <span class="at">gl2 =</span> <span class="fu">geary</span>(<span class="at">sd =</span> sd2i, <span class="at">m =</span> m2i, <span class="at">n =</span> n2i))</span>
+<span id="cb26-496"><a href="#cb26-496" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-497"><a href="#cb26-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-498"><a href="#cb26-498" aria-hidden="true" tabindex="-1"></a>SMD is still somewhat affected by the change in dimensions but to a far lesser extent.</span>
 <span id="cb26-499"><a href="#cb26-499" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-500"><a href="#cb26-500" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-501"><a href="#cb26-501" aria-hidden="true" tabindex="-1"></a>n_overdispersed <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb26-502"><a href="#cb26-502" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gl1 <span class="sc">&gt;</span> <span class="dv">3</span> <span class="sc">|</span> gl2 <span class="sc">&gt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb26-503"><a href="#cb26-503" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
-<span id="cb26-504"><a href="#cb26-504" aria-hidden="true" tabindex="-1"></a>n_overdispersed<span class="sc">/</span><span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb26-505"><a href="#cb26-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-506"><a href="#cb26-506" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-500"><a href="#cb26-500" aria-hidden="true" tabindex="-1"></a>For this reason, we suggest that if you are committed to using an lnRoM effect size, that you must record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was across 2 dimensions ($m^2$) then divide by 2 and if across 3 dimensions ($m^3$), divide by 3. </span>
+<span id="cb26-501"><a href="#cb26-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-502"><a href="#cb26-502" aria-hidden="true" tabindex="-1"></a>However, there may be many cases where the number of dimensions of the measurement may be unclear.</span>
+<span id="cb26-503"><a href="#cb26-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-504"><a href="#cb26-504" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb26-505"><a href="#cb26-505" aria-hidden="true" tabindex="-1"></a>The dimensionality problem of lnRoM is quite perilous given that lnRoM is the dominant effect size used in ecology and evolution. It may be that the majority of ecological meta-analyses, especially vegetation meta-analyses, need to be redone.</span>
+<span id="cb26-506"><a href="#cb26-506" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb26-507"><a href="#cb26-507" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-508"><a href="#cb26-508" aria-hidden="true" tabindex="-1"></a>It looks like \~54% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.</span>
+<span id="cb26-508"><a href="#cb26-508" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overdispersion {#sec-overdispersion}</span></span>
 <span id="cb26-509"><a href="#cb26-509" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-510"><a href="#cb26-510" aria-hidden="true" tabindex="-1"></a>An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This may be an essential method when a significant amount of your data is overdispersed. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
+<span id="cb26-510"><a href="#cb26-510" aria-hidden="true" tabindex="-1"></a>SMD and lnRoM assume that the underlying data generation process is normal. This assumption can be broken if the data is overdispersed---which is remarkably common in ecology and evolution, especially with abundance or count data. This can lead to biased point and sampling variance estimates. </span>
 <span id="cb26-511"><a href="#cb26-511" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-512"><a href="#cb26-512" aria-hidden="true" tabindex="-1"></a>Effective sample size is defined as: </span>
-<span id="cb26-513"><a href="#cb26-513" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-514"><a href="#cb26-514" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-515"><a href="#cb26-515" aria-hidden="true" tabindex="-1"></a>N_{0} = \frac{4n_1n_2}{n_1 + n_2}<span class="sc">\\</span></span>
-<span id="cb26-516"><a href="#cb26-516" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-517"><a href="#cb26-517" aria-hidden="true" tabindex="-1"></a>$${#eq-8}</span>
-<span id="cb26-518"><a href="#cb26-518" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-519"><a href="#cb26-519" aria-hidden="true" tabindex="-1"></a>Let's go through a full example, with lnRoM as our effect size.</span>
-<span id="cb26-520"><a href="#cb26-520" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-521"><a href="#cb26-521" aria-hidden="true" tabindex="-1"></a>First we'll calculate lnRoM point estimates and sampling variance:</span>
-<span id="cb26-522"><a href="#cb26-522" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-525"><a href="#cb26-525" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-526"><a href="#cb26-526" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-527"><a href="#cb26-527" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-528"><a href="#cb26-528" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-529"><a href="#cb26-529" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>, </span>
-<span id="cb26-530"><a href="#cb26-530" aria-hidden="true" tabindex="-1"></a>              <span class="at">m1i =</span> m1i, <span class="at">m2i =</span> m2i, </span>
-<span id="cb26-531"><a href="#cb26-531" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd1i =</span> sd1i, <span class="at">sd2i =</span> sd2i,</span>
-<span id="cb26-532"><a href="#cb26-532" aria-hidden="true" tabindex="-1"></a>              <span class="at">n1i =</span> n1i, <span class="at">n2i =</span> n2i,</span>
-<span id="cb26-533"><a href="#cb26-533" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat, <span class="at">append =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb26-534"><a href="#cb26-534" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setDT</span>()</span>
-<span id="cb26-535"><a href="#cb26-535" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
-<span id="cb26-536"><a href="#cb26-536" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-537"><a href="#cb26-537" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-512"><a href="#cb26-512" aria-hidden="true" tabindex="-1"></a>Overdispersion affects these effect sizes differently. For SMD, they directly affect the point estimate, because the point estimate is a ratio of signal to noise. Overdispersed data will tend to make SMDs approach 0. For lnRoM, the point estimate is robust to overdispersion (as long as you use the <span class="co">[</span><span class="ot">uncorrected definition formula</span><span class="co">](#sec-lnrom-correction)</span>). However, the sampling variance estimate is sensitive to overdispersion. </span>
+<span id="cb26-513"><a href="#cb26-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-514"><a href="#cb26-514" aria-hidden="true" tabindex="-1"></a>There are as yet no effect sizes formulated for overdispersed data. As such, if there is overdispersed data in your dataset, you should:</span>
+<span id="cb26-515"><a href="#cb26-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-516"><a href="#cb26-516" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Exclude effect sizes that are overdispersed as a sensitivity analysis in comparison to your full dataset</span>
+<span id="cb26-517"><a href="#cb26-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-518"><a href="#cb26-518" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use the inverse of effective sample size as your meta-analytic weight, instead of sampling variance, as an additional sensitivity analysis.</span>
+<span id="cb26-519"><a href="#cb26-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-520"><a href="#cb26-520" aria-hidden="true" tabindex="-1"></a>As you'll see throughout this tutorial, sensitivity tests are the annoying reality of meta-analysis.</span>
+<span id="cb26-521"><a href="#cb26-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-522"><a href="#cb26-522" aria-hidden="true" tabindex="-1"></a>Testing for overdispersion should be part of your analytic <span class="co">[</span><span class="ot">workflow</span><span class="co">](3.0-starting-extraction.qmd)</span>. The easiest way to test for overdispersion is to calculate the coefficient of variation ($CV$) for your control and treatment groups. $CV$ is the ratio of standard deviation to the mean ($sd/x$).</span>
+<span id="cb26-523"><a href="#cb26-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-524"><a href="#cb26-524" aria-hidden="true" tabindex="-1"></a>We consider a $CV&gt;2$ to be indicative of overdispersion. However, for lnRoM, @Lajeunesse2015-gw suggested a small sample-size corrected threshold based on the standardized mean, derived from the Geary test <span class="co">[</span><span class="ot">@Geary1930-yf, @Hedges1999-al</span><span class="co">]</span>. Let $m$ be the group mean, $sd$ be the standard deviation and $n$ be your group sample size:</span>
+<span id="cb26-525"><a href="#cb26-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-526"><a href="#cb26-526" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-527"><a href="#cb26-527" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-528"><a href="#cb26-528" aria-hidden="true" tabindex="-1"></a>G' = \frac{m}{sd}*\frac{4*n^{3/2}}{1+4*n}</span>
+<span id="cb26-529"><a href="#cb26-529" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-530"><a href="#cb26-530" aria-hidden="true" tabindex="-1"></a>$${#eq-7}</span>
+<span id="cb26-531"><a href="#cb26-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-532"><a href="#cb26-532" aria-hidden="true" tabindex="-1"></a>There are several suggested thresholds for this value that can be used to exclude potentially overdispersed and problematic data. Lajuennesse suggested excluding values ≥3 for lnRoM. </span>
+<span id="cb26-533"><a href="#cb26-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-534"><a href="#cb26-534" aria-hidden="true" tabindex="-1"></a>If a lot of your data is overdispersed, one option is to compare the bias-corrected and uncorrected lnRoM estimators as a sensitivity analysis. In current versions of <span class="in">`metafor`</span>, request the uncorrected estimator with <span class="in">`correct = FALSE`</span>; it is not the default. We also recommend conducting sensitivity analyses that exclude data identified as potentially problematic using clearly specified criteria, and comparing sampling-variance weights with effective-sample-size weights when justified <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
+<span id="cb26-535"><a href="#cb26-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-536"><a href="#cb26-536" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb26-537"><a href="#cb26-537" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">summary</span><span class="dt">&gt;</span>Click to see a demonstration of overdispersion<span class="dt">&lt;/</span><span class="kw">summary</span><span class="dt">&gt;</span></span>
 <span id="cb26-538"><a href="#cb26-538" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-539"><a href="#cb26-539" aria-hidden="true" tabindex="-1"></a>Now let's run an intercept only model with <span class="in">`vi`</span> as our meta-analytic weight (taken by the argument <span class="in">`V`</span>). Note that there is only one effect size per article, which is reflected in our random effect formula (which lacks an effect size ID nested within the article id <span class="in">`author`</span>):</span>
+<span id="cb26-539"><a href="#cb26-539" aria-hidden="true" tabindex="-1"></a>Let's do this in <span class="in">`R`</span> with a $CV&gt;2$ threshold and the Geary-Lajuennesse threshold of 3, using a dataset provided by the <span class="in">`metafor`</span> package:</span>
 <span id="cb26-540"><a href="#cb26-540" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-543"><a href="#cb26-543" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb26-544"><a href="#cb26-544" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
 <span id="cb26-545"><a href="#cb26-545" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb26-546"><a href="#cb26-546" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-547"><a href="#cb26-547" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi, </span>
-<span id="cb26-548"><a href="#cb26-548" aria-hidden="true" tabindex="-1"></a>             <span class="at">V =</span> vi,</span>
-<span id="cb26-549"><a href="#cb26-549" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> author,</span>
-<span id="cb26-550"><a href="#cb26-550" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> dat)</span>
-<span id="cb26-551"><a href="#cb26-551" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-547"><a href="#cb26-547" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"dat.gibson2002"</span>)</span>
+<span id="cb26-548"><a href="#cb26-548" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat.gibson2002</span>
+<span id="cb26-549"><a href="#cb26-549" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-550"><a href="#cb26-550" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop NA values for the SMD type effect sizes</span></span>
+<span id="cb26-551"><a href="#cb26-551" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(m1i))</span>
 <span id="cb26-552"><a href="#cb26-552" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-553"><a href="#cb26-553" aria-hidden="true" tabindex="-1"></a>Now, let's run a model excluding the overdispersed data:</span>
-<span id="cb26-554"><a href="#cb26-554" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-557"><a href="#cb26-557" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-558"><a href="#cb26-558" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's run a sensitivity analysis by excluding overdispersed data</span></span>
-<span id="cb26-559"><a href="#cb26-559" aria-hidden="true" tabindex="-1"></a>sub.dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb26-560"><a href="#cb26-560" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(cv1 <span class="sc">&lt;=</span> <span class="dv">2</span> <span class="sc">&amp;</span> cv2 <span class="sc">&lt;=</span> <span class="dv">2</span>)</span>
-<span id="cb26-561"><a href="#cb26-561" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi, </span>
-<span id="cb26-562"><a href="#cb26-562" aria-hidden="true" tabindex="-1"></a>             <span class="at">V =</span> vi,</span>
-<span id="cb26-563"><a href="#cb26-563" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> author,</span>
-<span id="cb26-564"><a href="#cb26-564" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> sub.dat)</span>
-<span id="cb26-565"><a href="#cb26-565" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-553"><a href="#cb26-553" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate coefficient of variation:</span></span>
+<span id="cb26-554"><a href="#cb26-554" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb26-555"><a href="#cb26-555" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cv1 =</span> sd1i <span class="sc">/</span> m1i,</span>
+<span id="cb26-556"><a href="#cb26-556" aria-hidden="true" tabindex="-1"></a>         <span class="at">cv2 =</span> sd2i <span class="sc">/</span> m2i)</span>
+<span id="cb26-557"><a href="#cb26-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-558"><a href="#cb26-558" aria-hidden="true" tabindex="-1"></a>n_overdispersed <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb26-559"><a href="#cb26-559" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(cv1 <span class="sc">&gt;</span> <span class="dv">2</span> <span class="sc">|</span> cv2 <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-560"><a href="#cb26-560" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb26-561"><a href="#cb26-561" aria-hidden="true" tabindex="-1"></a>n_overdispersed<span class="sc">/</span><span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb26-562"><a href="#cb26-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-563"><a href="#cb26-563" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-564"><a href="#cb26-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-565"><a href="#cb26-565" aria-hidden="true" tabindex="-1"></a>It looks like 46% of this dataset has a $CV&gt;2$!</span>
 <span id="cb26-566"><a href="#cb26-566" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-567"><a href="#cb26-567" aria-hidden="true" tabindex="-1"></a>Finally, let's run a model using the inverse of effective sample size as our weight.</span>
-<span id="cb26-568"><a href="#cb26-568" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-571"><a href="#cb26-571" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-572"><a href="#cb26-572" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
-<span id="cb26-573"><a href="#cb26-573" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effective_N =</span> (<span class="dv">4</span><span class="sc">*</span>n1i<span class="sc">*</span>n2i)<span class="sc">/</span>(n1i<span class="sc">+</span>n2i))</span>
-<span id="cb26-574"><a href="#cb26-574" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-575"><a href="#cb26-575" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi, </span>
-<span id="cb26-576"><a href="#cb26-576" aria-hidden="true" tabindex="-1"></a>             <span class="at">V =</span> <span class="dv">1</span><span class="sc">/</span>effective_N,</span>
-<span id="cb26-577"><a href="#cb26-577" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> author,</span>
-<span id="cb26-578"><a href="#cb26-578" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> dat)</span>
-<span id="cb26-579"><a href="#cb26-579" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-580"><a href="#cb26-580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-581"><a href="#cb26-581" aria-hidden="true" tabindex="-1"></a>Let's compare these:</span>
+<span id="cb26-569"><a href="#cb26-569" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-570"><a href="#cb26-570" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-571"><a href="#cb26-571" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-572"><a href="#cb26-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-573"><a href="#cb26-573" aria-hidden="true" tabindex="-1"></a><span class="co"># With the Geary-Lajuennesse threshold:</span></span>
+<span id="cb26-574"><a href="#cb26-574" aria-hidden="true" tabindex="-1"></a>geary <span class="ot">&lt;-</span> <span class="cf">function</span>(sd, m, n){</span>
+<span id="cb26-575"><a href="#cb26-575" aria-hidden="true" tabindex="-1"></a>  (m<span class="sc">/</span>sd) <span class="sc">*</span> (<span class="dv">4</span><span class="sc">*</span>n<span class="sc">^</span>(<span class="dv">3</span><span class="sc">/</span><span class="dv">2</span>))<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">4</span><span class="sc">*</span>n)</span>
+<span id="cb26-576"><a href="#cb26-576" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-577"><a href="#cb26-577" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-578"><a href="#cb26-578" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb26-579"><a href="#cb26-579" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gl1 =</span> <span class="fu">geary</span>(<span class="at">sd =</span> sd1i, <span class="at">m =</span> m1i, <span class="at">n =</span> n1i),</span>
+<span id="cb26-580"><a href="#cb26-580" aria-hidden="true" tabindex="-1"></a>         <span class="at">gl2 =</span> <span class="fu">geary</span>(<span class="at">sd =</span> sd2i, <span class="at">m =</span> m2i, <span class="at">n =</span> n2i))</span>
+<span id="cb26-581"><a href="#cb26-581" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-582"><a href="#cb26-582" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-585"><a href="#cb26-585" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-586"><a href="#cb26-586" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-587"><a href="#cb26-587" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-588"><a href="#cb26-588" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-589"><a href="#cb26-589" aria-hidden="true" tabindex="-1"></a>compare_estimates <span class="ot">&lt;-</span> <span class="fu">rbind</span>(m1 <span class="sc">%&gt;%</span> </span>
-<span id="cb26-590"><a href="#cb26-590" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb26-591"><a href="#cb26-591" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"all data"</span>,</span>
-<span id="cb26-592"><a href="#cb26-592" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m1<span class="sc">$</span>ci.lb,</span>
-<span id="cb26-593"><a href="#cb26-593" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m1<span class="sc">$</span>ci.ub),</span>
-<span id="cb26-594"><a href="#cb26-594" aria-hidden="true" tabindex="-1"></a>                           m2 <span class="sc">%&gt;%</span></span>
-<span id="cb26-595"><a href="#cb26-595" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-596"><a href="#cb26-596" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"CV &lt;= 2"</span>,</span>
-<span id="cb26-597"><a href="#cb26-597" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m3<span class="sc">$</span>ci.lb,</span>
-<span id="cb26-598"><a href="#cb26-598" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m3<span class="sc">$</span>ci.ub),</span>
-<span id="cb26-599"><a href="#cb26-599" aria-hidden="true" tabindex="-1"></a>                           m3 <span class="sc">%&gt;%</span></span>
-<span id="cb26-600"><a href="#cb26-600" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-601"><a href="#cb26-601" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"1/effective_N"</span>,</span>
-<span id="cb26-602"><a href="#cb26-602" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m3<span class="sc">$</span>ci.lb,</span>
-<span id="cb26-603"><a href="#cb26-603" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m3<span class="sc">$</span>ci.ub))</span>
-<span id="cb26-604"><a href="#cb26-604" aria-hidden="true" tabindex="-1"></a>compare_estimates<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">factor</span>(compare_estimates<span class="sc">$</span>model,</span>
-<span id="cb26-605"><a href="#cb26-605" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"all data"</span>, <span class="st">"CV &lt;= 2"</span>, <span class="st">"1/effective_N"</span>))</span>
+<span id="cb26-583"><a href="#cb26-583" aria-hidden="true" tabindex="-1"></a>n_overdispersed <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb26-584"><a href="#cb26-584" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gl1 <span class="sc">&gt;</span> <span class="dv">3</span> <span class="sc">|</span> gl2 <span class="sc">&gt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-585"><a href="#cb26-585" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
+<span id="cb26-586"><a href="#cb26-586" aria-hidden="true" tabindex="-1"></a>n_overdispersed<span class="sc">/</span><span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb26-587"><a href="#cb26-587" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-588"><a href="#cb26-588" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-589"><a href="#cb26-589" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-590"><a href="#cb26-590" aria-hidden="true" tabindex="-1"></a>It looks like \~54% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.</span>
+<span id="cb26-591"><a href="#cb26-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-592"><a href="#cb26-592" aria-hidden="true" tabindex="-1"></a>**DOES THIS APPLY TO BOTH SMD AND lnROM??**</span>
+<span id="cb26-593"><a href="#cb26-593" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-594"><a href="#cb26-594" aria-hidden="true" tabindex="-1"></a>An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This may be essential when a significant amount of your data is overdispersed. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
+<span id="cb26-595"><a href="#cb26-595" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-596"><a href="#cb26-596" aria-hidden="true" tabindex="-1"></a>Effective sample size is defined as: </span>
+<span id="cb26-597"><a href="#cb26-597" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb26-598"><a href="#cb26-598" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb26-599"><a href="#cb26-599" aria-hidden="true" tabindex="-1"></a>N_{0} = \frac{4n_1n_2}{n_1 + n_2}<span class="sc">\\</span></span>
+<span id="cb26-600"><a href="#cb26-600" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb26-601"><a href="#cb26-601" aria-hidden="true" tabindex="-1"></a>$${#eq-8}</span>
+<span id="cb26-602"><a href="#cb26-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-603"><a href="#cb26-603" aria-hidden="true" tabindex="-1"></a>Let's go through a full example, with lnRoM as our effect size.</span>
+<span id="cb26-604"><a href="#cb26-604" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-605"><a href="#cb26-605" aria-hidden="true" tabindex="-1"></a>First we'll calculate lnRoM point estimates and sampling variance:</span>
 <span id="cb26-606"><a href="#cb26-606" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-607"><a href="#cb26-607" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> compare_estimates,</span>
-<span id="cb26-608"><a href="#cb26-608" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> model, <span class="at">y =</span> estimate, <span class="at">ymin =</span> ci.lb, <span class="at">ymax =</span> ci.ub))<span class="sc">+</span></span>
-<span id="cb26-609"><a href="#cb26-609" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Estimate ± 95% CIs"</span>)<span class="sc">+</span></span>
-<span id="cb26-610"><a href="#cb26-610" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
-<span id="cb26-611"><a href="#cb26-611" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
-<span id="cb26-612"><a href="#cb26-612" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
-<span id="cb26-613"><a href="#cb26-613" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-614"><a href="#cb26-614" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-615"><a href="#cb26-615" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-616"><a href="#cb26-616" aria-hidden="true" tabindex="-1"></a>It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produced similar results which were more conservative than when the entire dataset was analyzed.</span>
-<span id="cb26-617"><a href="#cb26-617" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-618"><a href="#cb26-618" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
-<span id="cb26-619"><a href="#cb26-619" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-620"><a href="#cb26-620" aria-hidden="true" tabindex="-1"></a><span class="fu">## Heteroscedasticity {#sec-heteroscedasticity}</span></span>
-<span id="cb26-621"><a href="#cb26-621" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-622"><a href="#cb26-622" aria-hidden="true" tabindex="-1"></a>Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity <span class="co">[</span><span class="ot">@Bonett2009-sf</span><span class="co">]</span>. This is available as the measure 'SMDH' in <span class="in">`metafor::escalc`</span>.</span>
-<span id="cb26-623"><a href="#cb26-623" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-624"><a href="#cb26-624" aria-hidden="true" tabindex="-1"></a>For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator.</span>
-<span id="cb26-625"><a href="#cb26-625" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-626"><a href="#cb26-626" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-627"><a href="#cb26-627" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion---which effect size should you use?</span></span>
-<span id="cb26-628"><a href="#cb26-628" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-629"><a href="#cb26-629" aria-hidden="true" tabindex="-1"></a>Return first to the biological question. Use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response has a meaningful zero. The flow chart below summarizes additional considerations.</span>
+<span id="cb26-609"><a href="#cb26-609" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-610"><a href="#cb26-610" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-611"><a href="#cb26-611" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-612"><a href="#cb26-612" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-613"><a href="#cb26-613" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>, </span>
+<span id="cb26-614"><a href="#cb26-614" aria-hidden="true" tabindex="-1"></a>              <span class="at">m1i =</span> m1i, <span class="at">m2i =</span> m2i, </span>
+<span id="cb26-615"><a href="#cb26-615" aria-hidden="true" tabindex="-1"></a>              <span class="at">sd1i =</span> sd1i, <span class="at">sd2i =</span> sd2i,</span>
+<span id="cb26-616"><a href="#cb26-616" aria-hidden="true" tabindex="-1"></a>              <span class="at">n1i =</span> n1i, <span class="at">n2i =</span> n2i,</span>
+<span id="cb26-617"><a href="#cb26-617" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> dat, <span class="at">append =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb26-618"><a href="#cb26-618" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setDT</span>()</span>
+<span id="cb26-619"><a href="#cb26-619" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
+<span id="cb26-620"><a href="#cb26-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-621"><a href="#cb26-621" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-622"><a href="#cb26-622" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-623"><a href="#cb26-623" aria-hidden="true" tabindex="-1"></a>Now let's run an intercept only model with <span class="in">`vi`</span> as our meta-analytic weight (taken by the argument <span class="in">`V`</span>). Note that there is only one effect size per article, which is reflected in our random effect formula (which lacks an effect size ID nested within the article id <span class="in">`author`</span>):</span>
+<span id="cb26-624"><a href="#cb26-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-627"><a href="#cb26-627" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-628"><a href="#cb26-628" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-629"><a href="#cb26-629" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb26-630"><a href="#cb26-630" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-631"><a href="#cb26-631" aria-hidden="true" tabindex="-1"></a><span class="al">![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)</span></span>
-<span id="cb26-632"><a href="#cb26-632" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-633"><a href="#cb26-633" aria-hidden="true" tabindex="-1"></a>When both estimands are biologically meaningful, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly.</span>
-<span id="cb26-634"><a href="#cb26-634" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-635"><a href="#cb26-635" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
-<span id="cb26-636"><a href="#cb26-636" aria-hidden="true" tabindex="-1"></a>@Yang2024-fw showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://yefeng0920.github.io/BRMA_tutorial_git/)</span>.</span>
-<span id="cb26-637"><a href="#cb26-637" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-631"><a href="#cb26-631" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi, </span>
+<span id="cb26-632"><a href="#cb26-632" aria-hidden="true" tabindex="-1"></a>             <span class="at">V =</span> vi,</span>
+<span id="cb26-633"><a href="#cb26-633" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> author,</span>
+<span id="cb26-634"><a href="#cb26-634" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> dat)</span>
+<span id="cb26-635"><a href="#cb26-635" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-636"><a href="#cb26-636" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-637"><a href="#cb26-637" aria-hidden="true" tabindex="-1"></a>Now, let's run a model excluding the overdispersed data:</span>
 <span id="cb26-638"><a href="#cb26-638" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-639"><a href="#cb26-639" aria-hidden="true" tabindex="-1"></a>For lnRoM, state whether the small-sample bias correction was applied. Current versions of <span class="in">`metafor::escalc()`</span> apply it by default. The uncorrected estimator can be requested with <span class="in">`correct = FALSE`</span>; if it is used because of concerns about distributional assumptions, justify that choice and compare estimators in a sensitivity analysis.</span>
-<span id="cb26-640"><a href="#cb26-640" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-643"><a href="#cb26-643" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-644"><a href="#cb26-644" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-645"><a href="#cb26-645" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-646"><a href="#cb26-646" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-647"><a href="#cb26-647" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-648"><a href="#cb26-648" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
-<span id="cb26-649"><a href="#cb26-649" aria-hidden="true" tabindex="-1"></a>         <span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>,</span>
-<span id="cb26-650"><a href="#cb26-650" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
-<span id="cb26-651"><a href="#cb26-651" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
-<span id="cb26-652"><a href="#cb26-652" aria-hidden="true" tabindex="-1"></a>         <span class="at">default_formulas =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb26-653"><a href="#cb26-653" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-654"><a href="#cb26-654" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-655"><a href="#cb26-655" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-656"><a href="#cb26-656" aria-hidden="true" tabindex="-1"></a>Finally, if data are identified as potentially problematic using the criteria described <span class="co">[</span><span class="ot">above</span><span class="co">](#sec-overdispersion)</span>, compare the full analysis with clearly justified sensitivity analyses, such as excluding flagged observations or using inverse effective sample size as the model weight <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
-<span id="cb26-657"><a href="#cb26-657" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-658"><a href="#cb26-658" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb26-659"><a href="#cb26-659" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Missing error bars</span></span>
-<span id="cb26-660"><a href="#cb26-660" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-661"><a href="#cb26-661" aria-hidden="true" tabindex="-1"></a>Note that some extraction challenges may also influence your choice of effect size. For example, it is possible to calculate lnRoM for data that did not report error (e.g., standard deviation, standard error, etc) by imputing error with cross-study coefficient of variation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>. This is a good reason to use lnRoM but has to be weighed against the other numeric assumptions described above. We discuss this further <span class="co">[</span><span class="ot">here</span><span class="co">](3.2-smd-challenges.qmd#sec-callout-missing-error-bars)</span>.</span>
-<span id="cb26-662"><a href="#cb26-662" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-663"><a href="#cb26-663" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-641"><a href="#cb26-641" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-642"><a href="#cb26-642" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's run a sensitivity analysis by excluding overdispersed data</span></span>
+<span id="cb26-643"><a href="#cb26-643" aria-hidden="true" tabindex="-1"></a>sub.dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
+<span id="cb26-644"><a href="#cb26-644" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(cv1 <span class="sc">&lt;=</span> <span class="dv">2</span> <span class="sc">&amp;</span> cv2 <span class="sc">&lt;=</span> <span class="dv">2</span>)</span>
+<span id="cb26-645"><a href="#cb26-645" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi, </span>
+<span id="cb26-646"><a href="#cb26-646" aria-hidden="true" tabindex="-1"></a>             <span class="at">V =</span> vi,</span>
+<span id="cb26-647"><a href="#cb26-647" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> author,</span>
+<span id="cb26-648"><a href="#cb26-648" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> sub.dat)</span>
+<span id="cb26-649"><a href="#cb26-649" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-650"><a href="#cb26-650" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-651"><a href="#cb26-651" aria-hidden="true" tabindex="-1"></a>Finally, let's run a model using the inverse of effective sample size as our weight.</span>
+<span id="cb26-652"><a href="#cb26-652" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-655"><a href="#cb26-655" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-656"><a href="#cb26-656" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb26-657"><a href="#cb26-657" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effective_N =</span> (<span class="dv">4</span><span class="sc">*</span>n1i<span class="sc">*</span>n2i)<span class="sc">/</span>(n1i<span class="sc">+</span>n2i))</span>
+<span id="cb26-658"><a href="#cb26-658" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-659"><a href="#cb26-659" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">rma.mv</span>(yi, </span>
+<span id="cb26-660"><a href="#cb26-660" aria-hidden="true" tabindex="-1"></a>             <span class="at">V =</span> <span class="dv">1</span><span class="sc">/</span>effective_N,</span>
+<span id="cb26-661"><a href="#cb26-661" aria-hidden="true" tabindex="-1"></a>             <span class="at">random =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span> author,</span>
+<span id="cb26-662"><a href="#cb26-662" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> dat)</span>
+<span id="cb26-663"><a href="#cb26-663" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb26-664"><a href="#cb26-664" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-665"><a href="#cb26-665" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-666"><a href="#cb26-666" aria-hidden="true" tabindex="-1"></a><span class="fu"># A full example</span></span>
-<span id="cb26-667"><a href="#cb26-667" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-668"><a href="#cb26-668" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-669"><a href="#cb26-669" aria-hidden="true" tabindex="-1"></a><span class="fu"># Alternative versions</span></span>
-<span id="cb26-670"><a href="#cb26-670" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-671"><a href="#cb26-671" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paired experimental designs</span></span>
+<span id="cb26-665"><a href="#cb26-665" aria-hidden="true" tabindex="-1"></a>Let's compare these:</span>
+<span id="cb26-666"><a href="#cb26-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-669"><a href="#cb26-669" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-670"><a href="#cb26-670" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-671"><a href="#cb26-671" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
 <span id="cb26-672"><a href="#cb26-672" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-673"><a href="#cb26-673" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-674"><a href="#cb26-674" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-673"><a href="#cb26-673" aria-hidden="true" tabindex="-1"></a>compare_estimates <span class="ot">&lt;-</span> <span class="fu">rbind</span>(m1 <span class="sc">%&gt;%</span> </span>
+<span id="cb26-674"><a href="#cb26-674" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb26-675"><a href="#cb26-675" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"all data"</span>,</span>
+<span id="cb26-676"><a href="#cb26-676" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m1<span class="sc">$</span>ci.lb,</span>
+<span id="cb26-677"><a href="#cb26-677" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m1<span class="sc">$</span>ci.ub),</span>
+<span id="cb26-678"><a href="#cb26-678" aria-hidden="true" tabindex="-1"></a>                           m2 <span class="sc">%&gt;%</span></span>
+<span id="cb26-679"><a href="#cb26-679" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-680"><a href="#cb26-680" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"CV &lt;= 2"</span>,</span>
+<span id="cb26-681"><a href="#cb26-681" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m3<span class="sc">$</span>ci.lb,</span>
+<span id="cb26-682"><a href="#cb26-682" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m3<span class="sc">$</span>ci.ub),</span>
+<span id="cb26-683"><a href="#cb26-683" aria-hidden="true" tabindex="-1"></a>                           m3 <span class="sc">%&gt;%</span></span>
+<span id="cb26-684"><a href="#cb26-684" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-685"><a href="#cb26-685" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"1/effective_N"</span>,</span>
+<span id="cb26-686"><a href="#cb26-686" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m3<span class="sc">$</span>ci.lb,</span>
+<span id="cb26-687"><a href="#cb26-687" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m3<span class="sc">$</span>ci.ub))</span>
+<span id="cb26-688"><a href="#cb26-688" aria-hidden="true" tabindex="-1"></a>compare_estimates<span class="sc">$</span>model <span class="ot">&lt;-</span> <span class="fu">factor</span>(compare_estimates<span class="sc">$</span>model,</span>
+<span id="cb26-689"><a href="#cb26-689" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"all data"</span>, <span class="st">"CV &lt;= 2"</span>, <span class="st">"1/effective_N"</span>))</span>
+<span id="cb26-690"><a href="#cb26-690" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-691"><a href="#cb26-691" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> compare_estimates,</span>
+<span id="cb26-692"><a href="#cb26-692" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> model, <span class="at">y =</span> estimate, <span class="at">ymin =</span> ci.lb, <span class="at">ymax =</span> ci.ub))<span class="sc">+</span></span>
+<span id="cb26-693"><a href="#cb26-693" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Estimate ± 95% CIs"</span>)<span class="sc">+</span></span>
+<span id="cb26-694"><a href="#cb26-694" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb26-695"><a href="#cb26-695" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>()<span class="sc">+</span></span>
+<span id="cb26-696"><a href="#cb26-696" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb26-697"><a href="#cb26-697" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-698"><a href="#cb26-698" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-699"><a href="#cb26-699" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-700"><a href="#cb26-700" aria-hidden="true" tabindex="-1"></a>It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produced similar results which were more conservative than when the entire dataset was analyzed.</span>
+<span id="cb26-701"><a href="#cb26-701" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-702"><a href="#cb26-702" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">details</span><span class="dt">&gt;</span></span>
+<span id="cb26-703"><a href="#cb26-703" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-704"><a href="#cb26-704" aria-hidden="true" tabindex="-1"></a><span class="fu">## Heteroscedasticity {#sec-heteroscedasticity}</span></span>
+<span id="cb26-705"><a href="#cb26-705" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-706"><a href="#cb26-706" aria-hidden="true" tabindex="-1"></a>Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity <span class="co">[</span><span class="ot">@Bonett2009-sf</span><span class="co">]</span>. This is available as the measure 'SMDH' in <span class="in">`metafor::escalc`</span>. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset---instead of comparing SMD estimates to SMDH estimates. **IS THIS TRUE?**</span>
+<span id="cb26-707"><a href="#cb26-707" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-708"><a href="#cb26-708" aria-hidden="true" tabindex="-1"></a>For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator. However, this is a topic that has been little explored and is a subject for future research. **DOUBLE CHECK**</span>
+<span id="cb26-709"><a href="#cb26-709" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-710"><a href="#cb26-710" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion---which effect size should you use?</span></span>
+<span id="cb26-711"><a href="#cb26-711" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-712"><a href="#cb26-712" aria-hidden="true" tabindex="-1"></a>Return first to the biological question. Use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response is bounded by zero. The flow chart below summarizes additional considerations.</span>
+<span id="cb26-713"><a href="#cb26-713" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-714"><a href="#cb26-714" aria-hidden="true" tabindex="-1"></a><span class="al">![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)</span></span>
+<span id="cb26-715"><a href="#cb26-715" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-716"><a href="#cb26-716" aria-hidden="true" tabindex="-1"></a>When both estimands are biologically meaningful, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly.</span>
+<span id="cb26-717"><a href="#cb26-717" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-718"><a href="#cb26-718" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb26-719"><a href="#cb26-719" aria-hidden="true" tabindex="-1"></a>@Yang2024-fw showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://yefeng0920.github.io/BRMA_tutorial_git/)</span>.</span>
+<span id="cb26-720"><a href="#cb26-720" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-721"><a href="#cb26-721" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-722"><a href="#cb26-722" aria-hidden="true" tabindex="-1"></a>For lnRoM, state whether the small-sample bias correction was applied. Current versions of <span class="in">`metafor::escalc()`</span> apply it by default. The uncorrected estimator can be requested with <span class="in">`correct = FALSE`</span>; if it is used because of concerns about distributional assumptions, justify that choice and compare estimators in a sensitivity analysis.</span>
+<span id="cb26-723"><a href="#cb26-723" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-724"><a href="#cb26-724" aria-hidden="true" tabindex="-1"></a>Conversely, you can also use our function <span class="in">`eff_size`</span>, which returns all the estimates in one go:</span>
+<span id="cb26-725"><a href="#cb26-725" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-728"><a href="#cb26-728" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-729"><a href="#cb26-729" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-730"><a href="#cb26-730" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-731"><a href="#cb26-731" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb26-732"><a href="#cb26-732" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-733"><a href="#cb26-733" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb26-734"><a href="#cb26-734" aria-hidden="true" tabindex="-1"></a>         <span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>,</span>
+<span id="cb26-735"><a href="#cb26-735" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
+<span id="cb26-736"><a href="#cb26-736" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
+<span id="cb26-737"><a href="#cb26-737" aria-hidden="true" tabindex="-1"></a>         <span class="at">default_formulas =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb26-738"><a href="#cb26-738" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-739"><a href="#cb26-739" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-740"><a href="#cb26-740" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-741"><a href="#cb26-741" aria-hidden="true" tabindex="-1"></a>Finally, if data are identified as potentially problematic using the criteria described <span class="co">[</span><span class="ot">above</span><span class="co">](#sec-overdispersion)</span>, compare the full analysis with clearly justified sensitivity analyses, such as excluding flagged observations or using inverse effective sample size as the model weight <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
+<span id="cb26-742"><a href="#cb26-742" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-743"><a href="#cb26-743" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb26-744"><a href="#cb26-744" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Missing error bars</span></span>
+<span id="cb26-745"><a href="#cb26-745" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-746"><a href="#cb26-746" aria-hidden="true" tabindex="-1"></a>Note that some extraction challenges may also influence your choice of effect size. For example, it is possible to calculate lnRoM for data that did not report error (e.g., standard deviation, standard error, etc) by imputing error with cross-study coefficient of variation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>. This is a good reason to use lnRoM but has to be weighed against the other numeric assumptions described above. We discuss this further <span class="co">[</span><span class="ot">here</span><span class="co">](3.2-smd-challenges.qmd#sec-callout-missing-error-bars)</span>.</span>
+<span id="cb26-747"><a href="#cb26-747" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-748"><a href="#cb26-748" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-749"><a href="#cb26-749" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-750"><a href="#cb26-750" aria-hidden="true" tabindex="-1"></a><span class="fu"># Alternative estimators {#sec-alternative-estimators}</span></span>
+<span id="cb26-751"><a href="#cb26-751" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-752"><a href="#cb26-752" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paired designs {#sec-paired-designs}</span></span>
+<span id="cb26-753"><a href="#cb26-753" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-754"><a href="#cb26-754" aria-hidden="true" tabindex="-1"></a>There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. For the most part, these paired estimators *reduce* the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the correlated variance between your treatment groups.</span>
+<span id="cb26-755"><a href="#cb26-755" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-756"><a href="#cb26-756" aria-hidden="true" tabindex="-1"></a>In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals, which is pronounced "rho" and symbolized as <span class="in">`r`</span> in most <span class="in">`R`</span> code. Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.</span>
+<span id="cb26-757"><a href="#cb26-757" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-758"><a href="#cb26-758" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb26-759"><a href="#cb26-759" aria-hidden="true" tabindex="-1"></a>######### $\rho$ {#sec-specifying-rho}</span>
+<span id="cb26-760"><a href="#cb26-760" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-761"><a href="#cb26-761" aria-hidden="true" tabindex="-1"></a>The correlation between groups, $\rho$ (<span class="in">`ri`</span> in <span class="in">`escalc`</span> and <span class="in">`r`</span> in <span class="in">`eff_size`</span>) is rarely reported and so needs to be assigned based, basically, on guesswork. We'd suggest that if the pairing is within an individual or plot (e.g., before-after a treatment), then a $\rho$ of 0.8 seems reasonable. However, if the pairing is based on spatially paired but independent plots (e.g., adjacent to each other across a fenceline) then a rho of 0.5 may be more reasonable.</span>
+<span id="cb26-762"><a href="#cb26-762" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-763"><a href="#cb26-763" aria-hidden="true" tabindex="-1"></a>Be sure to always conduct sensitivity analyses on these choices, to ensure that they aren't unduly changing your model estimates.</span>
+<span id="cb26-764"><a href="#cb26-764" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb26-765"><a href="#cb26-765" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-766"><a href="#cb26-766" aria-hidden="true" tabindex="-1"></a><span class="fu">### SMD paired designs</span></span>
+<span id="cb26-767"><a href="#cb26-767" aria-hidden="true" tabindex="-1"></a>For SMD, the measure "SMCRP" <span class="co">[</span><span class="ot">@Cousineau2020-jf</span><span class="co">]</span> is likely safe to use in a dataset alongside unpaired "SMD" estimates, even though this formulation changes the point estimate slightly. If your data is heteroscedastic, you can use the measure "SMCRPH" <span class="co">[</span><span class="ot">@Bonett2008-ni</span><span class="co">]</span>. </span>
+<span id="cb26-768"><a href="#cb26-768" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-769"><a href="#cb26-769" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span> we can compare the results of SMD and SMCRP. Note that you only supply a single value for sample size (<span class="in">`ni`</span>) instead of <span class="in">`n1i`</span> and <span class="in">`n2i`</span> because a paired design must by definition have equal sample sizes in each treatment. </span>
+<span id="cb26-772"><a href="#cb26-772" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-773"><a href="#cb26-773" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-774"><a href="#cb26-774" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-775"><a href="#cb26-775" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-776"><a href="#cb26-776" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb26-777"><a href="#cb26-777" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb26-778"><a href="#cb26-778" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> <span class="dv">20</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-779"><a href="#cb26-779" aria-hidden="true" tabindex="-1"></a>                   <span class="at">measure =</span> <span class="st">"SMD"</span>)</span>
+<span id="cb26-780"><a href="#cb26-780" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-781"><a href="#cb26-781" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb26-782"><a href="#cb26-782" aria-hidden="true" tabindex="-1"></a>                 <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb26-783"><a href="#cb26-783" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ni =</span> <span class="dv">20</span>, <span class="at">ri =</span> <span class="fl">0.5</span>,</span>
+<span id="cb26-784"><a href="#cb26-784" aria-hidden="true" tabindex="-1"></a>                 <span class="at">measure =</span> <span class="st">"SMCRP"</span>)</span>
+<span id="cb26-785"><a href="#cb26-785" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb26-786"><a href="#cb26-786" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb26-787"><a href="#cb26-787" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-788"><a href="#cb26-788" aria-hidden="true" tabindex="-1"></a>As you can see, the point estimates differ slightly, but the sampling variance was reduced by nearly half---which means the paired estimates have considerably more influence in your models.</span>
+<span id="cb26-789"><a href="#cb26-789" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-790"><a href="#cb26-790" aria-hidden="true" tabindex="-1"></a>Our <span class="in">`eff_size`</span> function provides a different paired option for SMD and SMDH that produce almost identical point estimates but also much lower sampling variance estimates:</span>
+<span id="cb26-791"><a href="#cb26-791" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-794"><a href="#cb26-794" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-795"><a href="#cb26-795" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb26-796"><a href="#cb26-796" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-797"><a href="#cb26-797" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-798"><a href="#cb26-798" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb26-799"><a href="#cb26-799" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb26-800"><a href="#cb26-800" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">20</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
+<span id="cb26-801"><a href="#cb26-801" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb26-802"><a href="#cb26-802" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-803"><a href="#cb26-803" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">FALSE</span>) <span class="co"># paired = FALSE is default</span></span>
+<span id="cb26-804"><a href="#cb26-804" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-805"><a href="#cb26-805" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb26-806"><a href="#cb26-806" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb26-807"><a href="#cb26-807" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">20</span>, <span class="at">r =</span> <span class="fl">0.5</span>,</span>
+<span id="cb26-808"><a href="#cb26-808" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb26-809"><a href="#cb26-809" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-810"><a href="#cb26-810" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-811"><a href="#cb26-811" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb26-812"><a href="#cb26-812" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb26-813"><a href="#cb26-813" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-814"><a href="#cb26-814" aria-hidden="true" tabindex="-1"></a>It is unclear whether SMCRP or the version in <span class="in">`eff_size`</span> are better alternatives. **??????**</span>
+<span id="cb26-815"><a href="#cb26-815" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-816"><a href="#cb26-816" aria-hidden="true" tabindex="-1"></a>We note that there are several other paired estimators for SMD-style effect sizes in the function <span class="in">`escalc`</span> that account for alternative correlated treatment designs (see our <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](6-escalc-cheatsheet.qmd)</span>). These options may preferable if your meta-analysis focuses only on these types of experiments but these, to the best of our knowledge are not comparable to normal, unpaired SMD estimates</span>
+<span id="cb26-817"><a href="#cb26-817" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-818"><a href="#cb26-818" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnRoM paired designs</span></span>
+<span id="cb26-819"><a href="#cb26-819" aria-hidden="true" tabindex="-1"></a>For lnRoM, both <span class="in">`escalc`</span> and <span class="in">`eff_size`</span> provide paired formulas: </span>
+<span id="cb26-820"><a href="#cb26-820" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-823"><a href="#cb26-823" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-824"><a href="#cb26-824" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-825"><a href="#cb26-825" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb26-826"><a href="#cb26-826" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-827"><a href="#cb26-827" aria-hidden="true" tabindex="-1"></a><span class="co"># First, unpaired:</span></span>
+<span id="cb26-828"><a href="#cb26-828" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb26-829"><a href="#cb26-829" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb26-830"><a href="#cb26-830" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> <span class="dv">20</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb26-831"><a href="#cb26-831" aria-hidden="true" tabindex="-1"></a>                    <span class="at">measure =</span> <span class="st">"ROM"</span>)</span>
+<span id="cb26-832"><a href="#cb26-832" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-833"><a href="#cb26-833" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-834"><a href="#cb26-834" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, the paired version:</span></span>
+<span id="cb26-835"><a href="#cb26-835" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb26-836"><a href="#cb26-836" aria-hidden="true" tabindex="-1"></a>                 <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb26-837"><a href="#cb26-837" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ni =</span> <span class="dv">20</span>, <span class="at">ri =</span> <span class="fl">0.5</span>,</span>
+<span id="cb26-838"><a href="#cb26-838" aria-hidden="true" tabindex="-1"></a>                  <span class="at">measure =</span> <span class="st">"ROMC"</span>)</span>
+<span id="cb26-839"><a href="#cb26-839" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-840"><a href="#cb26-840" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb26-841"><a href="#cb26-841" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb26-842"><a href="#cb26-842" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-843"><a href="#cb26-843" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-844"><a href="#cb26-844" aria-hidden="true" tabindex="-1"></a>As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to a stronger influence in the meta-analytic models.</span>
+<span id="cb26-845"><a href="#cb26-845" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-846"><a href="#cb26-846" aria-hidden="true" tabindex="-1"></a>And in <span class="in">`eff_size`</span>:</span>
+<span id="cb26-849"><a href="#cb26-849" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb26-850"><a href="#cb26-850" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb26-851"><a href="#cb26-851" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb26-852"><a href="#cb26-852" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-853"><a href="#cb26-853" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb26-854"><a href="#cb26-854" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb26-855"><a href="#cb26-855" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">20</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
+<span id="cb26-856"><a href="#cb26-856" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb26-857"><a href="#cb26-857" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-858"><a href="#cb26-858" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">FALSE</span>) <span class="co"># paired = FALSE is default</span></span>
+<span id="cb26-859"><a href="#cb26-859" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-860"><a href="#cb26-860" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb26-861"><a href="#cb26-861" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb26-862"><a href="#cb26-862" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">20</span>, <span class="at">r =</span> <span class="fl">0.5</span>,</span>
+<span id="cb26-863"><a href="#cb26-863" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb26-864"><a href="#cb26-864" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-865"><a href="#cb26-865" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb26-866"><a href="#cb26-866" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb26-867"><a href="#cb26-867" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb26-868"><a href="#cb26-868" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-869"><a href="#cb26-869" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb26-870"><a href="#cb26-870" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
