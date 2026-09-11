@@ -75,27 +75,27 @@ There are a suite of challenges, regardless of effect size type, that challenge 
 
 Sample size can be devilishly tricky to extract from author text. Yet sample size is essential to accurately calculating effect size point estimates and sampling variance. As we review [elsewhere](2.1-SMD-assumptions.qmd), sample size is necessary to convert author-reported estimates of {{< glossary "standard error" >}} or confidence intervals to {{< glossary "standard deviation" >}}---a key summary statistic necessary to calculate SMD and lnRoM effect sizes.
 
-For example, imagine you are meta-analyzing the effects of some treatment (say logging) on ungulate abundance. Imagine that one study did spotlight surveys from a vehicle and report mean±error ungulate abundance. There are multiple dimensions of sample size here: the number of spatially distinct surveys, the number of survey nights, and the number of kilometers driven. If the authors reported {{< glossary "standard error" >}} with their data summaries, then you must figure out the sample size used by the authors in order to convert the author-reported standard error to {{< glossary "standard deviation" >}}.
+For example, imagine you are meta-analyzing the effects of some treatment (say logging) on ungulate abundance. Imagine that one study did spotlight surveys from a vehicle and reported mean±error ungulate abundance. There are multiple dimensions of sample size here: the number of spatially distinct surveys, the number of survey nights, and the number of kilometers driven. If the authors reported {{< glossary "standard error" >}} in their data summaries, then you must figure out the sample size used by the authors in order to convert the author-reported standard error to {{< glossary "standard deviation" >}}.
 
-Sample size also introduces questions about comparability between studies. Imagine a second study in the same meta-analysis also looked at the effect of logging on ungulate abundance but used camera traps, where the sample size would be number of camera trap nights or number of camera trap locations.
+Sample size also introduces questions about comparability between studies. Imagine a second study in the same meta-analysis also looked at the effect of logging on ungulate abundance. However, this study used camera traps, where the sample size would be number of camera trap nights or number of camera trap locations.
 
-Are these two sample sizes comparable? We don't know. There are likely way more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights). We believe it is worth recording the different dimensions of sample size in your meta-analysis dataset, and to conduct sensitivity analyses to ensure that your results are robust to these sources of methodological heterogeneity.
+Are these two sample sizes comparable? We don't know. There are likely many more camera trap nights than spotlight surveys yet the camera traps only cover a small field of view (but for many nights) while the spotlight surveys could cover dozens of kilometers (but over fewer nights). We believe it is worth recording the different dimensions of sample size in your meta-analysis dataset and to conduct sensitivity analyses to ensure that your results are robust to these sources of methodological heterogeneity.
 
 :::callout-important
 #### Summaries of clustered, non-independent data {#sec-callout-internal-non-independence}
 Imagine if a study reported $mean±sd$ across 3 individuals measured 5 times per treatment. The resulting sample size is 15 per treatment but the replicates are not fully independent. However, a different study might measure 15 separate individuals a single time, leading also to a sample size of 15 per treatment. The first summary contains a mixture of more and less independent data while the second summary is summarized across a similar level of independence.
 
-As such, you will notice that some articles summarize data (e.g., calculate `means±sd`) across **spatial** dimensions (e.g., independent plots or sites or individuals); some summarize data over **time** points *within* each spatially independent sample (plots or individuals); and others will summarize data over both **spatial** and **temporal** dimensions. 
+As such, you will notice that some articles summarize data (e.g., calculate `means±sd`) across **spatial** dimensions (e.g., independent plots or sites or individuals); some summarize data over **time** points *within* each spatially independent samples (plots or individuals); and others will summarize data over both **spatial** and **temporal** dimensions. 
 
 These differences likely matter, especially in ecological data, yet are rarely addressed. We recommend recording whether data-reported summaries are across time, across spatially-independent samples (or individuals), or across both. These factors may explain methodological heterogeneity in your dataset and should form the basis for sensitivity analyses.
 
-An alternative is to use *effective sample size* instead of author-reported sample size (after converting author-reported standard error or confidence intervals to standard deviation) or a *conservative sample size*. For example, in the study with 3 individuals measured 5 times, you could convert author-reported standard error to standard deviation using an n of 15 but then use an n of 3 to calculate your effect size [@Noble2017-wv].
+An alternative is to use a *conservative sample size* based on *a priori* criteria instead of the author-reported sample size (after converting author-reported standard error or confidence intervals to standard deviation). For example, in the study with 3 individuals measured 5 times, you could convert author-reported standard error to standard deviation using an $n$ of 15 but then use an $n$ of 3 to calculate your effect size [@Noble2017-wv].
 
 See @Noble2017-wv for further discussion of this approach and @Rutkowska2014-xc for an example meta-analysis.
 :::
 
 ## Unit of replication
-The unit of replication are the replicates across which summaries were calculated. With [lnOR and lnRR](2.2-lnOR-assumptions.qmd) type effect sizes, the unit of replication is generally straightforward: the number of individuals, plots, or sites across which a discrete outcome was measured. 
+The unit of replication are the replicates across which summaries were calculated. In the example above, the number of surveys, or camera trap nights, or kilometers driven. With [lnOR and lnRR](2.2-lnOR-assumptions.qmd) type effect sizes, the unit of replication is generally straightforward: the number of individuals, plots, or sites across which a discrete outcome was measured. 
 
 In [correlational effect sizes (Zr)](2.3-Zr-assumptions.qmd), the unit of replication is usually the number of measurements, unless the data presents data summarized into means±sd per value of a continuous predictor variable (see [here](3.4-Zr-challenges.qmd#sec-error-bars) for how to resolve these). 
 
@@ -213,12 +213,11 @@ extracted <- dat %>%
 knitr::kable(head(extracted))
 
 ```
+**need to align column names to the dataset template on the starting-extraction page**
 
-Note that we have a column for the article (`article_id`), a column describing where in the article the data came from (`fig`), a column recording the species (`species`), an id for the experiment (which was unique to each species) and the time sequence (`time_sequence`) within that experiment. The experiment ID might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).
+Note that we have a column for the article (`article_id`), a column describing where in the article the data came from (`fig`), a column recording the species (`species`), an id for each independent experiment (`experiment_id`) and the time sequence (`time_sequence`) _*within*_ that experiment. The experiment ID might need to be more complex, e.g., if there were several independent experiments crossed with other treatments (e.g., salinity, or independent field sites or trials that are reported separately).
 
 These columns control our non-independence structures within this study. We also have the statistics necessary for our effect size calculations (`mean_*`, `sd_*`, `n_*`) for each temperature treatment. And we have two columns that can be used to construct moderators (`temperature_high` and `temperature_low`). 
-
-We will show you below how to fit a model on this data.
 
 ## Multiple comparisons to same control {#sec-multiple-comparisons-same-control}
 
@@ -294,7 +293,7 @@ extracted2 <- rbind(ext.1.wide, ext.2.wide) %>%
 knitr::kable(head(extracted2))
 ```
 
-This dataset has a `control_id` which specifies that these rows share the same control. This can be used in your random effect formulation.
+This dataset has a `control_id` which specifies that these rows share the same control. This can be used in your random effect formulation. Similar conditions may exist for individuals which are part of a cohort, in which case you may also need a `cohort_id` variable.
 
 The combined dataset with both studies would look like this. Note that the time_sequence column for the second study is populated with '1', while the control id for the first study is given a unique value per row (i.e., 1, 2, 3).
 
@@ -319,10 +318,15 @@ Tricky business, right?
 
 Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. 
 
-Ultimately, we would also likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. And we should also control for spatial non-independence between studies. But let's leave that out for now. See @Mizuno2026-ab for a tutorial on phylogenetic and spatial meta-analytic models and see @Nakagawa2023-la for further discussion on controlling for non-independence in meta-analysis.
+:::callout-note
+Crossed and nested random effects are confusing. Nested random effects occur when the *inner* level is unique to the outer level. For example, an independent experiment *within* an article Crossed random effects happen when a random effect level occurs across other random effect levels. For example, the same species studied across multiple articles. 
+:::
+
+Ultimately, we would also likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. And perhaps (at least in a field study), we should also control for spatial non-independence between studies. But let's leave that out for now. See @Mizuno2026-ab for a tutorial on phylogenetic and spatial meta-analytic models and see @Nakagawa2023-la for further discussion on controlling for non-independence in meta-analysis.
 
 Note that the `struct` argument in `rma.mv` specifies the correlation structure to apply to the time series.
 
+**SHOULD THIS JUST BE A `vcalc` OPERATION????????**
 ```{r}
 #| eval: false
 #| echo: true
@@ -351,18 +355,47 @@ m <- rma.mv(yi ~ temperature_diff,
                           ~time_sequence | experiment_id),
             dfs = "contain",
             test = "t",
-            method = "ML",
+            method = "REML",
             struct = "AR",
             data = full_dat)
 
 ```
+
+
+Voila! 
+
+Well, sort of. In the case above, the model actually doesn't fit because the random effects are too complex for the number of levels provided (2 studies, 3 species). If the model *does* fit, it may be **overfit**, which can lead to inaccurate model estimates. 
+
+To evaluate model overfitting, you can look for $\sigma^2$ values that approach 0. $\sigma^2$ describe the variation explained by each random effect level. In `rma.mv`, the model summary reports $\sigma^2$ as `sigma2` and it be accessed in the model object as follows:
+
+```{r}
+#| echo: true
+#| eval: false
+
+# Fit the model:
+m <- rma.mv(yi ~ temperature_diff,
+            V = vi,
+            random = list(~1 | article_id / control_id / effect_size_id,
+                          ~1 | species,
+                          ~time_sequence | experiment_id),
+            dfs = "contain",
+            test = "t",
+            method = "REML",
+            struct = "AR",
+            data = full_dat)
+
+m$sigma2
+
+```
+
+We recommend constructing a series of random effect structures, from complex to simple, running all the models, screening out $\sigma^2 \approx 0$, and selecting the best model with AIC or AICc. **See XXXX for a tutorial on model selection and overfitting in meta-analysis.**
 
 ::: callout-important
 #### Effect size choices to reduce nuisance heterogeneity {#sec-callout-custom-effect-sizes}
 
 In the example above, we are forced to use the difference in temperature as a moderator. However, alternatively, we could have calculated Zr, after drawing the underlying data for each temperature treatment with the mean, standard deviation, and sample size. We demonstrate this [here](3.4-Zr-challenges.qmd#sec-single-axis-error-bars).
 
-Another option would be to calculate single-group effect sizes for each temperature treatment, and to use the temperature directly in our models (instead of the difference in temperature). There are a variety of single-group effect sizes, which we describe in the [appendix](5-less-common-effect-sizes.qmd#sec-single-group) for this (and other) purposes.
+Another option would be to calculate single-group effect sizes for each temperature treatment, and to use the temperature directly in our models (instead of the difference in temperature). There are a variety of single-group effect sizes, which we describe in the [appendix](5.3-single-variable-effect-sizes.qmd) for this (and other) purposes.
 
 Finally, a third option would have been to use a totally different (and more unusual effect size): **Q~10~**. This effect size would have allowed us to capture the temperature difference explicitly, thus yielding simpler models and (potentially) less heterogeneity. We discuss this further [here](1-effect-size-overview.qmd#sec-custom-effect-sizes).
 
@@ -375,7 +408,7 @@ For more discussion of how to accomodate experimental designs (so called nuisanc
 
 Complex non-independence structures can also be calculated separately with the function `metafor::vcalc`.
 
-Use `vcalc` to control for non-independence structures within studies that may be non-identifiable as a random effect. E.g., if you have 20 studies and 22 cohort IDs within then, you'll likely never get a good estimate at the cohort_ID level of your random effects. Factoring cohort ID, effect size ID into vcalc can take care of that non-independence without overfitting your model.
+Use `vcalc` to control for non-independence structures within studies that may be non-identifiable as a random effect. E.g., if you have 20 studies and 22 control IDs within then, you'll likely never get a good estimate at the cohort_ID level of your random effects. Factoring cohort ID, effect size ID into vcalc can take care of that non-independence without overfitting your model.
 
 See XXXX for a tutorial on how to use `vcalc`.
 
@@ -389,11 +422,30 @@ As you can see, one of the key considerations in performing a robust and accurat
 
 We recommend that you do a pilot extraction, and analysis, of \~10% of your screened articles before extracting all of your articles. This pilot extraction will give your database a stress test and will help ensure that you are correctly digitizing complex non-independence structures and the covariates that you might be interested in.
 
+We provide a simplified, universal database template that can be a helpful starting place---but certainly not a final cut. You'll notice, as you conduct a meta-analysis, that all sorts of levels of non-independence and confusion will emerge. This is natural and gets easier with time ☺️
+
+
+```{r}
+#| echo: false
+
+library("downloadthis")
+
+download_file(path = "data/template_dataset.xlsx",
+                output_name = "database_template",
+                output_extension = ".xlsx",
+                button_label = "Download template dataset",
+                button_type = "primary", # Controls styling 
+                has_icon = TRUE,
+                icon = "fa fa-save")
+
+
+```
+
 # Other resources {#sec-other-resources}
 
 We have done our best to describe universal considerations in extracting effect sizes, especially in ecology and evolution. However, given the diversity of study designs utilized, we could write an entire book about this.
 
-We recommend the following tutorials and articles that help disentangle universal challenges related to sample size and non-independence:
+We recommend the following tutorials and articles that help disentangle universal challenges related to sample size and non-independence structures:
 
 - [@cochrane-handbook-1](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current)
 

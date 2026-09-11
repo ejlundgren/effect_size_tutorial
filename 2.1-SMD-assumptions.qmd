@@ -87,19 +87,21 @@ Before choosing an effect size, ask what kind of difference matters:
 |---|---|
 | How far apart are the group means relative to variation among observations? | Standardized Mean Difference (**SMD**) |
 | How many times larger or smaller is one group mean than the other? | Log-transformed ratio of means (**lnRoM**) |
-| Does one group have responses of greater magnitude, regardless of direction? | **lnM** |
-| Is the response more variable in one group? | **lnVR** or **lnCVR** |
+| Does one group have responses of greater magnitude, regardless of direction? | log-magnitude (**lnM**) |
+| Is the response more variable in one group? | log variability ratio or coefficient of variation (**lnVR**, **lnCVR**) |
 
-These effect sizes may use similar information and may be interpreted in similar ways, but they do not answer exactly the same question. The biological question---not simply the format in which the data were reported---should determine which one you use.
+These effect sizes may use similar information and may be interpreted in similar ways, but they do not answer the same question. The biological question should determine which one you use.
 
-In this chapter, **SMD** and **lnRoM** are equally important options for comparing **mean** responses of continuous variables between two groups. In addition to **SMD** and **lnRoM**, continuous responses between two groups can often be complimented by analyses of different effect sizes, which capture more than just mean differences. For example, **lnM** describes magnitude of differences regardless of direction and **lnVR/lnCVR** describe differences in variability between two groups. These require the same statistical ingredients as **SMD** and **lnRoM** but are discussed in separate pages. We discuss lnM [here](5.2-differences-in-magnitude.qmd) and lnCVR/lnVR [here](5.1-variability-between-groups.qmd)
+In this chapter, we focus on **SMD** and **lnRoM**. These are important options for comparing **mean** responses of continuous variables between two groups. 
+
+In addition to SMD and lnRoM, comparisons of continuous responses between two groups can often be complimented by analyses of different effect sizes, which capture more than just mean differences. For example, **lnM** describes magnitude of differences regardless of direction and **lnVR/lnCVR** describe differences in variability between two groups. These require the same statistical ingredients as **SMD** and **lnRoM**. We discuss lnM [here](5.2-differences-in-magnitude.qmd) and lnCVR/lnVR [here](5.1-variability-between-groups.qmd)
 
 Choosing between SMD and lnRoM is not trivial. The appropriate choice depends on the biological quantity you want to estimate and whether the data meet the assumptions of that effect size. 
 
 :::callout-important
 ### Nomenclature of **lnRoM** and **lnRR**
 
-The **log-transformed ratio of means (lnRoM)** compares the means of continuous responses such as weight, biomass, abundance, growth, or concentration. It is often called the *log response ratio* and, in many articles, is abbreviated with **lnRR**.
+The **log-transformed ratio of means (lnRoM)** is often referred to as the *log response ratio* and, in many articles, is abbreviated with **lnRR**.
 
 However, **lnRR** also refers to the **log risk ratio (lnRR)**, which compares the risks of binary events such as survival, infection, or fledging. We discuss lnRR in the chapter on [binary outcomes](2.2-lnOR-assumptions.qmd).
 
@@ -107,7 +109,7 @@ Throughout this tutorial, we use **lnRoM** for the log ratio of means and reserv
 :::
 
 # Statistical ingredients
-These effect sizes describe *continuous* responses between two groups. To calculate these effect sizes, you will need three statistical ingredients:
+These effect sizes describe *continuous* mean responses between two groups. To calculate these effect sizes, you will need three statistical ingredients:
 
 - means of each group ($m_1$, $m_2$)
 
@@ -121,7 +123,7 @@ The subscript numbers correspond to the treatment and control groups. These are 
 
 - group 2: control
 
-As such, for both **lnRoM** and **SMD**, a negative effect size point estimate indicates that the treatment *reduced* the response variable while a positive effect size indicates that treatment *increased* the response variable. 
+As such, for both **lnRoM** and **SMD**, a negative effect size point estimate indicates that the treatment *reduced* the mean of the response variable while a positive effect size indicates that treatment *increased* the response variable mean. 
 
 ::: callout-warning
 ######### Measurements of error/variance {#sec-callout-error-types}
@@ -154,11 +156,11 @@ where $c$ is the critical value used to construct the interval. For a large-samp
 
 # Interpretation
 SMD and lnRoM have very different interpretations, which are borne from their mathematical formulations. These can be summarized here:
+
 | Data property | SMD | lnRoM |
 |---|---|---|
-| Are group standard deviations part of the point estimate? | Yes | No, except in the small-sample bias correction |
-| Must the response have a meaningful zero? | No | Yes |
-| Must both group means be positive? | No | Yes |
+| Should the point estimate account for variability | Yes | No |
+| Mean must be > 0 | No | Yes |
 | Can the estimates be back-transformed directly to a percentage? | No | Yes |
 
 We'll walk you through the use and interpretation of these effect sizes with a running biological example. Imagine a warming experiment that measures plant biomass after one growing season:
@@ -204,7 +206,7 @@ And a Cohen's d value of:
 $$
 d=\frac{12-10}{2.55}\approx 0.78.
 $$
-However, Cohen's d is *biased* at low sample sizes. For that reason, we also apply a small sample size correction factor ($J$) [@Hedges1981-bt]. $J$ approaches 1 as sample size increases, which means that with high sample sizes, Hedges' g becomes indistinguishable from from Cohen's d:
+However, Cohen's d is *biased* at low sample sizes. For that reason, we will also apply a small sample size correction factor ($J$) [@Hedges1981-bt], to calculate a modified version of SMD called Hedges' g. $J$ approaches 1 as sample size increases, which means that with high sample sizes, Hedges' g becomes indistinguishable from from Cohen's d:
 
 $$
 \begin{aligned}
@@ -225,7 +227,7 @@ $$
 $$
 This value of 0.76 equates to a moderately strong effect: a change in 0.76 standard deviations between the control and treatment groups.
 
-This can be done in `R` quite simply using `metafor`'s `escalc` function: 
+This can be done in `R` using `metafor`'s `escalc` function: 
 
 ```{r}
 #| eval: true
@@ -239,7 +241,7 @@ escalc(m1i = 12, sd1i = 3, n1i = 20,
 ## Log-transformed ratio of means (lnRoM)
 lnRoM is intended for measurements on a **ratio scale**, which means the group means must be positive and greater than zero. It is not suitable when the means have opposite signs, which may happen when dealing with [before-after-control-impact](3.2-smd-challenges#sec-BACI) experimental designs. 
 
-lnRoM tells a very different story than SMD, which is shaped by the variability of your dataset. For example, if all of the studies in your dataset found non-significant differences between a control and experimental treatment, an SMD-based meta-analysis is likely to also find weak differences between those groups. 
+lnRoM tells a very different story than SMD. The point estimate only accounts for the group means---all signal and no noise. This can lead to very meta-analytic results. For example, if all of the studies in your dataset found non-significant differences between a control and experimental treatment, an SMD-based meta-analysis is likely to also find very weak differences between those groups. 
 
 However, an lnRoM-based meta-analysis may find strong and significant differences because the **lnRoM** *point estimate* only accounts for the mean, and not for variation. Instead, variability is captured by lnRoM's *sampling variance* estimates---which influence the *relative* weight of each effect size in your models. 
 
@@ -259,14 +261,14 @@ $$
 \end{aligned}
 $$
 
-The lnRoM point estimate of 0.18 can be interpreted by converting it back to % change. This means that if you're fitting meta-analytic models on an lnRoM dataset, you can convert your model estimates to % change, which can dramatically improve your communication ability in plain language. This is one the great advantages of lnRoM. 
+The lnRoM point estimate of 0.18 can be interpreted by converting it back to % change. This means that if you're fitting meta-analytic models on an lnRoM dataset, you can convert your overall model estimates to % change, which can dramatically improve your communication ability in plain language. This is one the great advantages of lnRoM. 
 
-To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100:
+To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100. For our lnRoM point estimate of 0.18:
 
 $$
 100(e^{0.18} - 1) \approx 0.20
 $$
-This means that the treatment led to a 20% increase relative to the control (or 20% higher biomass).
+This means that the treatment led to a 20% increase in plant biomass in our warming treatment.
 
 In `R`, we can calculate lnRoM as follows:
 
@@ -287,7 +289,7 @@ And to convert to % change:
 ```
 
 ## The small-sample size correction {#sec-lnrom-correction}
-With SMD, we used $J$ to correct for bias at low sample sizes. A similar second-order derived estimator for lnRoM [@Lajeunesse2015-gw]. This correction is important **if** your dataset has small sample sizes and is **not** overdispersed (which we'll discuss further [below](#sec-overdispersion)). 
+With SMD, we used $J$ to correct for bias at low sample sizes. A similar second-order derived estimator exists for lnRoM to account for bias at low sample sizes [@Lajeunesse2015-gw]. This correction is important **if** your dataset has small sample sizes and is **not** overdispersed (which we'll discuss further [below](#sec-overdispersion)). 
 
 This correction changes the lnRoM point estimate formula to:
 
@@ -329,19 +331,19 @@ eff_size(x1 = 12, sd1 = 3, n1 = 20,
 with `_first` and `_second` referring to uncorrected definition formula (@eq-lnrom-definition) and second-order (@eq-lnrom-corrected) estimators respectively.
 
 # Assumptions
-As we describe above, SMD and lnRoM have very different interpretations based on their mathematical formulation. They also have different assumptions which, regardless of which interpretation you prefer, may shape your decision about which effect size to use.
+As we described above, SMD and lnRoM have very different biological interpretations because of their mathematical definitions. They also have different assumptions which, regardless of which interpretation you prefer, may shape your decision about which effect size to use.
 
 The following properties help determine whether SMD or lnRoM are mathematically appropriate:
 
 | Assumption | SMD | lnRoM |
 |------------|-----|-------|
 | Accepts values ≤ 0 | Yes | No |
-| Multiple dimensions | Yes | No |
-| Overdispersed data | Sensitive | Yes |
-| Heteroscedasticity | Use SMDH | Yes |
-| Missing error bars | No | Can be imputed |
-| Converting model test statistics | Yes | No |
-| Converting between other effect sizes | Yes | No |
+| OK with mixed dimensionality | Yes | No |
+| OK with overdispersed data | Sensitive | Yes |
+| OK with heteroscedasticity | Use SMDH | Yes |
+| Can impute missing error bars | No | Can be imputed |
+| Can calculate from model test statistics | Yes | No |
+| Can calculate from other effect size types | Yes | No |
 
 The remaining sections examine these considerations---including negative values, dimensionality, overdispersion, heteroscedasticity, and missing standard deviations---all of which should guide your decision about whether to use SMD or lnRoM.
 
@@ -674,13 +676,29 @@ Heteroscedasticity (i.e., differences in variance between the experimental group
 
 For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator. However, this is a topic that has been little explored and is a subject for future research. **DOUBLE CHECK**
 
+## Model estimates and effect size conversions
+A key consideration in choosing to use SMD or lnRoM is whether you plan to extract data from model estimates. 
+
+SMD itself is very similar to a test statistic. As such, you can readily convert t statistics to SMD:
+
+$$
+\begin{aligned}
+&d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \\
+&g = Jd
+\end{aligned}
+$$
+However, lnRoM cannot be calculated from model test statistics and SMD cannot be converted to lnRoM. 
+
+Similarly, the other main effect size types for the relationships between two variables (lnOR, Zr, and even lnRoM) can be converted to SMD. These constraints, especially with smaller meta-analyses where every bit of data counts, may force your hand into choosing to use SMD.
+
 # Conclusion---which effect size should you use?
 
-Return first to the biological question: use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response is bounded by zero. The flow chart below summarizes additional considerations.
+Return first to the biological question: use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response is bounded by zero. The flow chart below summarizes the additional assumptions and decisions to make:
 
 ![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)
+**FIX THIS FIGURE**
 
-When both estimands are biologically meaningful, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly.
+When both SMD and lnRoM are biologically relevant, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly.
 
 :::callout-note
 @Yang2024-fw showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial [here](https://yefeng0920.github.io/BRMA_tutorial_git/).

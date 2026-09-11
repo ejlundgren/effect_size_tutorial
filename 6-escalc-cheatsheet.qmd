@@ -1,6 +1,6 @@
 ---
 title: "`escalc` cheatsheet"
-subtitle: "so many estimators, so little time"
+subtitle: "so many effects, so little time"
 date: today
 format: 
   html:
@@ -81,15 +81,15 @@ The standard estimators for SMD are "SMD" and "SMDH", the latter of which is for
 |------------|------------|------------|------------|---------------|------------|
 | SMD | "SMCC" | No | Yes | No | Paired group formulation that uses the standard deviation of group 1 and 2. |
 |  | "SMCR" | No | Yes | No | Paired group formulation that uses standard deviation of group 1 only. |
-|  | "SMCRH" | Yes | Yes | No | Same as above but for heteroscedastic data. |
-|  | "SMCRP" | No | Yes | No | An alternative formulation that uses the standard deviations of both group 1 and 2. |
+|  | "SMCRH" | Yes | Yes | Yes | Same as above but for heteroscedastic data. |
+|  | "SMCRP" | No | Yes | Yes | An alternative formulation that uses the standard deviations of both group 1 and 2. |
 | lnRoM | "ROMC" | No | Yes | Yes | Paired formula for lnRoM. |
-
-Note that "Zmu" is only available in our own function `eff_this` (originally published in Nakagawa et al. XXXX) and supplied here. To select a paired formula, set paired_design = TRUE and be sure to provide `r` and `n` as an input.
 
 # lnOR / lnRR options {#sec-lnor-options}
 
 The standard estimator options in `escalc` are "OR" for lnOR and "RR". The alternative estimators below are for "matched pairs contingency tables".
+
+***What are matched pairs contingency tables???***
 
 | class | `escalc` | Paired designs | Comparable to standard? | Details |
 |-------------|-------------|-------------|----------------|------------------|
@@ -116,7 +116,7 @@ What do we do about these?
 
 ## Coefficients of determination ($R^2$) {#sec-r2}
 
-??? Is this wise ??
+??? Is this wise ?? I think out of scope
 
 # Other effect sizes {#sec-other-effect-sizes}
 
@@ -124,9 +124,7 @@ What do we do about these?
 
 For example, % of a population that is infected. Or percent of diet.
 
-*PLAIN ENGLISH EXAMPLE*
-
- ni=sample size; xi=proportion
+ni=sample size; xi=proportion
  
 | `escalc` | Name | Recommended |
 |---------------|---------------|---------------|
@@ -138,6 +136,8 @@ For example, % of a population that is infected. Or percent of diet.
 
 For example, % of a population that is infected? Or number of times attacked/affected?
 
+How exactly is this different than the proportions above???
+
 *PLAIN ENGLISH EXAMPLE*
 
 | `escalc` | Input | Name | Recommended |
@@ -145,3 +145,8 @@ For example, % of a population that is infected? Or number of times attacked/aff
 | "IRLN" | ti=total person-times at risk; xi=n events | "log-transformed incidence rate". | ? |
 | "IRS" | ti=total person-times at risk; xi=n events | "square root transformed incidence rate". | ? |
 | "IRFT" | ti=total person-times at risk; xi=n events | "Freeman-Tukey transformed incidence rate". | ? |
+
+## Time to event effect sizes
+Why are these different? I'm sure it's a statistical distribution thing but I don't get it....
+
+A lot of behavioral data is probably this yet I don't hear of anyone treating them differently...

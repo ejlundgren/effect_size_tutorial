@@ -60,20 +60,17 @@ library("simplermarkdown")
 
 # A brief introduction to effect sizes and sampling variance  {#sec-introduction-to-effect-sizes}
 
-Meta-analytic effect sizes are statistics that summarize numeric distributions, and their associated variance, from empirical research. Meta-analytic effect sizes allow researchers, such as you, to synthesize data across different studies to answer big questions and to generate overall synthetic estimates.
+Meta-analytic effect sizes are statistics that summarize empirical research. Meta-analytic effect sizes allow researchers to synthesize data across different studies to answer big questions and to generate overall synthetic estimates. Effect sizes are no trivial thing: they are themselves tiny models, with their own assumptions, rules of interpretation, and numeric challenges.
 
-Meta-analytic effect sizes have two parts: the **point estimate** and **sampling variance**. Point estimates are the target of interest. For example, the mean difference in cancer rates between two treatment groups. Sampling variance is the associated uncertainty around these estimates, based on sample size and/or author-reported standard deviation. Both point estimates and sampling variance are essential to fitting meta-analytic models: sampling variance is used as a weight. Effect sizes with higher sampling variance have *less* weight in meta-analytic models than effect sizes with lower sampling variance.  
+Meta-analytic effect sizes have two parts: the **point estimate** and **sampling variance**. Point estimates are the target of interest. For example, the difference in cancer rates between two treatment groups or the proportional change in average body size between two treatments. 
+
+Sampling variance is the associated uncertainty around these estimates, based on sample size and/or author-reported standard deviation. Both point estimates and sampling variance are essential to fitting meta-analytic models: sampling variance is used as a weight in meta-analytic models. 
+
+These weights mean that effect sizes with *higher* sampling variance have *less* influence in meta-analytic models than effect sizes with *lower* sampling variance. Thus effect sizes with higher sample sizes and/or lower variation (also called higher precision) have more influence on your results. This relationship is key to meta-analysis and also is core feature of publication bias testing. 
 
 # Effect size types {#sec-effect-size-types}
 
-We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable between two groups (e.g., a categorical variable) or in relationship to a continuous predictor variable. 
-
-:::callout-note
-### Standardized and unstandardized effect sizes
-The effect sizes in this tutorial in this tutorial are **standardized**, which allows comparison across different units of measurement. However, in some disciplines, it is customary to use unstandardized effect sizes (such as mean difference), because standardized research protocols ensure that all studies use the same scale of measurement. 
-:::
-
-We here focus the majority of this tutorial on the mathematical assumptions, alternative formulations of, and extraction challenges of the 3 most popular effect size types in ecology and evolution (@REF):
+We'll here commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable between two groups (e.g., a categorical variable) or in relationship to a continuous predictor variable:
 
 1)  standardized mean difference (SMD) and log-transformed ratio of means (lnRoM)
 
@@ -81,7 +78,10 @@ We here focus the majority of this tutorial on the mathematical assumptions, alt
 
 3)  correlation coefficient (Zr)
 
-**Better names for each category?**
+:::callout-note
+### Standardized and unstandardized effect sizes
+The effect sizes in this tutorial in this tutorial are **standardized**, which allows comparison across different units of measurement. However, in some disciplines, it is customary to use unstandardized effect sizes (such as mean difference), because standardized research protocols ensure that all studies use the same scale of measurement.
+:::
 
 These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.
 
@@ -93,9 +93,9 @@ When the response variable is continuous and the predictor is discrete, for inst
 Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). For that reason we use lnRoM throughout this tutorial to refer to log-transformed ratio of means and lnRR to refer to log risk ratio. 
 :::
 
-If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged or the number of islands where a rare species was present, then we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). This is the type of data you may encounter in contingency tables and would, in an introductory stats class, learn to analyze with a chi-square goodness of fit test.
+If the predictor is discrete (control versus treatment) and the response is a binary outcome, e.g., the number or percent of nests that fledged or the number of islands where a rare species was present, then we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). This is the type of data you may encounter in contingency tables and would, in an introductory stats class, learn to analyze with a Chi-square goodness of fit test.
 
-The correlation between a continuous or discrete response variable and a continuous predictor is analyzed as the r-t-z-transformed correlation coefficient (**Zr**). This is the workhorse for meta-analyses based on observational data.
+Correlations are analyzed as Fisher's r-t-z-transformed correlation coefficient (**Zr**). These generally involve continuous predictor and response variables. However, you can also calculate correlation coefficients for discrete predictors and discrete responses, which may be necessary in some peculiar cases. This is the workhorse for meta-analyses based on observational data.
 
 Finally, it is also possible to convert between these main effect size types, which we discuss [here](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data [@borenstein2021] or splitting your data into many separate models, each of which lack statistical power. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size)
 
@@ -108,22 +108,22 @@ The choice of what effect size to use may seem very simple. For example, if you 
 
 However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey [like in [@Wallach2025-ta]]. Many studies present results that look like SMD-type data: comparing mean±SD of prey abundance in areas with high predator abundance to areas with low predator abundance, due to a culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.
 
-If you use an SMD or lnRoM-type effect size, then you should treat the *difference* in density between treatments as a moderator in your meta-analytic models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators---because each would then need an interaction to this density-difference variable.
+If you use an SMD or lnRoM-type effect size, then you should treat the *difference* in density between treatments as a moderator in your meta-analytic models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators---because each would then need an interaction to this density variable.
 
 An alternative is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. 
 
-In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used >2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or different predator densities). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the various experimental groups (e.g., the temperature of each treatment) as predictors in your meta-analytic model. **Are there statistical reasons not to? E.g., inflating sample size or something?**
+In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used >2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or pesticide dosages). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the experimental groups explicitly (e.g., the temperature of each treatment) as predictors in your meta-analytic model. **Are there statistical reasons not to? E.g., inflating sample size or something?**
 
-This applies both to continuous data summarized by mean±sd as well as binary outcome data, which can be summarized as proportions. We describe single-group effect sizes for means and proportions in the appendix, [here](5.3-single-group-effect-sizes.qmd).
+This applies both to continuous data summarized by mean±sd as well as proportions (binary outcome data). We describe single-group effect sizes for means and proportions in the appendix, [here](5.3-single-group-effect-sizes.qmd).
 
 Finally, it is also possible to formulate custom effect sizes that may help simplify these situations by explicitly including sources of nuisance heterogeneity in your effect size calculation. See our section [below](#sec-custom-effect-sizes) and @Noble2022-pl for discussion about the potential to formulate custom effect sizes.
 :::
 
 # How to calculate effect sizes & sampling variance {#sec-calculating-effect-sizes}
 
-The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes summary statistics, a variable specifying the effect size type (specified with the `measure` argument).
+The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes effect-size-specific summary statistics and a variable specifying the effect size type (specified with the `measure` argument).
 
-At certain points we will also use our own custom function, `eff_size` **(currently called eff_size but eff_this could be funny...)** which can do most of what `escalc` can do but also some things that `escalc` cannot do.
+At certain points we will also use our own custom function, `eff_size` **(currently called eff_size but eff_this could be funny...)** which can do most of what `escalc` can do but also a few niche things that `escalc` currently doesn't support.
 
 To start, we'll clean the environment and we will install a custom package, `metatools`, that we developed to go alongside this tutorial. `metatools` contains the function `eff_size` and a function for converting between effect sizes (`convert_effect_sizes`, see our tutorial [here](4-converting-effect-sizes.qmd)). 
 
@@ -185,6 +185,9 @@ eff_size(effect_type = "SMD",
          default_formulas = FALSE)
 ```
 
+Now, you may be thinking, what the hell is an estimator? Why are there multiple estimators for the same effect size? 
+
+Let us explain.
 
 # Estimates, estimators, and estimands {#sec-estimates-and-estimators}
 
@@ -197,7 +200,7 @@ d = \frac{m_1 - m_2}{sd_{pooled}}
 $$
 With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled} as the pooled standard deviation of those two groups (see [here](2.1-SMD-assumptions.qmd) for the full math). This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).
 
-However, using this definition formula produces {{< glossary bias display=biased >}} results when sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. For that reason, we don't generally use the estimand formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. 
+However, using this definition formula produces {{< glossary bias display=biased >}} results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. 
 
 Hedges' g multiples Cohen's d by a small sample size correction factor ($J$) to the math above. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.
 
@@ -210,11 +213,11 @@ g &= J*d.
 $$
 All of this is this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. Fun stuff right?
 
-The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands 
+The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. 
 
 In general, `escalc` uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, `escalc` uses Hedges' g. 
 
-Our function, `eff_this` is similar but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates, and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential formulas support and their inputs.
+Our function, `eff_this` is similar but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates, and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.
 
 ```{r}
 #| eval: true
@@ -248,15 +251,17 @@ eff_size(x1 = 10, x2 = 6,
 
 ```
 
-`yi_first` and `vi_first` are the definition formulas (@eq-1 and @eq-2). the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
+`yi_first` and `vi_first` are the definition formulas (@eq-1 and @eq-2) and the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
-You'll see in future sections that certain data types should use alternative estimators, which are provided within `eff_size`. For example, if your data is normally distributed you should actually use the second-order estimator of lnRoM [@Lajeunesse2015-gw] and provided as `yi_second` and `vi_second` by `eff_size` (but not by `escalc`). However, if your data is overdispersed, you should use the first-order estimator of lnRoM provided by `escalc` by default (and as `yi_first` and `vi_first` in `eff_size`). See [here](2.1-SMD-assumptions.qmd) where discuss this in greater depth.
+You'll see in future sections that certain data types should use alternative estimators, which are provided within `eff_size`. For example, if your data is normally distributed you should actually use the second-order estimator of lnRoM [@Lajeunesse2015-gw] and provided as `yi_second` and `vi_second` by `eff_size` (which are also returned by default by `escalc`). However, if your data is overdispersed, you should use the first-order estimator of lnRoM provided by `escalc` by default (and as `yi_first` and `vi_first` in `eff_size`). See [here](2.1-SMD-assumptions.qmd) where discuss this in greater depth.
+
+These alternatives can also be accessed in `escalc` by specifying `corrected=FALSE` in the function arguments, which will return the first order definition formula estimates.
 
 ## Alternative estimators {#sec-alternative-estimators}
 
 You'll also notice, for example if looking at the documentation of `escalc`, that there are many many effect size estimators that are similar to the primary effect size flavors covered here yet have small differences that can be difficult to disentangle. These are often rarely used despite their potential utility to meta-analyses.
 
-Some of these estimates can be lumped with the typical effect size flavors. Others cannot. This largely depends on whether the alternative formulation affects the point estimate (effect size) or just the sampling variance estimate.
+Some of these estimates can be lumped with the typical effect size flavors. Others cannot.
 
 One of the most statistically important alternative flavors account for paired designs---i.e., non-independence between control and experimental groups. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account for this non-independence.
 
@@ -287,30 +292,3 @@ Sampling variance for Q~10~ can be estimated with a plugin formula (which was de
 We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this may be the best way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly within your custom effect size. See [@Noble2022-pl] for a thorough discussion of these matters. 
 
 In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.
-
-# TESTING WORKSPACE. DELETE
-```{r}
-escalc(measure = "SMD",
-       m1i = 15, m2i = 12,
-       sd1i = 1.5, sd2i = 1.7,
-       n1i = 15, n2i = 15)
-
-escalc(measure = "SMCRP",
-       m1i = 15, m2i = 12,
-       sd1i = 1.5, sd2i = 1.7,
-       ni = 15, ri = 0.5)
-
-eff_size(effect_type = "SMD",
-         x1 = 15, x2 = 12,
-         sd1 = 1.5, sd2 = 1.7,
-         n1 = 15, n2 = 15,
-         paired = FALSE)
-
-eff_size(effect_type = "SMD",
-         x1 = 15, x2 = 12,
-         sd1 = 1.5, sd2 = 1.7,
-         n = 15, r = 0.5,
-         paired = TRUE)
-
-
-```
