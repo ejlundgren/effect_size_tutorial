@@ -487,61 +487,61 @@ window.Quarto = {
 <tr class="odd">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">1.1524651</td>
-<td style="text-align: right;">1.0657021</td>
+<td style="text-align: right;">1.0743378</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">0.6170123</td>
-<td style="text-align: right;">0.7850335</td>
+<td style="text-align: right;">0.7787032</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">2.9255908</td>
-<td style="text-align: right;">1.7126490</td>
+<td style="text-align: right;">1.7112645</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">5.4405181</td>
-<td style="text-align: right;">2.3380867</td>
+<td style="text-align: right;">2.3292111</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">6.5707700</td>
-<td style="text-align: right;">2.5532588</td>
+<td style="text-align: right;">2.5643799</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">6.9582480</td>
-<td style="text-align: right;">2.6390924</td>
+<td style="text-align: right;">2.6113906</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">9.0049238</td>
-<td style="text-align: right;">2.9929804</td>
+<td style="text-align: right;">2.9867001</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Present</td>
 <td style="text-align: right;">8.9468565</td>
-<td style="text-align: right;">2.9817494</td>
+<td style="text-align: right;">2.9919731</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Eradicated</td>
 <td style="text-align: right;">8.3295040</td>
-<td style="text-align: right;">2.8811233</td>
+<td style="text-align: right;">2.8819878</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Eradicated</td>
 <td style="text-align: right;">9.5688325</td>
-<td style="text-align: right;">3.0967404</td>
+<td style="text-align: right;">3.0945064</td>
 <td style="text-align: right;">10</td>
 </tr>
 </tbody>
@@ -615,7 +615,7 @@ size = \frac{m^2}{Var - m}
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html">rpois</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">10</span>, lambda <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] 0 2 0 0 2 2 0 0 0 0</code></pre>
+<pre><code> [1] 0 4 3 1 1 0 2 0 2 2</code></pre>
 </div>
 </div>
 </section><section id="sec-binomial" class="level2"><h2 class="anchored" data-anchor-id="sec-binomial">Binomial</h2>
@@ -634,7 +634,7 @@ size = \frac{m^2}{Var - m}
 <span>              n <span class="op">=</span> <span class="va">n_sites</span><span class="op">)</span></span>
 <span><span class="va">out</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4 5 3 6 6</code></pre>
+<pre><code>[1] 2 5 2 3 3</code></pre>
 </div>
 </div>
 <p>Each element of the resulting vector is the number of individuals (of 10 total) that experienced the binomial outcome. We can now coerce this into a format that is compatible with calculating lnOR type effect sizes (with only one level of treatment).</p>
@@ -681,18 +681,18 @@ sd_{theoretical} = \sqrt{\frac{\bar{p}(1-\bar{p})}{n}}
 <span></span>
 <span><span class="va">out</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4 4 2 4 3</code></pre>
+<pre><code>[1] 5 7 6 2 6</code></pre>
 </div>
 </div>
 <p>This vector gives the estimated number of outcomes (e.g.&nbsp;fledged or survived or died) per individual in each trial, while accounting for standard deviation. We can check how closely it matches the author provided means±sd:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">out</span> <span class="op">/</span> <span class="va">n_individuals</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.34</code></pre>
+<pre><code>[1] 0.52</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html">sd</a></span><span class="op">(</span><span class="va">out</span> <span class="op">/</span> <span class="va">n_individuals</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.08944272</code></pre>
+<pre><code>[1] 0.1923538</code></pre>
 </div>
 </div>
 <p>Very closely!</p>
