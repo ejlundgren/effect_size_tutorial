@@ -1,5 +1,5 @@
 ---
-title: "Discrete groups with continuous outcomes"
+title: "Continuous outcomes between two groups"
 subtitle: "SMD / lnRoM"
 date: today
 format: 
@@ -1027,6 +1027,8 @@ The first question is what each point represents. A point may be one observation
 
 Drawing artificial observations from each mean and SD does not reconstruct the study's original data. It preserves only the distributional assumptions supplied to the simulation. It cannot recover the original observations, serial correlation, pairing, or other dependence, and the number of simulated rows is not a new sample size for the meta-analysis.
 
+**^Written by Santi. Originally, I (EJL) had code to reconstruct underlying data---based on conversations with Shinichi. Decide what to do here...**
+
 For data like this, use one of the following routes:
 
 1. Look for raw data or a reported model contrast with an SE or confidence interval.
@@ -1196,6 +1198,7 @@ escalc(measure = "SMCC",
        ni = n_pairs)
 
 ```
+**But is this comparable to other SMD values?**
 
 This effect uses the SD of the change scores as its denominator. It should not be assumed to estimate exactly the same standardized quantity as an independent-groups SMD that uses a pooled raw-score SD.
 
@@ -1218,11 +1221,13 @@ escalc(measure = "SMD",
 
 For a test with one numerator degree of freedom, $|t|=\sqrt{F}$. The $F$ statistic does not contain the direction of the contrast, so the sign must come from reported means, a coefficient, a figure, or clear text. An omnibus $F$ test with more than two groups or more than one numerator degree of freedom does not identify one two-group SMD by itself.
 
+**Needs clarification. How to calculate.**
+
 ## Least Square Means (LS Means) or Estimated Marginal Means {#sec-least-square-means}
 
-Estimated marginal means are adjusted model predictions. They are not automatically interchangeable with raw arithmetic means, and their SEs are not within-group SDs.
+Estimated marginal means are adjusted model predictions. They are not interchangeable with raw arithmetic means, and their SEs are not within-group SDs.
 
-Prefer a directly reported pairwise contrast between the estimated marginal means together with its SE or confidence interval. That adjusted contrast can be synthesized using its own sampling variance if it matches the intended estimand and its adjustment set is sufficiently comparable with the other included effects.
+Prefer a directly reported pairwise contrast **??** between the estimated marginal means together with its SE or confidence interval. That adjusted contrast can be synthesized using its own sampling variance if it matches the intended estimand and its adjustment set is sufficiently comparable with the other included effects.
 
 If only two estimated marginal means and their separate SEs are reported, the SE of their difference also depends on their covariance:
 
