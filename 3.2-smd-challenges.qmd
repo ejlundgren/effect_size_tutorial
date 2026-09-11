@@ -304,14 +304,15 @@ dens
 
 Sometimes SMD/lnRoM design types will present the total % of a population for a study design that is otherwise indistinguishable from other SMD/lnRoM studies in your dataset. For example, instead of recording mean mortality ± SD across survey plots, a study may present total mortality across all plots or individuals.
 
-This data is derived from the binomial distribution, where standard deviation is directly related to the mean. As such, mean±SD can be extracted from a proportions with the following formulas, where $p$ is the proportion, $m$ is the mean, $sd$ is standard deviation, and $N_{total}$ is the population size??.
-
-*I THINK?*
+For an individual binary outcome coded 1 when the event occurs and 0 otherwise, the mean is the event proportion $p$. Its variance and standard deviation are determined by $p$:
 
 $$\begin{aligned}
-&sd = p * (1-p) \\
-&m = p*N_{total}?? \\
+&m = p \\
+&Var = p(1-p) \\
+&sd = \sqrt{p(1-p)}. \\
 \end{aligned}$$
+
+The expected number of events among $N_{total}$ individuals is $pN_{total}$, but that count is not the mean of the individual 0/1 outcomes. These formulas describe individual binary observations; they do not give the standard deviation among site-level or trial-level proportions.
 
 An alternative to is to use these values to calculate discrete response data for an [lnOR](2.2-lnOR-assumptions.qmd) type effect size. This may be a better option, especially if this maintains a comparable *unit of replication* with the rest of your dataset. We simulate a similar example, albeit for a Zr effect size, [here](3.4-Zr-challenges.qmd#sec-proportion-data)
 
@@ -336,7 +337,7 @@ In `R`:
 m = 0.7
 sd = 0.1
 
-m_trans <- asin(m)
+m_trans <- asin(sqrt(m))
 sd_trans <- sqrt(sd^2 / (4*m * (1-m)))
 
 c("transformed_mean" = m_trans, "transformed_sd" = sd_trans)

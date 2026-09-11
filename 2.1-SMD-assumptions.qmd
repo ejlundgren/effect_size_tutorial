@@ -266,7 +266,7 @@ The lnRoM point estimate of 0.18 can be interpreted by converting it back to % c
 To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100. For our lnRoM point estimate of 0.18:
 
 $$
-100(e^{0.18} - 1) \approx 0.20
+100(e^{0.18} - 1) \approx 19.72\%.
 $$
 This means that the treatment led to a 20% increase in plant biomass in our warming treatment.
 
@@ -561,14 +561,14 @@ dat <- dat %>%
          gl2 = geary(sd = sd2i, m = m2i, n = n2i))
 
 
-n_overdispersed <- dat %>% 
-  filter(gl1 > 3 | gl2 > 3) %>%
+n_failed_geary <- dat %>%
+  filter(gl1 < 3 | gl2 < 3) %>%
   nrow()
-n_overdispersed/nrow(dat) * 100
+n_failed_geary/nrow(dat) * 100
 
 ```
 
-It looks like \~54% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.
+Values of 3 or greater pass the improved Geary test. The code above reports the percentage of effect sizes for which either group has a value below 3 and therefore fails the test. If many effect sizes fail, compare the full analysis with an analysis that excludes the flagged values.
 
 An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This may be essential when a significant amount of your data is overdispersed. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation [@Nakagawa2023-tn].
 
@@ -647,8 +647,8 @@ compare_estimates <- rbind(m1 %>%
                            m2 %>%
                              tidy() %>%
                              mutate(model = "CV <= 2",
-                                    ci.lb = m3$ci.lb,
-                                    ci.ub = m3$ci.ub),
+                                    ci.lb = m2$ci.lb,
+                                    ci.ub = m2$ci.ub),
                            m3 %>%
                              tidy() %>%
                              mutate(model = "1/effective_N",

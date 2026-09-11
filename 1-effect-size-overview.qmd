@@ -259,9 +259,9 @@ eff_size(x1 = 10, x2 = 6,
 
 `yi_first` and `vi_first` are the definition formulas (@eq-1 and @eq-2) and the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
-You'll see in future sections that certain data types should use alternative estimators, which are provided within `eff_size`. For example, if your data is normally distributed you should actually use the second-order estimator of lnRoM [@Lajeunesse2015-gw] and provided as `yi_second` and `vi_second` by `eff_size` (which are also returned by default by `escalc`). However, if your data is overdispersed, you should use the first-order estimator of lnRoM provided by `escalc` by default (and as `yi_first` and `vi_first` in `eff_size`). See [here](2.1-SMD-assumptions.qmd) where discuss this in greater depth.
+You'll see in future sections that certain data types may require alternative estimators, which are provided within `eff_size`. For example, `escalc` returns the bias-corrected lnRoM point estimate by default [@Lajeunesse2015-gw]. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as `yi_second` and `yi_first`, respectively, by `eff_size`. See [here](2.1-SMD-assumptions.qmd) for a fuller discussion.
 
-These alternatives can also be accessed in `escalc` by specifying `corrected=FALSE` in the function arguments, which will return the first order definition formula estimates.
+These alternatives can also be accessed in `escalc` by specifying `correct = FALSE` in the function arguments, which will return the first-order definition-formula estimates.
 
 ## Alternative estimators {#sec-alternative-estimators}
 
