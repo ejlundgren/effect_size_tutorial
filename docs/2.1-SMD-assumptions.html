@@ -2,18 +2,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.38">
+<meta name="generator" content="quarto-1.10.18">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-09-10">
+<meta name="dcterms.date" content="2026-09-11">
 <title>Continuous outcomes between two groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -92,10 +95,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-61b838042b633b16d416a2b6f0e5420d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-3ce91eb55eff57f05a160ac941f5b984.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -121,7 +124,7 @@ div.csl-indent {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script><script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
     // MathJax Typeset
@@ -399,7 +402,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 10, 2026</p>
+      <p class="date">September 11, 2026</p>
     </div>
   </div>
   
@@ -630,7 +633,7 @@ lnRoM = \ln(\frac{m_1}{m_2})
 <p>The lnRoM point estimate of 0.18 can be interpreted by converting it back to % change. This means that if you’re fitting meta-analytic models on an lnRoM dataset, you can convert your overall model estimates to % change, which can dramatically improve your communication ability in plain language. This is one the great advantages of lnRoM.</p>
 <p>To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100. For our lnRoM point estimate of 0.18:</p>
 <p><span class="math display">\[
-100(e^{0.18} - 1) \approx 0.20
+100(e^{0.18} - 1) \approx 19.72\%.
 \]</span> This means that the treatment led to a 20% increase in plant biomass in our warming treatment.</p>
 <p>In <code>R</code>, we can calculate lnRoM as follows:</p>
 <div class="cell">
@@ -934,15 +937,15 @@ Click to see a demonstration of overdispersion
 <span>         gl2 <span class="op">=</span> <span class="fu">geary</span><span class="op">(</span>sd <span class="op">=</span> <span class="va">sd2i</span>, m <span class="op">=</span> <span class="va">m2i</span>, n <span class="op">=</span> <span class="va">n2i</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="va">n_overdispersed</span> <span class="op">&lt;-</span> <span class="va">dat</span> <span class="op">%&gt;%</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">gl1</span> <span class="op">&gt;</span> <span class="fl">3</span> <span class="op">|</span> <span class="va">gl2</span> <span class="op">&gt;</span> <span class="fl">3</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span><span class="va">n_failed_geary</span> <span class="op">&lt;-</span> <span class="va">dat</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">gl1</span> <span class="op">&lt;</span> <span class="fl">3</span> <span class="op">|</span> <span class="va">gl2</span> <span class="op">&lt;</span> <span class="fl">3</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">n_overdispersed</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span><span class="va">n_failed_geary</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 76.92308</code></pre>
+<pre><code>[1] 38.46154</code></pre>
 </div>
 </div>
-<p>It looks like ~54% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.</p>
+<p>Values of 3 or greater pass the improved Geary test. The code above reports the percentage of effect sizes for which either group has a value below 3 and therefore fails the test. If many effect sizes fail, compare the full analysis with an analysis that excludes the flagged values.</p>
 <p>An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This may be essential when a significant amount of your data is overdispersed. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation <span class="citation" data-cites="Nakagawa2023-tn">(<a href="#ref-Nakagawa2023-tn" role="doc-biblioref">Nakagawa et al. 2023</a>)</span>.</p>
 <p>Effective sample size is defined as: <span id="eq-8"><span class="math display">\[
 \begin{aligned}
@@ -1318,16 +1321,16 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
     }
     function toggleCodeHandler(show) {
       return function(e) {
-        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-        for (let i=0; i<detailsSrc.length; i++) {
-          const details = detailsSrc[i].parentElement;
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
           if (show) {
             details.open = true;
           } else {
             details.removeAttribute("open");
           }
         }
-        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
         const fromCls = show ? "hidden" : "unhidden";
         const toCls = show ? "unhidden" : "hidden";
         for (let i=0; i<cellCodeDivs.length; i++) {
@@ -1945,7 +1948,7 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb33-270"><a href="#cb33-270" aria-hidden="true" tabindex="-1"></a>To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100. For our lnRoM point estimate of 0.18:</span>
 <span id="cb33-271"><a href="#cb33-271" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-272"><a href="#cb33-272" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb33-273"><a href="#cb33-273" aria-hidden="true" tabindex="-1"></a>100(e^{0.18} - 1) \approx 0.20</span>
+<span id="cb33-273"><a href="#cb33-273" aria-hidden="true" tabindex="-1"></a>100(e^{0.18} - 1) \approx 19.72\%.</span>
 <span id="cb33-274"><a href="#cb33-274" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb33-275"><a href="#cb33-275" aria-hidden="true" tabindex="-1"></a>This means that the treatment led to a 20% increase in plant biomass in our warming treatment.</span>
 <span id="cb33-276"><a href="#cb33-276" aria-hidden="true" tabindex="-1"></a></span>
@@ -2240,14 +2243,14 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb33-581"><a href="#cb33-581" aria-hidden="true" tabindex="-1"></a>         <span class="at">gl2 =</span> <span class="fu">geary</span>(<span class="at">sd =</span> sd2i, <span class="at">m =</span> m2i, <span class="at">n =</span> n2i))</span>
 <span id="cb33-582"><a href="#cb33-582" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-583"><a href="#cb33-583" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-584"><a href="#cb33-584" aria-hidden="true" tabindex="-1"></a>n_overdispersed <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb33-585"><a href="#cb33-585" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gl1 <span class="sc">&gt;</span> <span class="dv">3</span> <span class="sc">|</span> gl2 <span class="sc">&gt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-584"><a href="#cb33-584" aria-hidden="true" tabindex="-1"></a>n_failed_geary <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb33-585"><a href="#cb33-585" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(gl1 <span class="sc">&lt;</span> <span class="dv">3</span> <span class="sc">|</span> gl2 <span class="sc">&lt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb33-586"><a href="#cb33-586" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>()</span>
-<span id="cb33-587"><a href="#cb33-587" aria-hidden="true" tabindex="-1"></a>n_overdispersed<span class="sc">/</span><span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb33-587"><a href="#cb33-587" aria-hidden="true" tabindex="-1"></a>n_failed_geary<span class="sc">/</span><span class="fu">nrow</span>(dat) <span class="sc">*</span> <span class="dv">100</span></span>
 <span id="cb33-588"><a href="#cb33-588" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-589"><a href="#cb33-589" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb33-590"><a href="#cb33-590" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-591"><a href="#cb33-591" aria-hidden="true" tabindex="-1"></a>It looks like \~54% the data in this meta-analysis fails the Geary-Lajuennesse test. So what do you do if that happens? We suggest that you filter out overdispersed values and rerun your models, both with the full dataset and with the subsets that are not overdispersed.</span>
+<span id="cb33-591"><a href="#cb33-591" aria-hidden="true" tabindex="-1"></a>Values of 3 or greater pass the improved Geary test. The code above reports the percentage of effect sizes for which either group has a value below 3 and therefore fails the test. If many effect sizes fail, compare the full analysis with an analysis that excludes the flagged values.</span>
 <span id="cb33-592"><a href="#cb33-592" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-593"><a href="#cb33-593" aria-hidden="true" tabindex="-1"></a>An alternative approach is to use the inverse of effective sample size as your meta-analytic model weight, instead of sampling variance. This may be essential when a significant amount of your data is overdispersed. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
 <span id="cb33-594"><a href="#cb33-594" aria-hidden="true" tabindex="-1"></a></span>
@@ -2326,8 +2329,8 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb33-677"><a href="#cb33-677" aria-hidden="true" tabindex="-1"></a>                           m2 <span class="sc">%&gt;%</span></span>
 <span id="cb33-678"><a href="#cb33-678" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb33-679"><a href="#cb33-679" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"CV &lt;= 2"</span>,</span>
-<span id="cb33-680"><a href="#cb33-680" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m3<span class="sc">$</span>ci.lb,</span>
-<span id="cb33-681"><a href="#cb33-681" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m3<span class="sc">$</span>ci.ub),</span>
+<span id="cb33-680"><a href="#cb33-680" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.lb =</span> m2<span class="sc">$</span>ci.lb,</span>
+<span id="cb33-681"><a href="#cb33-681" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">ci.ub =</span> m2<span class="sc">$</span>ci.ub),</span>
 <span id="cb33-682"><a href="#cb33-682" aria-hidden="true" tabindex="-1"></a>                           m3 <span class="sc">%&gt;%</span></span>
 <span id="cb33-683"><a href="#cb33-683" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">tidy</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb33-684"><a href="#cb33-684" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">mutate</span>(<span class="at">model =</span> <span class="st">"1/effective_N"</span>,</span>
