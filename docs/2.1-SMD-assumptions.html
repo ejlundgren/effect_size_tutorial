@@ -2,21 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-09-11">
+<meta name="dcterms.date" content="2026-09-16">
 <title>Continuous outcomes between two groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
+code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: 1.5em;}
-div.column{flex: auto;}
-@media screen {
-div.columns{gap: min(4vw, 1.5em);}
-div.column{overflow-x: auto;}
-}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -95,10 +92,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-3ce91eb55eff57f05a160ac941f5b984.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="site_libs/bootstrap/bootstrap-61b838042b633b16d416a2b6f0e5420d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -124,7 +121,7 @@ div.csl-indent {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script><script type="text/javascript">
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
     // MathJax Typeset
@@ -402,7 +399,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 11, 2026</p>
+      <p class="date">September 16, 2026</p>
     </div>
   </div>
   
@@ -1019,8 +1016,9 @@ N_{0} = \frac{4n_1n_2}{n_1 + n_2}\\
 </div>
 <p>It looks like the sensitivity analyses (CV ≤ 2 and 1/effective_N) both produced similar results which were more conservative than when the entire dataset was analyzed.</p>
 </details></section><section id="sec-heteroscedasticity" class="level2"><h2 class="anchored" data-anchor-id="sec-heteroscedasticity">Heteroscedasticity</h2>
-<p>Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity <span class="citation" data-cites="Bonett2009-sf">(<a href="#ref-Bonett2009-sf" role="doc-biblioref">Bonett 2009</a>)</span>. This is available as the measure ‘SMDH’ in <code><a href="https://wviechtb.github.io/metafor/reference/escalc.html">metafor::escalc</a></code>. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset—instead of comparing SMD estimates to SMDH estimates. <strong>IS THIS TRUE?</strong></p>
+<p>Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity <span class="citation" data-cites="Bonett2009-sf">(<a href="#ref-Bonett2009-sf" role="doc-biblioref">Bonett 2009</a>)</span>. This is available as the measure ‘SMDH’ in <code><a href="https://wviechtb.github.io/metafor/reference/escalc.html">metafor::escalc</a></code>. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset—instead of comparing SMD estimates to SMDH estimates.</p>
 <p>For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator. However, this is a topic that has been little explored and is a subject for future research. <strong>DOUBLE CHECK</strong></p>
+<p><strong>It looks like there are several vtypes in <code>escalc</code> for lnRoM. But it’s not clear if one is meant for heteroscedastic data</strong></p>
 </section><section id="model-estimates-and-effect-size-conversions" class="level2"><h2 class="anchored" data-anchor-id="model-estimates-and-effect-size-conversions">Model estimates and effect size conversions</h2>
 <p>A key consideration in choosing to use SMD or lnRoM is whether you plan to extract data from model estimates.</p>
 <p>SMD itself is very similar to a test statistic. As such, you can readily convert t statistics to SMD:</p>
@@ -1321,16 +1319,16 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
     }
     function toggleCodeHandler(show) {
       return function(e) {
-        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
-        for (let i=0; i<cellDetails.length; i++) {
-          const details = cellDetails[i];
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
           if (show) {
             details.open = true;
           } else {
             details.removeAttribute("open");
           }
         }
-        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
         const fromCls = show ? "hidden" : "unhidden";
         const toCls = show ? "unhidden" : "hidden";
         for (let i=0; i<cellCodeDivs.length; i++) {
@@ -2354,179 +2352,181 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb33-702"><a href="#cb33-702" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-703"><a href="#cb33-703" aria-hidden="true" tabindex="-1"></a><span class="fu">## Heteroscedasticity {#sec-heteroscedasticity}</span></span>
 <span id="cb33-704"><a href="#cb33-704" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-705"><a href="#cb33-705" aria-hidden="true" tabindex="-1"></a>Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity <span class="co">[</span><span class="ot">@Bonett2009-sf</span><span class="co">]</span>. This is available as the measure 'SMDH' in <span class="in">`metafor::escalc`</span>. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset---instead of comparing SMD estimates to SMDH estimates. **IS THIS TRUE?**</span>
+<span id="cb33-705"><a href="#cb33-705" aria-hidden="true" tabindex="-1"></a>Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity <span class="co">[</span><span class="ot">@Bonett2009-sf</span><span class="co">]</span>. This is available as the measure 'SMDH' in <span class="in">`metafor::escalc`</span>. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset---instead of comparing SMD estimates to SMDH estimates. </span>
 <span id="cb33-706"><a href="#cb33-706" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-707"><a href="#cb33-707" aria-hidden="true" tabindex="-1"></a>For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the small-sample bias correction. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator. However, this is a topic that has been little explored and is a subject for future research. **DOUBLE CHECK**</span>
 <span id="cb33-708"><a href="#cb33-708" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-709"><a href="#cb33-709" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model estimates and effect size conversions</span></span>
-<span id="cb33-710"><a href="#cb33-710" aria-hidden="true" tabindex="-1"></a>A key consideration in choosing to use SMD or lnRoM is whether you plan to extract data from model estimates. </span>
-<span id="cb33-711"><a href="#cb33-711" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-712"><a href="#cb33-712" aria-hidden="true" tabindex="-1"></a>SMD itself is very similar to a test statistic. As such, you can readily convert t statistics to SMD:</span>
+<span id="cb33-709"><a href="#cb33-709" aria-hidden="true" tabindex="-1"></a>**It looks like there are several vtypes in `escalc` for lnRoM. But it's not clear if one is meant for heteroscedastic data**</span>
+<span id="cb33-710"><a href="#cb33-710" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-711"><a href="#cb33-711" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model estimates and effect size conversions</span></span>
+<span id="cb33-712"><a href="#cb33-712" aria-hidden="true" tabindex="-1"></a>A key consideration in choosing to use SMD or lnRoM is whether you plan to extract data from model estimates. </span>
 <span id="cb33-713"><a href="#cb33-713" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-714"><a href="#cb33-714" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb33-715"><a href="#cb33-715" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb33-716"><a href="#cb33-716" aria-hidden="true" tabindex="-1"></a>&amp;d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} <span class="sc">\\</span></span>
-<span id="cb33-717"><a href="#cb33-717" aria-hidden="true" tabindex="-1"></a>&amp;g = Jd</span>
-<span id="cb33-718"><a href="#cb33-718" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb33-719"><a href="#cb33-719" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb33-720"><a href="#cb33-720" aria-hidden="true" tabindex="-1"></a>However, lnRoM cannot be calculated from model test statistics and SMD cannot be converted to lnRoM. </span>
-<span id="cb33-721"><a href="#cb33-721" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-722"><a href="#cb33-722" aria-hidden="true" tabindex="-1"></a>Similarly, the other main effect size types for the relationships between two variables (lnOR, Zr, and even lnRoM) can be converted to SMD. These constraints, especially with smaller meta-analyses where every bit of data counts, may force your hand into choosing to use SMD.</span>
+<span id="cb33-714"><a href="#cb33-714" aria-hidden="true" tabindex="-1"></a>SMD itself is very similar to a test statistic. As such, you can readily convert t statistics to SMD:</span>
+<span id="cb33-715"><a href="#cb33-715" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-716"><a href="#cb33-716" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb33-717"><a href="#cb33-717" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb33-718"><a href="#cb33-718" aria-hidden="true" tabindex="-1"></a>&amp;d=t*\sqrt{\frac{1}{n_1} + \frac{1}{n_2}} <span class="sc">\\</span></span>
+<span id="cb33-719"><a href="#cb33-719" aria-hidden="true" tabindex="-1"></a>&amp;g = Jd</span>
+<span id="cb33-720"><a href="#cb33-720" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb33-721"><a href="#cb33-721" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb33-722"><a href="#cb33-722" aria-hidden="true" tabindex="-1"></a>However, lnRoM cannot be calculated from model test statistics and SMD cannot be converted to lnRoM. </span>
 <span id="cb33-723"><a href="#cb33-723" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-724"><a href="#cb33-724" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion---which effect size should you use?</span></span>
+<span id="cb33-724"><a href="#cb33-724" aria-hidden="true" tabindex="-1"></a>Similarly, the other main effect size types for the relationships between two variables (lnOR, Zr, and even lnRoM) can be converted to SMD. These constraints, especially with smaller meta-analyses where every bit of data counts, may force your hand into choosing to use SMD.</span>
 <span id="cb33-725"><a href="#cb33-725" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-726"><a href="#cb33-726" aria-hidden="true" tabindex="-1"></a>Return first to the biological question: use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response is bounded by zero. The flow chart below summarizes the additional assumptions and decisions to make:</span>
+<span id="cb33-726"><a href="#cb33-726" aria-hidden="true" tabindex="-1"></a><span class="fu"># Conclusion---which effect size should you use?</span></span>
 <span id="cb33-727"><a href="#cb33-727" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-728"><a href="#cb33-728" aria-hidden="true" tabindex="-1"></a><span class="al">![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)</span></span>
-<span id="cb33-729"><a href="#cb33-729" aria-hidden="true" tabindex="-1"></a>**FIX THIS FIGURE**</span>
-<span id="cb33-730"><a href="#cb33-730" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-731"><a href="#cb33-731" aria-hidden="true" tabindex="-1"></a>When both SMD and lnRoM are biologically relevant, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly.</span>
+<span id="cb33-728"><a href="#cb33-728" aria-hidden="true" tabindex="-1"></a>Return first to the biological question: use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response is bounded by zero. The flow chart below summarizes the additional assumptions and decisions to make:</span>
+<span id="cb33-729"><a href="#cb33-729" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-730"><a href="#cb33-730" aria-hidden="true" tabindex="-1"></a><span class="al">![SMD vs lnRoM](figures/flowcharts_diagrams/SMD vs lnrom.jpg)</span></span>
+<span id="cb33-731"><a href="#cb33-731" aria-hidden="true" tabindex="-1"></a>**FIX THIS FIGURE**</span>
 <span id="cb33-732"><a href="#cb33-732" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-733"><a href="#cb33-733" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
-<span id="cb33-734"><a href="#cb33-734" aria-hidden="true" tabindex="-1"></a>@Yang2024-fw showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://yefeng0920.github.io/BRMA_tutorial_git/)</span>.</span>
-<span id="cb33-735"><a href="#cb33-735" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb33-736"><a href="#cb33-736" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-737"><a href="#cb33-737" aria-hidden="true" tabindex="-1"></a>For lnRoM, state whether the small-sample bias correction was applied. Current versions of <span class="in">`metafor::escalc()`</span> apply it by default. The uncorrected estimator can be requested with <span class="in">`correct = FALSE`</span>; if it is used because of concerns about distributional assumptions, justify that choice and compare estimators in a sensitivity analysis.</span>
+<span id="cb33-733"><a href="#cb33-733" aria-hidden="true" tabindex="-1"></a>When both SMD and lnRoM are biologically relevant, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly.</span>
+<span id="cb33-734"><a href="#cb33-734" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-735"><a href="#cb33-735" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb33-736"><a href="#cb33-736" aria-hidden="true" tabindex="-1"></a>@Yang2024-fw showed that including both SMD and lnRoM in a bivariate model can improve model estimates. See their tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](https://yefeng0920.github.io/BRMA_tutorial_git/)</span>.</span>
+<span id="cb33-737"><a href="#cb33-737" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb33-738"><a href="#cb33-738" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-739"><a href="#cb33-739" aria-hidden="true" tabindex="-1"></a>Conversely, you can also use our function <span class="in">`eff_size`</span>, which returns all the estimates in one go:</span>
+<span id="cb33-739"><a href="#cb33-739" aria-hidden="true" tabindex="-1"></a>For lnRoM, state whether the small-sample bias correction was applied. Current versions of <span class="in">`metafor::escalc()`</span> apply it by default. The uncorrected estimator can be requested with <span class="in">`correct = FALSE`</span>; if it is used because of concerns about distributional assumptions, justify that choice and compare estimators in a sensitivity analysis.</span>
 <span id="cb33-740"><a href="#cb33-740" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-743"><a href="#cb33-743" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-744"><a href="#cb33-744" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb33-745"><a href="#cb33-745" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb33-746"><a href="#cb33-746" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb33-747"><a href="#cb33-747" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-748"><a href="#cb33-748" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
-<span id="cb33-749"><a href="#cb33-749" aria-hidden="true" tabindex="-1"></a>         <span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>,</span>
-<span id="cb33-750"><a href="#cb33-750" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
-<span id="cb33-751"><a href="#cb33-751" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
-<span id="cb33-752"><a href="#cb33-752" aria-hidden="true" tabindex="-1"></a>         <span class="at">default_formulas =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb33-753"><a href="#cb33-753" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-754"><a href="#cb33-754" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-741"><a href="#cb33-741" aria-hidden="true" tabindex="-1"></a>Conversely, you can also use our function <span class="in">`eff_size`</span>, which returns all the estimates in one go:</span>
+<span id="cb33-742"><a href="#cb33-742" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-745"><a href="#cb33-745" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-746"><a href="#cb33-746" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb33-747"><a href="#cb33-747" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb33-748"><a href="#cb33-748" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb33-749"><a href="#cb33-749" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-750"><a href="#cb33-750" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb33-751"><a href="#cb33-751" aria-hidden="true" tabindex="-1"></a>         <span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>,</span>
+<span id="cb33-752"><a href="#cb33-752" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
+<span id="cb33-753"><a href="#cb33-753" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
+<span id="cb33-754"><a href="#cb33-754" aria-hidden="true" tabindex="-1"></a>         <span class="at">default_formulas =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb33-755"><a href="#cb33-755" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-756"><a href="#cb33-756" aria-hidden="true" tabindex="-1"></a>Finally, if data are identified as potentially problematic using the criteria described <span class="co">[</span><span class="ot">above</span><span class="co">](#sec-overdispersion)</span>, compare the full analysis with clearly justified sensitivity analyses, such as excluding flagged observations or using inverse effective sample size as the model weight <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
+<span id="cb33-756"><a href="#cb33-756" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb33-757"><a href="#cb33-757" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-758"><a href="#cb33-758" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb33-759"><a href="#cb33-759" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Missing error bars</span></span>
-<span id="cb33-760"><a href="#cb33-760" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-761"><a href="#cb33-761" aria-hidden="true" tabindex="-1"></a>Note that some extraction challenges may also influence your choice of effect size. For example, it is possible to calculate lnRoM for data that did not report error (e.g., standard deviation, standard error, etc) by imputing error with cross-study coefficient of variation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>. This is a good reason to use lnRoM but has to be weighed against the other numeric assumptions described above. We discuss this further <span class="co">[</span><span class="ot">here</span><span class="co">](3.2-smd-challenges.qmd#sec-callout-missing-error-bars)</span>.</span>
+<span id="cb33-758"><a href="#cb33-758" aria-hidden="true" tabindex="-1"></a>Finally, if data are identified as potentially problematic using the criteria described <span class="co">[</span><span class="ot">above</span><span class="co">](#sec-overdispersion)</span>, compare the full analysis with clearly justified sensitivity analyses, such as excluding flagged observations or using inverse effective sample size as the model weight <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>.</span>
+<span id="cb33-759"><a href="#cb33-759" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-760"><a href="#cb33-760" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb33-761"><a href="#cb33-761" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Missing error bars</span></span>
 <span id="cb33-762"><a href="#cb33-762" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-763"><a href="#cb33-763" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb33-763"><a href="#cb33-763" aria-hidden="true" tabindex="-1"></a>Note that some extraction challenges may also influence your choice of effect size. For example, it is possible to calculate lnRoM for data that did not report error (e.g., standard deviation, standard error, etc) by imputing error with cross-study coefficient of variation <span class="co">[</span><span class="ot">@Nakagawa2023-tn</span><span class="co">]</span>. This is a good reason to use lnRoM but has to be weighed against the other numeric assumptions described above. We discuss this further <span class="co">[</span><span class="ot">here</span><span class="co">](3.2-smd-challenges.qmd#sec-callout-missing-error-bars)</span>.</span>
 <span id="cb33-764"><a href="#cb33-764" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-765"><a href="#cb33-765" aria-hidden="true" tabindex="-1"></a><span class="fu"># Alternative estimators {#sec-alternative-estimators}</span></span>
+<span id="cb33-765"><a href="#cb33-765" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb33-766"><a href="#cb33-766" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-767"><a href="#cb33-767" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paired designs {#sec-paired-designs}</span></span>
+<span id="cb33-767"><a href="#cb33-767" aria-hidden="true" tabindex="-1"></a><span class="fu"># Alternative estimators {#sec-alternative-estimators}</span></span>
 <span id="cb33-768"><a href="#cb33-768" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-769"><a href="#cb33-769" aria-hidden="true" tabindex="-1"></a>There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. For the most part, these paired estimators *reduce* the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the correlated variance between your treatment groups.</span>
+<span id="cb33-769"><a href="#cb33-769" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paired designs {#sec-paired-designs}</span></span>
 <span id="cb33-770"><a href="#cb33-770" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-771"><a href="#cb33-771" aria-hidden="true" tabindex="-1"></a>In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals, which is pronounced "rho" and symbolized as <span class="in">`r`</span> in most <span class="in">`R`</span> code. Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.</span>
+<span id="cb33-771"><a href="#cb33-771" aria-hidden="true" tabindex="-1"></a>There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. For the most part, these paired estimators *reduce* the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the correlated variance between your treatment groups.</span>
 <span id="cb33-772"><a href="#cb33-772" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-773"><a href="#cb33-773" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb33-774"><a href="#cb33-774" aria-hidden="true" tabindex="-1"></a>######### $\rho$ {#sec-specifying-rho}</span>
-<span id="cb33-775"><a href="#cb33-775" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-776"><a href="#cb33-776" aria-hidden="true" tabindex="-1"></a>The correlation between groups, $\rho$ (<span class="in">`ri`</span> in <span class="in">`escalc`</span> and <span class="in">`r`</span> in <span class="in">`eff_size`</span>) is rarely reported and so needs to be assigned based, basically, on guesswork. We'd suggest that if the pairing is within an individual or plot (e.g., before-after a treatment), then a $\rho$ of 0.8 seems reasonable. However, if the pairing is based on spatially paired but independent plots (e.g., adjacent to each other across a fenceline) then a rho of 0.5 may be more reasonable.</span>
+<span id="cb33-773"><a href="#cb33-773" aria-hidden="true" tabindex="-1"></a>In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals, which is pronounced "rho" and symbolized as <span class="in">`r`</span> in most <span class="in">`R`</span> code. Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.</span>
+<span id="cb33-774"><a href="#cb33-774" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-775"><a href="#cb33-775" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb33-776"><a href="#cb33-776" aria-hidden="true" tabindex="-1"></a>######### $\rho$ {#sec-specifying-rho}</span>
 <span id="cb33-777"><a href="#cb33-777" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-778"><a href="#cb33-778" aria-hidden="true" tabindex="-1"></a>Be sure to always conduct sensitivity analyses on these choices, to ensure that they aren't unduly changing your model estimates.</span>
-<span id="cb33-779"><a href="#cb33-779" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb33-780"><a href="#cb33-780" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-781"><a href="#cb33-781" aria-hidden="true" tabindex="-1"></a><span class="fu">### SMD paired designs</span></span>
-<span id="cb33-782"><a href="#cb33-782" aria-hidden="true" tabindex="-1"></a>For SMD, the measure "SMCRP" <span class="co">[</span><span class="ot">@Cousineau2020-jf</span><span class="co">]</span> is likely safe to use in a dataset alongside unpaired "SMD" estimates, even though this formulation changes the point estimate slightly. If your data is heteroscedastic, you can use the measure "SMCRPH" <span class="co">[</span><span class="ot">@Bonett2008-ni</span><span class="co">]</span> which is comparable to "SMDH". </span>
-<span id="cb33-783"><a href="#cb33-783" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-784"><a href="#cb33-784" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span> we'll compare the results of SMD and SMCRP. Note that you only supply a single value for sample size (<span class="in">`ni`</span>) instead of <span class="in">`n1i`</span> and <span class="in">`n2i`</span> because a paired design must by definition have equal sample sizes in each treatment. </span>
+<span id="cb33-778"><a href="#cb33-778" aria-hidden="true" tabindex="-1"></a>The correlation between groups, $\rho$ (<span class="in">`ri`</span> in <span class="in">`escalc`</span> and <span class="in">`r`</span> in <span class="in">`eff_size`</span>) is rarely reported and so needs to be assigned based, basically, on guesswork. We'd suggest that if the pairing is within an individual or plot (e.g., before-after a treatment), then a $\rho$ of 0.8 seems reasonable. However, if the pairing is based on spatially paired but independent plots (e.g., adjacent to each other across a fenceline) then a rho of 0.5 may be more reasonable.</span>
+<span id="cb33-779"><a href="#cb33-779" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-780"><a href="#cb33-780" aria-hidden="true" tabindex="-1"></a>Be sure to always conduct sensitivity analyses on these choices, to ensure that they aren't unduly changing your model estimates.</span>
+<span id="cb33-781"><a href="#cb33-781" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb33-782"><a href="#cb33-782" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-783"><a href="#cb33-783" aria-hidden="true" tabindex="-1"></a><span class="fu">### SMD paired designs</span></span>
+<span id="cb33-784"><a href="#cb33-784" aria-hidden="true" tabindex="-1"></a>For SMD, the measure "SMCRP" <span class="co">[</span><span class="ot">@Cousineau2020-jf</span><span class="co">]</span> is likely safe to use in a dataset alongside unpaired "SMD" estimates, even though this formulation changes the point estimate slightly. If your data is heteroscedastic, you can use the measure "SMCRPH" <span class="co">[</span><span class="ot">@Bonett2008-ni</span><span class="co">]</span> which is comparable to "SMDH". </span>
 <span id="cb33-785"><a href="#cb33-785" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-788"><a href="#cb33-788" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-789"><a href="#cb33-789" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb33-790"><a href="#cb33-790" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb33-791"><a href="#cb33-791" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-792"><a href="#cb33-792" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
-<span id="cb33-793"><a href="#cb33-793" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
-<span id="cb33-794"><a href="#cb33-794" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> <span class="dv">20</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
-<span id="cb33-795"><a href="#cb33-795" aria-hidden="true" tabindex="-1"></a>                   <span class="at">measure =</span> <span class="st">"SMD"</span>)</span>
-<span id="cb33-796"><a href="#cb33-796" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-797"><a href="#cb33-797" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
-<span id="cb33-798"><a href="#cb33-798" aria-hidden="true" tabindex="-1"></a>                 <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
-<span id="cb33-799"><a href="#cb33-799" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ni =</span> <span class="dv">20</span>, <span class="at">ri =</span> <span class="fl">0.5</span>,</span>
-<span id="cb33-800"><a href="#cb33-800" aria-hidden="true" tabindex="-1"></a>                 <span class="at">measure =</span> <span class="st">"SMCRP"</span>)</span>
-<span id="cb33-801"><a href="#cb33-801" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-802"><a href="#cb33-802" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
-<span id="cb33-803"><a href="#cb33-803" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
-<span id="cb33-804"><a href="#cb33-804" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-805"><a href="#cb33-805" aria-hidden="true" tabindex="-1"></a>As you can see, the point estimates differ slightly, but the sampling variance was reduced by nearly half---which means the paired estimates will have considerably more influence in your models.</span>
-<span id="cb33-806"><a href="#cb33-806" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-807"><a href="#cb33-807" aria-hidden="true" tabindex="-1"></a>Our <span class="in">`eff_size`</span> function provides a different paired formulation for SMD and SMDH that produce more identical point estimates:</span>
+<span id="cb33-786"><a href="#cb33-786" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span> we'll compare the results of SMD and SMCRP. Note that you only supply a single value for sample size (<span class="in">`ni`</span>) instead of <span class="in">`n1i`</span> and <span class="in">`n2i`</span> because a paired design must by definition have equal sample sizes in each treatment. </span>
+<span id="cb33-787"><a href="#cb33-787" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-790"><a href="#cb33-790" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-791"><a href="#cb33-791" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb33-792"><a href="#cb33-792" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb33-793"><a href="#cb33-793" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-794"><a href="#cb33-794" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb33-795"><a href="#cb33-795" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb33-796"><a href="#cb33-796" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> <span class="dv">20</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb33-797"><a href="#cb33-797" aria-hidden="true" tabindex="-1"></a>                   <span class="at">measure =</span> <span class="st">"SMD"</span>)</span>
+<span id="cb33-798"><a href="#cb33-798" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-799"><a href="#cb33-799" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb33-800"><a href="#cb33-800" aria-hidden="true" tabindex="-1"></a>                 <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb33-801"><a href="#cb33-801" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ni =</span> <span class="dv">20</span>, <span class="at">ri =</span> <span class="fl">0.5</span>,</span>
+<span id="cb33-802"><a href="#cb33-802" aria-hidden="true" tabindex="-1"></a>                 <span class="at">measure =</span> <span class="st">"SMCRP"</span>)</span>
+<span id="cb33-803"><a href="#cb33-803" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-804"><a href="#cb33-804" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb33-805"><a href="#cb33-805" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb33-806"><a href="#cb33-806" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-807"><a href="#cb33-807" aria-hidden="true" tabindex="-1"></a>As you can see, the point estimates differ slightly, but the sampling variance was reduced by nearly half---which means the paired estimates will have considerably more influence in your models.</span>
 <span id="cb33-808"><a href="#cb33-808" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-811"><a href="#cb33-811" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-812"><a href="#cb33-812" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb33-813"><a href="#cb33-813" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb33-814"><a href="#cb33-814" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-815"><a href="#cb33-815" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
-<span id="cb33-816"><a href="#cb33-816" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
-<span id="cb33-817"><a href="#cb33-817" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">20</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
-<span id="cb33-818"><a href="#cb33-818" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb33-819"><a href="#cb33-819" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-820"><a href="#cb33-820" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">FALSE</span>) <span class="co"># paired = FALSE is default</span></span>
-<span id="cb33-821"><a href="#cb33-821" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-822"><a href="#cb33-822" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
-<span id="cb33-823"><a href="#cb33-823" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
-<span id="cb33-824"><a href="#cb33-824" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">20</span>, <span class="at">r =</span> <span class="fl">0.5</span>,</span>
-<span id="cb33-825"><a href="#cb33-825" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb33-826"><a href="#cb33-826" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-827"><a href="#cb33-827" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-828"><a href="#cb33-828" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
-<span id="cb33-829"><a href="#cb33-829" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
-<span id="cb33-830"><a href="#cb33-830" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-831"><a href="#cb33-831" aria-hidden="true" tabindex="-1"></a>It is unclear whether "SMCRP" or the version in <span class="in">`eff_size`</span> are better, which is a topic for future research. **??????**</span>
-<span id="cb33-832"><a href="#cb33-832" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-833"><a href="#cb33-833" aria-hidden="true" tabindex="-1"></a>We note that there are several other paired estimators for SMD-style effect sizes in the function <span class="in">`escalc`</span> that account for alternative correlated treatment designs (see our <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](6-escalc-cheatsheet.qmd)</span>). These options may preferable if your meta-analysis focuses only on these types of experiments but these, to the best of our knowledge are not comparable to normal, unpaired SMD estimates</span>
+<span id="cb33-809"><a href="#cb33-809" aria-hidden="true" tabindex="-1"></a>Our <span class="in">`eff_size`</span> function provides a different paired formulation for SMD and SMDH that produce more identical point estimates:</span>
+<span id="cb33-810"><a href="#cb33-810" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-813"><a href="#cb33-813" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-814"><a href="#cb33-814" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb33-815"><a href="#cb33-815" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb33-816"><a href="#cb33-816" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-817"><a href="#cb33-817" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb33-818"><a href="#cb33-818" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb33-819"><a href="#cb33-819" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">20</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
+<span id="cb33-820"><a href="#cb33-820" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb33-821"><a href="#cb33-821" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-822"><a href="#cb33-822" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">FALSE</span>) <span class="co"># paired = FALSE is default</span></span>
+<span id="cb33-823"><a href="#cb33-823" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-824"><a href="#cb33-824" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb33-825"><a href="#cb33-825" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb33-826"><a href="#cb33-826" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">20</span>, <span class="at">r =</span> <span class="fl">0.5</span>,</span>
+<span id="cb33-827"><a href="#cb33-827" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb33-828"><a href="#cb33-828" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-829"><a href="#cb33-829" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-830"><a href="#cb33-830" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb33-831"><a href="#cb33-831" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb33-832"><a href="#cb33-832" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-833"><a href="#cb33-833" aria-hidden="true" tabindex="-1"></a>It is unclear whether "SMCRP" or the version in <span class="in">`eff_size`</span> are better, which is a topic for future research. **??????**</span>
 <span id="cb33-834"><a href="#cb33-834" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-835"><a href="#cb33-835" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnRoM paired designs</span></span>
-<span id="cb33-836"><a href="#cb33-836" aria-hidden="true" tabindex="-1"></a>For lnRoM, you can specify a paired version with measure "ROMC":</span>
-<span id="cb33-837"><a href="#cb33-837" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-840"><a href="#cb33-840" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-841"><a href="#cb33-841" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb33-842"><a href="#cb33-842" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb33-843"><a href="#cb33-843" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-844"><a href="#cb33-844" aria-hidden="true" tabindex="-1"></a><span class="co"># First, unpaired:</span></span>
-<span id="cb33-845"><a href="#cb33-845" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
-<span id="cb33-846"><a href="#cb33-846" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
-<span id="cb33-847"><a href="#cb33-847" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> <span class="dv">20</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
-<span id="cb33-848"><a href="#cb33-848" aria-hidden="true" tabindex="-1"></a>                   <span class="at">measure =</span> <span class="st">"ROM"</span>)</span>
-<span id="cb33-849"><a href="#cb33-849" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-850"><a href="#cb33-850" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-851"><a href="#cb33-851" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, the paired version:</span></span>
-<span id="cb33-852"><a href="#cb33-852" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
-<span id="cb33-853"><a href="#cb33-853" aria-hidden="true" tabindex="-1"></a>                 <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
-<span id="cb33-854"><a href="#cb33-854" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ni =</span> <span class="dv">20</span>, <span class="at">ri =</span> <span class="fl">0.5</span>,</span>
-<span id="cb33-855"><a href="#cb33-855" aria-hidden="true" tabindex="-1"></a>                 <span class="at">measure =</span> <span class="st">"ROMC"</span>)</span>
-<span id="cb33-856"><a href="#cb33-856" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-857"><a href="#cb33-857" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
-<span id="cb33-858"><a href="#cb33-858" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
-<span id="cb33-859"><a href="#cb33-859" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb33-860"><a href="#cb33-860" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-861"><a href="#cb33-861" aria-hidden="true" tabindex="-1"></a>As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to a stronger influence in the meta-analytic models.</span>
+<span id="cb33-835"><a href="#cb33-835" aria-hidden="true" tabindex="-1"></a>We note that there are several other paired estimators for SMD-style effect sizes in the function <span class="in">`escalc`</span> that account for alternative correlated treatment designs (see our <span class="in">`escalc`</span> <span class="co">[</span><span class="ot">cheatsheet</span><span class="co">](6-escalc-cheatsheet.qmd)</span>). These options may preferable if your meta-analysis focuses only on these types of experiments but these, to the best of our knowledge are not comparable to normal, unpaired SMD estimates</span>
+<span id="cb33-836"><a href="#cb33-836" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-837"><a href="#cb33-837" aria-hidden="true" tabindex="-1"></a><span class="fu">### lnRoM paired designs</span></span>
+<span id="cb33-838"><a href="#cb33-838" aria-hidden="true" tabindex="-1"></a>For lnRoM, you can specify a paired version with measure "ROMC":</span>
+<span id="cb33-839"><a href="#cb33-839" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-842"><a href="#cb33-842" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-843"><a href="#cb33-843" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb33-844"><a href="#cb33-844" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb33-845"><a href="#cb33-845" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-846"><a href="#cb33-846" aria-hidden="true" tabindex="-1"></a><span class="co"># First, unpaired:</span></span>
+<span id="cb33-847"><a href="#cb33-847" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb33-848"><a href="#cb33-848" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb33-849"><a href="#cb33-849" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1i =</span> <span class="dv">20</span>, <span class="at">n2i =</span> <span class="dv">20</span>,</span>
+<span id="cb33-850"><a href="#cb33-850" aria-hidden="true" tabindex="-1"></a>                   <span class="at">measure =</span> <span class="st">"ROM"</span>)</span>
+<span id="cb33-851"><a href="#cb33-851" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-852"><a href="#cb33-852" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-853"><a href="#cb33-853" aria-hidden="true" tabindex="-1"></a><span class="co"># Now, the paired version:</span></span>
+<span id="cb33-854"><a href="#cb33-854" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">sd1i =</span> <span class="dv">3</span>,</span>
+<span id="cb33-855"><a href="#cb33-855" aria-hidden="true" tabindex="-1"></a>                 <span class="at">m2i =</span> <span class="dv">10</span>, <span class="at">sd2i =</span> <span class="dv">2</span>, </span>
+<span id="cb33-856"><a href="#cb33-856" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ni =</span> <span class="dv">20</span>, <span class="at">ri =</span> <span class="fl">0.5</span>,</span>
+<span id="cb33-857"><a href="#cb33-857" aria-hidden="true" tabindex="-1"></a>                 <span class="at">measure =</span> <span class="st">"ROMC"</span>)</span>
+<span id="cb33-858"><a href="#cb33-858" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-859"><a href="#cb33-859" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb33-860"><a href="#cb33-860" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
+<span id="cb33-861"><a href="#cb33-861" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb33-862"><a href="#cb33-862" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-863"><a href="#cb33-863" aria-hidden="true" tabindex="-1"></a>And in <span class="in">`eff_size`</span>:</span>
-<span id="cb33-866"><a href="#cb33-866" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb33-867"><a href="#cb33-867" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb33-868"><a href="#cb33-868" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb33-869"><a href="#cb33-869" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-870"><a href="#cb33-870" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
-<span id="cb33-871"><a href="#cb33-871" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
-<span id="cb33-872"><a href="#cb33-872" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">20</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
-<span id="cb33-873"><a href="#cb33-873" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
-<span id="cb33-874"><a href="#cb33-874" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-875"><a href="#cb33-875" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">FALSE</span>) <span class="co"># paired = FALSE is default</span></span>
-<span id="cb33-876"><a href="#cb33-876" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-877"><a href="#cb33-877" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
-<span id="cb33-878"><a href="#cb33-878" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
-<span id="cb33-879"><a href="#cb33-879" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">20</span>, <span class="at">r =</span> <span class="fl">0.5</span>,</span>
-<span id="cb33-880"><a href="#cb33-880" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
-<span id="cb33-881"><a href="#cb33-881" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-882"><a href="#cb33-882" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-883"><a href="#cb33-883" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
-<span id="cb33-884"><a href="#cb33-884" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
-<span id="cb33-885"><a href="#cb33-885" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-886"><a href="#cb33-886" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-863"><a href="#cb33-863" aria-hidden="true" tabindex="-1"></a>As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to a stronger influence in the meta-analytic models.</span>
+<span id="cb33-864"><a href="#cb33-864" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-865"><a href="#cb33-865" aria-hidden="true" tabindex="-1"></a>And in <span class="in">`eff_size`</span>:</span>
+<span id="cb33-868"><a href="#cb33-868" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb33-869"><a href="#cb33-869" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb33-870"><a href="#cb33-870" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb33-871"><a href="#cb33-871" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-872"><a href="#cb33-872" aria-hidden="true" tabindex="-1"></a>unpaired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb33-873"><a href="#cb33-873" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb33-874"><a href="#cb33-874" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1 =</span> <span class="dv">20</span>, <span class="at">n2 =</span> <span class="dv">20</span>,</span>
+<span id="cb33-875"><a href="#cb33-875" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb33-876"><a href="#cb33-876" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-877"><a href="#cb33-877" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">FALSE</span>) <span class="co"># paired = FALSE is default</span></span>
+<span id="cb33-878"><a href="#cb33-878" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-879"><a href="#cb33-879" aria-hidden="true" tabindex="-1"></a>paired <span class="ot">&lt;-</span> <span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">sd1 =</span> <span class="dv">3</span>,</span>
+<span id="cb33-880"><a href="#cb33-880" aria-hidden="true" tabindex="-1"></a>                     <span class="at">x2 =</span> <span class="dv">10</span>, <span class="at">sd2 =</span> <span class="dv">2</span>, </span>
+<span id="cb33-881"><a href="#cb33-881" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> <span class="dv">20</span>, <span class="at">r =</span> <span class="fl">0.5</span>,</span>
+<span id="cb33-882"><a href="#cb33-882" aria-hidden="true" tabindex="-1"></a>                     <span class="at">effect_type =</span> <span class="st">"lnRoM"</span>,</span>
+<span id="cb33-883"><a href="#cb33-883" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-884"><a href="#cb33-884" aria-hidden="true" tabindex="-1"></a>                     <span class="at">paired =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-885"><a href="#cb33-885" aria-hidden="true" tabindex="-1"></a><span class="fu">rbind</span>(unpaired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"unpaired"</span>),</span>
+<span id="cb33-886"><a href="#cb33-886" aria-hidden="true" tabindex="-1"></a>      paired <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">pairing =</span> <span class="st">"paired"</span>))</span>
 <span id="cb33-887"><a href="#cb33-887" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-888"><a href="#cb33-888" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb33-889"><a href="#cb33-889" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
