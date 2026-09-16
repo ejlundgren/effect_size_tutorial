@@ -1,0 +1,231 @@
+---
+title: "Effect Sizes for Dichotomous Data: Assumptions and Interpretation"
+subtitle: "Odds Ratio, Risk Ratio, and Risk Difference"
+date: "2026-09-08"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    code-link: true
+    code-tools: true
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure
+  tbl-title: Table
+  title-delim: "—"
+  fig-prefix: Fig.
+  tbl-prefix: Table.
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+
+if (!requireNamespace("metafor", quietly = TRUE)) {
+    install.packages("metafor")
+}
+library("metafor")
+
+```
+
+Sometimes the world is just black and white. 
+
+Calculating dichotomous effect sizes requires organizing frequency data into a standard 2×2 contingency table. In ecology, this often compares an exposed or managed group to a control group across a binary outcome (e.g., mortality vs. survival, or presence vs. absence):
+
+|                                          | **Target Event (e.g., Mortality)** | **Non-Event (e.g., Survival)** | **Total** |
+| ---------------------------------------- | ---------------------------------- | ------------------------------ | --------- |
+| **Exposed (e.g., Pollutant / Stressor)** | a                                  | b                              | a + b     |
+| **Control (e.g., Ambient Conditions)**   | c                                  | d                              | c + d     |
+
+### Odds Ratio (OR)
+
+The Odds Ratio (OR) compares the odds of an ecological event happening in a treatment or exposed group to the odds of it happening in a control group. While risk measures absolute probability (ranging from 0 to 1), odds measure the probability of an event happening versus not happening (ranging from 0 to infinity).
+
+$$OR=\frac{a \times d}{b \times c}$$
+
+
+
+Interpret the statistical output as follows:
+
+- **OR = 1:** Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).
+
+- **OR > 1:** Higher odds of the event in the exposed group.
+
+- **OR < 1:** Lower odds of the event in the exposed group.
+
+**Sampling Variance**
+
+Variance for the OR is calculated on a natural logarithmic scale:
+
+$$Var(\ln OR)=\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}$$
+
+Sparse cell counts—especially zeros—artificially inflate variance estimates. If a sampled site or cohort has zero events (e.g., no individuals died in the control group), calculating the OR becomes mathematically impossible. To resolve this, researchers apply a standard **0.5 continuity correction** to all cells. Meta-analyses typically pool $\ln(OR)$ values because the log transformation creates a normal, symmetric sampling distribution around 0.
+
+Code snippet
+```{r}
+#| eval: true
+#| echo: true
+
+# Define dataset representing a 2x2 table for amphibian chytrid infection across two wetlands
+dat_dichotomous <- data.frame(
+  site = c("Wetland A", "Wetland B"),
+  ai = c(15, 20), # Infected in exposed (warmed mesocosm)
+  bi = c(85, 30), # Uninfected in exposed (warmed mesocosm)
+  ci = c(10, 15), # Infected in control (ambient)
+  di = c(90, 35)  # Uninfected in control (ambient)
+)
+
+# Calculate Log Odds Ratio (ln OR)
+dat_or <- escalc(measure = "OR", ai = ai, bi = bi, ci = ci, di = di, data = dat_dichotomous)
+
+```
+
+### Risk Ratio (RR)
+
+The Risk Ratio (RR), or Relative Risk, compares the absolute probability (risk) of an event in the exposed group to the risk in the unexposed group.
+
+$$RR=\frac{a/(a+b)}{c/(c+d)}$$
+
+While interpreted similarly to the OR, the RR strictly evaluates absolute probability. For common events in a population, the RR is mathematically capped; it cannot exceed $1/CGR$ (Comparator Group Risk).
+
+Interpret the statistical output as follows:
+
+- **RR = 1:** Equal risk (or probability) between the comparison groups (e.g., a stressor has no effect on overall mortality risk).
+
+- **RR > 1:** Higher risk (or probability) of the event in the exposed group.
+
+- **RR < 1:** Lower risk (or probability) of the event in the exposed group.
+
+
+**Sampling Variance**
+
+Like the OR, RR variance is calculated on the log scale:
+
+$$Var(\ln RR)=\frac{1}{a}-\frac{1}{a+b}+\frac{1}{c}-\frac{1}{c+d}$$
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Calculate Log Risk Ratio (ln RR) utilizing the established dataset
+dat_rr <- escalc(measure = "RR", ai = ai, bi = bi, ci = ci, di = di, data = dat_dichotomous)
+
+```
+
+### Converting OR to RR
+
+To convert an OR to an RR, you need the control group's baseline risk ($R_0 = c / (c + d)$):
+
+$$RR=\frac{OR}{(1-R_0)+(R_0 \times OR)}$$
+### Risk Difference (RD)
+
+The Risk Difference (RD), or absolute risk reduction, measures the exact difference in observed risk between the experimental and control groups. This metric is ideal for weighing conservation trade-offs between a management intervention's ecological benefits and its implementation costs.
+
+$$RD=\frac{a}{a+b}-\frac{c}{c+d}$$
+
+Interpret the statistical output as follows:
+
+- **RD = 0:** Equal risk between the comparison groups (the exposure or intervention has no absolute effect on risk).
+
+- **RD > 0:** Higher absolute risk of the event in the exposed group.
+
+- **RD < 0:** Lower absolute risk of the event in the exposed group (representing absolute risk reduction).
+
+**Sampling Variance**
+
+Unlike the OR and RR, the Risk Difference is measured on an absolute scale, so its variance is calculated directly on the raw scale rather than a logarithmic scale:
+
+$$Var(RD)=\frac{a \times b}{(a+b)^3}+\frac{c \times d}{(c+d)^3}$$
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Calculate Log Risk Ratio (ln RR) utilizing the established dataset
+dat_rd <- escalc(measure = "RD", ai = ai, bi = bi, ci = ci, di = di, data = dat_dichotomous)
+
+```
+
+### Defining the Target Event
+
+You must rigorously define your target "event". Switching the target (analyzing non-events instead of events) changes your metrics differently:
+
+- **RD:** The sign flips (identical magnitude, opposite direction).
+
+- **OR:** The new estimate becomes the exact reciprocal ($1/x$).
+
+- **RR:** The estimate, its precision, and statistical significance all change dramatically. *Best practice:* Define the less common state as the target event to minimize mathematical errors and inter-study heterogeneity.
+
+
+### Applied Ecological Examples
+
+Applied Ecological Examples: Matching the Effect Size to What Your Design Provides
+The effect size you can report is determined first by what your design allows you to estimate (the OR when only odds are available), and second by how the result will be used (RR for comparing effects across studies; RD for judging impact in a specific system).
+
+**Example 1** 
+
+You cannot calculate the proportion of each group that experienced the event → OR only
+
+Example: Testing whether large horns deter bird predation in beetles. Researchers collect the remains of the killed beetles (cases) and sample living beetles from the same area (controls), then compare how often the large-horn phenotype occurs in each group.
+
+Why is OR needed? 
+
+As sampling is by outcome, the proportion of killed beetles in the dataset is set by the researcher, not by the true predation rate. With no denominator for the population at risk, RR and RD cannot be estimated. The OR can be estimated because it is the same whether sampling is by outcome or by exposure.
+
+**Example 2**
+
+You can calculate the proportion of each group that experienced the event, and want to say how many times higher or lower it is → RR
+
+Example: A two-year field experiment tracking 1,000 oak seedlings inside deer exclosures and 1,000 in adjacent open plots, with mortality as the target event.
+
+**Why is RR preferred?**
+
+All seedlings are counted at planting, so mortality risk is observed directly in each treatment. The RR gives the proportional change in mortality (e.g., “exclosures reduce mortality risk by 60%”) and is comparable across studies. Because mortality is common in open plots (~35%), the OR would be much smaller than the RR and, if reported as a relative risk, would overstate the effect of exclosures.
+
+
+**Example 3**
+
+You can calculate the proportion of each group that experienced the event, and want to say how many more or fewer event occurred  →  RD alongside RR
+
+Example: Comparing colonisation by a specialist butterfly between isolated habitat fragments and fragments linked by a corridor: 20% of isolated patches and 35% of connected patches are colonised over the study period. 
+
+**Why is RD needed (alongside RR)?**
+
+The RR (1.75) shows that corridors increase the probability of colonisation by 75% relative to isolated patches. The RD (0.15) expresses the same results as an absolute change: 15 additional patches colonised per 100, or roughly serve corridors required for each additional colonisation (NNM ≈ 6.7). Because an RR of 1.75 would correspond to a much smaller absolute gain at a lower baseline (e.g., 3 additional patches per 100 if only 4% of isolated patches were colonised), the RD is the measure needed to judge whether corridor construction justifies its cost.
+
+### Comparing odds ratio, risk ratio and risk difference
+
+| Effect size | What it compares | Scale | Main strength | Main limitation |
+|---|---|---|---|---|
+| **OR** | Odds between groups | Relative | Useful for case-control studies and logistic regression | Less intuitive and can exaggerate relative effects for common events |
+| **RR** | Probability between groups | Relative | Direct and intuitive interpretation of relative risk | Requires known risks and depends on baseline risk |
+| **RD** | Difference in probability | Absolute | Directly communicates the absolute ecological impact | Less comparable across populations with very different baseline risks |
+
+The relationship between these measures can be summarised simply:
+
+- **OR vs. RR:** Both describe relative effects, but OR is based on odds and RR is based on probability. They are approximately equivalent only when the outcome is rare.
+- **RR vs. RD:** Both use probability, but RR describes proportional change while RD describes the actual change in probability.
+- **OR vs. RD:** OR describes relative change on an odds scale, whereas RD describes absolute change. The same OR can produce very different RDs depending on baseline risk.
+
