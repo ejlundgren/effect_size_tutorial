@@ -1,0 +1,370 @@
+---
+title: "Effect Sizes for Dichotomous Data: Assumptions and Interpretation"
+subtitle: "Odds Ratio, Risk Ratio, and Risk Difference"
+date: "2026-09-08"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    code-link: true
+    code-tools: true
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure
+  tbl-title: Table
+  title-delim: "—"
+  fig-prefix: Fig.
+  tbl-prefix: Table.
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+
+if (!requireNamespace("metafor", quietly = TRUE)) {
+    install.packages("metafor")
+}
+library("metafor")
+
+```
+
+Sometimes the world is just black and white. Individuals live or die. Organisms are present or absent. Vegetation plots burn or don't burn.
+
+Calculating dichotomous effect sizes requires organizing frequency data into a standard 2×2 contingency table. In ecology, this often compares an exposed or managed group to a control group across a binary outcome (e.g., mortality vs. survival, or presence vs. absence):
+
+|                                          | **Target Event (e.g., Mortality)** | **Non-Event (e.g., Survival)** | **Total** |
+| ---------------------------------------- | ---------------------------------- | ------------------------------ | --------- |
+| **Exposed (e.g., Pollutant / Stressor)** | a                                  | b                              | a + b     |
+| **Control (e.g., Ambient Conditions)**   | c                                  | d                              | c + d     |
+
+Let's create a running example that we'll use throughout:
+```{r}
+#| eval: true
+#| echo: true
+
+# Define dataset representing a 2x2 table for amphibian chytrid infection across two wetlands
+dat_dichotomous <- data.frame(
+  site = c("Wetland A", "Wetland B"),
+  ai = c(15, 20), # Infected in exposed (warmed mesocosm)
+  bi = c(85, 30), # Uninfected in exposed (warmed mesocosm)
+  ci = c(10, 15), # Infected in control (ambient)
+  di = c(90, 35)  # Uninfected in control (ambient)
+)
+
+```
+
+
+### log Odds Ratio (OR)
+
+The Odds Ratio (OR) compares the odds of an ecological event happening in a treatment or exposed group to the odds of it happening in a control group. Odds measure the probability of an event happening versus not happening (ranging from 0 to infinity).
+
+$$\begin{aligned}
+&OR=\frac{a \times d}{b \times c} \\
+\end{aligned}$${#eq-OR}
+
+Analyzing OR directly in a meta-analysis is not recommended because the values are bounded by 0 and do not approximate normality. For that reason, we log transform it so that it centers on 0 and varies from $-\infty$ to $\infty$.
+
+$$\begin{aligned}
+&lnOR = log(OR)\\
+\end{aligned}$${#eq-OR}
+
+::: {.callout-note collapse="true"}
+### Click to see how log transformation alters the distribution of the odds ratio
+
+```{r}
+# Blah blah blah
+```
+:::
+
+
+Let's calculate lnOR for our running example data:
+```{r}
+# Calculate Log Odds Ratio (ln OR)
+dat_or <- escalc(measure = "OR", 
+                 ai = ai, bi = bi, 
+                 ci = ci, di = di, 
+                 data = dat_dichotomous)
+dat_or
+```
+
+To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates ($e^{lnOR}$) to convert them back to Odds Ratios. 
+Interpret Odds Ratios as follows:
+
+- **OR = 1:** Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).
+
+- **OR > 1:** Higher odds of the event in the exposed group.
+
+- **OR < 1:** Lower odds of the event in the exposed group.
+
+Let's convert and interpret a lnOR effect of 0.18 in plain english. First, we convert it to back to an Odds Ratio:
+
+```{r}
+
+exp(0.18)
+
+```
+
+An odds ratio of 1.19 means 1.19 higher odds of the outcome in the exposed (treatment) wetland. There are several ways to write this in plain english:
+
+**Can someone double check this?**
+1. Subtract the odds ratio from 1 and multiply by 100 to calculate percentage decrease or increase: $100 * (1 - OR)$. 
+
+> The odds of the outcome occurring were `r abs(round(100*(1 - 1.19), 1))`% higher in the exposed group than the control group
+
+2. Directly state the odds on a percentage scale: ($OR * 100$)
+
+> The odds of the outcome occurring to the exposed group were `r round(1.19 * 100)`% higher than they were for the control group
+
+3. You can also take the inverse of the odds to describe the outcome for the control group: $1/OR$
+
+> The **control group** had `r round(1/1.19, 1)` times higher odds of experiencing the outcome
+
+#### lnOR Sampling Variance
+
+Variance for the OR is calculated on a natural logarithmic scale:
+
+$$
+\begin{aligned}
+&Var(\ln OR)=\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}\\
+\end{aligned}
+$${#eq-lnOR-var}
+
+#### Continuity corrections
+
+As you can see in @eq-lnOR and @eq-lnOR-var, if site or cohort (i.e., $a$, $b$, $c$, or $d$) has a value of 0 (e.g., no individuals died in the control group), the effect size becomes incalculable. To resolve this, researchers apply a standard 0.5 continuity correction to all cells if a 0 is present in any cell for that particular effect size. This is done automatically by `escalc`:
+
+```{r}
+escalc(measure = "OR",
+       ai = 10, bi = 10,
+       ci = 0, di = 5)
+```
+
+---
+
+### log Risk Ratio (lnRR)
+
+The Risk Ratio (RR), or Relative Risk, compares the absolute probability (risk) of an event in the exposed group to the risk in the unexposed group. Each risk is defined as the number of individuals experiencing the outcome divided by the total number of individuals. 
+$$
+\begin{aligned}
+&n_1 = a + b\\
+&n_2 = c + d\\
+&RR=\frac{a/n_1}{c/n_2} \\
+\end{aligned}
+$${#eq-RR}
+
+
+While interpreted similarly to the OR, the RR evaluates absolute probability. For common events in a population, the RR is mathematically capped; it cannot exceed $1/CGR$ (Comparator Group Risk). 
+**^ Unclear. Kyle?**
+
+As with OR, for meta-analysis RR is log transformed to approximate normality and to be centered on 0.
+$$
+lnRR = log(RR) \\
+$${#eq-lnRR}
+
+
+Let's calculate lnRR for our dataset:
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Calculate Log Risk Ratio (ln RR) utilizing the established dataset
+dat_rr <- escalc(measure = "RR", ai = ai, bi = bi, ci = ci, di = di, data = dat_dichotomous)
+dat_rr
+```
+
+To interpret these effect sizes (and the final model estimates), you first convert lnRR to RR by exponentiating ($e^lnRR$):
+
+```{r}
+exp(0.405)
+```
+
+Thus an lnRR of $0.405$ is equivalent to an RR of $1.499$. 
+
+Interpret RR as follows:
+
+- **RR = 1:** Equal risk (or probability) between the comparison groups (e.g., a stressor has no effect on overall mortality risk).
+
+- **RR > 1:** Higher risk (or probability) of the event in the exposed group.
+
+- **RR < 1:** Lower risk (or probability) of the event in the exposed group.
+
+In plain english, you can write an RR of ~1.50 as:
+
+1. As with lnOR, you can subtract RR from 1 and multiply by 100 ($100 * (1 - RR)$). This is called the [Relative Risk Reduction](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-15#section-15-4).
+
+> The outcome is 50% *more likely* in the exposure group than the control group.
+
+2. You can also report RR directly, which is easiest to interpret than OR. 
+
+> The exposure group was 1.50 times as likely to experience the outcome than the control group
+
+#### lnRR Sampling Variance
+
+Like lnOR, lnRR variance is calculated on the log scale:
+
+$$Var(\ln RR)=\frac{1}{a}-\frac{1}{a+b}+\frac{1}{c}-\frac{1}{c+d}$$
+
+#### Continuity correction
+lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
+
+
+
+:::callout-important
+#### Defining the Target Event
+
+You must rigorously define your target "event". It can be easy to accidentally swap **success** with **failure** or **fledged** with **failed**. Switching the target (analyzing non-events instead of events) changes your metrics differently:
+
+<!-- - **RD:** The sign flips (identical magnitude, opposite direction). -->
+
+- **OR:** The new estimate becomes the exact reciprocal ($1/x$).
+
+- **RR:** The estimate, its precision, and statistical significance all change dramatically---which is a [troubling](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3) mathematical property of RR.
+
+*Best practice:* Define the less common event as the target event to minimize mathematical errors and inter-study heterogeneity. Be sure to change your column names to be informative and to reduce data input errors. We recommend color-coding your columns in Excel to further reduce potential confusion.
+:::
+
+# When to use lnOR or lnRR
+
+Some consider RR to be easier to interpret than OR. However, unlike lnOR, lnRR is a bounded effect size, leading to mathematical properties that make it less preferred to lnOR. 
+
+Blah blah blah.
+
+
+:::callout-note
+#### Rare events
+**From Cochrane: Summarize!**
+https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3
+"At event rates below 1% the Peto one-step odds ratio method was found to be the least biased and most powerful method, and provided the best confidence interval coverage, provided there was no substantial imbalance between treatment and comparator group sizes within studies, and treatment effects were not exceptionally large. This finding was consistently observed across three different meta-analytical scenarios, and was also observed by Sweeting and colleagues (Sweeting et al 2004).
+
+This finding was noted despite the method producing only an approximation to the odds ratio. For very large effects (e.g. risk ratio=0.2) when the approximation is known to be poor, treatment effects were under-estimated, but the Peto method still had the best performance of all the methods considered for event risks of 1 in 1000, and the bias was never more than 6% of the comparator group risk.
+
+In other circumstances (i.e. event risks above 1%, very large effects at event risks around 1%, and meta-analyses where many studies were substantially imbalanced) the best performing methods were the Mantel-Haenszel odds ratio without zero-cell corrections, logistic regression and an exact method. None of these methods is available in RevMan.
+
+Methods that should be avoided with rare events are the inverse-variance methods (including the random-effects DerSimonian and Laird method) (Efthimiou 2018). These directly incorporate the study’s variance in the estimation of its contribution to the meta-analysis, but these are usually based on a large-sample variance approximation, which was not intended for use with rare events. We would suggest that incorporation of heterogeneity into an estimate of a treatment effect should be a secondary consideration when attempting to produce estimates of effects from sparse data – the primary concern is to discern whether there is any signal of an effect in the data."
+
+Peto's method in `escalc` is `measure="PETO"`
+:::
+
+
+:::callout-note
+##### Paired or longitudinal outcome data
+
+Is this provided by the matched pairs contingency tables in `escalc`? If so, can they be compared to unpaired estimators or does the entire meta-analysis need to focus on these alone?
+
+:::
+
+
+### Applied Ecological Examples: Matching the Effect Size to What Your Design Provides
+
+The effect size you can report is determined first by what your design allows you to estimate (the OR when only odds are available), and second by how the result will be used (RR for comparing effects across studies; RD for judging impact in a specific system).
+
+**Example 1** 
+
+You cannot calculate the proportion of each group that experienced the event → OR only
+
+Example: Testing whether large horns deter bird predation in beetles. Researchers collect the remains of the killed beetles (cases) and sample living beetles from the same area (controls), then compare how often the large-horn phenotype occurs in each group.
+
+Why is OR needed? 
+
+As sampling is by outcome, the proportion of killed beetles in the dataset is set by the researcher, not by the true predation rate. With no denominator for the population at risk, RR and RD cannot be estimated. The OR can be estimated because it is the same whether sampling is by outcome or by exposure.
+
+**I'm not following this Kyle**
+
+**Example 2**
+
+You can calculate the proportion of each group that experienced the event, and want to say how many times higher or lower it is → RR
+
+Example: A two-year field experiment tracking 1,000 oak seedlings inside deer exclosures and 1,000 in adjacent open plots, with mortality as the target event.
+
+**Why is RR preferred?**
+
+All seedlings are counted at planting, so mortality risk is observed directly in each treatment. The RR gives the proportional change in mortality (e.g., “exclosures reduce mortality risk by 60%”) and is comparable across studies. Because mortality is common in open plots (~35%), the OR would be much smaller than the RR and, if reported as a relative risk, would overstate the effect of exclosures.
+
+**Example 3**
+
+You can calculate the proportion of each group that experienced the event, and want to say how many more or fewer event occurred  →  RD alongside RR
+
+Example: Comparing colonisation by a specialist butterfly between isolated habitat fragments and fragments linked by a corridor: 20% of isolated patches and 35% of connected patches are colonised over the study period. 
+
+**Why is RD needed (alongside RR)?**
+
+The RR (1.75) shows that corridors increase the probability of colonisation by 75% relative to isolated patches. The RD (0.15) expresses the same results as an absolute change: 15 additional patches colonised per 100, or roughly serve corridors required for each additional colonisation (NNM ≈ 6.7). Because an RR of 1.75 would correspond to a much smaller absolute gain at a lower baseline (e.g., 3 additional patches per 100 if only 4% of isolated patches were colonised), the RD is the measure needed to judge whether corridor construction justifies its cost.
+
+### Comparing odds ratio, risk ratio and risk difference
+
+**Shouldn't one be used with rare outcomes and the other with more common outcomes?**
+
+| Effect size | What it compares | Scale | Main strength | Main limitation |
+|---|---|---|---|---|
+| **OR** | Odds between groups | Relative | Useful for case-control studies and logistic regression | Less intuitive and can exaggerate relative effects for common events |
+| **RR** | Probability between groups | Relative | Direct and intuitive interpretation of relative risk | Requires known risks and depends on baseline risk |
+| **RD** | Difference in probability | Absolute | Directly communicates the absolute ecological impact | Less comparable across populations with very different baseline risks |
+
+The relationship between these measures can be summarised simply:
+
+- **OR vs. RR:** Both describe relative effects, but OR is based on odds and RR is based on probability. They are approximately equivalent only when the outcome is rare.
+- **RR vs. RD:** Both use probability, but RR describes proportional change while RD describes the actual change in probability.
+- **OR vs. RD:** OR describes relative change on an odds scale, whereas RD describes absolute change. The same OR can produce very different RDs depending on baseline risk.
+
+# Outtakes
+
+### Risk Difference (RD)
+**I don't think RD is recommended for meta-analysis**
+There is an additional effect size for this type of data that can be useful as a compliment to lnRR or lnOR. The Risk Difference (RD), or absolute risk reduction, measures the exact difference in observed risk between the experimental and control groups. This metric is ideal for weighing conservation trade-offs between a management intervention's ecological benefits and its implementation costs.
+
+$$
+\begin{aligned}
+n_1 = a + b
+n_2 = c + d
+&RD=\frac{a}{n_1}-\frac{c}{n_2}
+\end{aligned}
+$${#eq-RD}
+
+Interpret the statistical output as follows:
+
+- **RD = 0:** Equal risk between the comparison groups (the exposure or intervention has no absolute effect on risk).
+
+- **RD > 0:** Higher absolute risk of the event in the exposed group.
+
+- **RD < 0:** Lower absolute risk of the event in the exposed group (representing absolute risk reduction).
+
+#### RD Sampling Variance
+
+Unlike the OR and RR, the Risk Difference is measured on an absolute scale, so its variance is calculated directly on the raw scale rather than a logarithmic scale:
+
+$$Var(RD)=\frac{a \times b}{(a+b)^3}+\frac{c \times d}{(c+d)^3}$$
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Calculate Log Risk Difference (lnRD) utilizing the established dataset
+dat_rd <- escalc(measure = "RD", 
+                 ai = ai, bi = bi, 
+                 ci = ci, di = di, 
+                 data = dat_dichotomous)
+
+```

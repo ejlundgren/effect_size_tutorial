@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="dcterms.date" content="2026-09-08">
+<title>Effect Sizes for Dichotomous Data: Assumptions and Interpretation – A user’s guide to effect sizes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./icons/temp_logo.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-61b838042b633b16d416a2b6f0e5420d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="styles.css">
+</head>
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>On this Page</strong></h2>
+   
+  <ul>
+<li>
+<a href="#log-odds-ratio-or" id="toc-log-odds-ratio-or" class="nav-link active" data-scroll-target="#log-odds-ratio-or">log Odds Ratio (OR)</a>
+  <ul>
+<li><a href="#lnor-sampling-variance" id="toc-lnor-sampling-variance" class="nav-link" data-scroll-target="#lnor-sampling-variance">lnOR Sampling Variance</a></li>
+  <li><a href="#continuity-corrections" id="toc-continuity-corrections" class="nav-link" data-scroll-target="#continuity-corrections">Continuity corrections</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#log-risk-ratio-lnrr" id="toc-log-risk-ratio-lnrr" class="nav-link" data-scroll-target="#log-risk-ratio-lnrr">log Risk Ratio (lnRR)</a>
+  <ul>
+<li><a href="#lnrr-sampling-variance" id="toc-lnrr-sampling-variance" class="nav-link" data-scroll-target="#lnrr-sampling-variance">lnRR Sampling Variance</a></li>
+  <li><a href="#continuity-correction" id="toc-continuity-correction" class="nav-link" data-scroll-target="#continuity-correction">Continuity correction</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#when-to-use-lnor-or-lnrr" id="toc-when-to-use-lnor-or-lnrr" class="nav-link" data-scroll-target="#when-to-use-lnor-or-lnrr">When to use lnOR or lnRR</a>
+  <ul>
+<li><a href="#applied-ecological-examples-matching-the-effect-size-to-what-your-design-provides" id="toc-applied-ecological-examples-matching-the-effect-size-to-what-your-design-provides" class="nav-link" data-scroll-target="#applied-ecological-examples-matching-the-effect-size-to-what-your-design-provides">Applied Ecological Examples: Matching the Effect Size to What Your Design Provides</a></li>
+  <li><a href="#comparing-odds-ratio-risk-ratio-and-risk-difference" id="toc-comparing-odds-ratio-risk-ratio-and-risk-difference" class="nav-link" data-scroll-target="#comparing-odds-ratio-risk-ratio-and-risk-difference">Comparing odds ratio, risk ratio and risk difference</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#outtakes" id="toc-outtakes" class="nav-link" data-scroll-target="#outtakes">Outtakes</a>
+  <ul>
+<li>
+<a href="#risk-difference-rd" id="toc-risk-difference-rd" class="nav-link" data-scroll-target="#risk-difference-rd">Risk Difference (RD)</a>
+  <ul>
+<li><a href="#rd-sampling-variance" id="toc-rd-sampling-variance" class="nav-link" data-scroll-target="#rd-sampling-variance">RD Sampling Variance</a></li>
+  </ul>
+</li>
+  </ul>
+</li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Effect Sizes for Dichotomous Data: Assumptions and Interpretation</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Odds Ratio, Risk Ratio, and Risk Difference</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 8, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header><p>Sometimes the world is just black and white. Individuals live or die. Organisms are present or absent. Vegetation plots burn or don’t burn.</p>
+<p>Calculating dichotomous effect sizes requires organizing frequency data into a standard 2×2 contingency table. In ecology, this often compares an exposed or managed group to a control group across a binary outcome (e.g., mortality vs.&nbsp;survival, or presence vs.&nbsp;absence):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 35%">
+<col style="width: 30%">
+<col style="width: 26%">
+<col style="width: 7%">
+</colgroup>
+<thead><tr class="header">
+<th></th>
+<th><strong>Target Event (e.g., Mortality)</strong></th>
+<th><strong>Non-Event (e.g., Survival)</strong></th>
+<th><strong>Total</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Exposed (e.g., Pollutant / Stressor)</strong></td>
+<td>a</td>
+<td>b</td>
+<td>a + b</td>
+</tr>
+<tr class="even">
+<td><strong>Control (e.g., Ambient Conditions)</strong></td>
+<td>c</td>
+<td>d</td>
+<td>c + d</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s create a running example that we’ll use throughout:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Define dataset representing a 2x2 table for amphibian chytrid infection across two wetlands</span></span>
+<span><span class="va">dat_dichotomous</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  site <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Wetland A"</span>, <span class="st">"Wetland B"</span><span class="op">)</span>,</span>
+<span>  ai <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">20</span><span class="op">)</span>, <span class="co"># Infected in exposed (warmed mesocosm)</span></span>
+<span>  bi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">85</span>, <span class="fl">30</span><span class="op">)</span>, <span class="co"># Uninfected in exposed (warmed mesocosm)</span></span>
+<span>  ci <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">15</span><span class="op">)</span>, <span class="co"># Infected in control (ambient)</span></span>
+<span>  di <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">90</span>, <span class="fl">35</span><span class="op">)</span>  <span class="co"># Uninfected in control (ambient)</span></span>
+<span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="log-odds-ratio-or" class="level3"><h3 class="anchored" data-anchor-id="log-odds-ratio-or">log Odds Ratio (OR)</h3>
+<p>The Odds Ratio (OR) compares the odds of an ecological event happening in a treatment or exposed group to the odds of it happening in a control group. Odds measure the probability of an event happening versus not happening (ranging from 0 to infinity).</p>
+<p><span id="eq-OR"><span class="math display">\[\begin{aligned}
+&amp;OR=\frac{a \times d}{b \times c} \\
+\end{aligned} \tag{1}\]</span></span></p>
+<p>Analyzing OR directly in a meta-analysis is not recommended because the values are bounded by 0 and do not approximate normality. For that reason, we log transform it so that it centers on 0 and varies from <span class="math inline">\(-\infty\)</span> to <span class="math inline">\(\infty\)</span>.</p>
+<p><span id="eq-OR"><span class="math display">\[\begin{aligned}
+&amp;lnOR = log(OR)\\
+\end{aligned} \tag{2}\]</span></span></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Click to see how log transformation alters the distribution of the odds ratio
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Blah blah blah</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+<p>Let’s calculate lnOR for our running example data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Calculate Log Odds Ratio (ln OR)</span></span>
+<span><span class="va">dat_or</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"OR"</span>, </span>
+<span>                 ai <span class="op">=</span> <span class="va">ai</span>, bi <span class="op">=</span> <span class="va">bi</span>, </span>
+<span>                 ci <span class="op">=</span> <span class="va">ci</span>, di <span class="op">=</span> <span class="va">di</span>, </span>
+<span>                 data <span class="op">=</span> <span class="va">dat_dichotomous</span><span class="op">)</span></span>
+<span><span class="va">dat_or</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+       site ai bi ci di     yi     vi 
+1 Wetland A 15 85 10 90 0.4626 0.1895 
+2 Wetland B 20 30 15 35 0.4418 0.1786 </code></pre>
+</div>
+</div>
+<p>To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates (<span class="math inline">\(e^{lnOR}\)</span>) to convert them back to Odds Ratios. Interpret Odds Ratios as follows:</p>
+<ul>
+<li><p><strong>OR = 1:</strong> Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).</p></li>
+<li><p><strong>OR &gt; 1:</strong> Higher odds of the event in the exposed group.</p></li>
+<li><p><strong>OR &lt; 1:</strong> Lower odds of the event in the exposed group.</p></li>
+</ul>
+<p>Let’s convert and interpret a lnOR effect of 0.18 in plain english. First, we convert it to back to an Odds Ratio:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fl">0.18</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.197217</code></pre>
+</div>
+</div>
+<p>An odds ratio of 1.19 means 1.19 higher odds of the outcome in the exposed (treatment) wetland. There are several ways to write this in plain english:</p>
+<p><strong>Can someone double check this?</strong> 1. Subtract the odds ratio from 1 and multiply by 100 to calculate percentage decrease or increase: <span class="math inline">\(100 * (1 - OR)\)</span>.</p>
+<blockquote class="blockquote">
+<p>The odds of the outcome occurring were 19% higher in the exposed group than the control group</p>
+</blockquote>
+<ol start="2" type="1">
+<li>Directly state the odds on a percentage scale: (<span class="math inline">\(OR * 100\)</span>)</li>
+</ol>
+<blockquote class="blockquote">
+<p>The odds of the outcome occurring to the exposed group were 119% higher than they were for the control group</p>
+</blockquote>
+<ol start="3" type="1">
+<li>You can also take the inverse of the odds to describe the outcome for the control group: <span class="math inline">\(1/OR\)</span>
+</li>
+</ol>
+<blockquote class="blockquote">
+<p>The <strong>control group</strong> had 0.8 times higher odds of experiencing the outcome</p>
+</blockquote>
+<section id="lnor-sampling-variance" class="level4"><h4 class="anchored" data-anchor-id="lnor-sampling-variance">lnOR Sampling Variance</h4>
+<p>Variance for the OR is calculated on a natural logarithmic scale:</p>
+<p><span id="eq-lnOR-var"><span class="math display">\[
+\begin{aligned}
+&amp;Var(\ln OR)=\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}\\
+\end{aligned}
+\tag{3}\]</span></span></p>
+</section><section id="continuity-corrections" class="level4"><h4 class="anchored" data-anchor-id="continuity-corrections">Continuity corrections</h4>
+<p>As you can see in <strong>?@eq-lnOR</strong> and <a href="#eq-lnOR-var" class="quarto-xref">Equation&nbsp;3</a>, if site or cohort (i.e., <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, <span class="math inline">\(c\)</span>, or <span class="math inline">\(d\)</span>) has a value of 0 (e.g., no individuals died in the control group), the effect size becomes incalculable. To resolve this, researchers apply a standard 0.5 continuity correction to all cells if a 0 is present in any cell for that particular effect size. This is done automatically by <code>escalc</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"OR"</span>,</span>
+<span>       ai <span class="op">=</span> <span class="fl">10</span>, bi <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>       ci <span class="op">=</span> <span class="fl">0</span>, di <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      yi     vi 
+1 2.3979 2.3723 </code></pre>
+</div>
+</div>
+<hr></section></section><section id="log-risk-ratio-lnrr" class="level3"><h3 class="anchored" data-anchor-id="log-risk-ratio-lnrr">log Risk Ratio (lnRR)</h3>
+<p>The Risk Ratio (RR), or Relative Risk, compares the absolute probability (risk) of an event in the exposed group to the risk in the unexposed group. Each risk is defined as the number of individuals experiencing the outcome divided by the total number of individuals. <span id="eq-RR"><span class="math display">\[
+\begin{aligned}
+&amp;n_1 = a + b\\
+&amp;n_2 = c + d\\
+&amp;RR=\frac{a/n_1}{c/n_2} \\
+\end{aligned}
+\tag{4}\]</span></span></p>
+<p>While interpreted similarly to the OR, the RR evaluates absolute probability. For common events in a population, the RR is mathematically capped; it cannot exceed <span class="math inline">\(1/CGR\)</span> (Comparator Group Risk). <strong>^ Unclear. Kyle?</strong></p>
+<p>As with OR, for meta-analysis RR is log transformed to approximate normality and to be centered on 0. <span id="eq-lnRR"><span class="math display">\[
+lnRR = log(RR) \\
+\tag{5}\]</span></span></p>
+<p>Let’s calculate lnRR for our dataset:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Calculate Log Risk Ratio (ln RR) utilizing the established dataset</span></span>
+<span><span class="va">dat_rr</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"RR"</span>, ai <span class="op">=</span> <span class="va">ai</span>, bi <span class="op">=</span> <span class="va">bi</span>, ci <span class="op">=</span> <span class="va">ci</span>, di <span class="op">=</span> <span class="va">di</span>, data <span class="op">=</span> <span class="va">dat_dichotomous</span><span class="op">)</span></span>
+<span><span class="va">dat_rr</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+       site ai bi ci di     yi     vi 
+1 Wetland A 15 85 10 90 0.4055 0.1467 
+2 Wetland B 20 30 15 35 0.2877 0.0767 </code></pre>
+</div>
+</div>
+<p>To interpret these effect sizes (and the final model estimates), you first convert lnRR to RR by exponentiating (<span class="math inline">\(e^lnRR\)</span>):</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fl">0.405</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.499303</code></pre>
+</div>
+</div>
+<p>Thus an lnRR of <span class="math inline">\(0.405\)</span> is equivalent to an RR of <span class="math inline">\(1.499\)</span>.</p>
+<p>Interpret RR as follows:</p>
+<ul>
+<li><p><strong>RR = 1:</strong> Equal risk (or probability) between the comparison groups (e.g., a stressor has no effect on overall mortality risk).</p></li>
+<li><p><strong>RR &gt; 1:</strong> Higher risk (or probability) of the event in the exposed group.</p></li>
+<li><p><strong>RR &lt; 1:</strong> Lower risk (or probability) of the event in the exposed group.</p></li>
+</ul>
+<p>In plain english, you can write an RR of ~1.50 as:</p>
+<ol type="1">
+<li>As with lnOR, you can subtract RR from 1 and multiply by 100 (<span class="math inline">\(100 * (1 - RR)\)</span>). This is called the <a href="https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-15#section-15-4">Relative Risk Reduction</a>.</li>
+</ol>
+<blockquote class="blockquote">
+<p>The outcome is 50% <em>more likely</em> in the exposure group than the control group.</p>
+</blockquote>
+<ol start="2" type="1">
+<li>You can also report RR directly, which is easiest to interpret than OR.</li>
+</ol>
+<blockquote class="blockquote">
+<p>The exposure group was 1.50 times as likely to experience the outcome than the control group</p>
+</blockquote>
+<section id="lnrr-sampling-variance" class="level4"><h4 class="anchored" data-anchor-id="lnrr-sampling-variance">lnRR Sampling Variance</h4>
+<p>Like lnOR, lnRR variance is calculated on the log scale:</p>
+<p><span class="math display">\[Var(\ln RR)=\frac{1}{a}-\frac{1}{a+b}+\frac{1}{c}-\frac{1}{c+d}\]</span></p>
+</section><section id="continuity-correction" class="level4"><h4 class="anchored" data-anchor-id="continuity-correction">Continuity correction</h4>
+<p>lnRR breaks down when <span class="math inline">\(a\)</span> or <span class="math inline">\(c\)</span> equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Defining the Target Event
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You must rigorously define your target “event”. It can be easy to accidentally swap <strong>success</strong> with <strong>failure</strong> or <strong>fledged</strong> with <strong>failed</strong>. Switching the target (analyzing non-events instead of events) changes your metrics differently:</p>
+<!-- - **RD:** The sign flips (identical magnitude, opposite direction). -->
+<ul>
+<li><p><strong>OR:</strong> The new estimate becomes the exact reciprocal (<span class="math inline">\(1/x\)</span>).</p></li>
+<li><p><strong>RR:</strong> The estimate, its precision, and statistical significance all change dramatically—which is a <a href="https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3">troubling</a> mathematical property of RR.</p></li>
+</ul>
+<p><em>Best practice:</em> Define the less common event as the target event to minimize mathematical errors and inter-study heterogeneity. Be sure to change your column names to be informative and to reduce data input errors. We recommend color-coding your columns in Excel to further reduce potential confusion.</p>
+</div>
+</div>
+</section></section><section id="when-to-use-lnor-or-lnrr" class="level1"><h1>When to use lnOR or lnRR</h1>
+<p>Some consider RR to be easier to interpret than OR. However, unlike lnOR, lnRR is a bounded effect size, leading to mathematical properties that make it less preferred to lnOR.</p>
+<p>Blah blah blah.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Rare events
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>From Cochrane: Summarize!</strong> https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3 “At event rates below 1% the Peto one-step odds ratio method was found to be the least biased and most powerful method, and provided the best confidence interval coverage, provided there was no substantial imbalance between treatment and comparator group sizes within studies, and treatment effects were not exceptionally large. This finding was consistently observed across three different meta-analytical scenarios, and was also observed by Sweeting and colleagues (Sweeting et al 2004).</p>
+<p>This finding was noted despite the method producing only an approximation to the odds ratio. For very large effects (e.g.&nbsp;risk ratio=0.2) when the approximation is known to be poor, treatment effects were under-estimated, but the Peto method still had the best performance of all the methods considered for event risks of 1 in 1000, and the bias was never more than 6% of the comparator group risk.</p>
+<p>In other circumstances (i.e.&nbsp;event risks above 1%, very large effects at event risks around 1%, and meta-analyses where many studies were substantially imbalanced) the best performing methods were the Mantel-Haenszel odds ratio without zero-cell corrections, logistic regression and an exact method. None of these methods is available in RevMan.</p>
+<p>Methods that should be avoided with rare events are the inverse-variance methods (including the random-effects DerSimonian and Laird method) (Efthimiou 2018). These directly incorporate the study’s variance in the estimation of its contribution to the meta-analysis, but these are usually based on a large-sample variance approximation, which was not intended for use with rare events. We would suggest that incorporation of heterogeneity into an estimate of a treatment effect should be a secondary consideration when attempting to produce estimates of effects from sparse data – the primary concern is to discern whether there is any signal of an effect in the data.”</p>
+<p>Peto’s method in <code>escalc</code> is <code>measure="PETO"</code></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Paired or longitudinal outcome data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Is this provided by the matched pairs contingency tables in <code>escalc</code>? If so, can they be compared to unpaired estimators or does the entire meta-analysis need to focus on these alone?</p>
+</div>
+</div>
+<section id="applied-ecological-examples-matching-the-effect-size-to-what-your-design-provides" class="level3"><h3 class="anchored" data-anchor-id="applied-ecological-examples-matching-the-effect-size-to-what-your-design-provides">Applied Ecological Examples: Matching the Effect Size to What Your Design Provides</h3>
+<p>The effect size you can report is determined first by what your design allows you to estimate (the OR when only odds are available), and second by how the result will be used (RR for comparing effects across studies; RD for judging impact in a specific system).</p>
+<p><strong>Example 1</strong></p>
+<p>You cannot calculate the proportion of each group that experienced the event → OR only</p>
+<p>Example: Testing whether large horns deter bird predation in beetles. Researchers collect the remains of the killed beetles (cases) and sample living beetles from the same area (controls), then compare how often the large-horn phenotype occurs in each group.</p>
+<p>Why is OR needed?</p>
+<p>As sampling is by outcome, the proportion of killed beetles in the dataset is set by the researcher, not by the true predation rate. With no denominator for the population at risk, RR and RD cannot be estimated. The OR can be estimated because it is the same whether sampling is by outcome or by exposure.</p>
+<p><strong>I’m not following this Kyle</strong></p>
+<p><strong>Example 2</strong></p>
+<p>You can calculate the proportion of each group that experienced the event, and want to say how many times higher or lower it is → RR</p>
+<p>Example: A two-year field experiment tracking 1,000 oak seedlings inside deer exclosures and 1,000 in adjacent open plots, with mortality as the target event.</p>
+<p><strong>Why is RR preferred?</strong></p>
+<p>All seedlings are counted at planting, so mortality risk is observed directly in each treatment. The RR gives the proportional change in mortality (e.g., “exclosures reduce mortality risk by 60%”) and is comparable across studies. Because mortality is common in open plots (~35%), the OR would be much smaller than the RR and, if reported as a relative risk, would overstate the effect of exclosures.</p>
+<p><strong>Example 3</strong></p>
+<p>You can calculate the proportion of each group that experienced the event, and want to say how many more or fewer event occurred → RD alongside RR</p>
+<p>Example: Comparing colonisation by a specialist butterfly between isolated habitat fragments and fragments linked by a corridor: 20% of isolated patches and 35% of connected patches are colonised over the study period.</p>
+<p><strong>Why is RD needed (alongside RR)?</strong></p>
+<p>The RR (1.75) shows that corridors increase the probability of colonisation by 75% relative to isolated patches. The RD (0.15) expresses the same results as an absolute change: 15 additional patches colonised per 100, or roughly serve corridors required for each additional colonisation (NNM ≈ 6.7). Because an RR of 1.75 would correspond to a much smaller absolute gain at a lower baseline (e.g., 3 additional patches per 100 if only 4% of isolated patches were colonised), the RD is the measure needed to judge whether corridor construction justifies its cost.</p>
+</section><section id="comparing-odds-ratio-risk-ratio-and-risk-difference" class="level3"><h3 class="anchored" data-anchor-id="comparing-odds-ratio-risk-ratio-and-risk-difference">Comparing odds ratio, risk ratio and risk difference</h3>
+<p><strong>Shouldn’t one be used with rare outcomes and the other with more common outcomes?</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead><tr class="header">
+<th>Effect size</th>
+<th>What it compares</th>
+<th>Scale</th>
+<th>Main strength</th>
+<th>Main limitation</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>OR</strong></td>
+<td>Odds between groups</td>
+<td>Relative</td>
+<td>Useful for case-control studies and logistic regression</td>
+<td>Less intuitive and can exaggerate relative effects for common events</td>
+</tr>
+<tr class="even">
+<td><strong>RR</strong></td>
+<td>Probability between groups</td>
+<td>Relative</td>
+<td>Direct and intuitive interpretation of relative risk</td>
+<td>Requires known risks and depends on baseline risk</td>
+</tr>
+<tr class="odd">
+<td><strong>RD</strong></td>
+<td>Difference in probability</td>
+<td>Absolute</td>
+<td>Directly communicates the absolute ecological impact</td>
+<td>Less comparable across populations with very different baseline risks</td>
+</tr>
+</tbody>
+</table>
+<p>The relationship between these measures can be summarised simply:</p>
+<ul>
+<li>
+<strong>OR vs.&nbsp;RR:</strong> Both describe relative effects, but OR is based on odds and RR is based on probability. They are approximately equivalent only when the outcome is rare.</li>
+<li>
+<strong>RR vs.&nbsp;RD:</strong> Both use probability, but RR describes proportional change while RD describes the actual change in probability.</li>
+<li>
+<strong>OR vs.&nbsp;RD:</strong> OR describes relative change on an odds scale, whereas RD describes absolute change. The same OR can produce very different RDs depending on baseline risk.</li>
+</ul></section></section><section id="outtakes" class="level1"><h1>Outtakes</h1>
+<section id="risk-difference-rd" class="level3"><h3 class="anchored" data-anchor-id="risk-difference-rd">Risk Difference (RD)</h3>
+<p><strong>I don’t think RD is recommended for meta-analysis</strong> There is an additional effect size for this type of data that can be useful as a compliment to lnRR or lnOR. The Risk Difference (RD), or absolute risk reduction, measures the exact difference in observed risk between the experimental and control groups. This metric is ideal for weighing conservation trade-offs between a management intervention’s ecological benefits and its implementation costs.</p>
+<p><span id="eq-RD"><span class="math display">\[
+\begin{aligned}
+n_1 = a + b
+n_2 = c + d
+&amp;RD=\frac{a}{n_1}-\frac{c}{n_2}
+\end{aligned}
+\tag{6}\]</span></span></p>
+<p>Interpret the statistical output as follows:</p>
+<ul>
+<li><p><strong>RD = 0:</strong> Equal risk between the comparison groups (the exposure or intervention has no absolute effect on risk).</p></li>
+<li><p><strong>RD &gt; 0:</strong> Higher absolute risk of the event in the exposed group.</p></li>
+<li><p><strong>RD &lt; 0:</strong> Lower absolute risk of the event in the exposed group (representing absolute risk reduction).</p></li>
+</ul>
+<section id="rd-sampling-variance" class="level4"><h4 class="anchored" data-anchor-id="rd-sampling-variance">RD Sampling Variance</h4>
+<p>Unlike the OR and RR, the Risk Difference is measured on an absolute scale, so its variance is calculated directly on the raw scale rather than a logarithmic scale:</p>
+<p><span class="math display">\[Var(RD)=\frac{a \times b}{(a+b)^3}+\frac{c \times d}{(c+d)^3}\]</span></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Calculate Log Risk Difference (lnRD) utilizing the established dataset</span></span>
+<span><span class="va">dat_rd</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"RD"</span>, </span>
+<span>                 ai <span class="op">=</span> <span class="va">ai</span>, bi <span class="op">=</span> <span class="va">bi</span>, </span>
+<span>                 ci <span class="op">=</span> <span class="va">ci</span>, di <span class="op">=</span> <span class="va">di</span>, </span>
+<span>                 data <span class="op">=</span> <span class="va">dat_dichotomous</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+
+
+<!-- -->
+
+</section></section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Effect Sizes for Dichotomous Data: Assumptions and Interpretation"</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Odds Ratio, Risk Ratio, and Risk Difference"</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "2026-09-08"</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"metafor"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>Sometimes the world is just black and white. Individuals live or die. Organisms are present or absent. Vegetation plots burn or don't burn.</span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>Calculating dichotomous effect sizes requires organizing frequency data into a standard 2×2 contingency table. In ecology, this often compares an exposed or managed group to a control group across a binary outcome (e.g., mortality vs. survival, or presence vs. absence):</span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-59"><a href="#cb14-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>                                          <span class="pp">|</span> **Target Event (e.g., Mortality)** | **Non-Event (e.g., Survival)** | **Total** <span class="pp">|</span></span>
+<span id="cb14-60"><a href="#cb14-60" aria-hidden="true" tabindex="-1"></a><span class="pp">| ----------------------------------------</span> <span class="pp">| ----------------------------------</span> <span class="pp">| ------------------------------</span> <span class="pp">| ---------</span> <span class="pp">|</span></span>
+<span id="cb14-61"><a href="#cb14-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Exposed (e.g., Pollutant / Stressor)** <span class="pp">|</span> a                                  <span class="pp">|</span> b                              <span class="pp">|</span> a + b     <span class="pp">|</span></span>
+<span id="cb14-62"><a href="#cb14-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Control (e.g., Ambient Conditions)**   <span class="pp">|</span> c                                  <span class="pp">|</span> d                              <span class="pp">|</span> c + d     <span class="pp">|</span></span>
+<span id="cb14-63"><a href="#cb14-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-64"><a href="#cb14-64" aria-hidden="true" tabindex="-1"></a>Let's create a running example that we'll use throughout:</span>
+<span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a><span class="co"># Define dataset representing a 2x2 table for amphibian chytrid infection across two wetlands</span></span>
+<span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a>dat_dichotomous <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">site =</span> <span class="fu">c</span>(<span class="st">"Wetland A"</span>, <span class="st">"Wetland B"</span>),</span>
+<span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">ai =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>), <span class="co"># Infected in exposed (warmed mesocosm)</span></span>
+<span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">bi =</span> <span class="fu">c</span>(<span class="dv">85</span>, <span class="dv">30</span>), <span class="co"># Uninfected in exposed (warmed mesocosm)</span></span>
+<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">15</span>), <span class="co"># Infected in control (ambient)</span></span>
+<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">di =</span> <span class="fu">c</span>(<span class="dv">90</span>, <span class="dv">35</span>)  <span class="co"># Uninfected in control (ambient)</span></span>
+<span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a><span class="fu">### log Odds Ratio (OR)</span></span>
+<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a>The Odds Ratio (OR) compares the odds of an ecological event happening in a treatment or exposed group to the odds of it happening in a control group. Odds measure the probability of an event happening versus not happening (ranging from 0 to infinity).</span>
+<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
+<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a>&amp;OR=\frac{a \times d}{b \times c} <span class="sc">\\</span></span>
+<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a>\end{aligned}$${#eq-OR}</span>
+<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a>Analyzing OR directly in a meta-analysis is not recommended because the values are bounded by 0 and do not approximate normality. For that reason, we log transform it so that it centers on 0 and varies from $-\infty$ to $\infty$.</span>
+<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>$$\begin{aligned}</span>
+<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>&amp;lnOR = log(OR)<span class="sc">\\</span></span>
+<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a>\end{aligned}$${#eq-OR}</span>
+<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true"}</span>
+<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a><span class="fu">### Click to see how log transformation alters the distribution of the odds ratio</span></span>
+<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a><span class="co"># Blah blah blah</span></span>
+<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-105"><a href="#cb14-105" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-106"><a href="#cb14-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-107"><a href="#cb14-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-108"><a href="#cb14-108" aria-hidden="true" tabindex="-1"></a>Let's calculate lnOR for our running example data:</span>
+<span id="cb14-111"><a href="#cb14-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-112"><a href="#cb14-112" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Log Odds Ratio (ln OR)</span></span>
+<span id="cb14-113"><a href="#cb14-113" aria-hidden="true" tabindex="-1"></a>dat_or <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>, </span>
+<span id="cb14-114"><a href="#cb14-114" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, </span>
+<span id="cb14-115"><a href="#cb14-115" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ci =</span> ci, <span class="at">di =</span> di, </span>
+<span id="cb14-116"><a href="#cb14-116" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> dat_dichotomous)</span>
+<span id="cb14-117"><a href="#cb14-117" aria-hidden="true" tabindex="-1"></a>dat_or</span>
+<span id="cb14-118"><a href="#cb14-118" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-119"><a href="#cb14-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-120"><a href="#cb14-120" aria-hidden="true" tabindex="-1"></a>To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates ($e^{lnOR}$) to convert them back to Odds Ratios. </span>
+<span id="cb14-121"><a href="#cb14-121" aria-hidden="true" tabindex="-1"></a>Interpret Odds Ratios as follows:</span>
+<span id="cb14-122"><a href="#cb14-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-123"><a href="#cb14-123" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OR = 1:** Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).</span>
+<span id="cb14-124"><a href="#cb14-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-125"><a href="#cb14-125" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OR &gt; 1:** Higher odds of the event in the exposed group.</span>
+<span id="cb14-126"><a href="#cb14-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-127"><a href="#cb14-127" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OR &lt; 1:** Lower odds of the event in the exposed group.</span>
+<span id="cb14-128"><a href="#cb14-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-129"><a href="#cb14-129" aria-hidden="true" tabindex="-1"></a>Let's convert and interpret a lnOR effect of 0.18 in plain english. First, we convert it to back to an Odds Ratio:</span>
+<span id="cb14-130"><a href="#cb14-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-133"><a href="#cb14-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-134"><a href="#cb14-134" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fl">0.18</span>)</span>
+<span id="cb14-135"><a href="#cb14-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-136"><a href="#cb14-136" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-137"><a href="#cb14-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-138"><a href="#cb14-138" aria-hidden="true" tabindex="-1"></a>An odds ratio of 1.19 means 1.19 higher odds of the outcome in the exposed (treatment) wetland. There are several ways to write this in plain english:</span>
+<span id="cb14-139"><a href="#cb14-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-140"><a href="#cb14-140" aria-hidden="true" tabindex="-1"></a>**Can someone double check this?**</span>
+<span id="cb14-141"><a href="#cb14-141" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Subtract the odds ratio from 1 and multiply by 100 to calculate percentage decrease or increase: $100 * (1 - OR)$. </span>
+<span id="cb14-142"><a href="#cb14-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-143"><a href="#cb14-143" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; The odds of the outcome occurring were </span><span class="in">`r abs(round(100*(1 - 1.19), 1))`</span><span class="at">% higher in the exposed group than the control group</span></span>
+<span id="cb14-144"><a href="#cb14-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-145"><a href="#cb14-145" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Directly state the odds on a percentage scale: ($OR * 100$)</span>
+<span id="cb14-146"><a href="#cb14-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-147"><a href="#cb14-147" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; The odds of the outcome occurring to the exposed group were </span><span class="in">`r round(1.19 * 100)`</span><span class="at">% higher than they were for the control group</span></span>
+<span id="cb14-148"><a href="#cb14-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-149"><a href="#cb14-149" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>You can also take the inverse of the odds to describe the outcome for the control group: $1/OR$</span>
+<span id="cb14-150"><a href="#cb14-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-151"><a href="#cb14-151" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; The **control group** had </span><span class="in">`r round(1/1.19, 1)`</span><span class="at"> times higher odds of experiencing the outcome</span></span>
+<span id="cb14-152"><a href="#cb14-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-153"><a href="#cb14-153" aria-hidden="true" tabindex="-1"></a><span class="fu">#### lnOR Sampling Variance</span></span>
+<span id="cb14-154"><a href="#cb14-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-155"><a href="#cb14-155" aria-hidden="true" tabindex="-1"></a>Variance for the OR is calculated on a natural logarithmic scale:</span>
+<span id="cb14-156"><a href="#cb14-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-157"><a href="#cb14-157" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-158"><a href="#cb14-158" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb14-159"><a href="#cb14-159" aria-hidden="true" tabindex="-1"></a>&amp;Var(\ln OR)=\frac{1}{a}+\frac{1}{b}+\frac{1}{c}+\frac{1}{d}<span class="sc">\\</span></span>
+<span id="cb14-160"><a href="#cb14-160" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb14-161"><a href="#cb14-161" aria-hidden="true" tabindex="-1"></a>$${#eq-lnOR-var}</span>
+<span id="cb14-162"><a href="#cb14-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-163"><a href="#cb14-163" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Continuity corrections</span></span>
+<span id="cb14-164"><a href="#cb14-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-165"><a href="#cb14-165" aria-hidden="true" tabindex="-1"></a>As you can see in @eq-lnOR and @eq-lnOR-var, if site or cohort (i.e., $a$, $b$, $c$, or $d$) has a value of 0 (e.g., no individuals died in the control group), the effect size becomes incalculable. To resolve this, researchers apply a standard 0.5 continuity correction to all cells if a 0 is present in any cell for that particular effect size. This is done automatically by <span class="in">`escalc`</span>:</span>
+<span id="cb14-166"><a href="#cb14-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-169"><a href="#cb14-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-170"><a href="#cb14-170" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb14-171"><a href="#cb14-171" aria-hidden="true" tabindex="-1"></a>       <span class="at">ai =</span> <span class="dv">10</span>, <span class="at">bi =</span> <span class="dv">10</span>,</span>
+<span id="cb14-172"><a href="#cb14-172" aria-hidden="true" tabindex="-1"></a>       <span class="at">ci =</span> <span class="dv">0</span>, <span class="at">di =</span> <span class="dv">5</span>)</span>
+<span id="cb14-173"><a href="#cb14-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-174"><a href="#cb14-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-175"><a href="#cb14-175" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb14-176"><a href="#cb14-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-177"><a href="#cb14-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### log Risk Ratio (lnRR)</span></span>
+<span id="cb14-178"><a href="#cb14-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-179"><a href="#cb14-179" aria-hidden="true" tabindex="-1"></a>The Risk Ratio (RR), or Relative Risk, compares the absolute probability (risk) of an event in the exposed group to the risk in the unexposed group. Each risk is defined as the number of individuals experiencing the outcome divided by the total number of individuals. </span>
+<span id="cb14-180"><a href="#cb14-180" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-181"><a href="#cb14-181" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb14-182"><a href="#cb14-182" aria-hidden="true" tabindex="-1"></a>&amp;n_1 = a + b<span class="sc">\\</span></span>
+<span id="cb14-183"><a href="#cb14-183" aria-hidden="true" tabindex="-1"></a>&amp;n_2 = c + d<span class="sc">\\</span></span>
+<span id="cb14-184"><a href="#cb14-184" aria-hidden="true" tabindex="-1"></a>&amp;RR=\frac{a/n_1}{c/n_2} <span class="sc">\\</span></span>
+<span id="cb14-185"><a href="#cb14-185" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb14-186"><a href="#cb14-186" aria-hidden="true" tabindex="-1"></a>$${#eq-RR}</span>
+<span id="cb14-187"><a href="#cb14-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-188"><a href="#cb14-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-189"><a href="#cb14-189" aria-hidden="true" tabindex="-1"></a>While interpreted similarly to the OR, the RR evaluates absolute probability. For common events in a population, the RR is mathematically capped; it cannot exceed $1/CGR$ (Comparator Group Risk). </span>
+<span id="cb14-190"><a href="#cb14-190" aria-hidden="true" tabindex="-1"></a>**^ Unclear. Kyle?**</span>
+<span id="cb14-191"><a href="#cb14-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-192"><a href="#cb14-192" aria-hidden="true" tabindex="-1"></a>As with OR, for meta-analysis RR is log transformed to approximate normality and to be centered on 0.</span>
+<span id="cb14-193"><a href="#cb14-193" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-194"><a href="#cb14-194" aria-hidden="true" tabindex="-1"></a>lnRR = log(RR) <span class="sc">\\</span></span>
+<span id="cb14-195"><a href="#cb14-195" aria-hidden="true" tabindex="-1"></a>$${#eq-lnRR}</span>
+<span id="cb14-196"><a href="#cb14-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-197"><a href="#cb14-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-198"><a href="#cb14-198" aria-hidden="true" tabindex="-1"></a>Let's calculate lnRR for our dataset:</span>
+<span id="cb14-199"><a href="#cb14-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-202"><a href="#cb14-202" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-203"><a href="#cb14-203" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb14-204"><a href="#cb14-204" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-205"><a href="#cb14-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-206"><a href="#cb14-206" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Log Risk Ratio (ln RR) utilizing the established dataset</span></span>
+<span id="cb14-207"><a href="#cb14-207" aria-hidden="true" tabindex="-1"></a>dat_rr <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"RR"</span>, <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, <span class="at">ci =</span> ci, <span class="at">di =</span> di, <span class="at">data =</span> dat_dichotomous)</span>
+<span id="cb14-208"><a href="#cb14-208" aria-hidden="true" tabindex="-1"></a>dat_rr</span>
+<span id="cb14-209"><a href="#cb14-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-210"><a href="#cb14-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-211"><a href="#cb14-211" aria-hidden="true" tabindex="-1"></a>To interpret these effect sizes (and the final model estimates), you first convert lnRR to RR by exponentiating ($e^lnRR$):</span>
+<span id="cb14-212"><a href="#cb14-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-215"><a href="#cb14-215" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-216"><a href="#cb14-216" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fl">0.405</span>)</span>
+<span id="cb14-217"><a href="#cb14-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb14-218"><a href="#cb14-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-219"><a href="#cb14-219" aria-hidden="true" tabindex="-1"></a>Thus an lnRR of $0.405$ is equivalent to an RR of $1.499$. </span>
+<span id="cb14-220"><a href="#cb14-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-221"><a href="#cb14-221" aria-hidden="true" tabindex="-1"></a>Interpret RR as follows:</span>
+<span id="cb14-222"><a href="#cb14-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-223"><a href="#cb14-223" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RR = 1:** Equal risk (or probability) between the comparison groups (e.g., a stressor has no effect on overall mortality risk).</span>
+<span id="cb14-224"><a href="#cb14-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-225"><a href="#cb14-225" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RR &gt; 1:** Higher risk (or probability) of the event in the exposed group.</span>
+<span id="cb14-226"><a href="#cb14-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-227"><a href="#cb14-227" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RR &lt; 1:** Lower risk (or probability) of the event in the exposed group.</span>
+<span id="cb14-228"><a href="#cb14-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-229"><a href="#cb14-229" aria-hidden="true" tabindex="-1"></a>In plain english, you can write an RR of ~1.50 as:</span>
+<span id="cb14-230"><a href="#cb14-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-231"><a href="#cb14-231" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>As with lnOR, you can subtract RR from 1 and multiply by 100 ($100 * (1 - RR)$). This is called the <span class="co">[</span><span class="ot">Relative Risk Reduction</span><span class="co">](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-15#section-15-4)</span>.</span>
+<span id="cb14-232"><a href="#cb14-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-233"><a href="#cb14-233" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; The outcome is 50% *more likely* in the exposure group than the control group.</span></span>
+<span id="cb14-234"><a href="#cb14-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-235"><a href="#cb14-235" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>You can also report RR directly, which is easiest to interpret than OR. </span>
+<span id="cb14-236"><a href="#cb14-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-237"><a href="#cb14-237" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; The exposure group was 1.50 times as likely to experience the outcome than the control group</span></span>
+<span id="cb14-238"><a href="#cb14-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-239"><a href="#cb14-239" aria-hidden="true" tabindex="-1"></a><span class="fu">#### lnRR Sampling Variance</span></span>
+<span id="cb14-240"><a href="#cb14-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-241"><a href="#cb14-241" aria-hidden="true" tabindex="-1"></a>Like lnOR, lnRR variance is calculated on the log scale:</span>
+<span id="cb14-242"><a href="#cb14-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-243"><a href="#cb14-243" aria-hidden="true" tabindex="-1"></a>$$Var(\ln RR)=\frac{1}{a}-\frac{1}{a+b}+\frac{1}{c}-\frac{1}{c+d}$$</span>
+<span id="cb14-244"><a href="#cb14-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-245"><a href="#cb14-245" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Continuity correction</span></span>
+<span id="cb14-246"><a href="#cb14-246" aria-hidden="true" tabindex="-1"></a>lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.</span>
+<span id="cb14-247"><a href="#cb14-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-248"><a href="#cb14-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-249"><a href="#cb14-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-250"><a href="#cb14-250" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb14-251"><a href="#cb14-251" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Defining the Target Event</span></span>
+<span id="cb14-252"><a href="#cb14-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-253"><a href="#cb14-253" aria-hidden="true" tabindex="-1"></a>You must rigorously define your target "event". It can be easy to accidentally swap **success** with **failure** or **fledged** with **failed**. Switching the target (analyzing non-events instead of events) changes your metrics differently:</span>
+<span id="cb14-254"><a href="#cb14-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-255"><a href="#cb14-255" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- - **RD:** The sign flips (identical magnitude, opposite direction). --&gt;</span></span>
+<span id="cb14-256"><a href="#cb14-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-257"><a href="#cb14-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OR:** The new estimate becomes the exact reciprocal ($1/x$).</span>
+<span id="cb14-258"><a href="#cb14-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-259"><a href="#cb14-259" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RR:** The estimate, its precision, and statistical significance all change dramatically---which is a <span class="co">[</span><span class="ot">troubling</span><span class="co">](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3)</span> mathematical property of RR.</span>
+<span id="cb14-260"><a href="#cb14-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-261"><a href="#cb14-261" aria-hidden="true" tabindex="-1"></a>*Best practice:* Define the less common event as the target event to minimize mathematical errors and inter-study heterogeneity. Be sure to change your column names to be informative and to reduce data input errors. We recommend color-coding your columns in Excel to further reduce potential confusion.</span>
+<span id="cb14-262"><a href="#cb14-262" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-263"><a href="#cb14-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-264"><a href="#cb14-264" aria-hidden="true" tabindex="-1"></a><span class="fu"># When to use lnOR or lnRR</span></span>
+<span id="cb14-265"><a href="#cb14-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-266"><a href="#cb14-266" aria-hidden="true" tabindex="-1"></a>Some consider RR to be easier to interpret than OR. However, unlike lnOR, lnRR is a bounded effect size, leading to mathematical properties that make it less preferred to lnOR. </span>
+<span id="cb14-267"><a href="#cb14-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-268"><a href="#cb14-268" aria-hidden="true" tabindex="-1"></a>Blah blah blah.</span>
+<span id="cb14-269"><a href="#cb14-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-270"><a href="#cb14-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-271"><a href="#cb14-271" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb14-272"><a href="#cb14-272" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Rare events</span></span>
+<span id="cb14-273"><a href="#cb14-273" aria-hidden="true" tabindex="-1"></a>**From Cochrane: Summarize!**</span>
+<span id="cb14-274"><a href="#cb14-274" aria-hidden="true" tabindex="-1"></a>https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3</span>
+<span id="cb14-275"><a href="#cb14-275" aria-hidden="true" tabindex="-1"></a>"At event rates below 1% the Peto one-step odds ratio method was found to be the least biased and most powerful method, and provided the best confidence interval coverage, provided there was no substantial imbalance between treatment and comparator group sizes within studies, and treatment effects were not exceptionally large. This finding was consistently observed across three different meta-analytical scenarios, and was also observed by Sweeting and colleagues (Sweeting et al 2004).</span>
+<span id="cb14-276"><a href="#cb14-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-277"><a href="#cb14-277" aria-hidden="true" tabindex="-1"></a>This finding was noted despite the method producing only an approximation to the odds ratio. For very large effects (e.g. risk ratio=0.2) when the approximation is known to be poor, treatment effects were under-estimated, but the Peto method still had the best performance of all the methods considered for event risks of 1 in 1000, and the bias was never more than 6% of the comparator group risk.</span>
+<span id="cb14-278"><a href="#cb14-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-279"><a href="#cb14-279" aria-hidden="true" tabindex="-1"></a>In other circumstances (i.e. event risks above 1%, very large effects at event risks around 1%, and meta-analyses where many studies were substantially imbalanced) the best performing methods were the Mantel-Haenszel odds ratio without zero-cell corrections, logistic regression and an exact method. None of these methods is available in RevMan.</span>
+<span id="cb14-280"><a href="#cb14-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-281"><a href="#cb14-281" aria-hidden="true" tabindex="-1"></a>Methods that should be avoided with rare events are the inverse-variance methods (including the random-effects DerSimonian and Laird method) (Efthimiou 2018). These directly incorporate the study’s variance in the estimation of its contribution to the meta-analysis, but these are usually based on a large-sample variance approximation, which was not intended for use with rare events. We would suggest that incorporation of heterogeneity into an estimate of a treatment effect should be a secondary consideration when attempting to produce estimates of effects from sparse data – the primary concern is to discern whether there is any signal of an effect in the data."</span>
+<span id="cb14-282"><a href="#cb14-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-283"><a href="#cb14-283" aria-hidden="true" tabindex="-1"></a>Peto's method in <span class="in">`escalc`</span> is <span class="in">`measure="PETO"`</span></span>
+<span id="cb14-284"><a href="#cb14-284" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-285"><a href="#cb14-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-286"><a href="#cb14-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-287"><a href="#cb14-287" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb14-288"><a href="#cb14-288" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Paired or longitudinal outcome data</span></span>
+<span id="cb14-289"><a href="#cb14-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-290"><a href="#cb14-290" aria-hidden="true" tabindex="-1"></a>Is this provided by the matched pairs contingency tables in <span class="in">`escalc`</span>? If so, can they be compared to unpaired estimators or does the entire meta-analysis need to focus on these alone?</span>
+<span id="cb14-291"><a href="#cb14-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-292"><a href="#cb14-292" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb14-293"><a href="#cb14-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-294"><a href="#cb14-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-295"><a href="#cb14-295" aria-hidden="true" tabindex="-1"></a><span class="fu">### Applied Ecological Examples: Matching the Effect Size to What Your Design Provides</span></span>
+<span id="cb14-296"><a href="#cb14-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-297"><a href="#cb14-297" aria-hidden="true" tabindex="-1"></a>The effect size you can report is determined first by what your design allows you to estimate (the OR when only odds are available), and second by how the result will be used (RR for comparing effects across studies; RD for judging impact in a specific system).</span>
+<span id="cb14-298"><a href="#cb14-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-299"><a href="#cb14-299" aria-hidden="true" tabindex="-1"></a>**Example 1** </span>
+<span id="cb14-300"><a href="#cb14-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-301"><a href="#cb14-301" aria-hidden="true" tabindex="-1"></a>You cannot calculate the proportion of each group that experienced the event → OR only</span>
+<span id="cb14-302"><a href="#cb14-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-303"><a href="#cb14-303" aria-hidden="true" tabindex="-1"></a>Example: Testing whether large horns deter bird predation in beetles. Researchers collect the remains of the killed beetles (cases) and sample living beetles from the same area (controls), then compare how often the large-horn phenotype occurs in each group.</span>
+<span id="cb14-304"><a href="#cb14-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-305"><a href="#cb14-305" aria-hidden="true" tabindex="-1"></a>Why is OR needed? </span>
+<span id="cb14-306"><a href="#cb14-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-307"><a href="#cb14-307" aria-hidden="true" tabindex="-1"></a>As sampling is by outcome, the proportion of killed beetles in the dataset is set by the researcher, not by the true predation rate. With no denominator for the population at risk, RR and RD cannot be estimated. The OR can be estimated because it is the same whether sampling is by outcome or by exposure.</span>
+<span id="cb14-308"><a href="#cb14-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-309"><a href="#cb14-309" aria-hidden="true" tabindex="-1"></a>**I'm not following this Kyle**</span>
+<span id="cb14-310"><a href="#cb14-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-311"><a href="#cb14-311" aria-hidden="true" tabindex="-1"></a>**Example 2**</span>
+<span id="cb14-312"><a href="#cb14-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-313"><a href="#cb14-313" aria-hidden="true" tabindex="-1"></a>You can calculate the proportion of each group that experienced the event, and want to say how many times higher or lower it is → RR</span>
+<span id="cb14-314"><a href="#cb14-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-315"><a href="#cb14-315" aria-hidden="true" tabindex="-1"></a>Example: A two-year field experiment tracking 1,000 oak seedlings inside deer exclosures and 1,000 in adjacent open plots, with mortality as the target event.</span>
+<span id="cb14-316"><a href="#cb14-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-317"><a href="#cb14-317" aria-hidden="true" tabindex="-1"></a>**Why is RR preferred?**</span>
+<span id="cb14-318"><a href="#cb14-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-319"><a href="#cb14-319" aria-hidden="true" tabindex="-1"></a>All seedlings are counted at planting, so mortality risk is observed directly in each treatment. The RR gives the proportional change in mortality (e.g., “exclosures reduce mortality risk by 60%”) and is comparable across studies. Because mortality is common in open plots (~35%), the OR would be much smaller than the RR and, if reported as a relative risk, would overstate the effect of exclosures.</span>
+<span id="cb14-320"><a href="#cb14-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-321"><a href="#cb14-321" aria-hidden="true" tabindex="-1"></a>**Example 3**</span>
+<span id="cb14-322"><a href="#cb14-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-323"><a href="#cb14-323" aria-hidden="true" tabindex="-1"></a>You can calculate the proportion of each group that experienced the event, and want to say how many more or fewer event occurred  →  RD alongside RR</span>
+<span id="cb14-324"><a href="#cb14-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-325"><a href="#cb14-325" aria-hidden="true" tabindex="-1"></a>Example: Comparing colonisation by a specialist butterfly between isolated habitat fragments and fragments linked by a corridor: 20% of isolated patches and 35% of connected patches are colonised over the study period. </span>
+<span id="cb14-326"><a href="#cb14-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-327"><a href="#cb14-327" aria-hidden="true" tabindex="-1"></a>**Why is RD needed (alongside RR)?**</span>
+<span id="cb14-328"><a href="#cb14-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-329"><a href="#cb14-329" aria-hidden="true" tabindex="-1"></a>The RR (1.75) shows that corridors increase the probability of colonisation by 75% relative to isolated patches. The RD (0.15) expresses the same results as an absolute change: 15 additional patches colonised per 100, or roughly serve corridors required for each additional colonisation (NNM ≈ 6.7). Because an RR of 1.75 would correspond to a much smaller absolute gain at a lower baseline (e.g., 3 additional patches per 100 if only 4% of isolated patches were colonised), the RD is the measure needed to judge whether corridor construction justifies its cost.</span>
+<span id="cb14-330"><a href="#cb14-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-331"><a href="#cb14-331" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparing odds ratio, risk ratio and risk difference</span></span>
+<span id="cb14-332"><a href="#cb14-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-333"><a href="#cb14-333" aria-hidden="true" tabindex="-1"></a>**Shouldn't one be used with rare outcomes and the other with more common outcomes?**</span>
+<span id="cb14-334"><a href="#cb14-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-335"><a href="#cb14-335" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Effect size <span class="pp">|</span> What it compares <span class="pp">|</span> Scale <span class="pp">|</span> Main strength <span class="pp">|</span> Main limitation <span class="pp">|</span></span>
+<span id="cb14-336"><a href="#cb14-336" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|---|</span></span>
+<span id="cb14-337"><a href="#cb14-337" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **OR** <span class="pp">|</span> Odds between groups <span class="pp">|</span> Relative <span class="pp">|</span> Useful for case-control studies and logistic regression <span class="pp">|</span> Less intuitive and can exaggerate relative effects for common events <span class="pp">|</span></span>
+<span id="cb14-338"><a href="#cb14-338" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **RR** <span class="pp">|</span> Probability between groups <span class="pp">|</span> Relative <span class="pp">|</span> Direct and intuitive interpretation of relative risk <span class="pp">|</span> Requires known risks and depends on baseline risk <span class="pp">|</span></span>
+<span id="cb14-339"><a href="#cb14-339" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **RD** <span class="pp">|</span> Difference in probability <span class="pp">|</span> Absolute <span class="pp">|</span> Directly communicates the absolute ecological impact <span class="pp">|</span> Less comparable across populations with very different baseline risks <span class="pp">|</span></span>
+<span id="cb14-340"><a href="#cb14-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-341"><a href="#cb14-341" aria-hidden="true" tabindex="-1"></a>The relationship between these measures can be summarised simply:</span>
+<span id="cb14-342"><a href="#cb14-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-343"><a href="#cb14-343" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OR vs. RR:** Both describe relative effects, but OR is based on odds and RR is based on probability. They are approximately equivalent only when the outcome is rare.</span>
+<span id="cb14-344"><a href="#cb14-344" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RR vs. RD:** Both use probability, but RR describes proportional change while RD describes the actual change in probability.</span>
+<span id="cb14-345"><a href="#cb14-345" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**OR vs. RD:** OR describes relative change on an odds scale, whereas RD describes absolute change. The same OR can produce very different RDs depending on baseline risk.</span>
+<span id="cb14-346"><a href="#cb14-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-347"><a href="#cb14-347" aria-hidden="true" tabindex="-1"></a><span class="fu"># Outtakes</span></span>
+<span id="cb14-348"><a href="#cb14-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-349"><a href="#cb14-349" aria-hidden="true" tabindex="-1"></a><span class="fu">### Risk Difference (RD)</span></span>
+<span id="cb14-350"><a href="#cb14-350" aria-hidden="true" tabindex="-1"></a>**I don't think RD is recommended for meta-analysis**</span>
+<span id="cb14-351"><a href="#cb14-351" aria-hidden="true" tabindex="-1"></a>There is an additional effect size for this type of data that can be useful as a compliment to lnRR or lnOR. The Risk Difference (RD), or absolute risk reduction, measures the exact difference in observed risk between the experimental and control groups. This metric is ideal for weighing conservation trade-offs between a management intervention's ecological benefits and its implementation costs.</span>
+<span id="cb14-352"><a href="#cb14-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-353"><a href="#cb14-353" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb14-354"><a href="#cb14-354" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb14-355"><a href="#cb14-355" aria-hidden="true" tabindex="-1"></a>n_1 = a + b</span>
+<span id="cb14-356"><a href="#cb14-356" aria-hidden="true" tabindex="-1"></a>n_2 = c + d</span>
+<span id="cb14-357"><a href="#cb14-357" aria-hidden="true" tabindex="-1"></a>&amp;RD=\frac{a}{n_1}-\frac{c}{n_2}</span>
+<span id="cb14-358"><a href="#cb14-358" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb14-359"><a href="#cb14-359" aria-hidden="true" tabindex="-1"></a>$${#eq-RD}</span>
+<span id="cb14-360"><a href="#cb14-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-361"><a href="#cb14-361" aria-hidden="true" tabindex="-1"></a>Interpret the statistical output as follows:</span>
+<span id="cb14-362"><a href="#cb14-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-363"><a href="#cb14-363" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RD = 0:** Equal risk between the comparison groups (the exposure or intervention has no absolute effect on risk).</span>
+<span id="cb14-364"><a href="#cb14-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-365"><a href="#cb14-365" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RD &gt; 0:** Higher absolute risk of the event in the exposed group.</span>
+<span id="cb14-366"><a href="#cb14-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-367"><a href="#cb14-367" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RD &lt; 0:** Lower absolute risk of the event in the exposed group (representing absolute risk reduction).</span>
+<span id="cb14-368"><a href="#cb14-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-369"><a href="#cb14-369" aria-hidden="true" tabindex="-1"></a><span class="fu">#### RD Sampling Variance</span></span>
+<span id="cb14-370"><a href="#cb14-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-371"><a href="#cb14-371" aria-hidden="true" tabindex="-1"></a>Unlike the OR and RR, the Risk Difference is measured on an absolute scale, so its variance is calculated directly on the raw scale rather than a logarithmic scale:</span>
+<span id="cb14-372"><a href="#cb14-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-373"><a href="#cb14-373" aria-hidden="true" tabindex="-1"></a>$$Var(RD)=\frac{a \times b}{(a+b)^3}+\frac{c \times d}{(c+d)^3}$$</span>
+<span id="cb14-374"><a href="#cb14-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-377"><a href="#cb14-377" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb14-378"><a href="#cb14-378" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb14-379"><a href="#cb14-379" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb14-380"><a href="#cb14-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-381"><a href="#cb14-381" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate Log Risk Difference (lnRD) utilizing the established dataset</span></span>
+<span id="cb14-382"><a href="#cb14-382" aria-hidden="true" tabindex="-1"></a>dat_rd <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"RD"</span>, </span>
+<span id="cb14-383"><a href="#cb14-383" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, </span>
+<span id="cb14-384"><a href="#cb14-384" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ci =</span> ci, <span class="at">di =</span> di, </span>
+<span id="cb14-385"><a href="#cb14-385" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> dat_dichotomous)</span>
+<span id="cb14-386"><a href="#cb14-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-387"><a href="#cb14-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>
