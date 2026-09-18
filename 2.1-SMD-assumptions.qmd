@@ -66,7 +66,8 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
-
+library("ggtext")
+library("gridmicrotex")
 ```
 
 This class of effect sizes is among the most commonly used in ecology and evolution. These effect sizes compare a continuous response between two groups. For example:
@@ -344,13 +345,84 @@ The following properties help determine whether SMD or lnRoM are mathematically 
 | Can impute missing error bars | No | Can be imputed |
 | Can calculate from model test statistics | Yes | No |
 | Can calculate from other effect size types | Yes | No |
+| Values near 0 | Yes | No |
 
 The remaining sections examine these considerations---including negative values, dimensionality, overdispersion, heteroscedasticity, and missing standard deviations---all of which should guide your decision about whether to use SMD or lnRoM.
 
 # When are SMD and lnRoM appropriate? {#sec-assumptions-and-properties}
 
+## Values near 0
+
+Is the relationship between 0.1 and 0.3 the same as the relationship between 10.1 and 10.3? 
+
+This is a core question when considering the use of lnRoM and SMD. 
+
+SMD estimates are based on the difference between $m_1$ and $m_2$. As such, the difference between 0.1 and 0.3 is identical to the difference between 10.1 and 10.3. (as long as standard deviation is the same). 
+
+lnRoM estimates will be **radically** different because lnRoM is a ratio and 0 is a real boundary condition. 
+
+Let us demonstrate:
+
+```{r}
+#| eval: true
+#| echo: true
+
+dat <- data.table(m1 = c(0.1, 10.1, 100.1),
+                  m2 = c(0.3, 10.3, 100.3),
+                  sd1 = c(1, 1, 1),
+                  sd2 = c(1, 1, 1),
+                  n1 = 30,
+                  n2 = 30)
+
+dat <- escalc(measure = "ROM",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat,
+              var.names = c("yi_rom", "vi_rom"))
+
+
+dat <- escalc(measure = "SMD",
+              m1i = m2, m2i = m1,
+              sd1i = sd2, sd2i = sd1,
+              n1i = n2, n2i = n1,
+              data = dat,
+              var.names = c("yi_smd", "vi_smd")) |> 
+  setDT()
+
+dat <- melt(dat,
+            id.vars = c("m1", "m2"),
+            measure.vars = c("yi_rom", "yi_smd"))
+
+dat[, comparison := paste0("$m_1$=", m1, ", $m_2$=", m2)]
+
+ggplot(data = dat,
+       aes(x = comparison, y = value, fill = variable))+
+  geom_point(size = 4, shape = 21)+
+  facet_wrap(~variable, labeller = as_labeller(c("yi_smd" = "SMD", 
+                                               "yi_rom" = "lnRoM")),
+             scales = "free_y",
+             ncol = 1)+ 
+  ylab("Point estimate")+
+  xlab(NULL)+
+  theme_bw()+
+  theme(axis.text.x = gridmicrotex::element_markdown(),
+        strip.background = element_blank(),
+        legend.position = "none")
+
+
+```
+
+Wild, right?
+
+This is because 0s are **real** for lnRoM---true absences. 
+
+Think carefully about whether zeroes are real in your data. In many cases they may be: an abundanace measurement of 0 is a true absence. It's very different from 1---more different from 1 than 10 is from 11. 
+
+However, in other cases (e.g., with biomass), this is not the case, because we approach 0 grams simply because of our choice of precision (measuring in grams instead of milligrams or nanograms).
+
 ## Values ≤ 0
-A key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.
+Similarly, a key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.
 
 :::callout-important
 #### Data bounded between 0 and 1 {#sec-zero-one-bounded}

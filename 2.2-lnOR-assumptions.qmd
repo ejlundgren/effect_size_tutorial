@@ -89,7 +89,7 @@ Analyzing OR directly in a meta-analysis is not recommended because the values a
 
 $$\begin{aligned}
 &lnOR = log(OR)\\
-\end{aligned}$${#eq-OR}
+\end{aligned}$${#eq-lnOR}
 
 ::: {.callout-note collapse="true"}
 ### Click to see how log transformation alters the distribution of the odds ratio
@@ -101,6 +101,7 @@ $$\begin{aligned}
 
 
 Let's calculate lnOR for our running example data:
+
 ```{r}
 # Calculate Log Odds Ratio (ln OR)
 dat_or <- escalc(measure = "OR", 
@@ -110,14 +111,7 @@ dat_or <- escalc(measure = "OR",
 dat_or
 ```
 
-To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates ($e^{lnOR}$) to convert them back to Odds Ratios. 
-Interpret Odds Ratios as follows:
-
-- **OR = 1:** Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).
-
-- **OR > 1:** Higher odds of the event in the exposed group.
-
-- **OR < 1:** Lower odds of the event in the exposed group.
+To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates ($e^{lnOR}$) to convert them back to Odds Ratios. You can also do this to the model derived confidence intervals.
 
 Let's convert and interpret a lnOR effect of 0.18 in plain english. First, we convert it to back to an Odds Ratio:
 
@@ -127,9 +121,20 @@ exp(0.18)
 
 ```
 
+
+Interpret Odds Ratios as follows:
+
+- **OR = 1:** Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).
+
+- **OR > 1:** Higher odds of the event in the exposed group.
+
+- **OR < 1:** Lower odds of the event in the exposed group.
+
+
 An odds ratio of 1.19 means 1.19 higher odds of the outcome in the exposed (treatment) wetland. There are several ways to write this in plain english:
 
 **Can someone double check this?**
+
 1. Subtract the odds ratio from 1 and multiply by 100 to calculate percentage decrease or increase: $100 * (1 - OR)$. 
 
 > The odds of the outcome occurring were `r abs(round(100*(1 - 1.19), 1))`% higher in the exposed group than the control group
@@ -275,6 +280,11 @@ Peto's method in `escalc` is `measure="PETO"`
 
 Is this provided by the matched pairs contingency tables in `escalc`? If so, can they be compared to unpaired estimators or does the entire meta-analysis need to focus on these alone?
 
+:::
+
+:::callout-note
+##### Use both lnRR and lnOR 
+This way you can report the one that is easiest to understand if they both similar qualitative results
 :::
 
 
