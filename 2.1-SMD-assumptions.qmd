@@ -359,13 +359,12 @@ This is a core question when considering the use of lnRoM and SMD.
 
 SMD estimates are based on the difference between $m_1$ and $m_2$. As such, an SMD calculated on means of 0.1 and 0.3 is identical to an SMD calculated on means of 10.1 and 10.3. (as long as standard deviation is the same). 
 
-lnRoM estimates will be **radically** different. 
-
-Let us demonstrate:
+lnRoM estimates will be **radically** different:
 
 ```{r}
 #| eval: true
 #| echo: true
+#| code-fold: true
 
 dat <- data.table(m1 = c(0.1, 10.1, 100.1),
                   m2 = c(0.3, 10.3, 100.3),
@@ -406,8 +405,9 @@ ggplot(data = dat,
   ylab("Point estimate")+
   xlab(NULL)+
   theme_bw()+
-  theme(axis.text.x = gridmicrotex::element_markdown(),
+  theme(axis.text.x = gridmicrotex::element_markdown(size = 12),
         strip.background = element_blank(),
+        strip.text = element_text(size = 14),
         legend.position = "none")
 
 
@@ -417,12 +417,12 @@ Wild, right?
 
 This is because 0s are **real** for lnRoM---true absences. 
 
-Think carefully about whether zeroes are real in your data. In many cases they may be: an abundance measurement of 0 is a true absence. It's very different from 1---more different from 1 than 10 is from 11. (That's why we often simply analyze presence or absence, lumping all abundance measurements > 1 into 1!)
+Think carefully about whether zeroes are real in your data. In many cases they may be: an abundance measurement of 0 is a true absence. With abundance, 0 is very different from 1---while 10 is very close to 11. That's why we often simply analyze abundance data as presence or absence.
 
-However, in other cases, this is not true and is not the [estimand](1-effect-size-overview.qmd#sec-estimates-and-estimators) you intended to target. For example, measurements of biomass in grams can approach 0 simply because of our choice of precision (measuring in grams instead of milligrams or nanograms).
+However, in other cases, this is not true and 0 is an arbitrary value. For example, measurements of biomass in grams can approach 0 simply because of our choice of precision (if you had measured in milligrams or nanograms then you'd still be far away from 0). Think about whether 0 is meaningful when considering whether lnRoM is the [estimand](1-effect-size-overview.qmd#sec-estimates-and-estimators) you intend to target. 
 
 ## Values ≤ 0
-Similarly, a key consideration in choosing between SMD and lnRoM is whether your dataset has means ≤ 0. These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats or because your target response variable is not by 0. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.
+Similarly, does your dataset have means ≤ 0? These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats. If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data.
 
 :::callout-important
 #### Data bounded between 0 and 1 {#sec-zero-one-bounded}
@@ -446,7 +446,7 @@ Let us demonstrate. We'll create a starting dataset at one dimension and then we
 
 ```{r}
 #| eval: true
-#| codefold: show
+#| code-fold: true
 
 # Simulate data for two groups
 sim1 <- rnorm(n = 1e8, mean = 15, sd = .6)
@@ -498,6 +498,8 @@ p1 <- ggplot(data = dat,
   geom_path()+
   geom_point(size = 4)+
   ylab("lnRoM point estimate")+
+  xlab(NULL)+
+  ggtitle("lnRoM dimensionality")+
   scale_x_continuous(breaks = c(1, 2, 3))+
   theme_bw()+
   theme(panel.grid = element_blank(),
@@ -508,6 +510,7 @@ p2 <- ggplot(data = dat,
   geom_path()+
   geom_point(size = 4)+
   ylab("Estimated % change")+
+  xlab("Number of measurement dimensions")+
   scale_x_continuous(breaks = c(1, 2, 3))+
   theme_bw()+
   theme(panel.grid = element_blank(),
@@ -519,11 +522,11 @@ p1 / p2
 
 As you can see, the lnRoM effect size doubled and then tripled as the dimensions increased. In ecology and evolutionary biology, which commonly pool measurements at different dimensions, this is obviously a huge problem!
 
-Now let's look at SMD. Since the y axis values are not comparable, we'll plot the raw SMD as well as the difference of each dimension to the first dimension, to indicate how large of an effect dimensionality had on the strength of the SMD estimate in reference to our [rules of thumb](#sec-interpretation)
+Now let's look at SMD. Since the y axis values are not comparable with lnRoM, we'll plot the raw SMD as well as the % change relative to the first dimension.
 
 ```{r}
 #| eval: true
-#| echo: false
+#| code-fold: true
 #| out-width: "70%"
 
 first_dimension <- dat %>% filter(dimensions == 1) %>% pull(yi_smd)
@@ -534,7 +537,10 @@ p1 <- ggplot(data = dat, aes(x = dimensions, y = yi_smd))+
   geom_path()+
   geom_point(size = 4)+
   ylab("Effect size point estimate (yi)")+
+  xlab(NULL)+
+  ggtitle("SMD dimensionality")+
   scale_x_continuous(breaks = c(1, 2, 3))+
+  coord_cartesian(ylim = c(2.8, 3.3))+
   theme_bw()+
     theme(panel.grid = element_blank())
 
@@ -542,6 +548,7 @@ p2 <- ggplot(data = dat, aes(x = dimensions, y = smd_diff))+
   geom_path()+
   geom_point(size = 4)+
   ylab("% change in SMD estimate")+
+  xlab("Number of measurement dimensions")+
   coord_cartesian(ylim = c(-1, 1))+
   scale_x_continuous(breaks = c(1, 2, 3))+
   theme_bw()+
@@ -550,11 +557,11 @@ p1 / p2
 
 ```
 
-SMD is still somewhat affected by the change in dimensions but to a far lesser extent.
+SMD is still somewhat affected by the change in dimensions but to a far lesser extent---varying only by \~0.5% relative to the first dimension.
 
-For this reason, we suggest that if you are committed to using an lnRoM effect size, that you must record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was across 2 dimensions ($m^2$) then divide by 2 and if across 3 dimensions ($m^3$), divide by 3. 
+For this reason, we suggest that if you are committed to using an lnRoM effect size, that you must record the number of dimensions of each measurement. You can use these to divide the resulting effect size point estimate by the number of dimensions to standardize dimensionality. E.g., if the measurement was in $meter^2$, which is 2 dimensions, then divide the lnRoM point estimate by 2. If the measurement was in $meter^3$, then divide the point estimate by 3. 
 
-However, there may be many cases where the number of dimensions of the measurement may be unclear.
+However, there may be many cases where the number of dimensions of the measurement may be unclear, in which case you should use SMD.
 
 :::callout-important
 The dimensionality problem of lnRoM is quite perilous given that lnRoM is the dominant effect size used in ecology and evolution. It may be that the majority of ecological meta-analyses, especially vegetation meta-analyses, need to be redone.
@@ -564,9 +571,9 @@ The dimensionality problem of lnRoM is quite perilous given that lnRoM is the do
 
 SMD and lnRoM assume that the underlying data generation process is normal. This assumption can be broken if the data is overdispersed---which is remarkably common in ecology and evolution, especially with abundance or count data. This can lead to biased point and sampling variance estimates. 
 
-Overdispersion affects these effect sizes differently. For SMD, they directly affect the point estimate, because the point estimate is a ratio of signal to noise. Overdispersed data will tend to make SMDs approach 0. For lnRoM, the point estimate is robust to overdispersion (as long as you use the [uncorrected definition formula](#sec-lnrom-correction)). However, the sampling variance estimate is sensitive to overdispersion. 
+Overdispersion affects these effect sizes differently. For SMD, they directly affect the point estimate, because the point estimate is a ratio of signal to noise. Overdispersed data will tend to make SMDs approach 0. For lnRoM, the point estimate is robust to overdispersion (as long as you use the [uncorrected definition formula](#sec-lnrom-correction)). However, the sampling variance estimate is sensitive to overdispersion (**HOW??**).
 
-There are as yet no effect sizes formulated for overdispersed data. As such, if there is overdispersed data in your dataset, you should:
+If there is overdispersed data in your dataset, you should:
 
 - Exclude effect sizes that are overdispersed as a sensitivity analysis in comparison to your full dataset
 
