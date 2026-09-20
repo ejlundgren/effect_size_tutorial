@@ -77,8 +77,9 @@ The primary effect sizes that can be calculated with this data are standardized 
 
 :::callout-important
 
-The primary aim of this tutorial is to align extractions with target [estimands](1-effect-size-overview.qmd#sec-estimates-and-estimators) of SMD and lnRoM (see [here](2.1-SMD-assumptions.qmd)). However, some of the extraction challenges in this page are naturally suited for alternative estimands that account for different study designs. However, these alternative estimands are not interchangeable with meta-analyses focused on SMD or lnRoM. When these cases show up, we acknowledge the "ideal" estimands but present code to allow calculation of SMD and lnRoM. If your entire meta-analysis consists of these situations, then you may want to use these alternative estimands directly.
+The primary aim of this tutorial is to align extractions with target [estimands](1-effect-size-overview.qmd#sec-estimates-and-estimators) of SMD and lnRoM (see [here](2.1-SMD-assumptions.qmd)). 
 
+However, some of the extraction challenges in this page are naturally suited for alternative estimands that account for different study designs. These alternative estimands are not interchangeable with meta-analyses focused on SMD or lnRoM. When these cases show up, we acknowledge the "ideal" estimands but present solutions to allow calculation of SMD and lnRoM target estimands. We also briefly discuss these alternative estimands in the `escalc` [cheatsheet.](6-escalc-cheatsheet.qmd) If your entire meta-analysis consists of these situations, then you may want to use these alternative estimands directly.
 :::
 
 # Database design
@@ -223,10 +224,9 @@ Let's move on to more complex situations.
 
 ####### 3-dimensional plots
 
-There was a brief period in the 1990s when these became popular. 3D plots were often of histograms. but many other types existed, including bar charts, etc.
+There was a brief unfortunate period in the 1990s when these became popular. 3D plots often depicted multivariate histograms, as well as other data types such as bar charts.
 
-We won't discuss these much here, we just want to acknowledge your pain if you come across one. Hopefully the general plot designs will be similar to those covered in this tutorial. We believe that [WebPlotDigitizer](https://automeris.io/) has options to calibrate 3D plots. Alternatively, LLMs (e.g., Gemini or Claude or ChatGPT) are likely able to extract this data.
-
+We won't discuss these much here, we just want to acknowledge your pain if you come across one. Hopefully the general plot designs will be similar to those covered in this tutorial. We believe that [WebPlotDigitizer](https://automeris.io/) has options to calibrate 3D plots. Alternatively, popular LLMs (e.g., Gemini or Claude or ChatGPT) are likely able to extract this data.
 :::
 
 # Raw distributions {#sec-raw-distributions}
@@ -259,7 +259,7 @@ hist1 + hist2
 
 ```
 
-`metaDigitise()` luckily has built-in functionality for dealing with histograms. The function will guide you through each step, which requires calibrating the axes and then clicking on the left and right corners of each bar. It'll then convert the extracted distributions into means±sd.
+`metaDigitise()` luckily has built-in functionality for dealing with histograms. The function will guide you through each step, which requires calibrating the axes and then clicking on the left and right corners of each bar. It'll then convert the extracted distributions into means±sd. This can be time-consuming. You can also try getting an LLM model to do it for you.
 
 ## Violin and density plots {#sec-violin-density-plots}
 
@@ -371,8 +371,11 @@ ggplot(bandwidth.dt, aes(x = response, fill = smoothing)) +
 For an SMD or lnRoM, we recommend the following extraction order:
 
 1. **Look elsewhere first.** Check the text, tables, figure caption, supplementary files, and data repository for the mean, SD, and sample size.
+
 2. **If individual observations are visible, digitize those observations.** Calculate the mean and SD from the extracted values. Points may overlap, so use the reported sample size rather than counting the visible points whenever possible.
+
 3. **If the plot contains summary markers, extract only statistics that the caption or legend defines.** A dot could represent either a mean or a median, and bars could represent an SD, interquartile range, or confidence interval. Their meaning should not be guessed from their appearance.
+
 4. **If only the violin or density outline is available, contact the authors.** If the required statistics cannot be obtained, record the outcome as unavailable for calculating an SMD or lnRoM.
 
 ::: {.callout-warning}
@@ -445,6 +448,7 @@ When the approximation is appropriate, an SMD can be calculated from the transfo
 Do not use the transformed means to calculate an lnRoM and interpret it as a proportional change on the original scale. The arcsine transformation changes the ratio between values. If an lnRoM answers the biological question, calculate it from the original positive means and address its assumptions directly. 
 
 Unfold the section below if you want to see a full demonstration of the relationship between means and standard deviation in proportion data:
+
 ::: {.callout-note collapse="true"}
 
 For a proportion $X$ with population mean $\mu$, the population variance cannot exceed:
@@ -499,9 +503,10 @@ The figure shows the population relationship. A reported sample SD usually uses 
 
 :::
 
+
 ::: callout-caution
 ####### Binary counts and summarized proportions {#sec-callout-reconstructing-binomial}
-If a paper reports an exact event count and denominator, such as 17 survivors among 25 animals, those values can be entered directly into an lnOR or lnRR calculation. If the rest of your meta-analysis is of SMD/lnRoM type data, you can convert the calculated lnOR effect size to SMD (but not to lnRoM).
+If a paper reports an exact event count and denominator, such as 17 survivors among 25 animals, those values can be entered directly into an lnOR or lnRR calculation. If the rest of your meta-analysis is of SMD/lnRoM type data, you can convert the calculated lnOR effect size to SMD (but not to lnRoM). See our [converting effect sizes page](4-converting-effect-sizes.qmd).
 :::
 
 # Complex experimental designs {#sec-derived-data}
@@ -600,15 +605,15 @@ escalc(measure = "SMCC",
 
 Some studies report a response ratio directly. Before extracting it, determine how it was calculated. Two similar-looking summaries estimate different quantities.
 
-The ratio of the two group means is:
+If the ratio is of two group means:
 
 $$
 RR_{means}=\frac{\bar{x}_{treatment}}{\bar{x}_{control}}.
 $$
 
-Its natural logarithm is the usual lnRoM point estimate. To calculate its usual sampling variance, we still need information about the uncertainty of both group means and whether the groups were independent or paired. A single reported ratio without an SE, confidence interval, group SDs, or other usable uncertainty is not a complete inverse-variance effect size.
+Its natural logarithm is the usual lnRoM point estimate. To calculate its usual sampling variance, we still need information about the uncertainty of both group means and whether the groups were independent or paired. A single reported ratio without an SE, confidence interval, group SDs, or other usable uncertainty is not usable, unfortunately.
 
-A study may instead calculate ratios at the observational-scale between paired measurements:
+However, a study may instead calculate ratios at the observational-scale between paired measurements:
 $$
 RR_i=\frac{x_{treatment,i}}{x_{control,i}}.
 $$
@@ -620,7 +625,7 @@ If the study reports the mean of the paired **log ratios** and its SE, use that 
 
 ## Results reported as an effect size itself {#sec-effect-sizes-directly-reported}
 
-One common situation is for studies to report their results as an effect size itself (e.g., SMD or lnRoM). These could be extracted directly as your effect size *except* that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).
+A similar situation is when studies report their results as an effect size itself (e.g., SMD or lnRoM). These could be extracted directly as your effect size *except* that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).
 
 If a measure of error *is* reported then you can use these effect sizes directly or convert them to your target effect size. See [here](4-converting-effect-sizes.qmd) on how to convert between effect size types.
 
@@ -638,7 +643,7 @@ In many other cases, there's nothing you can do but email the authors and hope t
 
 ## Before-after-control-impact designs {#sec-BACI}
 
-Before-after control-impact (BACI) designs are gold standard experimental designs. Yet most meta-analyses ignore the before treatment and only extract and analyze the 'after' treatments. Here is a BACI figure:
+Before-after control-impact (BACI) designs are considered gold standard experimental designs. Yet most meta-analyses ignore the before treatment and only extract and analyze the 'after' treatments. Here is a BACI figure:
 
 ```{r}
 #| echo: false
@@ -759,8 +764,6 @@ You may also see time series, where the first measurement in the time series is 
 There are alternative estimands for this type of study design [CITE BECKER]. If your meta-analysis only includes these study designs, then you should use them. See the `escalc` [cheatsheet](6-escalc-cheatsheet.qmed) for the `measure` options. However, we expect that you are encountering this study design in a meta-analysis otherwise using standard SMD or lnRoM effect sizes.
 :::
 
-BACI designs often lead to negative values---which requires you to use SMD or exclude the data. These decisions should be based on the biological question you are asking as well as pragmatism: if you are meta-analyzing a question with limited data then you are likely forced to use SMD to include this data.
-
 If you decide to include studies like this, we believe that the best solution is to calculate the difference between the before and after group means and use the **after** treatment standard deviation in your calculations.
 
 The extracted dataset would look like this:
@@ -782,7 +785,11 @@ knitr::kable(dt_wide[, .(mean_diff_control, sd_after_control, mean_diff_impact, 
 
 ```
 
-You can imagine that this data bears certain assumptions---especially from ignoring the **before** standard deviation. It might be acceptable to average the before and after standard deviations---we don't know. Regardless, we recommend sensitivity analyses including and excluding this data and potentially using either averaged or before standard deviation to see if that changes results.
+:::callout-note
+BACI designs often lead to negative values from subtracting the *before* treatment from the *after* treatments---which requires you to use SMD instead of lnRoM as your estimand. 
+:::
+
+You can also imagine that this data bears certain assumptions---especially from ignoring the **before** standard deviation. It might be acceptable to average the before and after standard deviations---we don't know. Regardless, we recommend sensitivity analyses including and excluding this data and potentially using either averaged or before standard deviation to see if that changes results.
 
 The final effect size can be calculated as normal:
 
@@ -800,7 +807,7 @@ escalc(measure = "SMD",
 
 Note that you may wish to use a paired estimator for this if the control and impact groups were paired spatially (they cannot be paired temporally).
 
-These 4 group designs may appear in other contexts than pre and post treatment and can be fairly in common in ecological field experiments. For example, to understand if reintroduced wild dogs indirectly affect vegetation by reducing dik-dik browsing and abundance, @Ford2015-el placed controls and exclosures in areas with and without wild dogs, predicting that the *difference* between controls and exclosures would be greatest where there are no wild dogs.
+These 4 group designs may appear in other contexts than pre and post treatment and can be fairly in common in ecological field experiments. For example, to understand if reintroduced wild dogs indirectly affect vegetation by reducing dik-dik browsing and abundance, @Ford2015-el placed controls and exclosures in areas with and without wild dogs, predicting that the **difference** between controls and exclosures would be greatest where there are *no* wild dogs.
 
 ```{r}
 #| echo: false
@@ -1049,11 +1056,11 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 In most cases, we expect you'll exclude this data. However, if data is extremely limited you may want to take the mean±sd of the two groups (in this case "Present" and "Eradicated") and calculate SMD or lnRoM. You could also calculate a correlation coefficient (Zr), treating the two groups as $0$ or $1$.
 
-In either case, this requies calculating summary statistics off of non-independent samples, non-independence violates statistical assumptions of independence. We therefore recommend, if you think this data is essential to include, to conduct sensitivity analyses including and excluding data summarized off of non-independent measurements. See our discussion of replication and non-independence [here](3.1-universal-challenges.qmd#sec-sample-size).
+In either case, this requies calculating summary statistics off of non-independent samples. We therefore recommend, if you think this data is essential to include, to conduct sensitivity analyses including and excluding data summarized off of non-independent measurements. See our discussion of replication and non-independence [here](3.1-universal-challenges.qmd#sec-sample-size).
 
 :::callout-important
 ######### Record the level of every summary {#sec-callout-data-reconstruction}
-For every extracted mean and SD, record whether it summarizes measurements across individuals, space, time, or a combination of these. Also record the experimental or sampling unit that received the treatment. These fields make it possible to recognize incompatible units of replication or directions of summaries and to plan sensitivity analyses.
+For every extracted mean and SD, record whether it summarizes measurements across individuals, space, time, or a combination of these. Also record the experimental or sampling unit that received the treatment. These fields make it possible to recognize incompatible units of replication or directions of summaries and to plan your sensitivity analyses.
 :::
 
 ## Time series with error bars {#sec-smd-reconstructing-data}
@@ -1071,7 +1078,7 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
   geom_path()+
   geom_point(size = 3, shape = 21)+
   geom_errorbar(aes(ymin = y1 - error, ymax = y1 + error))+
-  scale_fill_manual("Group of interest",
+  scale_fill_manual("Treatment group",
                     values = c("Present" = "dodgerblue",
                                "Eradicated"= "indianred"))+
   scale_x_continuous(breaks = 1995:2005)+

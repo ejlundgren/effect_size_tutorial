@@ -223,23 +223,22 @@ There are 5 attributes to estimands:
 
 These questions are important to consider when designing a meta-analysis and choosing the effect size to use. You might also note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis [REF]. 
 
-In addition to these questions above---which ---you also have practical considerations. These are:
+<!-- In addition to these questions above---which ---you also have practical considerations. These are: -->
 
-1. **The theoretical estimand:** what is the ideal conceptual knowledge that our research is pursuing? 
+<!-- 1. **The theoretical estimand:** what is the ideal conceptual knowledge that our research is pursuing?  -->
 
-> For example, what forests would look like if there still mammoths and other megafauna influencing them? [REF]
+<!-- > For example, what would today's forests would look like if there still mammoths knocking down trees? [REF] -->
 
-2. **The empirical estimand:** what data is actually available and what are their confounding variables? 
+<!-- 2. **The empirical estimand:** what data is actually available and what are their confounding variables?  -->
 
-> We can't go back in time, so at best we can compare two separate populations: areas where mammoth relatives still exist to areas where they do not.
-
+<!-- > We can't go back in time, so at best we can compare two separate populations: areas where mammoth relatives (elephants) still exist to areas where they are extinct. -->
 
 :::callout-note
-One issue with meta-analyses is that they often are forced to group studies that had different primary study-level **estimands**. In these cases, the meta-analytic model may be making an overall effect for study-level estimands that are concerned with fundamentally different things. 
+One issue with meta-analysis is that we are often forced to include studies that had different primary study-level **estimands**. In these cases, the meta-analytic model may be making an overall effect for studies that are concerned with fundamentally different things. 
 
-This is especially true if you're including both experimental and observational or quasi-experimental data. Experimental data can generally have the same population estimate target. However, observational or quasi-experimental by definition are comparing separate populations. 
+This is especially true if you're including both experimental and observational (or quasi-experimental) data. Experimental data generally concerns the same target population as the control population. However, observational or quasi-experimental data are forced to compare separate populations. 
 
-This is not to say that conducting a meta-analysis is not a worthy use of time---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.
+This is not to say that conducting a meta-analysis is not a worthy use of time---it is still the best way to synthesize knowledge---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.
 :::
 
 Estimands also have a mathematical dimension. The *true* mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the *difference* in a continuous outcome between two treatment groups. It is defined as:
@@ -248,14 +247,15 @@ $$
 \begin{aligned}
 d = \frac{m_1 - m_2}{sd_{pooled}}
 \end{aligned}
-$$
+$${#eq-cohens-d}
 
 With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled}$ as the pooled standard deviation of those two groups. This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).
 
-However, using this definition formula produces {{< glossary bias display=biased >}} results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. 
+However, this definition formula can produce {{< glossary bias display=biased >}} results when sample size is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. 
 
 :::callout-note
-If it's been awhile since you thought about these things, imagine that in a target population (maybe your city or town or county) there is a true mean height. However, you're unlikely to measure everyone's height. You therefore sample---if your sample size is low or biased, your sample mean is likely a biased estimate of true population mean height.
+##### Bias 
+If it's been awhile since you thought about these things, imagine that your town has a true mean height, which is your estimand. However, you're unlikely to measure everyone's height. You therefore measure the height of as many individuals as you can and calculate a *sample mean* which estimates your *estimand*---the population mean. If your sample size is low (or non-random) your sample mean is likely a **biased** estimate of the true population mean height.
 :::
 
 For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. 
@@ -268,15 +268,39 @@ df &= n_1+n_2-2,\\
 J &\approx 1-\frac{3}{4df-1},\\
 g &= J*d.
 \end{aligned}
-$$
+$${#eq-hedges-g}
 
-All of this is this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. In this case both Cohen's d and Hedges' g are estimators of SMD. Fun stuff right?
+Both Cohen's d and Hedges' g are estimators of the **estimand** of SMD---a mathematical description of the difference between two groups, standardized by shared standard deviation. 
 
-The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. 
+**Estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. There are sometimes multiple alternative estimators for the same estimand, which perform better or worse under different conditions. 
 
-In general, `escalc` uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, `escalc` uses Hedges' g. 
+There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. 
 
-Our function, `eff_this` is similar but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates, and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.
+In general, `escalc` uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, `escalc` uses Hedges' g. You can choose to use the first-order definition formula estimates by setting the parameter `corrected` to `FALSE`:
+
+
+```{r}
+#| out-width: "70%"
+
+# The default, corrected estimate (Hedges g):
+escalc(m1i = 10, m2i = 6,
+       sd1i = 1.5, sd2i = 1.5,
+       n1i = 15, n2i = 15,
+       measure = "SMD")
+
+# The uncorrected estimate (Cohen's d):
+escalc(m1i = 10, m2i = 6,
+       sd1i = 1.5, sd2i = 1.5,
+       n1i = 15, n2i = 15,
+       measure = "SMD",
+       correct = FALSE)
+
+```
+
+
+::: callout-note
+##### `eff_size`
+Our function, `eff_this`, is similar to `escalc` but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set `default_formulas=FALSE`---and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.
 
 ```{r}
 #| eval: true
@@ -310,11 +334,10 @@ eff_size(x1 = 10, x2 = 6,
 
 ```
 
-`yi_first` and `vi_first` are the definition formulas (@eq-1 and @eq-2) and the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
+`yi_first` and `vi_first` are the definition formulas (@cohens-d and @hedges-g) and the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
 You'll see in future sections that certain data types may require alternative estimators, which are provided within `eff_size`. For example, `escalc` returns the bias-corrected lnRoM point estimate by default [@Lajeunesse2015-gw]. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as `yi_second` and `yi_first`, respectively, by `eff_size`. See [here](2.1-SMD-assumptions.qmd) for a fuller discussion.
-
-These alternatives can also be accessed in `escalc` by specifying `correct = FALSE` in the function arguments, which will return the first-order definition-formula estimates.
+:::
 
 ## Alternative estimators {#sec-alternative-estimators}
 
@@ -332,13 +355,13 @@ We try to clear up this confusion in the [appendix](6-escalc-cheatsheet.qmd) wit
 
 You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method [see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do].
 
-However, custom effect sizes (or at least rare effect sizes) can also be useful even with data that is readily synthesizable with the effect sizes we discussed above. 
+Custom effect sizes (or at least rare effect sizes) can also be useful even with data that may seem readily synthesizable with already available effect sizes.
 
 For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator (while accounting for the shared control in your random effects).
 
 However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.
 
-Another way of solving this problem is to use an effect size that explicitly includes the temperature difference [@Noble2022-pl]. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$): 
+Another way of solving this problem is to use an effect size that explicitly includes the temperature difference [@Noble2022-pl]. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the two temperature treatments ($T_{1,2}$): 
 
 $$
 \begin{aligned}
