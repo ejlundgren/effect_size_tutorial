@@ -195,18 +195,70 @@ Now, you may be thinking, what the hell is an estimator? Why are there multiple 
 
 Let us explain.
 
-# Estimates, estimators, and estimands {#sec-estimates-and-estimators}
+# Estimands, estimators, and estimates {#sec-estimates-and-estimators}
 
-Effect size definition formulas define a theoretically *true* mathematical relationship of interest. This is called the **estimand**. For instance, the SMD point estimate estimand is defined as:
+The word **estimand** looks like a typo. But it isn't. An **estimand** is the target of a study: the thing we want to know. For example, are patients more likely to survive when given a drug, relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? These are all estimands: the theoretical target. Primary studies and meta-analytic studies are all aiming to **estimate** an **estimand**.
+
+There are 5 attributes to estimands:
+
+1. The target population: who or what does the question apply to? 
+
+> Which patients are we trialling the drug on? Are we evaluating logging in all forests or in boreal forests? 
+
+2. What is the treatment that we're interested in? 
+
+> What drug and at what dosage? How is "selective" logging defined relative to "clearcutting"?
+
+3. What endpoint are we interested in? 
+
+> Survivorship, species richness, biomass, and so on
+
+4. How does our estimand deal with intercurrent events?
+
+> How does the estimand handle death from other causes in our patients or wildfire or flooding in our logging experiment?
+
+5. How do we summarize the effect of the treatment?
+
+> Is the outcome of interest odds of survival of individuals between the placebo and control group? The ratio of species richness between logging treatments? Or the difference in richness between logging treatments?
+
+These questions are important to consider when designing a meta-analysis and choosing the effect size to use. You might also note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis [REF]. 
+
+In addition to these questions above---which ---you also have practical considerations. These are:
+
+1. **The theoretical estimand:** what is the ideal conceptual knowledge that our research is pursuing? 
+
+> For example, what forests would look like if there still mammoths and other megafauna influencing them? [REF]
+
+2. **The empirical estimand:** what data is actually available and what are their confounding variables? 
+
+> We can't go back in time, so at best we can compare two separate populations: areas where mammoth relatives still exist to areas where they do not.
+
+
+:::callout-note
+One issue with meta-analyses is that they often are forced to group studies that had different primary study-level **estimands**. In these cases, the meta-analytic model may be making an overall effect for study-level estimands that are concerned with fundamentally different things. 
+
+This is especially true if you're including both experimental and observational or quasi-experimental data. Experimental data can generally have the same population estimate target. However, observational or quasi-experimental by definition are comparing separate populations. 
+
+This is not to say that conducting a meta-analysis is not a worthy use of time---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.
+:::
+
+Estimands also have a mathematical dimension. The *true* mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the *difference* in a continuous outcome between two treatment groups. It is defined as:
 
 $$
 \begin{aligned}
 d = \frac{m_1 - m_2}{sd_{pooled}}
 \end{aligned}
 $$
-With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled} as the pooled standard deviation of those two groups (see [here](2.1-SMD-assumptions.qmd) for the full math). This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).
 
-However, using this definition formula produces {{< glossary bias display=biased >}} results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. 
+With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled}$ as the pooled standard deviation of those two groups. This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).
+
+However, using this definition formula produces {{< glossary bias display=biased >}} results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. 
+
+:::callout-note
+If it's been awhile since you thought about these things, imagine that in a target population (maybe your city or town or county) there is a true mean height. However, you're unlikely to measure everyone's height. You therefore sample---if your sample size is low or biased, your sample mean is likely a biased estimate of true population mean height.
+:::
+
+For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. 
 
 Hedges' g multiples Cohen's d by a small sample size correction factor ($J$) to the math above. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.
 
@@ -217,7 +269,8 @@ J &\approx 1-\frac{3}{4df-1},\\
 g &= J*d.
 \end{aligned}
 $$
-All of this is this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. Fun stuff right?
+
+All of this is this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. In this case both Cohen's d and Hedges' g are estimators of SMD. Fun stuff right?
 
 The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. 
 

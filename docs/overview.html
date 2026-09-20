@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-09-16">
+<meta name="dcterms.date" content="2026-09-19">
 <title>An overview of effect sizes – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -355,7 +355,7 @@ window.Quarto = {
   <li><a href="#sec-effect-size-types" id="toc-sec-effect-size-types" class="nav-link" data-scroll-target="#sec-effect-size-types">Effect size types</a></li>
   <li><a href="#sec-calculating-effect-sizes" id="toc-sec-calculating-effect-sizes" class="nav-link" data-scroll-target="#sec-calculating-effect-sizes">How to calculate effect sizes &amp; sampling variance</a></li>
   <li>
-<a href="#sec-estimates-and-estimators" id="toc-sec-estimates-and-estimators" class="nav-link" data-scroll-target="#sec-estimates-and-estimators">Estimates, estimators, and estimands</a>
+<a href="#sec-estimates-and-estimators" id="toc-sec-estimates-and-estimators" class="nav-link" data-scroll-target="#sec-estimates-and-estimators">Estimands, estimators, and estimates</a>
   <ul>
 <li><a href="#sec-alternative-estimators" id="toc-sec-alternative-estimators" class="nav-link" data-scroll-target="#sec-alternative-estimators">Alternative estimators</a></li>
   </ul>
@@ -377,7 +377,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 16, 2026</p>
+      <p class="date">September 19, 2026</p>
     </div>
   </div>
   
@@ -543,14 +543,92 @@ Be sure that all variables in formula are correctly named.</code></pre>
 </div>
 <p>Now, you may be thinking, what the hell is an estimator? Why are there multiple estimators for the same effect size?</p>
 <p>Let us explain.</p>
-</section><section id="sec-estimates-and-estimators" class="level1"><h1>Estimates, estimators, and estimands</h1>
-<p>Effect size definition formulas define a theoretically <em>true</em> mathematical relationship of interest. This is called the <strong>estimand</strong>. For instance, the SMD point estimate estimand is defined as:</p>
+</section><section id="sec-estimates-and-estimators" class="level1"><h1>Estimands, estimators, and estimates</h1>
+<p>The word <strong>estimand</strong> looks like a typo. But it isn’t. An <strong>estimand</strong> is the target of a study: the thing we want to know. For example, are patients more likely to survive when given a drug, relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? These are all estimands: the theoretical target. Primary studies and meta-analytic studies are all aiming to <strong>estimate</strong> an <strong>estimand</strong>.</p>
+<p>There are 5 attributes to estimands:</p>
+<ol type="1">
+<li>The target population: who or what does the question apply to?</li>
+</ol>
+<blockquote class="blockquote">
+<p>Which patients are we trialling the drug on? Are we evaluating logging in all forests or in boreal forests?</p>
+</blockquote>
+<ol start="2" type="1">
+<li>What is the treatment that we’re interested in?</li>
+</ol>
+<blockquote class="blockquote">
+<p>What drug and at what dosage? How is “selective” logging defined relative to “clearcutting”?</p>
+</blockquote>
+<ol start="3" type="1">
+<li>What endpoint are we interested in?</li>
+</ol>
+<blockquote class="blockquote">
+<p>Survivorship, species richness, biomass, and so on</p>
+</blockquote>
+<ol start="4" type="1">
+<li>How does our estimand deal with intercurrent events?</li>
+</ol>
+<blockquote class="blockquote">
+<p>How does the estimand handle death from other causes in our patients or wildfire or flooding in our logging experiment?</p>
+</blockquote>
+<ol start="5" type="1">
+<li>How do we summarize the effect of the treatment?</li>
+</ol>
+<blockquote class="blockquote">
+<p>Is the outcome of interest odds of survival of individuals between the placebo and control group? The ratio of species richness between logging treatments? Or the difference in richness between logging treatments?</p>
+</blockquote>
+<p>These questions are important to consider when designing a meta-analysis and choosing the effect size to use. You might also note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis [REF].</p>
+<p>In addition to these questions above—which —you also have practical considerations. These are:</p>
+<ol type="1">
+<li>
+<strong>The theoretical estimand:</strong> what is the ideal conceptual knowledge that our research is pursuing?</li>
+</ol>
+<blockquote class="blockquote">
+<p>For example, what forests would look like if there still mammoths and other megafauna influencing them? [REF]</p>
+</blockquote>
+<ol start="2" type="1">
+<li>
+<strong>The empirical estimand:</strong> what data is actually available and what are their confounding variables?</li>
+</ol>
+<blockquote class="blockquote">
+<p>We can’t go back in time, so at best we can compare two separate populations: areas where mammoth relatives still exist to areas where they do not.</p>
+</blockquote>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>One issue with meta-analyses is that they often are forced to group studies that had different primary study-level <strong>estimands</strong>. In these cases, the meta-analytic model may be making an overall effect for study-level estimands that are concerned with fundamentally different things.</p>
+<p>This is especially true if you’re including both experimental and observational or quasi-experimental data. Experimental data can generally have the same population estimate target. However, observational or quasi-experimental by definition are comparing separate populations.</p>
+<p>This is not to say that conducting a meta-analysis is not a worthy use of time—but that attention to study level estimands can help you be humble and honest about your meta-analytic results.</p>
+</div>
+</div>
+<p>Estimands also have a mathematical dimension. The <em>true</em> mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the <em>difference</em> in a continuous outcome between two treatment groups. It is defined as:</p>
 <p><span class="math display">\[
 \begin{aligned}
 d = \frac{m_1 - m_2}{sd_{pooled}}
 \end{aligned}
-\]</span> With <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span> as the means of two groups (e.g., a control and an experiment) and $SD_{pooled} as the pooled standard deviation of those two groups (see <a href="./2.1-SMD-assumptions.html">here</a> for the full math). This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen’s d).</p>
-<p>However, using this definition formula produces <button class="glossary"><span class="def">Blah blah blah</span>biased</button> results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span>. For that reason, we don’t generally use the estimand or definition formula to calculate SMD. Instead we use a modified <strong>estimator</strong> known as Hedges’ g.</p>
+\]</span></p>
+<p>With <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span> as the means of two groups (e.g., a control and an experiment) and <span class="math inline">\(SD_{pooled}\)</span> as the pooled standard deviation of those two groups. This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen’s d).</p>
+<p>However, using this definition formula produces <button class="glossary"><span class="def">Blah blah blah</span>biased</button> results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If it’s been awhile since you thought about these things, imagine that in a target population (maybe your city or town or county) there is a true mean height. However, you’re unlikely to measure everyone’s height. You therefore sample—if your sample size is low or biased, your sample mean is likely a biased estimate of true population mean height.</p>
+</div>
+</div>
+<p>For that reason, we don’t generally use the estimand or definition formula to calculate SMD. Instead we use a modified <strong>estimator</strong> known as Hedges’ g.</p>
 <p>Hedges’ g multiples Cohen’s d by a small sample size correction factor (<span class="math inline">\(J\)</span>) to the math above. <span class="math inline">\(J\)</span> approaches 1 as sample size increases. Thus at high sample sizes, Hedges’ g <span class="math inline">\(\approx\)</span> Cohen’s d.</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -558,7 +636,8 @@ df &amp;= n_1+n_2-2,\\
 J &amp;\approx 1-\frac{3}{4df-1},\\
 g &amp;= J*d.
 \end{aligned}
-\]</span> All of this is this is to say that <strong>estimands</strong> are the mathematical target of interest, which can be estimated with a variety of <strong>estimators</strong> to produce your effect size <strong>estimates</strong>. Fun stuff right?</p>
+\]</span></p>
+<p>All of this is this is to say that <strong>estimands</strong> are the mathematical target of interest, which can be estimated with a variety of <strong>estimators</strong> to produce your effect size <strong>estimates</strong>. In this case both Cohen’s d and Hedges’ g are estimators of SMD. Fun stuff right?</p>
 <p>The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types—but are not comparable to other estimands.</p>
 <p>In general, <code>escalc</code> uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, <code>escalc</code> uses Hedges’ g.</p>
 <p>Our function, <code>eff_this</code> is similar but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates, and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.</p>
@@ -1326,109 +1405,162 @@ Wooster, E. I. F., E. J. Lundgren, D. G. Nimmo, M. A. Cowan, E. C. Fricke, A. S.
 <span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a>Let us explain.</span>
 <span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estimates, estimators, and estimands {#sec-estimates-and-estimators}</span></span>
+<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estimands, estimators, and estimates {#sec-estimates-and-estimators}</span></span>
 <span id="cb17-209"><a href="#cb17-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-210"><a href="#cb17-210" aria-hidden="true" tabindex="-1"></a>Effect size definition formulas define a theoretically *true* mathematical relationship of interest. This is called the **estimand**. For instance, the SMD point estimate estimand is defined as:</span>
+<span id="cb17-210"><a href="#cb17-210" aria-hidden="true" tabindex="-1"></a>The word **estimand** looks like a typo. But it isn't. An **estimand** is the target of a study: the thing we want to know. For example, are patients more likely to survive when given a drug, relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? These are all estimands: the theoretical target. Primary studies and meta-analytic studies are all aiming to **estimate** an **estimand**.</span>
 <span id="cb17-211"><a href="#cb17-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a>d = \frac{m_1 - m_2}{sd_{pooled}}</span>
-<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled} as the pooled standard deviation of those two groups (see <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for the full math). This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).</span>
-<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a>However, using this definition formula produces {{&lt; glossary bias display=biased &gt;}} results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. </span>
-<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a>Hedges' g multiples Cohen's d by a small sample size correction factor ($J$) to the math above. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.</span>
-<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a>df &amp;= n_1+n_2-2,<span class="sc">\\</span></span>
-<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a>J &amp;\approx 1-\frac{3}{4df-1},<span class="sc">\\</span></span>
-<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a>g &amp;= J*d.</span>
-<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a>All of this is this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. Fun stuff right?</span>
+<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a>There are 5 attributes to estimands:</span>
+<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>The target population: who or what does the question apply to? </span>
+<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Which patients are we trialling the drug on? Are we evaluating logging in all forests or in boreal forests? </span></span>
+<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What is the treatment that we're interested in? </span>
+<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; What drug and at what dosage? How is "selective" logging defined relative to "clearcutting"?</span></span>
+<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What endpoint are we interested in? </span>
+<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Survivorship, species richness, biomass, and so on</span></span>
+<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>How does our estimand deal with intercurrent events?</span>
+<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; How does the estimand handle death from other causes in our patients or wildfire or flooding in our logging experiment?</span></span>
+<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>How do we summarize the effect of the treatment?</span>
 <span id="cb17-231"><a href="#cb17-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-232"><a href="#cb17-232" aria-hidden="true" tabindex="-1"></a>The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. </span>
+<span id="cb17-232"><a href="#cb17-232" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Is the outcome of interest odds of survival of individuals between the placebo and control group? The ratio of species richness between logging treatments? Or the difference in richness between logging treatments?</span></span>
 <span id="cb17-233"><a href="#cb17-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-234"><a href="#cb17-234" aria-hidden="true" tabindex="-1"></a>In general, <span class="in">`escalc`</span> uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, <span class="in">`escalc`</span> uses Hedges' g. </span>
+<span id="cb17-234"><a href="#cb17-234" aria-hidden="true" tabindex="-1"></a>These questions are important to consider when designing a meta-analysis and choosing the effect size to use. You might also note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis <span class="co">[</span><span class="ot">REF</span><span class="co">]</span>. </span>
 <span id="cb17-235"><a href="#cb17-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_this`</span> is similar but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates, and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.</span>
+<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a>In addition to these questions above---which ---you also have practical considerations. These are:</span>
 <span id="cb17-237"><a href="#cb17-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-240"><a href="#cb17-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-241"><a href="#cb17-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb17-242"><a href="#cb17-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb17-243"><a href="#cb17-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb17-244"><a href="#cb17-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-245"><a href="#cb17-245" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>()</span>
+<span id="cb17-238"><a href="#cb17-238" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**The theoretical estimand:** what is the ideal conceptual knowledge that our research is pursuing? </span>
+<span id="cb17-239"><a href="#cb17-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-240"><a href="#cb17-240" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; For example, what forests would look like if there still mammoths and other megafauna influencing them? </span><span class="co">[</span><span class="ot">REF</span><span class="co">]</span></span>
+<span id="cb17-241"><a href="#cb17-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-242"><a href="#cb17-242" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**The empirical estimand:** what data is actually available and what are their confounding variables? </span>
+<span id="cb17-243"><a href="#cb17-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-244"><a href="#cb17-244" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; We can't go back in time, so at best we can compare two separate populations: areas where mammoth relatives still exist to areas where they do not.</span></span>
+<span id="cb17-245"><a href="#cb17-245" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-246"><a href="#cb17-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-247"><a href="#cb17-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-248"><a href="#cb17-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-249"><a href="#cb17-249" aria-hidden="true" tabindex="-1"></a>You can also look at the documentation:</span>
-<span id="cb17-252"><a href="#cb17-252" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-253"><a href="#cb17-253" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb17-254"><a href="#cb17-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb17-255"><a href="#cb17-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb17-247"><a href="#cb17-247" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb17-248"><a href="#cb17-248" aria-hidden="true" tabindex="-1"></a>One issue with meta-analyses is that they often are forced to group studies that had different primary study-level **estimands**. In these cases, the meta-analytic model may be making an overall effect for study-level estimands that are concerned with fundamentally different things. </span>
+<span id="cb17-249"><a href="#cb17-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-250"><a href="#cb17-250" aria-hidden="true" tabindex="-1"></a>This is especially true if you're including both experimental and observational or quasi-experimental data. Experimental data can generally have the same population estimate target. However, observational or quasi-experimental by definition are comparing separate populations. </span>
+<span id="cb17-251"><a href="#cb17-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-252"><a href="#cb17-252" aria-hidden="true" tabindex="-1"></a>This is not to say that conducting a meta-analysis is not a worthy use of time---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.</span>
+<span id="cb17-253"><a href="#cb17-253" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb17-254"><a href="#cb17-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-255"><a href="#cb17-255" aria-hidden="true" tabindex="-1"></a>Estimands also have a mathematical dimension. The *true* mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the *difference* in a continuous outcome between two treatment groups. It is defined as:</span>
 <span id="cb17-256"><a href="#cb17-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-257"><a href="#cb17-257" aria-hidden="true" tabindex="-1"></a>?eff_size</span>
-<span id="cb17-258"><a href="#cb17-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-259"><a href="#cb17-259" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-260"><a href="#cb17-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-261"><a href="#cb17-261" aria-hidden="true" tabindex="-1"></a>Now let's calculate SMD:</span>
+<span id="cb17-257"><a href="#cb17-257" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-258"><a href="#cb17-258" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb17-259"><a href="#cb17-259" aria-hidden="true" tabindex="-1"></a>d = \frac{m_1 - m_2}{sd_{pooled}}</span>
+<span id="cb17-260"><a href="#cb17-260" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb17-261"><a href="#cb17-261" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb17-262"><a href="#cb17-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-265"><a href="#cb17-265" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb17-266"><a href="#cb17-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb17-267"><a href="#cb17-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-268"><a href="#cb17-268" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">10</span>, <span class="at">x2 =</span> <span class="dv">6</span>,</span>
-<span id="cb17-269"><a href="#cb17-269" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
-<span id="cb17-270"><a href="#cb17-270" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
-<span id="cb17-271"><a href="#cb17-271" aria-hidden="true" tabindex="-1"></a>       <span class="at">default_formulas =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb17-272"><a href="#cb17-272" aria-hidden="true" tabindex="-1"></a>       <span class="at">effect_type =</span> <span class="st">"SMD"</span>)</span>
-<span id="cb17-273"><a href="#cb17-273" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-274"><a href="#cb17-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-275"><a href="#cb17-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-276"><a href="#cb17-276" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas (@eq-1 and @eq-2) and the <span class="in">`_second`</span> variables are the bias-corrected estimates (in this case Hedges' g). If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that <span class="in">`escalc`</span> returns).</span>
-<span id="cb17-277"><a href="#cb17-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-278"><a href="#cb17-278" aria-hidden="true" tabindex="-1"></a>You'll see in future sections that certain data types may require alternative estimators, which are provided within <span class="in">`eff_size`</span>. For example, <span class="in">`escalc`</span> returns the bias-corrected lnRoM point estimate by default <span class="co">[</span><span class="ot">@Lajeunesse2015-gw</span><span class="co">]</span>. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as <span class="in">`yi_second`</span> and <span class="in">`yi_first`</span>, respectively, by <span class="in">`eff_size`</span>. See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for a fuller discussion.</span>
-<span id="cb17-279"><a href="#cb17-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-280"><a href="#cb17-280" aria-hidden="true" tabindex="-1"></a>These alternatives can also be accessed in <span class="in">`escalc`</span> by specifying <span class="in">`correct = FALSE`</span> in the function arguments, which will return the first-order definition-formula estimates.</span>
-<span id="cb17-281"><a href="#cb17-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-282"><a href="#cb17-282" aria-hidden="true" tabindex="-1"></a><span class="fu">## Alternative estimators {#sec-alternative-estimators}</span></span>
-<span id="cb17-283"><a href="#cb17-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-284"><a href="#cb17-284" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators that are similar to the primary effect size flavors covered here yet have small differences that can be difficult to disentangle. These are often rarely used despite their potential utility to meta-analyses.</span>
-<span id="cb17-285"><a href="#cb17-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-286"><a href="#cb17-286" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors. Others cannot.</span>
-<span id="cb17-287"><a href="#cb17-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-288"><a href="#cb17-288" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors account for paired designs---i.e., non-independence between control and experimental groups. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account for this non-independence.</span>
-<span id="cb17-289"><a href="#cb17-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-290"><a href="#cb17-290" aria-hidden="true" tabindex="-1"></a>Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same, or nearly the same, regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.</span>
-<span id="cb17-291"><a href="#cb17-291" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-292"><a href="#cb17-292" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](6-escalc-cheatsheet.qmd)</span> with some charts of compatibility between the different estimators in <span class="in">`escalc`</span>.</span>
-<span id="cb17-293"><a href="#cb17-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-294"><a href="#cb17-294" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes {#sec-custom-effect-sizes}</span></span>
-<span id="cb17-295"><a href="#cb17-295" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-296"><a href="#cb17-296" aria-hidden="true" tabindex="-1"></a>You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method <span class="co">[</span><span class="ot">see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do</span><span class="co">]</span>.</span>
+<span id="cb17-263"><a href="#cb17-263" aria-hidden="true" tabindex="-1"></a>With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled}$ as the pooled standard deviation of those two groups. This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).</span>
+<span id="cb17-264"><a href="#cb17-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-265"><a href="#cb17-265" aria-hidden="true" tabindex="-1"></a>However, using this definition formula produces {{&lt; glossary bias display=biased &gt;}} results when the sample size of those two groups is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. </span>
+<span id="cb17-266"><a href="#cb17-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-267"><a href="#cb17-267" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb17-268"><a href="#cb17-268" aria-hidden="true" tabindex="-1"></a>If it's been awhile since you thought about these things, imagine that in a target population (maybe your city or town or county) there is a true mean height. However, you're unlikely to measure everyone's height. You therefore sample---if your sample size is low or biased, your sample mean is likely a biased estimate of true population mean height.</span>
+<span id="cb17-269"><a href="#cb17-269" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb17-270"><a href="#cb17-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-271"><a href="#cb17-271" aria-hidden="true" tabindex="-1"></a>For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. </span>
+<span id="cb17-272"><a href="#cb17-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-273"><a href="#cb17-273" aria-hidden="true" tabindex="-1"></a>Hedges' g multiples Cohen's d by a small sample size correction factor ($J$) to the math above. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.</span>
+<span id="cb17-274"><a href="#cb17-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-275"><a href="#cb17-275" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-276"><a href="#cb17-276" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb17-277"><a href="#cb17-277" aria-hidden="true" tabindex="-1"></a>df &amp;= n_1+n_2-2,<span class="sc">\\</span></span>
+<span id="cb17-278"><a href="#cb17-278" aria-hidden="true" tabindex="-1"></a>J &amp;\approx 1-\frac{3}{4df-1},<span class="sc">\\</span></span>
+<span id="cb17-279"><a href="#cb17-279" aria-hidden="true" tabindex="-1"></a>g &amp;= J*d.</span>
+<span id="cb17-280"><a href="#cb17-280" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb17-281"><a href="#cb17-281" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-282"><a href="#cb17-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-283"><a href="#cb17-283" aria-hidden="true" tabindex="-1"></a>All of this is this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. In this case both Cohen's d and Hedges' g are estimators of SMD. Fun stuff right?</span>
+<span id="cb17-284"><a href="#cb17-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-285"><a href="#cb17-285" aria-hidden="true" tabindex="-1"></a>The key take-away from this is that there are sometimes multiple alternative estimators for the same estimand. There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. </span>
+<span id="cb17-286"><a href="#cb17-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-287"><a href="#cb17-287" aria-hidden="true" tabindex="-1"></a>In general, <span class="in">`escalc`</span> uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, <span class="in">`escalc`</span> uses Hedges' g. </span>
+<span id="cb17-288"><a href="#cb17-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-289"><a href="#cb17-289" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_this`</span> is similar but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates, and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.</span>
+<span id="cb17-290"><a href="#cb17-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-293"><a href="#cb17-293" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-294"><a href="#cb17-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb17-295"><a href="#cb17-295" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-296"><a href="#cb17-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
 <span id="cb17-297"><a href="#cb17-297" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-298"><a href="#cb17-298" aria-hidden="true" tabindex="-1"></a>However, custom effect sizes (or at least rare effect sizes) can also be useful even with data that is readily synthesizable with the effect sizes we discussed above. </span>
+<span id="cb17-298"><a href="#cb17-298" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>()</span>
 <span id="cb17-299"><a href="#cb17-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-300"><a href="#cb17-300" aria-hidden="true" tabindex="-1"></a>For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator (while accounting for the shared control in your random effects).</span>
+<span id="cb17-300"><a href="#cb17-300" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb17-301"><a href="#cb17-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-302"><a href="#cb17-302" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.</span>
-<span id="cb17-303"><a href="#cb17-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-304"><a href="#cb17-304" aria-hidden="true" tabindex="-1"></a>Another way of solving this problem is to use an effect size that explicitly includes the temperature difference <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span>. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$): </span>
-<span id="cb17-305"><a href="#cb17-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-306"><a href="#cb17-306" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb17-307"><a href="#cb17-307" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb17-308"><a href="#cb17-308" aria-hidden="true" tabindex="-1"></a>&amp;Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}<span class="sc">\\</span></span>
-<span id="cb17-309"><a href="#cb17-309" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb17-310"><a href="#cb17-310" aria-hidden="true" tabindex="-1"></a>$${#eq-3}</span>
+<span id="cb17-302"><a href="#cb17-302" aria-hidden="true" tabindex="-1"></a>You can also look at the documentation:</span>
+<span id="cb17-305"><a href="#cb17-305" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-306"><a href="#cb17-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb17-307"><a href="#cb17-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb17-308"><a href="#cb17-308" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb17-309"><a href="#cb17-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-310"><a href="#cb17-310" aria-hidden="true" tabindex="-1"></a>?eff_size</span>
 <span id="cb17-311"><a href="#cb17-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-312"><a href="#cb17-312" aria-hidden="true" tabindex="-1"></a>Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by @havird2020 using the Delta method) or with the <span class="co">[</span><span class="ot">SAFE method</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> <span class="co">[</span><span class="ot">@Nakagawa2025-do</span><span class="co">]</span>. These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). </span>
+<span id="cb17-312"><a href="#cb17-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb17-313"><a href="#cb17-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-314"><a href="#cb17-314" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this may be the best way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly within your custom effect size. See <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span> for a thorough discussion of these matters. </span>
+<span id="cb17-314"><a href="#cb17-314" aria-hidden="true" tabindex="-1"></a>Now let's calculate SMD:</span>
 <span id="cb17-315"><a href="#cb17-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-316"><a href="#cb17-316" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
+<span id="cb17-318"><a href="#cb17-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb17-319"><a href="#cb17-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb17-320"><a href="#cb17-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-321"><a href="#cb17-321" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">10</span>, <span class="at">x2 =</span> <span class="dv">6</span>,</span>
+<span id="cb17-322"><a href="#cb17-322" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
+<span id="cb17-323"><a href="#cb17-323" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
+<span id="cb17-324"><a href="#cb17-324" aria-hidden="true" tabindex="-1"></a>       <span class="at">default_formulas =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-325"><a href="#cb17-325" aria-hidden="true" tabindex="-1"></a>       <span class="at">effect_type =</span> <span class="st">"SMD"</span>)</span>
+<span id="cb17-326"><a href="#cb17-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-327"><a href="#cb17-327" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-328"><a href="#cb17-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-329"><a href="#cb17-329" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas (@eq-1 and @eq-2) and the <span class="in">`_second`</span> variables are the bias-corrected estimates (in this case Hedges' g). If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that <span class="in">`escalc`</span> returns).</span>
+<span id="cb17-330"><a href="#cb17-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-331"><a href="#cb17-331" aria-hidden="true" tabindex="-1"></a>You'll see in future sections that certain data types may require alternative estimators, which are provided within <span class="in">`eff_size`</span>. For example, <span class="in">`escalc`</span> returns the bias-corrected lnRoM point estimate by default <span class="co">[</span><span class="ot">@Lajeunesse2015-gw</span><span class="co">]</span>. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as <span class="in">`yi_second`</span> and <span class="in">`yi_first`</span>, respectively, by <span class="in">`eff_size`</span>. See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for a fuller discussion.</span>
+<span id="cb17-332"><a href="#cb17-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-333"><a href="#cb17-333" aria-hidden="true" tabindex="-1"></a>These alternatives can also be accessed in <span class="in">`escalc`</span> by specifying <span class="in">`correct = FALSE`</span> in the function arguments, which will return the first-order definition-formula estimates.</span>
+<span id="cb17-334"><a href="#cb17-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-335"><a href="#cb17-335" aria-hidden="true" tabindex="-1"></a><span class="fu">## Alternative estimators {#sec-alternative-estimators}</span></span>
+<span id="cb17-336"><a href="#cb17-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-337"><a href="#cb17-337" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators that are similar to the primary effect size flavors covered here yet have small differences that can be difficult to disentangle. These are often rarely used despite their potential utility to meta-analyses.</span>
+<span id="cb17-338"><a href="#cb17-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-339"><a href="#cb17-339" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors. Others cannot.</span>
+<span id="cb17-340"><a href="#cb17-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-341"><a href="#cb17-341" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors account for paired designs---i.e., non-independence between control and experimental groups. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account for this non-independence.</span>
+<span id="cb17-342"><a href="#cb17-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-343"><a href="#cb17-343" aria-hidden="true" tabindex="-1"></a>Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same, or nearly the same, regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.</span>
+<span id="cb17-344"><a href="#cb17-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-345"><a href="#cb17-345" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](6-escalc-cheatsheet.qmd)</span> with some charts of compatibility between the different estimators in <span class="in">`escalc`</span>.</span>
+<span id="cb17-346"><a href="#cb17-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-347"><a href="#cb17-347" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes {#sec-custom-effect-sizes}</span></span>
+<span id="cb17-348"><a href="#cb17-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-349"><a href="#cb17-349" aria-hidden="true" tabindex="-1"></a>You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method <span class="co">[</span><span class="ot">see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do</span><span class="co">]</span>.</span>
+<span id="cb17-350"><a href="#cb17-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-351"><a href="#cb17-351" aria-hidden="true" tabindex="-1"></a>However, custom effect sizes (or at least rare effect sizes) can also be useful even with data that is readily synthesizable with the effect sizes we discussed above. </span>
+<span id="cb17-352"><a href="#cb17-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-353"><a href="#cb17-353" aria-hidden="true" tabindex="-1"></a>For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator (while accounting for the shared control in your random effects).</span>
+<span id="cb17-354"><a href="#cb17-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-355"><a href="#cb17-355" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.</span>
+<span id="cb17-356"><a href="#cb17-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-357"><a href="#cb17-357" aria-hidden="true" tabindex="-1"></a>Another way of solving this problem is to use an effect size that explicitly includes the temperature difference <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span>. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the temperature treatments ($T_{1,2}$): </span>
+<span id="cb17-358"><a href="#cb17-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-359"><a href="#cb17-359" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb17-360"><a href="#cb17-360" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb17-361"><a href="#cb17-361" aria-hidden="true" tabindex="-1"></a>&amp;Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}<span class="sc">\\</span></span>
+<span id="cb17-362"><a href="#cb17-362" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb17-363"><a href="#cb17-363" aria-hidden="true" tabindex="-1"></a>$${#eq-3}</span>
+<span id="cb17-364"><a href="#cb17-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-365"><a href="#cb17-365" aria-hidden="true" tabindex="-1"></a>Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by @havird2020 using the Delta method) or with the <span class="co">[</span><span class="ot">SAFE method</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> <span class="co">[</span><span class="ot">@Nakagawa2025-do</span><span class="co">]</span>. These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). </span>
+<span id="cb17-366"><a href="#cb17-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-367"><a href="#cb17-367" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this may be the best way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly within your custom effect size. See <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span> for a thorough discussion of these matters. </span>
+<span id="cb17-368"><a href="#cb17-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-369"><a href="#cb17-369" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
