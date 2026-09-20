@@ -355,8 +355,12 @@ window.Quarto = {
 <a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">Interpretation</a>
   <ul>
 <li><a href="#standardized-mean-difference-smd" id="toc-standardized-mean-difference-smd" class="nav-link" data-scroll-target="#standardized-mean-difference-smd">Standardized Mean Difference (SMD)</a></li>
-  <li><a href="#log-transformed-ratio-of-means-lnrom" id="toc-log-transformed-ratio-of-means-lnrom" class="nav-link" data-scroll-target="#log-transformed-ratio-of-means-lnrom">Log-transformed ratio of means (lnRoM)</a></li>
-  <li><a href="#sec-lnrom-correction" id="toc-sec-lnrom-correction" class="nav-link" data-scroll-target="#sec-lnrom-correction">The small-sample size correction</a></li>
+  <li>
+<a href="#log-transformed-ratio-of-means-lnrom" id="toc-log-transformed-ratio-of-means-lnrom" class="nav-link" data-scroll-target="#log-transformed-ratio-of-means-lnrom">Log-transformed ratio of means (lnRoM)</a>
+  <ul>
+<li><a href="#sec-lnrom-correction" id="toc-sec-lnrom-correction" class="nav-link" data-scroll-target="#sec-lnrom-correction">The small-sample size correction</a></li>
+  </ul>
+</li>
   </ul>
 </li>
   <li><a href="#assumptions" id="toc-assumptions" class="nav-link" data-scroll-target="#assumptions">Assumptions</a></li>
@@ -651,7 +655,7 @@ lnRoM = \ln(\frac{m_1}{m_2})
 <pre><code>[1] 19.72174</code></pre>
 </div>
 </div>
-</section><section id="sec-lnrom-correction" class="level2"><h2 class="anchored" data-anchor-id="sec-lnrom-correction">The small-sample size correction</h2>
+<section id="sec-lnrom-correction" class="level4"><h4 class="anchored" data-anchor-id="sec-lnrom-correction">The small-sample size correction</h4>
 <p>With SMD, we used <span class="math inline">\(J\)</span> to correct for bias at low sample sizes. A similar second-order derived estimator exists for lnRoM to account for bias at low sample sizes <span class="citation" data-cites="Lajeunesse2015-gw">(<a href="#ref-Lajeunesse2015-gw" role="doc-biblioref">Lajeunesse 2015</a>)</span>. This correction is important <strong>if</strong> your dataset has small sample sizes and is <strong>not</strong> overdispersed (which we’ll discuss further <a href="#sec-overdispersion">below</a>).</p>
 <p>This correction changes the lnRoM point estimate formula to:</p>
 <p><span id="eq-lnrom-corrected"><span class="math display">\[
@@ -710,7 +714,7 @@ Be sure that all variables in formula are correctly named.</code></pre>
 </div>
 </div>
 <p>with <code>_first</code> and <code>_second</code> referring to uncorrected definition formula (<a href="#eq-lnrom-definition" class="quarto-xref">Equation&nbsp;4</a>) and second-order (<a href="#eq-lnrom-corrected" class="quarto-xref">Equation&nbsp;5</a>) estimators respectively.</p>
-</section></section><section id="assumptions" class="level1"><h1>Assumptions</h1>
+</section></section></section><section id="assumptions" class="level1"><h1>Assumptions</h1>
 <p>As we described above, SMD and lnRoM have very different biological interpretations because of their mathematical definitions. They also have different assumptions which, regardless of which interpretation you prefer, may shape your decision about which effect size to use.</p>
 <p>The following properties help determine whether SMD or lnRoM are mathematically appropriate:</p>
 <table class="caption-top table">
@@ -721,42 +725,42 @@ Be sure that all variables in formula are correctly named.</code></pre>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td>Sensitive to values near 0</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
 <td>Accepts values ≤ 0</td>
 <td>Yes</td>
 <td>No</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>OK with mixed dimensionality</td>
 <td>Yes</td>
 <td>No</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>OK with overdispersed data</td>
 <td>Sensitive</td>
 <td>Yes</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>OK with heteroscedasticity</td>
 <td>Use SMDH</td>
 <td>Yes</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Can impute missing error bars</td>
 <td>No</td>
 <td>Can be imputed</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Can calculate from model test statistics</td>
 <td>Yes</td>
 <td>No</td>
 </tr>
-<tr class="odd">
-<td>Can calculate from other effect size types</td>
-<td>Yes</td>
-<td>No</td>
-</tr>
 <tr class="even">
-<td>Values near 0</td>
+<td>Can calculate from other effect size types</td>
 <td>Yes</td>
 <td>No</td>
 </tr>
@@ -2035,7 +2039,7 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb34-297"><a href="#cb34-297" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> (<span class="fu">exp</span>(<span class="fl">0.18</span>) <span class="sc">-</span> <span class="dv">1</span>)</span>
 <span id="cb34-298"><a href="#cb34-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb34-299"><a href="#cb34-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-300"><a href="#cb34-300" aria-hidden="true" tabindex="-1"></a><span class="fu">## The small-sample size correction {#sec-lnrom-correction}</span></span>
+<span id="cb34-300"><a href="#cb34-300" aria-hidden="true" tabindex="-1"></a><span class="fu">#### The small-sample size correction {#sec-lnrom-correction}</span></span>
 <span id="cb34-301"><a href="#cb34-301" aria-hidden="true" tabindex="-1"></a>With SMD, we used $J$ to correct for bias at low sample sizes. A similar second-order derived estimator exists for lnRoM to account for bias at low sample sizes <span class="co">[</span><span class="ot">@Lajeunesse2015-gw</span><span class="co">]</span>. This correction is important **if** your dataset has small sample sizes and is **not** overdispersed (which we'll discuss further <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-overdispersion)</span>). </span>
 <span id="cb34-302"><a href="#cb34-302" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-303"><a href="#cb34-303" aria-hidden="true" tabindex="-1"></a>This correction changes the lnRoM point estimate formula to:</span>
@@ -2084,14 +2088,14 @@ Yang, Y., C. Williams, A. Senior, K. Morrison, L. Ricolfi, J. Pan, M. Lagisz, an
 <span id="cb34-350"><a href="#cb34-350" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-351"><a href="#cb34-351" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Assumption <span class="pp">|</span> SMD <span class="pp">|</span> lnRoM <span class="pp">|</span></span>
 <span id="cb34-352"><a href="#cb34-352" aria-hidden="true" tabindex="-1"></a><span class="pp">|------------|-----|-------|</span></span>
-<span id="cb34-353"><a href="#cb34-353" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Accepts values ≤ 0 <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb34-354"><a href="#cb34-354" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OK with mixed dimensionality <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb34-355"><a href="#cb34-355" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OK with overdispersed data <span class="pp">|</span> Sensitive <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb34-356"><a href="#cb34-356" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OK with heteroscedasticity <span class="pp">|</span> Use SMDH <span class="pp">|</span> Yes <span class="pp">|</span></span>
-<span id="cb34-357"><a href="#cb34-357" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can impute missing error bars <span class="pp">|</span> No <span class="pp">|</span> Can be imputed <span class="pp">|</span></span>
-<span id="cb34-358"><a href="#cb34-358" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can calculate from model test statistics <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb34-359"><a href="#cb34-359" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can calculate from other effect size types <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
-<span id="cb34-360"><a href="#cb34-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Values near 0 <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb34-353"><a href="#cb34-353" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sensitive to values near 0 <span class="pp">|</span> No <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb34-354"><a href="#cb34-354" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Accepts values ≤ 0 <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb34-355"><a href="#cb34-355" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OK with mixed dimensionality <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb34-356"><a href="#cb34-356" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OK with overdispersed data <span class="pp">|</span> Sensitive <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb34-357"><a href="#cb34-357" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> OK with heteroscedasticity <span class="pp">|</span> Use SMDH <span class="pp">|</span> Yes <span class="pp">|</span></span>
+<span id="cb34-358"><a href="#cb34-358" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can impute missing error bars <span class="pp">|</span> No <span class="pp">|</span> Can be imputed <span class="pp">|</span></span>
+<span id="cb34-359"><a href="#cb34-359" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can calculate from model test statistics <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb34-360"><a href="#cb34-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Can calculate from other effect size types <span class="pp">|</span> Yes <span class="pp">|</span> No <span class="pp">|</span></span>
 <span id="cb34-361"><a href="#cb34-361" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-362"><a href="#cb34-362" aria-hidden="true" tabindex="-1"></a>The remaining sections examine these considerations---including negative values, dimensionality, overdispersion, heteroscedasticity, and missing standard deviations---all of which should guide your decision about whether to use SMD or lnRoM.</span>
 <span id="cb34-363"><a href="#cb34-363" aria-hidden="true" tabindex="-1"></a></span>
