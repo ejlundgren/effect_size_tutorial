@@ -174,7 +174,7 @@ $${#eq-d-eq}
 
 Note that when lnM = 0, this translates to $d_{eq}$ of 1.41. What exactly does that mean? This means that within-group variation is large but overall mean differences between groups are 1.41 standard deviations apart. Tricky right?
 
-Let's illustrate lnM in `R` for three comparisons---each representing a plausible comparison of group 1 and 2. We'll set the group standard deviations constant at 5, and change the means of group 2 by increments of 5 while holding group 1 constant at $m_1=15$. We'll plot the simulated data, lnM estimates, and $d_{eq}$:
+Let's illustrate lnM in `R` for three comparisons---each representing a plausible comparison of group 1 and 2. We'll draw data from the normal distribution for 3 scenarios: equivalent "true" means, and increasing means for group 2. We'll set the group standard deviations constant at 5, and change the means of group 2 by increments of 5 while holding group 1 constant at $m_1=15$. In order to clearly illustrate how lnM works, we'll set a sample size of 100 for each group. We'll plot the simulated data, lnM estimates, and $d_{eq}$:
 
 ```{r}
 #| eval: true
@@ -182,26 +182,44 @@ Let's illustrate lnM in `R` for three comparisons---each representing a plausibl
 #| output: false
 #| code-fold: true
 #| fig-width: 10
-set.seed(33)
 
-dat <- data.table(x1 = 15, 
-                  x2 = c(15, 20, 25),
-                  sd1 = 5,
-                  sd2 = 5,
-                  n1 = 40,
-                  n2 = 40)
+set.seed(7)
 
-dat <- eff_size(x1 = x1, x2 = x2, 
-         sd1 = sd1, sd2 = sd2,
-         n1 = n1, n2 = n2,
-         data = dat,
-         bind = TRUE,
-         effect_type = "lnM",
-         verbose = FALSE,
-         SAFE = TRUE,
-         SAFE_boots = 1e6,
-         SAFE_max_secs = 15)
-dat
+# 
+sd <- 5
+n <- 500
+
+# Group 1 distribution (fixed):
+group_1 <- rnorm(n = n, mean = 15, sd = sd)
+
+# Group 2 distributions:
+distributions <- lapply(c(15, 20, 25),
+                        function(x) data.table(mean_group_2 = x,
+                                               group_2 = rnorm(n = n, mean = x, sd = sd))) |>
+  rbindlist()
+
+distributions[, group_1 := rep(group_1, length(unique(distributions$mean)))]
+
+dat_summaries <- distributions[, .(x1 = mean(group_1),
+                                   x2 = mean(group_2),
+                                   sd1 = sd(group_1),
+                                   sd2 = sd(group_2),
+                                   n1 = 40,
+                                   n2 = 40),
+                               by = .(mean_group_2)]
+dat_summaries
+
+dat_summaries <- eff_size(x1 = x1, x2 = x2, 
+                           sd1 = sd1, sd2 = sd2,
+                           n1 = n1, n2 = n2,
+                           data = dat_summaries,
+                           bind = TRUE,
+                           effect_type = "lnM",
+                           verbose = FALSE,
+                           SAFE = TRUE,
+                           SAFE_boots = 1e6,
+                           SAFE_max_secs = 15)
+dat_summaries
 
 d_eq <- function(lnM, n1, n2){
   n0 = (2*n1*n2) / (n1 + n2)
@@ -209,34 +227,32 @@ d_eq <- function(lnM, n1, n2){
 }
 
 # Calculate d_eq:
-dat[, deq := d_eq(lnM = yi_safe, n1 = n1, n2 = n2)]
+dat_summaries[, deq := d_eq(lnM = yi_safe, n1 = n1, n2 = n2)]
 
-dat[, string := paste0("lnM = ", round(yi_safe, 2), ";<br>d<sub>eq</sub> = ", round(deq, 2))]
-# Create rnorm distributions, for plotting:
+# Create string labels:
+dat_summaries[, estimates := paste0("lnM = ", round(yi_safe, 2), 
+                                    ";<br>d<sub>eq</sub> = ", round(deq, 2))]
+dat_summaries[, scenario := paste0("m<sub>1</sub>=", round(x1, 1), ", sd<sub>1</sub>=", round(sd1, 1),
+                                   "<br>",
+                                   "m<sub>2</sub>=", round(x2, 1),  ", sd<sub>2</sub>=", round(sd2, 1))]
 
-distributions <- lapply(dat$x2,
-                        function(x) data.table(mean_group_2 = x,
-                                               group_2 = rnorm(n = 40, mean = x, sd = 4))) |>
-  rbindlist()
+# Format distributions to be long and have labels:
+distributions.mlt <- melt(distributions,
+                            id.vars = c("mean_group_2"))
+distributions_final <- merge(distributions.mlt,
+                             dat_summaries[, .(mean_group_2, estimates)],
+                             by = "mean_group_2")
+distributions_final
 
-# for group 1:
-group_1 <- rnorm(n = 40, mean = 15, sd = 4)
-distributions[, group_1 := rep(group_1, length(unique(distributions$mean)))]
-
-distributions.mrg <- merge(distributions,
-                             dat[, .(x2, string)],
-                             by.x = "mean_group_2",
-                             by.y = "x2")
-
-distributions_final <- melt(distributions.mrg,
-                            id.vars = c("mean_group_2", "string"))
-
+# Sort:
 setorder(distributions_final, mean_group_2)
+distributions_final$estimates <- factor(distributions_final$estimates,
+                                     levels = unique(distributions_final$estimates))
 
-distributions_final[, facet_lab := paste0("m<sub>1</sub>=", 15, "<br>",
-                                          "m<sub>2</sub>=", mean_group_2)]
-distributions_final$string <- factor(distributions_final$string,
-                                     levels = unique(distributions_final$string))
+setorder(dat_summaries, mean_group_2)
+dat_summaries$estimates <- factor(dat_summaries$estimates,
+                                     levels = unique(distributions_final$estimates))
+
 # distributions_final[, facet_lab := paste("")]
 distributions_final$variable <- factor(distributions_final$variable,
                                        c("group_1", "group_2"))
@@ -244,11 +260,12 @@ distributions_final$variable <- factor(distributions_final$variable,
 p <- ggplot()+
   geom_density(data = distributions_final, aes(x = value, fill = variable),
                alpha = 0.75)+
-  geom_richtext(data = unique(distributions_final[, .(facet_lab, string, mean_group_2)]),
-            aes(x = 5, y = 0.11, label = facet_lab), 
-            size = 4, label.color = NA)+
-  facet_wrap(~string)+
+  geom_richtext(data = dat_summaries,
+            aes(x = 20, y = 0.1, label = scenario), 
+            size = 4, label.color = NA, fill = "transparent")+
+  facet_wrap(~estimates)+
   ylab("Density")+
+  coord_cartesian(ylim = c(0, 0.11))+
   scale_fill_manual(name = NULL,
                     labels = c("group_1" = "Group 1", "group_2" = "Group 2"),
                     values = c("group_1" = "goldenrod", "group_2" = "dodgerblue"))+
@@ -265,45 +282,102 @@ p <- ggplot()+
 #| eval: true
 p
 ```
+The figure shows the realized means and standard deviations of groups 1 and 2 ($m_{1,2}$, $sd_{1,2}$) after drawing their distributions from the normal distribution.
 
-In the first panel, the means of group 1 and 2 are identical, as are their standard deviations. The standard deviation in all scenarios and for both groups was set to 5. (Note that data was drawn from the normal distribution, so the two distributions are not identical but their summary statistics are). lnM is -1.94 and $d_{eq}$ is 0.3. 
+In the first panel, the means and standard deviations of group 1 and 2 are nearly identical. Yet lnM is -1.94 and **not 0**. This is obviously confusing---there should be no difference! But lnM doesn't work that way---because lnM is the ratio of within to between variance. That's where $d_{eq}$ comes in handy: $d_{eq} = 0.3$. This means that the two groups are ~1/3 of a standard deviation apart. 
 
-In the second panel, $m_2$ is now 20. lnM is -0.4 (still negative) and $d_{eq}$ is ~1! This makes sense *because the standard deviation is 5 and $m_2$ is now 5 away from $m_1$.* 
+In the second panel, $m_2$ is now ~20. lnM is -0.4 and $d_{eq}$ is ~1. This makes sense *because the standard deviation is 5 and $m_2$ is now 5 away from $m_1$* 
 
-> This can be reported as: "There was *1 standard deviation* between groups, regardless of direction"
+> This can be reported as: "There was *1 standard deviation* between groups"
 
-In the third panel, $m_2$ is 25 and lnM is 0.34. $d_{eq}$ again successfully recovered the number of standard deviations between the two groups (2).
+In the third panel, $m_2$ is 25, lnM is 0.34 and $d_{eq}$ is 2---which again successfully recovered the number of standard deviations between the two groups.
 
 > "There were *2 standard deviations* between groups, regardless of direction"
 
-As you can see, converting lnM to $d_{eq}$ makes the results intepretable in terms of differences in standard deviation between two groups---just like with SMD. However, these differences are directionless. It doesn't matter which group is higher or lower: the result will be the same. This produces a normally distributed and unbounded effect size distribution which allows us to ask evolutionary and ecological questions that have previously been unanswerable with meta-analysis.
+As you can see, converting lnM to $d_{eq}$ makes the results intepretable in terms of differences in standard deviation between two groups---just like with SMD. However, unlike SMD, these differences are directionless. It doesn't matter which group is higher or lower: the result will be the same. This produces a normally distributed and unbounded effect size distribution which allows us to ask evolutionary and ecological questions that have previously been unanswerable with meta-analysis.
 
-:::
-#### Models
-As we mention above, because of the distributional properties of lnM and $d_{eq}$, it is still better to fit models directly on lnM, instead of $d_{eq}$. 
+:::callout-important
+#### Modelling lnM
+Because of the distributional properties of lnM and $d_{eq}$, it is still better to fit models directly on lnM, instead of $d_{eq}$. 
 
-However, this can lead to challenges in interpreting the statistical outputs: the statistical tests performed by `metafor::rma.mv` compare coefficients relative to 0: a p-value of 0.01 indicates a significant difference in the coefficient of interest from 0. 
+However, this can lead to challenges in interpreting the statistical outputs: the statistical tests performed by `metafor::rma.mv` compare coefficients to 0: a p-value of 0.01 indicate that a coefficient is significantly different than 0. 
 
-However, for lnM, 0 does not mean the same as it does for other effect sizes. 
+However, for lnM, 0 does not mean the same as it does for other effect sizes: as our simulation above shows, identical means and standard deviations produce an lnM of -1.94. 
 
-As our figures above show, identical means and standard deviations produce an lnM of -1.94. 
+You can set alternative values using the function `anova` and the argument `rhs` to specify alternative values. 
 
-***How do we deal with this???***
+Let's use $d_{eq}=0$ as our threshold, or 0 standard deviation between groups. We'll use a modified conversion formula between lnM and $d_{eq}$ that assumes large sample size (see equation 22 in @Nakagawa2026-rb). 
+
+$$
+\begin{aligned}
+&d_{eq} \approx \sqrt{2}e^{lnM} \\
+\end{aligned}
+$${#eq-deq-large-sample-approx}
+
+Solving for lnM:
+$$
+\begin{aligned}
+&e^{lnM} \approx \frac{d_{eq}}{\sqrt{2}}\\
+\end{aligned}
+$${#eq-solving-for-lnm}
+
+If $d_{eq} = 0$, this simplifies to...?
+
+Not sure what to do here...
+
+Let's demonstrate with a dataset provided by `metafor`:
+
+```{r}
+data(dat.normand1999)
+dat.normand1999
+
+dat.normand1999 <- eff_size(x1 = m1i, x2 = m1i, 
+                           sd1 = sd1i, sd2 = sd2i,
+                           n1 = n1i, n2 = n2i,
+                           data = dat.normand1999,
+                           bind = TRUE,
+                           effect_type = "lnM",
+                           verbose = FALSE,
+                           SAFE = TRUE,
+                           SAFE_boots = 1e6,
+                           SAFE_max_secs = 15)
+dat.normand1999
+
+m <- rma.mv(yi = yi_safe,
+            V = vi_safe,
+            data = dat.normand1999,
+            random = ~1|study,
+            method = "REML",
+            test = "t")
+m # Comparison to 0
+
+anova(m, rhs = -1.5)
+
+```
 :::
 
 
 
 :::
 ##### Centering lnM to a target absolute SMD
-@Nakagawa-rb recommends centering $d_eq$ by XXXXX. ***HELP***
+@Nakagawa-rb notes that you can also center $d_eq$ on XXXXX. ***HELP***
 
 When and where to do this???
 
 :::
 
 
-#### Paired **lnM**
-For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call above.
+### Assumptions {#sec-lnM-assumptions}
+**lnM** works with both ratio-scale and interval-scale data and can thus accept negative values. 
+
+However, as with SMD and lnRoM, lnM assumes that the underlying data is more or less normally distributed. We recommend checking for overdispersed data and excluding effect sizes with $CV > 2$, as with SMD and lnRoM. See [here](2.1-SMD-assumptions.qmd) for further discussion of overdispersion. lnM is also sensitive to low sample sizes. @Nakagawa2026-rb recommends conducting sensitivity analyses only including studies with $n_1 + n_2 \geq 40$.
+
+lnM is a newly constructed effect size (as of 2026). Further research is necessary to understand how heteroscedasticity and other numeric properties influence lnM performance.
+
+
+:::callout-important
+##### Paired **lnM**
+For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call:
 
 ```{r}
 #| eval: true
@@ -314,21 +388,14 @@ eff_size(x1 = 15, x2 = 10,
          sd1 = 1.5, sd2 = 2,
          n = 15, r = 0.8,
          effect_type = "lnM",
-         paired = TRUE,
+         paired = TRUE, # Add this. FALSE is default.
          SAFE = TRUE,
          SAFE_boots = 1e6,
          SAFE_max_secs = 60)
 
 
 ```
-
-### Assumptions {#sec-lnM-assumptions}
-**lnM** works with both ratio-scale and interval-scale data and can thus accept negative values. 
-
-However, as with SMD and lnRoM, lnM assumes that the underlying data is more or less normally distributed. We recommend checking for overdispersed data and excluding effect sizes with $CV > 2$, as with SMD and lnRoM. See [here](2.1-SMD-assumptions.qmd) for further discussion of overdispersion. lnM is also sensitive to low sample sizes. @Nakagawa2026-rb recommends conducting sensitivity analyses only including studies with $n_1 + n_2 \geq 40$.
-
-lnM is a newly constructed effect size (as of 2026). Further research is necessary to understand how heteroscedasticity and other numeric properties influence lnM performance.
+:::
 
 ### Further reading
 Please see @Nakagawa2026-rb and the associated [tutorial]((https://itchyshin.github.io/meta-analysis_of_magnitude/)) for more information about lnM.
-

@@ -75,7 +75,7 @@ The most commonly used effect sizes concern *mean* relationships between variabl
 
 However, *variability* is itself a meaningful dimension of reality, not merely noise [@Nakagawa2026-wm]. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important information about selective pressures which can either increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce it [@Crispo2007-nf]. 
 
-There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
+There are two main effect sizes for calculating variability between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
 
 ## lnVR
 
@@ -87,26 +87,26 @@ $${#eq-lnvr}
 
 where $sd_1$ is the treatment-group standard deviation and $sd_2$ is the control-group standard deviation. If group 1 is your treatment or experimental group:
 
-- $\mathrm{lnVR}>0$: the treatment group is more variable;
+- $\mathrm{lnVR}>0$: the treatment group is more variable than the control group;
 
 - $\mathrm{lnVR}=0$: the groups have equal standard deviations;
 
 - $\mathrm{lnVR}<0$: the treatment group is less variable.
 
+#### Interpretation 
+lnVR can be back transformed to plain english by exponentiating (i.e., $e^{lnVR}$). 
 
-lnVR can be back transformed to plain english by exponentiating (i.e., $e^{lnVR}). 
-
-If we have an lnVR of 0.4: $e^{0.4}\approx1.5$. This indicates that the standard deviation of the treatment group is approximately 50% higher than the control group. 
+If we have an lnVR of 0.4: $e^{0.4}\approx1.5$. This indicates that the standard deviation of the treatment group is approximately 50% higher than the control group.
 
 Combining an lnRoM or SMD meta-analysis of mean differences with an lnVR meta-analysis can provide a more complete biological description of biological change.
 
+#### How to calculate 
 To calculate lnVR, use `measure="VR"` in `escalc`:
 ```{r}
 escalc(measure = "VR",
        sd1i = 3, n1i = 20,
        sd2i = 2, n2i = 20)
 ```
-
 
 There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it's unreported (which is typical, see [here](2.1-SMD-assumptions.qmd#sec-paired-designs)). Use this formula if groups 1 and 2 are paired, e.g., from paired plots, before-after experiments, and so on.
 
@@ -120,6 +120,7 @@ escalc(measure = "VRC",
        sd1i = 1.5, sd2i = 2.5,
        ni = 15, ri = 0.5)
 ```
+
 
 ## lnCVR {#sec-lnCVR}
 
@@ -157,6 +158,7 @@ That relationship differs among data types:
 
 For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. In all cases, we recommend using both lnVR and lnCVR, as well as lnRoM or SMD. If the results are different, these sensitivity analyses can help you understand **why**.
 
+#### How to calculate
 This can be calculated in `escalc` with `measure = "CVR"`. This effect size requires the same statistical ingredients as SMD and lnRoM:
 
 ```{r}
@@ -168,7 +170,6 @@ escalc(measure = "CVR",
        sd1i = 1.5, sd2i = 2.5,
        n1i = 15, n2i = 15)
 ```
-
 
 There is a paired version of lnCVR as well. In `escalc` this is specified with `measure="CVRC"`.
 
