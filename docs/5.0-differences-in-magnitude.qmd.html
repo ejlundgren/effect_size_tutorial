@@ -511,11 +511,11 @@ window.Quarto = {
 <td style="text-align: right;">15</td>
 <td style="text-align: right;">NaN</td>
 <td style="text-align: right;">3.4464286</td>
-<td style="text-align: right;">-1.2752822</td>
-<td style="text-align: right;">0.4644587</td>
+<td style="text-align: right;">-1.2755751</td>
+<td style="text-align: right;">0.4623554</td>
 <td style="text-align: right;">19</td>
 <td style="text-align: right;">1e+06</td>
-<td style="text-align: left;">1.149936 secs</td>
+<td style="text-align: left;">1.131160 secs</td>
 <td style="text-align: left;">yes</td>
 </tr>
 <tr class="even">
@@ -527,11 +527,11 @@ window.Quarto = {
 <td style="text-align: right;">15</td>
 <td style="text-align: right;">0.5589351</td>
 <td style="text-align: right;">0.0411553</td>
-<td style="text-align: right;">0.5651083</td>
-<td style="text-align: right;">0.0431975</td>
+<td style="text-align: right;">0.5650033</td>
+<td style="text-align: right;">0.0430428</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">1e+06</td>
-<td style="text-align: left;">0.399966 secs</td>
+<td style="text-align: left;">0.388536 secs</td>
 <td style="text-align: left;">yes</td>
 </tr>
 </tbody>
@@ -565,7 +565,7 @@ Note
 \end{aligned}
 \tag{4}\]</span></span></p>
 <p>Note that when lnM = 0, this translates to <span class="math inline">\(d_{eq}\)</span> of 1.41. What exactly does that mean? This means that within-group variation is large but overall mean differences between groups are 1.41 standard deviations apart. Tricky right?</p>
-<p>Let’s try to illustrate lnM in <code>R</code> for three comparisons. We’ll make group standard deviations constant and change the means of group 2 while holding group 1 constant at <span class="math inline">\(m_1=15\)</span>. We’ll plot the simulated data, lnM estimates, and <span class="math inline">\(d_eq\)</span>. Unfold the code to see how:</p>
+<p>Let’s illustrate lnM in <code>R</code> for three comparisons—each representing a plausible comparison of group 1 and 2. We’ll set the group standard deviations constant at 5, and change the means of group 2 by increments of 5 while holding group 1 constant at <span class="math inline">\(m_1=15\)</span>. We’ll plot the simulated data, lnM estimates, and <span class="math inline">\(d_{eq}\)</span>:</p>
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">33</span><span class="op">)</span></span>
 <span></span>
@@ -593,17 +593,13 @@ Note
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">lnM</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">2</span><span class="op">/</span><span class="va">n0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co"># library("ggtext")</span></span>
-<span><span class="co"># library("latex2exp")</span></span>
-<span></span>
 <span><span class="co"># Calculate d_eq:</span></span>
 <span><span class="va">dat</span><span class="op">[</span>, <span class="va">deq</span> <span class="op">:=</span> <span class="fu">d_eq</span><span class="op">(</span>lnM <span class="op">=</span> <span class="va">yi_safe</span>, n1 <span class="op">=</span> <span class="va">n1</span>, n2 <span class="op">=</span> <span class="va">n2</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="va">dat</span><span class="op">[</span>, <span class="va">string</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"lnM = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">yi_safe</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">";&lt;br&gt;d&lt;sub&gt;eq&lt;/sub&gt; = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">deq</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># Create rnorm distributions, for plotting:</span></span>
-<span><span class="va">means</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">x2</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">distributions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">means</span>,</span>
+<span><span class="va">distributions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">x2</span>,</span>
 <span>                        <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">data.table</span><span class="op">(</span>mean_group_2 <span class="op">=</span> <span class="va">x</span>,</span>
 <span>                                               group_2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">40</span>, mean <span class="op">=</span> <span class="va">x</span>, sd <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">rbindlist</span><span class="op">(</span><span class="op">)</span></span>
@@ -637,6 +633,7 @@ Note
 <span>            <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">5</span>, y <span class="op">=</span> <span class="fl">0.11</span>, label <span class="op">=</span> <span class="va">facet_lab</span><span class="op">)</span>, </span>
 <span>            size <span class="op">=</span> <span class="fl">4</span>, label.color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">string</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Density"</span><span class="op">)</span><span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_manual</span><span class="op">(</span>name <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_1"</span> <span class="op">=</span> <span class="st">"Group 1"</span>, <span class="st">"group_2"</span> <span class="op">=</span> <span class="st">"Group 2"</span><span class="op">)</span>,</span>
 <span>                    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"group_1"</span> <span class="op">=</span> <span class="st">"goldenrod"</span>, <span class="st">"group_2"</span> <span class="op">=</span> <span class="st">"dodgerblue"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
@@ -665,7 +662,10 @@ Note
 <p>“There were <em>2 standard deviations</em> between groups, regardless of direction”</p>
 </blockquote>
 <p>As you can see, converting lnM to <span class="math inline">\(d_{eq}\)</span> makes the results intepretable in terms of differences in standard deviation between two groups—just like with SMD. However, these differences are directionless. It doesn’t matter which group is higher or lower: the result will be the same. This produces a normally distributed and unbounded effect size distribution which allows us to ask evolutionary and ecological questions that have previously been unanswerable with meta-analysis.</p>
-<p>::: #### Models Note that the statistical tests performed by <code><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">metafor::rma.mv</a></code> compare coefficients relative to 0. However, for lnM, 0 does not mean the same as it does for other effect sizes. As our figures above show, identical means and standard deviations produce an lnM of -1.94.</p>
+<p>::: #### Models As we mention above, because of the distributional properties of lnM and <span class="math inline">\(d_{eq}\)</span>, it is still better to fit models directly on lnM, instead of <span class="math inline">\(d_{eq}\)</span>.</p>
+<p>However, this can lead to challenges in interpreting the statistical outputs: the statistical tests performed by <code><a href="https://wviechtb.github.io/metafor/reference/rma.mv.html">metafor::rma.mv</a></code> compare coefficients relative to 0: a p-value of 0.01 indicates a significant difference in the coefficient of interest from 0.</p>
+<p>However, for lnM, 0 does not mean the same as it does for other effect sizes.</p>
+<p>As our figures above show, identical means and standard deviations produce an lnM of -1.94.</p>
 <p><strong><em>How do we deal with this???</em></strong> :::</p>
 <p>::: ##### Centering lnM to a target absolute SMD <span class="citation" data-cites="Nakagawa-rb">(<a href="#ref-Nakagawa-rb" role="doc-biblioref"><strong>Nakagawa-rb?</strong></a>)</span> recommends centering <span class="math inline">\(d_eq\)</span> by XXXXX. <strong><em>HELP</em></strong></p>
 <p>When and where to do this???</p>
@@ -710,7 +710,7 @@ Be sure that all variables in formula are correctly named.</code></pre>
 1: 0.6847436 0.03481467 0.7127248 0.03596492                      1
    number_SAFE_bootstraps_completed SAFE_elapsed_time SAFE_complete
                               &lt;int&gt;        &lt;difftime&gt;        &lt;char&gt;
-1:                          1000000      0.33936 secs           yes</code></pre>
+1:                          1000000    0.3305101 secs           yes</code></pre>
 </div>
 </div>
 </section></section><section id="sec-lnM-assumptions" class="level3"><h3 class="anchored" data-anchor-id="sec-lnM-assumptions">Assumptions</h3>
@@ -1358,7 +1358,7 @@ Nakagawa, S., A. Mizuno, C. Williams, S. Ortega, S. M. Drobniak, M. Lagisz, Y. Y
 <span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a>Note that when lnM = 0, this translates to $d_{eq}$ of 1.41. What exactly does that mean? This means that within-group variation is large but overall mean differences between groups are 1.41 standard deviations apart. Tricky right?</span>
 <span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>Let's try to illustrate lnM in <span class="in">`R`</span> for three comparisons. We'll make group standard deviations constant and change the means of group 2 while holding group 1 constant at $m_1=15$. We'll plot the simulated data, lnM estimates, and $d_eq$. Unfold the code to see how:</span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>Let's illustrate lnM in <span class="in">`R`</span> for three comparisons---each representing a plausible comparison of group 1 and 2. We'll set the group standard deviations constant at 5, and change the means of group 2 by increments of 5 while holding group 1 constant at $m_1=15$. We'll plot the simulated data, lnM estimates, and $d_{eq}$:</span>
 <span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-185"><a href="#cb9-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb9-186"><a href="#cb9-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
@@ -1392,127 +1392,129 @@ Nakagawa, S., A. Mizuno, C. Williams, S. Ortega, S. M. Drobniak, M. Lagisz, Y. Y
 <span id="cb9-214"><a href="#cb9-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>(<span class="dv">2</span><span class="sc">*</span><span class="fu">exp</span>(<span class="dv">2</span><span class="sc">*</span>lnM) <span class="sc">+</span> (<span class="dv">2</span><span class="sc">/</span>n0))</span>
 <span id="cb9-215"><a href="#cb9-215" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb9-216"><a href="#cb9-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-217"><a href="#cb9-217" aria-hidden="true" tabindex="-1"></a><span class="co"># library("ggtext")</span></span>
-<span id="cb9-218"><a href="#cb9-218" aria-hidden="true" tabindex="-1"></a><span class="co"># library("latex2exp")</span></span>
+<span id="cb9-217"><a href="#cb9-217" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate d_eq:</span></span>
+<span id="cb9-218"><a href="#cb9-218" aria-hidden="true" tabindex="-1"></a>dat[, deq <span class="sc">:</span><span class="er">=</span> <span class="fu">d_eq</span>(<span class="at">lnM =</span> yi_safe, <span class="at">n1 =</span> n1, <span class="at">n2 =</span> n2)]</span>
 <span id="cb9-219"><a href="#cb9-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-220"><a href="#cb9-220" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate d_eq:</span></span>
-<span id="cb9-221"><a href="#cb9-221" aria-hidden="true" tabindex="-1"></a>dat[, deq <span class="sc">:</span><span class="er">=</span> <span class="fu">d_eq</span>(<span class="at">lnM =</span> yi_safe, <span class="at">n1 =</span> n1, <span class="at">n2 =</span> n2)]</span>
+<span id="cb9-220"><a href="#cb9-220" aria-hidden="true" tabindex="-1"></a>dat[, string <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"lnM = "</span>, <span class="fu">round</span>(yi_safe, <span class="dv">2</span>), <span class="st">";&lt;br&gt;d&lt;sub&gt;eq&lt;/sub&gt; = "</span>, <span class="fu">round</span>(deq, <span class="dv">2</span>))]</span>
+<span id="cb9-221"><a href="#cb9-221" aria-hidden="true" tabindex="-1"></a><span class="co"># Create rnorm distributions, for plotting:</span></span>
 <span id="cb9-222"><a href="#cb9-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-223"><a href="#cb9-223" aria-hidden="true" tabindex="-1"></a>dat[, string <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"lnM = "</span>, <span class="fu">round</span>(yi_safe, <span class="dv">2</span>), <span class="st">";&lt;br&gt;d&lt;sub&gt;eq&lt;/sub&gt; = "</span>, <span class="fu">round</span>(deq, <span class="dv">2</span>))]</span>
-<span id="cb9-224"><a href="#cb9-224" aria-hidden="true" tabindex="-1"></a><span class="co"># Create rnorm distributions, for plotting:</span></span>
-<span id="cb9-225"><a href="#cb9-225" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">c</span>(dat<span class="sc">$</span>x2)</span>
-<span id="cb9-226"><a href="#cb9-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-227"><a href="#cb9-227" aria-hidden="true" tabindex="-1"></a>distributions <span class="ot">&lt;-</span> <span class="fu">lapply</span>(means,</span>
-<span id="cb9-228"><a href="#cb9-228" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">function</span>(x) <span class="fu">data.table</span>(<span class="at">mean_group_2 =</span> x,</span>
-<span id="cb9-229"><a href="#cb9-229" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">group_2 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">40</span>, <span class="at">mean =</span> x, <span class="at">sd =</span> <span class="dv">4</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb9-230"><a href="#cb9-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbindlist</span>()</span>
+<span id="cb9-223"><a href="#cb9-223" aria-hidden="true" tabindex="-1"></a>distributions <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dat<span class="sc">$</span>x2,</span>
+<span id="cb9-224"><a href="#cb9-224" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">function</span>(x) <span class="fu">data.table</span>(<span class="at">mean_group_2 =</span> x,</span>
+<span id="cb9-225"><a href="#cb9-225" aria-hidden="true" tabindex="-1"></a>                                               <span class="at">group_2 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">40</span>, <span class="at">mean =</span> x, <span class="at">sd =</span> <span class="dv">4</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb9-226"><a href="#cb9-226" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbindlist</span>()</span>
+<span id="cb9-227"><a href="#cb9-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-228"><a href="#cb9-228" aria-hidden="true" tabindex="-1"></a><span class="co"># for group 1:</span></span>
+<span id="cb9-229"><a href="#cb9-229" aria-hidden="true" tabindex="-1"></a>group_1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">40</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> <span class="dv">4</span>)</span>
+<span id="cb9-230"><a href="#cb9-230" aria-hidden="true" tabindex="-1"></a>distributions[, group_1 <span class="sc">:</span><span class="er">=</span> <span class="fu">rep</span>(group_1, <span class="fu">length</span>(<span class="fu">unique</span>(distributions<span class="sc">$</span>mean)))]</span>
 <span id="cb9-231"><a href="#cb9-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-232"><a href="#cb9-232" aria-hidden="true" tabindex="-1"></a><span class="co"># for group 1:</span></span>
-<span id="cb9-233"><a href="#cb9-233" aria-hidden="true" tabindex="-1"></a>group_1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">40</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> <span class="dv">4</span>)</span>
-<span id="cb9-234"><a href="#cb9-234" aria-hidden="true" tabindex="-1"></a>distributions[, group_1 <span class="sc">:</span><span class="er">=</span> <span class="fu">rep</span>(group_1, <span class="fu">length</span>(<span class="fu">unique</span>(distributions<span class="sc">$</span>mean)))]</span>
-<span id="cb9-235"><a href="#cb9-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-236"><a href="#cb9-236" aria-hidden="true" tabindex="-1"></a>distributions.mrg <span class="ot">&lt;-</span> <span class="fu">merge</span>(distributions,</span>
-<span id="cb9-237"><a href="#cb9-237" aria-hidden="true" tabindex="-1"></a>                             dat[, .(x2, string)],</span>
-<span id="cb9-238"><a href="#cb9-238" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by.x =</span> <span class="st">"mean_group_2"</span>,</span>
-<span id="cb9-239"><a href="#cb9-239" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by.y =</span> <span class="st">"x2"</span>)</span>
-<span id="cb9-240"><a href="#cb9-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-241"><a href="#cb9-241" aria-hidden="true" tabindex="-1"></a>distributions_final <span class="ot">&lt;-</span> <span class="fu">melt</span>(distributions.mrg,</span>
-<span id="cb9-242"><a href="#cb9-242" aria-hidden="true" tabindex="-1"></a>                            <span class="at">id.vars =</span> <span class="fu">c</span>(<span class="st">"mean_group_2"</span>, <span class="st">"string"</span>))</span>
-<span id="cb9-243"><a href="#cb9-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-244"><a href="#cb9-244" aria-hidden="true" tabindex="-1"></a><span class="fu">setorder</span>(distributions_final, mean_group_2)</span>
-<span id="cb9-245"><a href="#cb9-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-246"><a href="#cb9-246" aria-hidden="true" tabindex="-1"></a>distributions_final[, facet_lab <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"m&lt;sub&gt;1&lt;/sub&gt;="</span>, <span class="dv">15</span>, <span class="st">"&lt;br&gt;"</span>,</span>
-<span id="cb9-247"><a href="#cb9-247" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">"m&lt;sub&gt;2&lt;/sub&gt;="</span>, mean_group_2)]</span>
-<span id="cb9-248"><a href="#cb9-248" aria-hidden="true" tabindex="-1"></a>distributions_final<span class="sc">$</span>string <span class="ot">&lt;-</span> <span class="fu">factor</span>(distributions_final<span class="sc">$</span>string,</span>
-<span id="cb9-249"><a href="#cb9-249" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">levels =</span> <span class="fu">unique</span>(distributions_final<span class="sc">$</span>string))</span>
-<span id="cb9-250"><a href="#cb9-250" aria-hidden="true" tabindex="-1"></a><span class="co"># distributions_final[, facet_lab := paste("")]</span></span>
-<span id="cb9-251"><a href="#cb9-251" aria-hidden="true" tabindex="-1"></a>distributions_final<span class="sc">$</span>variable <span class="ot">&lt;-</span> <span class="fu">factor</span>(distributions_final<span class="sc">$</span>variable,</span>
-<span id="cb9-252"><a href="#cb9-252" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">c</span>(<span class="st">"group_1"</span>, <span class="st">"group_2"</span>))</span>
-<span id="cb9-253"><a href="#cb9-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-254"><a href="#cb9-254" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>()<span class="sc">+</span></span>
-<span id="cb9-255"><a href="#cb9-255" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">data =</span> distributions_final, <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">fill =</span> variable),</span>
-<span id="cb9-256"><a href="#cb9-256" aria-hidden="true" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.75</span>)<span class="sc">+</span></span>
-<span id="cb9-257"><a href="#cb9-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_richtext</span>(<span class="at">data =</span> <span class="fu">unique</span>(distributions_final[, .(facet_lab, string, mean_group_2)]),</span>
-<span id="cb9-258"><a href="#cb9-258" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fl">0.11</span>, <span class="at">label =</span> facet_lab), </span>
-<span id="cb9-259"><a href="#cb9-259" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">4</span>, <span class="at">label.color =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
-<span id="cb9-260"><a href="#cb9-260" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>string)<span class="sc">+</span></span>
-<span id="cb9-261"><a href="#cb9-261" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">name =</span> <span class="cn">NULL</span>,</span>
-<span id="cb9-262"><a href="#cb9-262" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"group_1"</span> <span class="ot">=</span> <span class="st">"Group 1"</span>, <span class="st">"group_2"</span> <span class="ot">=</span> <span class="st">"Group 2"</span>),</span>
-<span id="cb9-263"><a href="#cb9-263" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"group_1"</span> <span class="ot">=</span> <span class="st">"goldenrod"</span>, <span class="st">"group_2"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>))<span class="sc">+</span></span>
-<span id="cb9-264"><a href="#cb9-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb9-265"><a href="#cb9-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb9-266"><a href="#cb9-266" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb9-267"><a href="#cb9-267" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> ggtext<span class="sc">::</span><span class="fu">element_markdown</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
-<span id="cb9-268"><a href="#cb9-268" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb9-269"><a href="#cb9-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-270"><a href="#cb9-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb9-271"><a href="#cb9-271" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-274"><a href="#cb9-274" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb9-275"><a href="#cb9-275" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb9-276"><a href="#cb9-276" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb9-277"><a href="#cb9-277" aria-hidden="true" tabindex="-1"></a>p</span>
-<span id="cb9-278"><a href="#cb9-278" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb9-279"><a href="#cb9-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-280"><a href="#cb9-280" aria-hidden="true" tabindex="-1"></a>In the first panel, the means of group 1 and 2 are identical, as are their standard deviations. The standard deviation in all scenarios and for both groups was set to 5. (Note that data was drawn from the normal distribution, so the two distributions are not identical but their summary statistics are). lnM is -1.94 and $d_{eq}$ is 0.3. </span>
-<span id="cb9-281"><a href="#cb9-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-282"><a href="#cb9-282" aria-hidden="true" tabindex="-1"></a>In the second panel, $m_2$ is now 20. lnM is -0.4 (still negative) and $d_{eq}$ is ~1! This makes sense *because the standard deviation is 5 and $m_2$ is now 5 away from $m_1$.* </span>
-<span id="cb9-283"><a href="#cb9-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-284"><a href="#cb9-284" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; This can be reported as: "There was *1 standard deviation* between groups, regardless of direction"</span></span>
-<span id="cb9-285"><a href="#cb9-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-286"><a href="#cb9-286" aria-hidden="true" tabindex="-1"></a>In the third panel, $m_2$ is 25 and lnM is 0.34. $d_{eq}$ again successfully recovered the number of standard deviations between the two groups (2).</span>
-<span id="cb9-287"><a href="#cb9-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-288"><a href="#cb9-288" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; "There were *2 standard deviations* between groups, regardless of direction"</span></span>
-<span id="cb9-289"><a href="#cb9-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-290"><a href="#cb9-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-291"><a href="#cb9-291" aria-hidden="true" tabindex="-1"></a>As you can see, converting lnM to $d_{eq}$ makes the results intepretable in terms of differences in standard deviation between two groups---just like with SMD. However, these differences are directionless. It doesn't matter which group is higher or lower: the result will be the same. This produces a normally distributed and unbounded effect size distribution which allows us to ask evolutionary and ecological questions that have previously been unanswerable with meta-analysis.</span>
+<span id="cb9-232"><a href="#cb9-232" aria-hidden="true" tabindex="-1"></a>distributions.mrg <span class="ot">&lt;-</span> <span class="fu">merge</span>(distributions,</span>
+<span id="cb9-233"><a href="#cb9-233" aria-hidden="true" tabindex="-1"></a>                             dat[, .(x2, string)],</span>
+<span id="cb9-234"><a href="#cb9-234" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by.x =</span> <span class="st">"mean_group_2"</span>,</span>
+<span id="cb9-235"><a href="#cb9-235" aria-hidden="true" tabindex="-1"></a>                             <span class="at">by.y =</span> <span class="st">"x2"</span>)</span>
+<span id="cb9-236"><a href="#cb9-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-237"><a href="#cb9-237" aria-hidden="true" tabindex="-1"></a>distributions_final <span class="ot">&lt;-</span> <span class="fu">melt</span>(distributions.mrg,</span>
+<span id="cb9-238"><a href="#cb9-238" aria-hidden="true" tabindex="-1"></a>                            <span class="at">id.vars =</span> <span class="fu">c</span>(<span class="st">"mean_group_2"</span>, <span class="st">"string"</span>))</span>
+<span id="cb9-239"><a href="#cb9-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-240"><a href="#cb9-240" aria-hidden="true" tabindex="-1"></a><span class="fu">setorder</span>(distributions_final, mean_group_2)</span>
+<span id="cb9-241"><a href="#cb9-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-242"><a href="#cb9-242" aria-hidden="true" tabindex="-1"></a>distributions_final[, facet_lab <span class="sc">:</span><span class="er">=</span> <span class="fu">paste0</span>(<span class="st">"m&lt;sub&gt;1&lt;/sub&gt;="</span>, <span class="dv">15</span>, <span class="st">"&lt;br&gt;"</span>,</span>
+<span id="cb9-243"><a href="#cb9-243" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">"m&lt;sub&gt;2&lt;/sub&gt;="</span>, mean_group_2)]</span>
+<span id="cb9-244"><a href="#cb9-244" aria-hidden="true" tabindex="-1"></a>distributions_final<span class="sc">$</span>string <span class="ot">&lt;-</span> <span class="fu">factor</span>(distributions_final<span class="sc">$</span>string,</span>
+<span id="cb9-245"><a href="#cb9-245" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">levels =</span> <span class="fu">unique</span>(distributions_final<span class="sc">$</span>string))</span>
+<span id="cb9-246"><a href="#cb9-246" aria-hidden="true" tabindex="-1"></a><span class="co"># distributions_final[, facet_lab := paste("")]</span></span>
+<span id="cb9-247"><a href="#cb9-247" aria-hidden="true" tabindex="-1"></a>distributions_final<span class="sc">$</span>variable <span class="ot">&lt;-</span> <span class="fu">factor</span>(distributions_final<span class="sc">$</span>variable,</span>
+<span id="cb9-248"><a href="#cb9-248" aria-hidden="true" tabindex="-1"></a>                                       <span class="fu">c</span>(<span class="st">"group_1"</span>, <span class="st">"group_2"</span>))</span>
+<span id="cb9-249"><a href="#cb9-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-250"><a href="#cb9-250" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb9-251"><a href="#cb9-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">data =</span> distributions_final, <span class="fu">aes</span>(<span class="at">x =</span> value, <span class="at">fill =</span> variable),</span>
+<span id="cb9-252"><a href="#cb9-252" aria-hidden="true" tabindex="-1"></a>               <span class="at">alpha =</span> <span class="fl">0.75</span>)<span class="sc">+</span></span>
+<span id="cb9-253"><a href="#cb9-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_richtext</span>(<span class="at">data =</span> <span class="fu">unique</span>(distributions_final[, .(facet_lab, string, mean_group_2)]),</span>
+<span id="cb9-254"><a href="#cb9-254" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">5</span>, <span class="at">y =</span> <span class="fl">0.11</span>, <span class="at">label =</span> facet_lab), </span>
+<span id="cb9-255"><a href="#cb9-255" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">4</span>, <span class="at">label.color =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
+<span id="cb9-256"><a href="#cb9-256" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>string)<span class="sc">+</span></span>
+<span id="cb9-257"><a href="#cb9-257" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Density"</span>)<span class="sc">+</span></span>
+<span id="cb9-258"><a href="#cb9-258" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">name =</span> <span class="cn">NULL</span>,</span>
+<span id="cb9-259"><a href="#cb9-259" aria-hidden="true" tabindex="-1"></a>                    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"group_1"</span> <span class="ot">=</span> <span class="st">"Group 1"</span>, <span class="st">"group_2"</span> <span class="ot">=</span> <span class="st">"Group 2"</span>),</span>
+<span id="cb9-260"><a href="#cb9-260" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"group_1"</span> <span class="ot">=</span> <span class="st">"goldenrod"</span>, <span class="st">"group_2"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>))<span class="sc">+</span></span>
+<span id="cb9-261"><a href="#cb9-261" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb9-262"><a href="#cb9-262" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb9-263"><a href="#cb9-263" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb9-264"><a href="#cb9-264" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> ggtext<span class="sc">::</span><span class="fu">element_markdown</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb9-265"><a href="#cb9-265" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span>
+<span id="cb9-266"><a href="#cb9-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-267"><a href="#cb9-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-268"><a href="#cb9-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-271"><a href="#cb9-271" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-272"><a href="#cb9-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb9-273"><a href="#cb9-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb9-274"><a href="#cb9-274" aria-hidden="true" tabindex="-1"></a>p</span>
+<span id="cb9-275"><a href="#cb9-275" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-276"><a href="#cb9-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-277"><a href="#cb9-277" aria-hidden="true" tabindex="-1"></a>In the first panel, the means of group 1 and 2 are identical, as are their standard deviations. The standard deviation in all scenarios and for both groups was set to 5. (Note that data was drawn from the normal distribution, so the two distributions are not identical but their summary statistics are). lnM is -1.94 and $d_{eq}$ is 0.3. </span>
+<span id="cb9-278"><a href="#cb9-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-279"><a href="#cb9-279" aria-hidden="true" tabindex="-1"></a>In the second panel, $m_2$ is now 20. lnM is -0.4 (still negative) and $d_{eq}$ is ~1! This makes sense *because the standard deviation is 5 and $m_2$ is now 5 away from $m_1$.* </span>
+<span id="cb9-280"><a href="#cb9-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-281"><a href="#cb9-281" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; This can be reported as: "There was *1 standard deviation* between groups, regardless of direction"</span></span>
+<span id="cb9-282"><a href="#cb9-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-283"><a href="#cb9-283" aria-hidden="true" tabindex="-1"></a>In the third panel, $m_2$ is 25 and lnM is 0.34. $d_{eq}$ again successfully recovered the number of standard deviations between the two groups (2).</span>
+<span id="cb9-284"><a href="#cb9-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-285"><a href="#cb9-285" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; "There were *2 standard deviations* between groups, regardless of direction"</span></span>
+<span id="cb9-286"><a href="#cb9-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-287"><a href="#cb9-287" aria-hidden="true" tabindex="-1"></a>As you can see, converting lnM to $d_{eq}$ makes the results intepretable in terms of differences in standard deviation between two groups---just like with SMD. However, these differences are directionless. It doesn't matter which group is higher or lower: the result will be the same. This produces a normally distributed and unbounded effect size distribution which allows us to ask evolutionary and ecological questions that have previously been unanswerable with meta-analysis.</span>
+<span id="cb9-288"><a href="#cb9-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-289"><a href="#cb9-289" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-290"><a href="#cb9-290" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Models</span></span>
+<span id="cb9-291"><a href="#cb9-291" aria-hidden="true" tabindex="-1"></a>As we mention above, because of the distributional properties of lnM and $d_{eq}$, it is still better to fit models directly on lnM, instead of $d_{eq}$. </span>
 <span id="cb9-292"><a href="#cb9-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-293"><a href="#cb9-293" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb9-294"><a href="#cb9-294" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Models</span></span>
-<span id="cb9-295"><a href="#cb9-295" aria-hidden="true" tabindex="-1"></a>Note that the statistical tests performed by <span class="in">`metafor::rma.mv`</span> compare coefficients relative to 0. However, for lnM, 0 does not mean the same as it does for other effect sizes. As our figures above show, identical means and standard deviations produce an lnM of -1.94. </span>
+<span id="cb9-293"><a href="#cb9-293" aria-hidden="true" tabindex="-1"></a>However, this can lead to challenges in interpreting the statistical outputs: the statistical tests performed by <span class="in">`metafor::rma.mv`</span> compare coefficients relative to 0: a p-value of 0.01 indicates a significant difference in the coefficient of interest from 0. </span>
+<span id="cb9-294"><a href="#cb9-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-295"><a href="#cb9-295" aria-hidden="true" tabindex="-1"></a>However, for lnM, 0 does not mean the same as it does for other effect sizes. </span>
 <span id="cb9-296"><a href="#cb9-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-297"><a href="#cb9-297" aria-hidden="true" tabindex="-1"></a>***How do we deal with this???***</span>
-<span id="cb9-298"><a href="#cb9-298" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb9-299"><a href="#cb9-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-300"><a href="#cb9-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-297"><a href="#cb9-297" aria-hidden="true" tabindex="-1"></a>As our figures above show, identical means and standard deviations produce an lnM of -1.94. </span>
+<span id="cb9-298"><a href="#cb9-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-299"><a href="#cb9-299" aria-hidden="true" tabindex="-1"></a>***How do we deal with this???***</span>
+<span id="cb9-300"><a href="#cb9-300" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb9-301"><a href="#cb9-301" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-302"><a href="#cb9-302" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb9-303"><a href="#cb9-303" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Centering lnM to a target absolute SMD</span></span>
-<span id="cb9-304"><a href="#cb9-304" aria-hidden="true" tabindex="-1"></a>@Nakagawa-rb recommends centering $d_eq$ by XXXXX. ***HELP***</span>
-<span id="cb9-305"><a href="#cb9-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-306"><a href="#cb9-306" aria-hidden="true" tabindex="-1"></a>When and where to do this???</span>
+<span id="cb9-302"><a href="#cb9-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-303"><a href="#cb9-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-304"><a href="#cb9-304" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-305"><a href="#cb9-305" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Centering lnM to a target absolute SMD</span></span>
+<span id="cb9-306"><a href="#cb9-306" aria-hidden="true" tabindex="-1"></a>@Nakagawa-rb recommends centering $d_eq$ by XXXXX. ***HELP***</span>
 <span id="cb9-307"><a href="#cb9-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-308"><a href="#cb9-308" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-308"><a href="#cb9-308" aria-hidden="true" tabindex="-1"></a>When and where to do this???</span>
 <span id="cb9-309"><a href="#cb9-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-310"><a href="#cb9-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-311"><a href="#cb9-311" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Paired **lnM**</span></span>
-<span id="cb9-312"><a href="#cb9-312" aria-hidden="true" tabindex="-1"></a>For the paired version of lnM, add <span class="in">`paired = TRUE`</span> to the <span class="in">`eff_size`</span> function call above.</span>
-<span id="cb9-313"><a href="#cb9-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-316"><a href="#cb9-316" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb9-317"><a href="#cb9-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb9-318"><a href="#cb9-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb9-319"><a href="#cb9-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb9-320"><a href="#cb9-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-321"><a href="#cb9-321" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
-<span id="cb9-322"><a href="#cb9-322" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
-<span id="cb9-323"><a href="#cb9-323" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">15</span>, <span class="at">r =</span> <span class="fl">0.8</span>,</span>
-<span id="cb9-324"><a href="#cb9-324" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnM"</span>,</span>
-<span id="cb9-325"><a href="#cb9-325" aria-hidden="true" tabindex="-1"></a>         <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-326"><a href="#cb9-326" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-327"><a href="#cb9-327" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_boots =</span> <span class="fl">1e6</span>,</span>
-<span id="cb9-328"><a href="#cb9-328" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_max_secs =</span> <span class="dv">60</span>)</span>
-<span id="cb9-329"><a href="#cb9-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-330"><a href="#cb9-330" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-331"><a href="#cb9-331" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-310"><a href="#cb9-310" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-311"><a href="#cb9-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-312"><a href="#cb9-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-313"><a href="#cb9-313" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Paired **lnM**</span></span>
+<span id="cb9-314"><a href="#cb9-314" aria-hidden="true" tabindex="-1"></a>For the paired version of lnM, add <span class="in">`paired = TRUE`</span> to the <span class="in">`eff_size`</span> function call above.</span>
+<span id="cb9-315"><a href="#cb9-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-318"><a href="#cb9-318" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-319"><a href="#cb9-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb9-320"><a href="#cb9-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb9-321"><a href="#cb9-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb9-322"><a href="#cb9-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-323"><a href="#cb9-323" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">15</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
+<span id="cb9-324"><a href="#cb9-324" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="dv">2</span>,</span>
+<span id="cb9-325"><a href="#cb9-325" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> <span class="dv">15</span>, <span class="at">r =</span> <span class="fl">0.8</span>,</span>
+<span id="cb9-326"><a href="#cb9-326" aria-hidden="true" tabindex="-1"></a>         <span class="at">effect_type =</span> <span class="st">"lnM"</span>,</span>
+<span id="cb9-327"><a href="#cb9-327" aria-hidden="true" tabindex="-1"></a>         <span class="at">paired =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-328"><a href="#cb9-328" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-329"><a href="#cb9-329" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_boots =</span> <span class="fl">1e6</span>,</span>
+<span id="cb9-330"><a href="#cb9-330" aria-hidden="true" tabindex="-1"></a>         <span class="at">SAFE_max_secs =</span> <span class="dv">60</span>)</span>
+<span id="cb9-331"><a href="#cb9-331" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-332"><a href="#cb9-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-333"><a href="#cb9-333" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assumptions {#sec-lnM-assumptions}</span></span>
-<span id="cb9-334"><a href="#cb9-334" aria-hidden="true" tabindex="-1"></a>**lnM** works with both ratio-scale and interval-scale data and can thus accept negative values. </span>
-<span id="cb9-335"><a href="#cb9-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-336"><a href="#cb9-336" aria-hidden="true" tabindex="-1"></a>However, as with SMD and lnRoM, lnM assumes that the underlying data is more or less normally distributed. We recommend checking for overdispersed data and excluding effect sizes with $CV &gt; 2$, as with SMD and lnRoM. See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for further discussion of overdispersion. lnM is also sensitive to low sample sizes. @Nakagawa2026-rb recommends conducting sensitivity analyses only including studies with $n_1 + n_2 \geq 40$.</span>
+<span id="cb9-333"><a href="#cb9-333" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-334"><a href="#cb9-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-335"><a href="#cb9-335" aria-hidden="true" tabindex="-1"></a><span class="fu">### Assumptions {#sec-lnM-assumptions}</span></span>
+<span id="cb9-336"><a href="#cb9-336" aria-hidden="true" tabindex="-1"></a>**lnM** works with both ratio-scale and interval-scale data and can thus accept negative values. </span>
 <span id="cb9-337"><a href="#cb9-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-338"><a href="#cb9-338" aria-hidden="true" tabindex="-1"></a>lnM is a newly constructed effect size (as of 2026). Further research is necessary to understand how heteroscedasticity and other numeric properties influence lnM performance.</span>
+<span id="cb9-338"><a href="#cb9-338" aria-hidden="true" tabindex="-1"></a>However, as with SMD and lnRoM, lnM assumes that the underlying data is more or less normally distributed. We recommend checking for overdispersed data and excluding effect sizes with $CV &gt; 2$, as with SMD and lnRoM. See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for further discussion of overdispersion. lnM is also sensitive to low sample sizes. @Nakagawa2026-rb recommends conducting sensitivity analyses only including studies with $n_1 + n_2 \geq 40$.</span>
 <span id="cb9-339"><a href="#cb9-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-340"><a href="#cb9-340" aria-hidden="true" tabindex="-1"></a><span class="fu">### Further reading</span></span>
-<span id="cb9-341"><a href="#cb9-341" aria-hidden="true" tabindex="-1"></a>Please see @Nakagawa2026-rb and the associated <span class="co">[</span><span class="ot">tutorial</span><span class="co">]</span>((https://itchyshin.github.io/meta-analysis_of_magnitude/)) for more information about lnM.</span>
+<span id="cb9-340"><a href="#cb9-340" aria-hidden="true" tabindex="-1"></a>lnM is a newly constructed effect size (as of 2026). Further research is necessary to understand how heteroscedasticity and other numeric properties influence lnM performance.</span>
+<span id="cb9-341"><a href="#cb9-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-342"><a href="#cb9-342" aria-hidden="true" tabindex="-1"></a><span class="fu">### Further reading</span></span>
+<span id="cb9-343"><a href="#cb9-343" aria-hidden="true" tabindex="-1"></a>Please see @Nakagawa2026-rb and the associated <span class="co">[</span><span class="ot">tutorial</span><span class="co">]</span>((https://itchyshin.github.io/meta-analysis_of_magnitude/)) for more information about lnM.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
