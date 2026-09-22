@@ -436,13 +436,13 @@ We cover this transformation in our extraction challenges page [here](3.2-smd-ch
 
 ## Dimensionality {#sec-dimensionality}
 
-Both SMD and lnRoM are standardized, which allow us to compare results across studies even if their units were different. However, what if one study measured a response in meters but another study measured it in area ($meter^2$) and a third study measured the same response in volume ($meter^3$)? 
+Both SMD and lnRoM are standardized, which allow us to compare results across studies even if their units were different. However, what if one study measured a response in linear meters ($m$) but another study measured it in area ($m^2$) and a third study measured the same response in volume ($m^3$)? 
 
 Imagine vegetation studies or morphological measurements of an organism or the size of a tumor. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.
 
 For lnRoM, this is a very serious problem---the estimated effect at dimension 1 will double at the second dimension!
 
-Let us demonstrate. We'll create a starting dataset at one dimension and then we'll increase the dimensions from 1 to 2 and 3, by recreating the underlying distribution, recalculating our summary statistics, and calculating SMD or lnRoM effect sizes. Feel free to unfold the code to see how we did this:
+Let us demonstrate. We'll create a starting dataset at one dimension and then we'll increase the dimensions from 1 to 2 and 3, by recreating the underlying distribution, recalculating our summary statistics, and calculating our effect sizes. Let's look first at lnRoM. Feel free to unfold the code to see how we did this:
 
 ```{r}
 #| eval: true
@@ -490,8 +490,9 @@ dat <- escalc(measure = "SMD",
 # dat
 
 # Convert ROM to % change:
+first_dimension <- dat %>% filter(dimensions == 1) %>% pull(yi_rom)
 dat <- dat %>%
-  mutate(percent_change = (exp(yi_rom) - 1) * 100)
+  mutate(yi_rom_diff = abs((first_dimension - yi_rom) / first_dimension * 100) )
 #
 p1 <- ggplot(data = dat, 
        aes(x = dimensions, y = yi_rom))+
@@ -506,10 +507,10 @@ p1 <- ggplot(data = dat,
         legend.position = "none")
 
 p2 <- ggplot(data = dat, 
-       aes(x = dimensions, y = percent_change))+
+       aes(x = dimensions, y = yi_rom_diff))+
   geom_path()+
   geom_point(size = 4)+
-  ylab("Estimated % change")+
+  ylab("% change in lnRoM measurement relative first dimension")+
   xlab("Number of measurement dimensions")+
   scale_x_continuous(breaks = c(1, 2, 3))+
   theme_bw()+
@@ -520,9 +521,9 @@ p1 / p2
 
 ```
 
-As you can see, the lnRoM effect size doubled and then tripled as the dimensions increased. In ecology and evolutionary biology, which commonly pool measurements at different dimensions, this is obviously a huge problem!
+As you can see, the lnRoM effect size doubled and then tripled as the dimensions increased: increasing by as much as 200% relative to the first dimension. In ecology and evolutionary biology, which commonly pool measurements at different dimensions, this is obviously a huge problem!
 
-Now let's look at SMD. Since the y axis values are not comparable with lnRoM, we'll plot the raw SMD as well as the % change relative to the first dimension.
+Now let's look at SMD:
 
 ```{r}
 #| eval: true

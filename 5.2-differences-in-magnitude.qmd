@@ -57,8 +57,8 @@ if(!requireNamespace("metatools")) {
 library("metatools")
 
 library("ggplot2")
+library("ggtext")
 library("data.table")
-library("ggpattern")
 library("patchwork")
 library("metafor")
 library("dplyr")
@@ -69,33 +69,69 @@ library("crayon")
 
 ```
 
-The effect sizes that we've described in depth in this tutorial have concerned the direction and magnitude of *mean* relationships between two variables.
+The effect sizes that we've described in depth in this tutorial have concerned *mean* relationships between two variables or differences in [variability](5.1-variability-between-groups.qmd) between two groups. However, what if you're interested in the magnitude of mean differences, regardless of their direction? These types of questions are common in evolution, where absolute differences between two populations are of interest but directionality of those differences is inconsequential.
 
-However, there are also effect sizes to describe the absolute magnitude of differences between groups (**lnM**), to describe differences in variability (or heteroscedasticity) between two groups (**lnVR** and **lnCVR**) and effect sizes to summarize single-group means and proportions. Extracting data for these effect sizes should be fundamentally similar as the other effect size types that this tutorial was dedicated to. We here briefly discuss these effect sizes, their assumptions, and how to calculate them in `R`.
+Previous attempts to conduct meta-analyses of magnitude have used the absolute value of SMD as an effect size (or 'folded-normal SMD'). However, taking the absolute value of SMD produces effect sizes clustered just above 0 with distributions that violate expectations of normality and can prevent accurate model estimates
 
-# Differences between groups {#sec-differences-between-groups}
+**lnM** is a recently developed effect size that describes the absolute difference between two groups and is unbounded and normally distributed [@Nakagawa2026-rb]. 
 
-## Differences in magnitude {#sec-lnM}
-**lnM** is an effect size that describes the absolute difference between two groups, which is often relevant in evolutionary research where the direction of difference between two populations or species is not of interest relative to absolute magnitude of differences [@Nakagawa2026-wn]. This effect size replaces earlier efforts which took the absolute value of SMD (or 'folded-normal SMD'). 
+To calculate lnM, you need the same statistical ingredients as for calculating **SMD** and **lnRoM** effect sizes: sample sizes ($n_1$, $n_2$), means ($m_1$, $m_2$), and standard deviations ($sd_1$, $sd_2$) for two discrete groups.
 
-To calculate lnM, you need the sample sizes ($n_1$, $n_2$), means ($m_1$, $m_2$), and standard deviations ($sd_1$, $sd_2$) for two discrete groups, similar as when calculating SMD or lnRoM effect sizes. Note that there is also a paired version of lnM that requires only 1 sample size ($n$) and $rho$---the estimated correlation between the two groups. As with other [paired effect sizes](2.1-SMD-assumptions.qmd#sec-paired-designs), since $rho$ is usually unreported, you can use values of 0.5 or 0.8 (and conduct sensitivity analyses!).
+The math for **lnM** is quite long and built upon classical one-way ANOVA building blocks. Unfold the section below to see the equations:
 
-### Assumptions {#sec-lnM-assumptions}
-Blah blah blah. SANTI
+:::.{callout-note collapse="true"}
+#### lnM math
+lnM is based on the classical ANOVA building blocks. First we calculate Mean Square Between ($MS_B$) and Mean Square Within ($MS_W$). $MS_B$ estimates the difference between group means. $MS_W$ estimates the variance inside of each group. 
 
-### Interpretation {#sec-lnM-interpretation}
-Complicated and weird. Need to subtract something from it. Blah blah blah. SANTI
+$$
+\begin{aligned}
+&MS_B = \frac{n_1 n_2}{n_1 + n_2} * (m_1 - m_2)^2\\ 
+&MS_W = \frac{(n_1 - 1)sd_1^2 + (n_2 - 1)sd_2^2}{n_1 + n_2 - 2}\\
+\end{aligned}
+$${#eq-ms}
 
-### How to calculate {#sec-lnM-how-to}
-The math of lnM can lead to uncalcaluable values when the means of the two groups are similar. For this reason, this effect size should be calculated with SAFE bootstrapping [@Nakagawa2025-do].
+We then establish within-group ($s_W^2$) and between-group variance ($s_B^2$), standardized by harmonic-mean sample size ($n_0$).
 
-Here we'll calculate lnM with `metatools::eff_size`. Be sure to set `SAFE=TRUE` in the function arguments. The `SAFE_boots` argument indicates how many bootstraps to run (1e6 is default and [appears](https://ejlundgren.github.io/SAFE/) to be a good compromise between accuracy nd speed). `SAFE_max_secs` is the number of seconds to run before timing out per effect size calculation.
+$$
+\begin{aligned}
+&n_0 = \frac{2n_1n_2}{n_1 + n_2}\\
+&s_W^2 = MS_W\\
+&s_B^2 = \frac{MS_B - MS_W}{n_0} \\
+\end{aligned}
+$${#eq-variances}
+
+Finally, with use these ingredients to calculate **lnM** as the ratio of between group standard deviation ($s_B$) and within-group standard deviation ($s_W$):
+
+$$
+\begin{aligned}
+&lnM = \ln\left(\frac{s_B}{s_W}\right)\\
+\end{aligned}
+$${#eq-lnM}
+:::
+### How to calculate lnM {#sec-lnM-how-to}
+If the means of group 1 and group 2 are similar, lnM cannot be calculated. For this reason, this effect size should be calculated with SAFE bootstrapping [@Nakagawa2025-do], which simulates hyperparameters based on the summary statistics (i.e., $m_{1,2}$, $sd_{1,2}$) and thus, if repeated enough, can produce estimates of lnM. 
+
+For that reason **lnM** is currently not supported by `metafor::escalc` and has to be calculated in  `metatools::eff_size`. 
+
+Be sure to set `SAFE=TRUE` in the function arguments. The `SAFE_boots` argument indicates how many bootstraps to run (1e6 is default and [appears](https://ejlundgren.github.io/SAFE/) to be a good compromise between accuracy and speed). `SAFE_max_secs` is the number of seconds to run before timing out per effect size calculation. Calculating **lnM** can be time consuming because calculations must be done over and over until a sufficient number of bootstraps is attained.
+
+Let's create a dataset with 2 row for which we want to calculate lnM. Note that the first row of this data has means that are very similar (15 and 15.5) between the two groups:
 
 ```{r}
-# TESTING:
+#| eval: true
+#| echo: true
+
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+
 dat <- data.table(x1 = c(15, 15), x2 = c(15.5, 20),
                   sd1 = c(2, 2), sd2 = c(2, 2),
                   n1 = c(15, 15), n2 = c(15, 15))
+knitr::kable(dat)
 
 out <- eff_size(x1 = x1, x2 = x2, 
          sd1 = sd1, sd2 = sd2,
@@ -103,62 +139,170 @@ out <- eff_size(x1 = x1, x2 = x2,
          data = dat,
          bind = TRUE,
          effect_type = "lnM",
+         verbose = FALSE,
          SAFE = TRUE,
          SAFE_boots = 1e6,
          SAFE_max_secs = 15)
 
-out[, .(yi_safe, vi_safe, x1, x2, sd1, sd2, n1, n2)]
-
-library("orchaRd")
-
-orchaRd:::.safe_lnM_indep(x1bar = dat$x1[1], x2bar = dat$x2[1],
-                          sd1 = dat$sd1[1], sd2 = dat$sd2[1],
-                          n1 = dat$n1[1], n2 = dat$n2[1])
-
-eff_size(x1 = x1, x2 = x2, 
-         sd1 = sd1, sd2 = sd2,
-         n = n1, r = 0.5,
-         data = dat[1, ],
-         bind = TRUE,
-         effect_type = "lnM",
-         paired = TRUE,
-         SAFE = TRUE,
-         SAFE_boots = 1e5,
-         SAFE_max_secs = 15)
-
+knitr::kable(out)
 
 ```
 
+In the resulting table, you'll note that `yi` for the first row is `NA`. This is because the difference between `x1` and `x2` is very small, leading to incalculable values. 
 
-
-```{r}
-#| eval: true
-#| echo: true
-#| out-width: "70%"
-
-if(!requireNamespace("metatools")) {
-  pak::pak("ejlundgren/metatools")
-}
-library("metatools")
-
-eff_size(x1 = 15, x2 = 10, 
-         sd1 = 1.5, sd2 = 2,
-         n1 = 15, n2 = 15,
-         effect_type = "lnM",
-         SAFE = TRUE,
-         SAFE_boots = 1e6,
-         SAFE_max_secs = 15)
-
-```
-
-This function returns `yi` and `vi`, which are the plugin-estimates of the lnM point estimate and sampling variance, respectively. The `yi_safe`, `vi_safe`, and `SE_safe` are the SAFE estimates. 
+SAFE circumvents this by bootstrapping from the means and standard deviations until a sufficient number of bootstraps is reached (defined by `SAFE_boots`, here set to 1e6). The point estimate and sampling variance produced by SAFE bootstrapping are reported as `yi_safe` and `vi_safe`. Additional information on the performance of the SAFE boostrapping are returned as well (`number_SAFE_iterations`, `number_SAFE_bootstraps_completed`, `SAFE_elapsed_time`, `SAFE_complete`). See function documentation for more information (`?eff_size`).
 
 :::callout-note
-lnM is incalculable with standard algebra when the means and standard deviations of the two groups are similar. However, SAFE allows us to circumvent this by bootstrapping simulated values. However, cases where the values are very similar may take increasing run times for enough SAFE bootstraps to successfully run. Increase `SAFE_max_secs` and reduce `SAFE_boots` until your dataset produces finalized SAFE estimates.
+Cases where the means between groups are very similar may take a while to successfully run. Increase `SAFE_max_secs` and reduce `SAFE_boots` until your dataset produces finalized SAFE estimates.
 
 To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
 :::
 
+### Interpretation {#sec-lnM-interpretation}
+**lnM** is the ratio of between group variation and within-group variation. This between group standard deviation can be thought of as mean-separation---how far apart the two groups are.
+
+lnM can be difficult to interpret on its own. An lnM of 0 corresponds to identical between and within group variation. This should **not** be interpreted as equal group means but whether the between-group dispersion is at least as large as the within-group dispersion. 
+
+While meta-analytic models should be fit on lnM directly, we recommend mapping lnM model estimates to SMD, or $d$, for interpretation to produce $d_{eq}$ or "d-equivalent":
+
+$$
+\begin{aligned}
+&n_0 = \frac{2 n_1 n_2}{n_1 + n_2}\\
+&d_{eq} = \sqrt{2e^{2lnM} + \frac{2}{n_0}}\\
+\end{aligned}
+$${#eq-d-eq}
+
+Note that when lnM = 0, this translates to $d_{eq}$ of 1.41. What exactly does that mean? This means that within-group variation is large but overall mean differences between groups are 1.41 standard deviations apart. Tricky right?
+
+Let's illustrate lnM in `R` for three comparisons---each representing a plausible comparison of group 1 and 2. We'll set the group standard deviations constant at 5, and change the means of group 2 by increments of 5 while holding group 1 constant at $m_1=15$. We'll plot the simulated data, lnM estimates, and $d_{eq}$:
+
+```{r}
+#| eval: true
+#| echo: true
+#| output: false
+#| code-fold: true
+#| fig-width: 10
+set.seed(33)
+
+dat <- data.table(x1 = 15, 
+                  x2 = c(15, 20, 25),
+                  sd1 = 5,
+                  sd2 = 5,
+                  n1 = 40,
+                  n2 = 40)
+
+dat <- eff_size(x1 = x1, x2 = x2, 
+         sd1 = sd1, sd2 = sd2,
+         n1 = n1, n2 = n2,
+         data = dat,
+         bind = TRUE,
+         effect_type = "lnM",
+         verbose = FALSE,
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 15)
+dat
+
+d_eq <- function(lnM, n1, n2){
+  n0 = (2*n1*n2) / (n1 + n2)
+  sqrt(2*exp(2*lnM) + (2/n0))
+}
+
+# Calculate d_eq:
+dat[, deq := d_eq(lnM = yi_safe, n1 = n1, n2 = n2)]
+
+dat[, string := paste0("lnM = ", round(yi_safe, 2), ";<br>d<sub>eq</sub> = ", round(deq, 2))]
+# Create rnorm distributions, for plotting:
+
+distributions <- lapply(dat$x2,
+                        function(x) data.table(mean_group_2 = x,
+                                               group_2 = rnorm(n = 40, mean = x, sd = 4))) |>
+  rbindlist()
+
+# for group 1:
+group_1 <- rnorm(n = 40, mean = 15, sd = 4)
+distributions[, group_1 := rep(group_1, length(unique(distributions$mean)))]
+
+distributions.mrg <- merge(distributions,
+                             dat[, .(x2, string)],
+                             by.x = "mean_group_2",
+                             by.y = "x2")
+
+distributions_final <- melt(distributions.mrg,
+                            id.vars = c("mean_group_2", "string"))
+
+setorder(distributions_final, mean_group_2)
+
+distributions_final[, facet_lab := paste0("m<sub>1</sub>=", 15, "<br>",
+                                          "m<sub>2</sub>=", mean_group_2)]
+distributions_final$string <- factor(distributions_final$string,
+                                     levels = unique(distributions_final$string))
+# distributions_final[, facet_lab := paste("")]
+distributions_final$variable <- factor(distributions_final$variable,
+                                       c("group_1", "group_2"))
+
+p <- ggplot()+
+  geom_density(data = distributions_final, aes(x = value, fill = variable),
+               alpha = 0.75)+
+  geom_richtext(data = unique(distributions_final[, .(facet_lab, string, mean_group_2)]),
+            aes(x = 5, y = 0.11, label = facet_lab), 
+            size = 4, label.color = NA)+
+  facet_wrap(~string)+
+  ylab("Density")+
+  scale_fill_manual(name = NULL,
+                    labels = c("group_1" = "Group 1", "group_2" = "Group 2"),
+                    values = c("group_1" = "goldenrod", "group_2" = "dodgerblue"))+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        strip.background = element_blank(),
+        strip.text = ggtext::element_markdown(size = 14),
+        legend.position = "bottom")
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+p
+```
+
+In the first panel, the means of group 1 and 2 are identical, as are their standard deviations. The standard deviation in all scenarios and for both groups was set to 5. (Note that data was drawn from the normal distribution, so the two distributions are not identical but their summary statistics are). lnM is -1.94 and $d_{eq}$ is 0.3. 
+
+In the second panel, $m_2$ is now 20. lnM is -0.4 (still negative) and $d_{eq}$ is ~1! This makes sense *because the standard deviation is 5 and $m_2$ is now 5 away from $m_1$.* 
+
+> This can be reported as: "There was *1 standard deviation* between groups, regardless of direction"
+
+In the third panel, $m_2$ is 25 and lnM is 0.34. $d_{eq}$ again successfully recovered the number of standard deviations between the two groups (2).
+
+> "There were *2 standard deviations* between groups, regardless of direction"
+
+As you can see, converting lnM to $d_{eq}$ makes the results intepretable in terms of differences in standard deviation between two groups---just like with SMD. However, these differences are directionless. It doesn't matter which group is higher or lower: the result will be the same. This produces a normally distributed and unbounded effect size distribution which allows us to ask evolutionary and ecological questions that have previously been unanswerable with meta-analysis.
+
+:::
+#### Models
+As we mention above, because of the distributional properties of lnM and $d_{eq}$, it is still better to fit models directly on lnM, instead of $d_{eq}$. 
+
+However, this can lead to challenges in interpreting the statistical outputs: the statistical tests performed by `metafor::rma.mv` compare coefficients relative to 0: a p-value of 0.01 indicates a significant difference in the coefficient of interest from 0. 
+
+However, for lnM, 0 does not mean the same as it does for other effect sizes. 
+
+As our figures above show, identical means and standard deviations produce an lnM of -1.94. 
+
+***How do we deal with this???***
+:::
+
+
+
+:::
+##### Centering lnM to a target absolute SMD
+@Nakagawa-rb recommends centering $d_eq$ by XXXXX. ***HELP***
+
+When and where to do this???
+
+:::
+
+
+#### Paired **lnM**
 For the paired version of lnM, add `paired = TRUE` to the `eff_size` function call above.
 
 ```{r}
@@ -178,5 +322,13 @@ eff_size(x1 = 15, x2 = 10,
 
 ```
 
+### Assumptions {#sec-lnM-assumptions}
+**lnM** works with both ratio-scale and interval-scale data and can thus accept negative values. 
 
-Please see the following tutorial for more information about lnM [link](https://itchyshin.github.io/meta-analysis_of_magnitude/).
+However, as with SMD and lnRoM, lnM assumes that the underlying data is more or less normally distributed. We recommend checking for overdispersed data and excluding effect sizes with $CV > 2$, as with SMD and lnRoM. See [here](2.1-SMD-assumptions.qmd) for further discussion of overdispersion. lnM is also sensitive to low sample sizes. @Nakagawa2026-rb recommends conducting sensitivity analyses only including studies with $n_1 + n_2 \geq 40$.
+
+lnM is a newly constructed effect size (as of 2026). Further research is necessary to understand how heteroscedasticity and other numeric properties influence lnM performance.
+
+### Further reading
+Please see @Nakagawa2026-rb and the associated [tutorial]((https://itchyshin.github.io/meta-analysis_of_magnitude/)) for more information about lnM.
+

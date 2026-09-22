@@ -71,17 +71,21 @@ library("crayon")
 
 **PASTED TOGETHER CONTENT FROM SEPARATE PAGES. NOT EDITED**
 
-The most commonly used effect sizes concern *mean* relationships. However, *variability* is itself a meaningful dimension of reality, not merely noise. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important information about selective pressures which can either act to increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce variation [@Crispo2007-nf]. 
+The most commonly used effect sizes concern *mean* relationships between variables. 
+
+However, *variability* is itself a meaningful dimension of reality, not merely noise [@Nakagawa2026-wm]. In ecological contexts, heterogeneity is considered a key driver of biodiversity and ecosystem functioning [@Stein2014-gj; @Levine2016-hb]. Likewise, in evolution, variability tells us important information about selective pressures which can either increase variation [@Buckley2016-sn; @O-Dea2016-jy] or reduce it [@Crispo2007-nf]. 
 
 There are two main effect sizes for calculating variability or heteroscedasticity between two groups (i.e., discrete predictors): **lnVR** and **lnCVR** [@Nakagawa2015-tq]. 
 
 ## lnVR
 
+lnVR is the log-transformed ratio of the standard deviations of two groups:
+
 $$
 \mathrm{lnVR}=\ln\left(\frac{sd_1}{sd_2}\right),
 $${#eq-lnvr}
 
-where $sd_1$ is the treatment-group standard deviation and $sd_2$ is the control-group standard deviation. With the direction used throughout this chapter:
+where $sd_1$ is the treatment-group standard deviation and $sd_2$ is the control-group standard deviation. If group 1 is your treatment or experimental group:
 
 - $\mathrm{lnVR}>0$: the treatment group is more variable;
 
@@ -89,67 +93,22 @@ where $sd_1$ is the treatment-group standard deviation and $sd_2$ is the control
 
 - $\mathrm{lnVR}<0$: the treatment group is less variable.
 
-For the plant-biomass example:
 
-$$
-\mathrm{lnVR}=\ln\left(\frac{3}{2}\right)\approx0.405.
-$$
+lnVR can be back transformed to plain english by exponentiating (i.e., $e^{lnVR}). 
 
-Back-transforming gives $e^{0.405}\approx1.5$, so the standard deviation is approximately 50% higher under warming. The lnRoM and lnVR analyses together provide a more complete biological description: warming increased mean biomass by 20% and was also associated with greater variation among plants.
+If we have an lnVR of 0.4: $e^{0.4}\approx1.5$. This indicates that the standard deviation of the treatment group is approximately 50% higher than the control group. 
 
-Calculate lnVR as a separate outcome rather than combining lnRoM and lnVR values in one univariate model:
+Combining an lnRoM or SMD meta-analysis of mean differences with an lnVR meta-analysis can provide a more complete biological description of biological change.
 
+To calculate lnVR, use `measure="VR"` in `escalc`:
 ```{r}
 escalc(measure = "VR",
        sd1i = 3, n1i = 20,
        sd2i = 2, n2i = 20)
 ```
 
-Interpret the two analyses separately. They address related but distinct questions: lnRoM concerns proportional differences in means, whereas lnVR concerns ratios of standard deviations.
 
-:::callout-warning
-### Use lnCVR carefully: its value depends directly on the means
-
-The **log coefficient of variation ratio (lnCVR)** compares standard deviations after dividing each one by its group mean [@Nakagawa2015-tq]:
-
-$$
-\mathrm{lnCVR}
-=\ln\left(\frac{s_1/m_1}{s_2/m_2}\right)
-=\mathrm{lnVR}-\mathrm{lnRoM},
-$${#eq-lncvr-relationship}
-
-before any small-sample bias corrections. Because the means occur directly in this formula, a change in lnCVR can arise from a change in the standard deviations, a change in the means, or both.
-
-lnCVR is intended to account for a common biological pattern: groups with larger means often also have larger variances. However, dividing by the mean makes an implicit scaling assumption. In simple terms, it works most naturally when the standard deviation increases roughly in proportion to the mean. Equivalently, variance then increases roughly with the square of the mean.
-
-That relationship differs among data types:
-
-- **Approximately normal data with constant variance:** the standard deviation may stay similar as the mean changes. The coefficient of variation will then change mechanically with the mean.
-
-- **Poisson count data:** variance equals the mean, so standard deviation increases with the square root of the mean rather than directly with the mean. The coefficient of variation therefore decreases as the mean increases.
-
-- **Negative-binomial count data:** variance can increase much faster than the mean. At large means, the standard deviation may be close to proportional to the mean, but the relationship depends on the dispersion parameter.
-
-- **Proportions and other bounded responses:** variance is constrained by the mean and commonly shrinks near the boundaries. The mean–variance relationship can therefore be strong and nonlinear.
-
-For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. Otherwise, report lnVR alongside lnRoM, examine the mean–variance relationship directly, or consider an arm-based model of means and standard deviations.
-:::
-
-### lnVR {#sec-lnVR}
-**lnVR** is the *log-transformed variability ratio*, defined as $log(\frac{sd_1}{sd_2})$. This effect size is **not** standardized by the mean. For that reason, this effect size can be applied to measurements derived from groups with a mean ≤ 0. However, the means need to be directly comparable. 
-
-This can be calculated in `escalc` with the measure = "VR".
-
-```{r}
-#| eval: false
-#| echo: true
-#| out-width: "70%"
-escalc(measure = "VR",
-       sd1i = 1.5, sd2i = 2.5,
-       n1i = 15, n2i = 15)
-```
-
-There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it's unreported (which is typical, see [here](2.1-SMD-assumptions.qmd#sec-paired-designs)):
+There is a paired version of lnVR as well, which requires an estimate of the correlation between group 1 and 2, which we can specify as 0.5 or 0.8 if it's unreported (which is typical, see [here](2.1-SMD-assumptions.qmd#sec-paired-designs)). Use this formula if groups 1 and 2 are paired, e.g., from paired plots, before-after experiments, and so on.
 
 In `escalc` this is specified with the "VRC" measure:
 
@@ -162,12 +121,43 @@ escalc(measure = "VRC",
        ni = 15, ri = 0.5)
 ```
 
-### lnCVR {#sec-lnCVR}
-**lnCVR** is the *log-transformed coefficient of variation ratio*, defined as $log(\frac{sd_1/m_1}{sd_2/m_2})$. This effect size **is** standardized by the mean allowing you to compare groups with different means. **SO THIS ISN"T TRUE?!** 
+## lnCVR {#sec-lnCVR}
 
-However, this effect size cannot accept negative values in the mean, requiring positive, ratio-scale data like the lnRoM effect size.
+**lnCVR** is the *log-transformed coefficient of variation ratio*. Its definition formula (prior to small sample bias correction) is: 
 
-This can be calculated in `escalc` with the measure = "CVR". This effect size requires the same statistical ingredients as SMD and lnRoM:
+$$
+\begin{aligned}
+lnCVR=\ln\left(\frac{s_1/m_1}{s_2/m_2}\right)
+\end{aligned}
+$${#eq-lncvr}
+
+This effect size **is** standardized by the mean. As such, this effect size cannot accept negative mean values, requiring positive, ratio-scale data like the [lnRoM effect size](2.1-SMD-assumptions.qmd). (Note that standard devations can never be negative so **lnVR** is always calculable as long as standard deviations were reported, even if means are <0).
+
+Importantly, lnCVR describes both mean differences between groups and differences in variability and has an exact mathematical relationship with **lnVR** and **lnRoM**:
+
+$$
+lnCVR = lnVR - lnRoM
+$${#eq-lncvr-lnvr-lnrom}
+
+:::callout-important
+Because **lnCVR** is defined by both **lnVR** and **lnRoM**, we recommend analyzing both lnVR and lnRoM (or SMD) separately instead of using lnCVR for most meta-analyses. Together, they will describe both differences in variability and differences in mean relationships.
+:::
+
+**lnCVR** is intended to account for a common biological pattern: groups with larger means often also have larger variances. However, dividing by the mean makes an implicit scaling assumption. In simple terms, it works most naturally when the standard deviation increases roughly in proportion to the mean. Equivalently, variance then increases roughly with the square of the mean.
+
+That relationship differs among data types:
+
+- **Approximately normal data with constant variance:** the standard deviation may stay similar as the mean changes. The coefficient of variation will then change mechanically with the mean.
+
+- **Poisson count data:** variance equals the mean, so standard deviation increases with the square root of the mean rather than directly with the mean. The coefficient of variation therefore decreases as the mean increases.
+
+- **Negative-binomial count data:** variance can increase much faster than the mean. At large means, the standard deviation may be close to proportional to the mean, but the relationship depends on the dispersion parameter.
+
+- **Proportions and other bounded responses:** variance is constrained by the mean and commonly shrinks near the boundaries. The mean–variance relationship can therefore be strong and nonlinear.
+
+For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. In all cases, we recommend using both lnVR and lnCVR, as well as lnRoM or SMD. If the results are different, these sensitivity analyses can help you understand **why**.
+
+This can be calculated in `escalc` with `measure = "CVR"`. This effect size requires the same statistical ingredients as SMD and lnRoM:
 
 ```{r}
 #| eval: false
@@ -180,7 +170,7 @@ escalc(measure = "CVR",
 ```
 
 
-There is a paired version of lnCVR as well. In `escalc` this is specified with the "CVRC" measure:
+There is a paired version of lnCVR as well. In `escalc` this is specified with `measure="CVRC"`.
 
 ```{r}
 #| eval: false
@@ -191,5 +181,4 @@ escalc(measure = "CVRC",
        sd1i = 1.5, sd2i = 2.5,
        ni = 15, ri = 0.5)
 ```
-
 
