@@ -157,6 +157,7 @@ knitr::kable(out)
 SAFE circumvents this by bootstrapping from the means and standard deviations until a sufficient number of bootstraps is reached (defined by `SAFE_boots`, here set to 1e6). The point estimate and sampling variance produced by SAFE bootstrapping are reported as `yi_safe` and `vi_safe`. Additional information on the performance of the SAFE boostrapping are returned as well (`number_SAFE_iterations`, `number_SAFE_bootstraps_completed`, `SAFE_elapsed_time`, `SAFE_complete`). See function documentation for more information (`?eff_size`).
 
 :::callout-note
+##### Optimizing SAFE
 Cases where the means between groups are very similar may take a while to successfully run. Increase `SAFE_max_secs` and reduce `SAFE_boots` until your dataset produces finalized SAFE estimates, indicated by the `SAFE_complete` column. We recommend not reducing `SAFE_boots` less than 1e4 (1e5 and 1e6 are preferable).
 
 To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
@@ -409,13 +410,14 @@ We can then report that the magnitude of differences between groups was ~0.19 st
 - $d_{eq} \approx |0.8|$ is a strong difference
 
 :::callout-note
-Alternatively, you can use the function `anova` to set an alternative null value than 0. This is done as follows:
+#### Testing custom null hypotheses with `anova`
+Alternatively, you can use the function `anova` to test a different null value than 0. This is done as follows:
 
 ```{r}
-anova(m, rhs = -1.5)
+anova(m, rhs = -2)
 ```
 
-This compared the model estimate to an lnM of -1.5 and returned `F = 4.8, p = 0.058`. However, choosing what this null value should be is non-trivial. There is no way to solve @eq-d-eq-approx for $d_eq$ of 0 (because the result is $-\infty$). For that reason, we don't recommend using `anova` unless there is a good *a priori* justification for your null hypothesis value.
+This compared the model estimate from our model object `m` to a null value of -2 and returned `F = 0.0001, p = 0.99`---indicating that our estimate is not significantly different than -2. However, choosing what this null value should be is non-trivial. There is no way to solve @eq-d-eq-approx for $d_eq = 0$ (because the result is $-\infty$). For that reason, we don't recommend using `anova` unless there is a good *a priori* justification for a custom null hypothesis value.
 :::
 
 ### Assumptions {#sec-lnM-assumptions}
