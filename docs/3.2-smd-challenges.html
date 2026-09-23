@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-09-19">
+<meta name="dcterms.date" content="2026-09-23">
 <title>Continuous outcomes between two groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -406,12 +406,13 @@ window.Quarto = {
   </ul>
 </li>
   <li>
-<a href="#sec-model-estimates" id="toc-sec-model-estimates" class="nav-link" data-scroll-target="#sec-model-estimates">Model estimates</a>
+<a href="#sec-model-estimates" id="toc-sec-model-estimates" class="nav-link" data-scroll-target="#sec-model-estimates">Model outputs</a>
   <ul>
 <li><a href="#sec-t-statistic" id="toc-sec-t-statistic" class="nav-link" data-scroll-target="#sec-t-statistic">From the t statistic</a></li>
   <li><a href="#sec-p-values" id="toc-sec-p-values" class="nav-link" data-scroll-target="#sec-p-values">From p values:</a></li>
   <li><a href="#sec-f-statistic" id="toc-sec-f-statistic" class="nav-link" data-scroll-target="#sec-f-statistic">From F statistic</a></li>
   <li><a href="#sec-least-square-means" id="toc-sec-least-square-means" class="nav-link" data-scroll-target="#sec-least-square-means">Least Square Means (LS Means) or Estimated Marginal Means</a></li>
+  <li><a href="#sec-ordination" id="toc-sec-ordination" class="nav-link" data-scroll-target="#sec-ordination">PCAs — risky business</a></li>
   </ul>
 </li>
   </ul></nav>
@@ -430,7 +431,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 19, 2026</p>
+      <p class="date">September 23, 2026</p>
     </div>
   </div>
   
@@ -774,8 +775,8 @@ Note
 <th><span class="math inline">\(sd_{difference}\)</span></th>
 </tr></thead>
 <tbody><tr class="odd">
-<td>-4.7328573</td>
-<td>1.3861114</td>
+<td>-5.339161</td>
+<td>1.274656</td>
 </tr></tbody>
 </table>
 <p>To calculate SMD (which is necessary because we are no longer dealing with ratio-scale data and negative values are likely), we have to be creative.</p>
@@ -798,10 +799,10 @@ Note
 <th><span class="math inline">\(sd_{experiment}\)</span></th>
 </tr></thead>
 <tbody><tr class="odd">
-<td>-4.7328573</td>
-<td>1.3861114</td>
+<td>-5.339161</td>
+<td>1.274656</td>
 <td>0</td>
-<td>1.3861114</td>
+<td>1.274656</td>
 </tr></tbody>
 </table>
 <p>Since the data is paired, you should use a paired (but comparable) version of SMD to calculate your effect sizes.</p>
@@ -818,7 +819,7 @@ Note
 <div class="cell-output cell-output-stdout">
 <pre><code>
   mean_control sd_control mean_experiment sd_experiment      yi     vi 
-1    -4.732857   1.386111               0      1.386111 -3.2987 0.2934 </code></pre>
+1    -5.339161   1.274656               0      1.274656 -4.0466 0.4078 </code></pre>
 </div>
 </div>
 <p>Cases like this should be flagged for sensitivity analysis.</p>
@@ -926,10 +927,10 @@ Note
 <th style="text-align: right;">sd_after_impact</th>
 </tr></thead>
 <tbody><tr class="odd">
-<td style="text-align: right;">4.343899</td>
-<td style="text-align: right;">0.9002749</td>
-<td style="text-align: right;">5.845548</td>
-<td style="text-align: right;">0.783089</td>
+<td style="text-align: right;">4.089326</td>
+<td style="text-align: right;">0.9046435</td>
+<td style="text-align: right;">5.731925</td>
+<td style="text-align: right;">0.7131216</td>
 </tr></tbody>
 </table>
 </div>
@@ -962,7 +963,7 @@ Note
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.7316 0.1833 </code></pre>
+1 1.9620 0.1975 </code></pre>
 </div>
 </div>
 <p>Note that you may wish to use a paired estimator for this if the control and impact groups were paired spatially (they cannot be paired temporally).</p>
@@ -1209,7 +1210,7 @@ Important
 \]</span></p>
 </div>
 </div>
-</section></section><section id="sec-model-estimates" class="level1"><h1>Model estimates</h1>
+</section></section><section id="sec-model-estimates" class="level1"><h1>Model outputs</h1>
 <p>Many studies report adjusted contrasts from linear models, generalized models, or mixed-effects models instead of raw group means. These estimates are not automatically unusable. An adjusted contrast can be meta-analyzed directly when it estimates the intended quantity on a compatible scale and is accompanied by an SE, confidence interval, or sampling variance.</p>
 <p>Do not treat a model-derived SE as though it were the SD of observations within a group. The SE describes uncertainty in the model estimate. When the model contrast itself is the effect of interest, enter the contrast and its sampling variance directly using a generic inverse-variance approach.</p>
 <table class="caption-top table">
@@ -1340,23 +1341,29 @@ Var(\hat\mu_1-\hat\mu_2)=SE_1^2+SE_2^2-2Cov(\hat\mu_1,\hat\mu_2).
 \]</span></p>
 <p>Without that covariance, the uncertainty of the contrast generally cannot be reconstructed exactly. Do not insert the two model SEs into the <code>sd1i</code> and <code>sd2i</code> arguments of an ordinary SMD calculation.</p>
 <p><strong>Hmmmm I also don’t follow this</strong></p>
-<div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Warning</span>PCAs / PCoAs — the lost minefield of ordination
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A principal component is a weighted combination of the variables included in one particular dataset. PC1 in one study may represent body size, while PC1 in another may represent activity, condition, or a mixture of several traits. Its meaning can change with the variables included, their scaling, and the relationships among them. A PCoA axis similarly depends on the chosen distance measure and the observations included in that study.</p>
-<p>An SMD removes the numerical units of an outcome, but it does not make outcomes with different biological meanings equivalent. The direction of a PCA or PCoA axis is also arbitrary: the same axis can be plotted with its signs reversed. Pooling study-specific axes can therefore combine different biological responses or reverse the direction of some effects.</p>
-<p>PCA or PCoA scores should not be included in an ordinary SMD/lnRoM meta-analysis unless all studies used a genuinely shared axis with the same biological meaning. This would require compatible variables and preprocessing, a common or demonstrably equivalent scoring rule, a prespecified way to align the direction, and group means, within-group SDs, and independent sample sizes calculated in that shared coordinate system. A meta-analysis made entirely from such shared PCA axes would be unusual; it would effectively be a meta-analysis of one consistently defined composite outcome.</p>
-<p>Centroids alone do not provide the within-group SD needed for an SMD. Do not infer an SD from an ordination ellipse unless its exact statistical definition makes that conversion possible. PERMANOVA statistics such as pseudo-<span class="math inline">\(F\)</span>, <span class="math inline">\(R^2\)</span>, and <span class="math inline">\(p\)</span> values describe a distance-based multivariate analysis and should not be converted into an ordinary SMD.</p>
-<p>When possible, return to the original variables and choose outcomes that answer the biological question consistently across studies. If the original outcomes or a valid shared score cannot be obtained, record the ordination result as unavailable for the SMD analysis.</p>
+</section><section id="sec-ordination" class="level2"><h2 class="anchored" data-anchor-id="sec-ordination">PCAs — risky business</h2>
+<p>Imagine you are conducting a meta-analysis of risk-taking in animals. You are including a variety of behavioral responses: flight initiation distances, vigilance, activity rate, and so on. All of these are considered proxies for risk-taking (and you are of course looking at these both combined and separately because you are a sensitivity-analysis master).</p>
+<p>Then you come upon a real stumper of a study. They used a principal components analysis (PCA) to synthesize the exact same variables you are interested in into a single ordination space. The first axis of this ordination space (PC1) has synthesized all the variables you are interested in into a single variable. This might look like this:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="3.2-smd-challenges_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
+</div>
+<p>The authors also provide this (though you could extract it from the points in the figure above as well):</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="3.2-smd-challenges_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Is this data usable?</p>
+<p>Before extracting these means±sd, we recommend looking for raw data or contacting the authors. If these prove to be fruitless, and your dataset is small and hungry, it might be worth using the PC1 scores. However, be certain that the PC axis is synthesizing variables that are otherwise considered legitimate responses in your dataset.</p>
+<p>And be careful: you should conduct sensitivity analyses excluding this data to ensure that your results are robust.</p>
 <!-- Erick's reading note: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927 -->
 
 
@@ -3054,7 +3061,7 @@ Pick, J. L., S. Nakagawa, and D. W. A. Noble. 2018. Reproducible, flexible and h
 <span id="cb19-1285"><a href="#cb19-1285" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb19-1286"><a href="#cb19-1286" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb19-1287"><a href="#cb19-1287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1288"><a href="#cb19-1288" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
+<span id="cb19-1288"><a href="#cb19-1288" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model outputs {#sec-model-estimates}</span></span>
 <span id="cb19-1289"><a href="#cb19-1289" aria-hidden="true" tabindex="-1"></a>Many studies report adjusted contrasts from linear models, generalized models, or mixed-effects models instead of raw group means. These estimates are not automatically unusable. An adjusted contrast can be meta-analyzed directly when it estimates the intended quantity on a compatible scale and is accompanied by an SE, confidence interval, or sampling variance.</span>
 <span id="cb19-1290"><a href="#cb19-1290" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-1291"><a href="#cb19-1291" aria-hidden="true" tabindex="-1"></a>Do not treat a model-derived SE as though it were the SD of observations within a group. The SE describes uncertainty in the model estimate. When the model contrast itself is the effect of interest, enter the contrast and its sampling variance directly using a generic inverse-variance approach.</span>
@@ -3163,21 +3170,72 @@ Pick, J. L., S. Nakagawa, and D. W. A. Noble. 2018. Reproducible, flexible and h
 <span id="cb19-1400"><a href="#cb19-1400" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-1401"><a href="#cb19-1401" aria-hidden="true" tabindex="-1"></a>**Hmmmm I also don't follow this**</span>
 <span id="cb19-1402"><a href="#cb19-1402" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1403"><a href="#cb19-1403" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
-<span id="cb19-1404"><a href="#cb19-1404" aria-hidden="true" tabindex="-1"></a><span class="fu">## PCAs / PCoAs — the lost minefield of ordination {#sec-ordination}</span></span>
-<span id="cb19-1405"><a href="#cb19-1405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1406"><a href="#cb19-1406" aria-hidden="true" tabindex="-1"></a>A principal component is a weighted combination of the variables included in one particular dataset. PC1 in one study may represent body size, while PC1 in another may represent activity, condition, or a mixture of several traits. Its meaning can change with the variables included, their scaling, and the relationships among them. A PCoA axis similarly depends on the chosen distance measure and the observations included in that study.</span>
-<span id="cb19-1407"><a href="#cb19-1407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1408"><a href="#cb19-1408" aria-hidden="true" tabindex="-1"></a>An SMD removes the numerical units of an outcome, but it does not make outcomes with different biological meanings equivalent. The direction of a PCA or PCoA axis is also arbitrary: the same axis can be plotted with its signs reversed. Pooling study-specific axes can therefore combine different biological responses or reverse the direction of some effects.</span>
-<span id="cb19-1409"><a href="#cb19-1409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1410"><a href="#cb19-1410" aria-hidden="true" tabindex="-1"></a>PCA or PCoA scores should not be included in an ordinary SMD/lnRoM meta-analysis unless all studies used a genuinely shared axis with the same biological meaning. This would require compatible variables and preprocessing, a common or demonstrably equivalent scoring rule, a prespecified way to align the direction, and group means, within-group SDs, and independent sample sizes calculated in that shared coordinate system. A meta-analysis made entirely from such shared PCA axes would be unusual; it would effectively be a meta-analysis of one consistently defined composite outcome.</span>
-<span id="cb19-1411"><a href="#cb19-1411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1412"><a href="#cb19-1412" aria-hidden="true" tabindex="-1"></a>Centroids alone do not provide the within-group SD needed for an SMD. Do not infer an SD from an ordination ellipse unless its exact statistical definition makes that conversion possible. PERMANOVA statistics such as pseudo-$F$, $R^2$, and $p$ values describe a distance-based multivariate analysis and should not be converted into an ordinary SMD.</span>
-<span id="cb19-1413"><a href="#cb19-1413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1414"><a href="#cb19-1414" aria-hidden="true" tabindex="-1"></a>When possible, return to the original variables and choose outcomes that answer the biological question consistently across studies. If the original outcomes or a valid shared score cannot be obtained, record the ordination result as unavailable for the SMD analysis.</span>
-<span id="cb19-1415"><a href="#cb19-1415" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb19-1416"><a href="#cb19-1416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-1417"><a href="#cb19-1417" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Erick's reading note: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927 --&gt;</span></span>
+<span id="cb19-1403"><a href="#cb19-1403" aria-hidden="true" tabindex="-1"></a><span class="fu">## PCAs — risky business {#sec-ordination}</span></span>
+<span id="cb19-1404"><a href="#cb19-1404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1405"><a href="#cb19-1405" aria-hidden="true" tabindex="-1"></a>Imagine you are conducting a meta-analysis of risk-taking in animals. You are including a variety of behavioral responses: flight initiation distances, vigilance, activity rate, and so on. All of these are considered proxies for risk-taking (and you are of course looking at these both combined and separately because you are a sensitivity-analysis master).</span>
+<span id="cb19-1406"><a href="#cb19-1406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1407"><a href="#cb19-1407" aria-hidden="true" tabindex="-1"></a>Then you come upon a real stumper of a study. They used a principal components analysis (PCA) to synthesize the exact same variables you are interested in into a single ordination space. The first axis of this ordination space (PC1) has synthesized all the variables you are interested in into a single variable. This might look like this: </span>
+<span id="cb19-1408"><a href="#cb19-1408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1411"><a href="#cb19-1411" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-1412"><a href="#cb19-1412" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-1413"><a href="#cb19-1413" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-1414"><a href="#cb19-1414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1415"><a href="#cb19-1415" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">pc1 =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">5</span>, <span class="at">mean =</span> <span class="sc">-</span><span class="dv">3</span>, <span class="at">sd =</span> <span class="dv">1</span>), <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">5</span>, <span class="at">mean =</span> <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">1</span>) ),</span>
+<span id="cb19-1416"><a href="#cb19-1416" aria-hidden="true" tabindex="-1"></a>                  <span class="at">pc2 =</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">5</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>), <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">5</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fl">0.5</span>)),</span>
+<span id="cb19-1417"><a href="#cb19-1417" aria-hidden="true" tabindex="-1"></a>                  <span class="at">group =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">"Treatment"</span>, <span class="dv">5</span>), <span class="fu">rep</span>(<span class="st">"Control"</span>, <span class="dv">5</span>)))</span>
+<span id="cb19-1418"><a href="#cb19-1418" aria-hidden="true" tabindex="-1"></a>vec <span class="ot">&lt;-</span> <span class="fu">data.table</span>(<span class="at">origin_pc1 =</span> <span class="dv">0</span>,</span>
+<span id="cb19-1419"><a href="#cb19-1419" aria-hidden="true" tabindex="-1"></a>                  <span class="at">origin_pc2 =</span> <span class="dv">0</span>,</span>
+<span id="cb19-1420"><a href="#cb19-1420" aria-hidden="true" tabindex="-1"></a>                  <span class="at">end_pc1 =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.5</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="fl">1.5</span>),</span>
+<span id="cb19-1421"><a href="#cb19-1421" aria-hidden="true" tabindex="-1"></a>                  <span class="at">end_pc2 =</span> <span class="fu">c</span>(.<span class="dv">3</span>, <span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">0.1</span>),</span>
+<span id="cb19-1422"><a href="#cb19-1422" aria-hidden="true" tabindex="-1"></a>                  <span class="at">var =</span> <span class="fu">c</span>(<span class="st">"Vigilance"</span>, <span class="st">"Flight initiation distance"</span>, <span class="st">"Activity rate"</span>))</span>
+<span id="cb19-1423"><a href="#cb19-1423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1424"><a href="#cb19-1424" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb19-1425"><a href="#cb19-1425" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> dat, </span>
+<span id="cb19-1426"><a href="#cb19-1426" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> pc1, <span class="at">y =</span> pc2, <span class="at">fill =</span> group),</span>
+<span id="cb19-1427"><a href="#cb19-1427" aria-hidden="true" tabindex="-1"></a>             <span class="at">shape =</span> <span class="dv">21</span>)<span class="sc">+</span></span>
+<span id="cb19-1428"><a href="#cb19-1428" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">data =</span> vec,</span>
+<span id="cb19-1429"><a href="#cb19-1429" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> origin_pc1, <span class="at">y =</span> origin_pc2,</span>
+<span id="cb19-1430"><a href="#cb19-1430" aria-hidden="true" tabindex="-1"></a>                 <span class="at">xend =</span> end_pc1, <span class="at">yend =</span> end_pc2))<span class="sc">+</span></span>
+<span id="cb19-1431"><a href="#cb19-1431" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> vec,</span>
+<span id="cb19-1432"><a href="#cb19-1432" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> end_pc1<span class="fl">+0.05</span>, <span class="at">y =</span> end_pc2<span class="fl">+0.05</span>,</span>
+<span id="cb19-1433"><a href="#cb19-1433" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> var))<span class="sc">+</span></span>
+<span id="cb19-1434"><a href="#cb19-1434" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">"Group of interest"</span>,</span>
+<span id="cb19-1435"><a href="#cb19-1435" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Treatment"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>,</span>
+<span id="cb19-1436"><a href="#cb19-1436" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Control"</span><span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span></span>
+<span id="cb19-1437"><a href="#cb19-1437" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">1995</span><span class="sc">:</span><span class="dv">2005</span>)<span class="sc">+</span></span>
+<span id="cb19-1438"><a href="#cb19-1438" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC1 (Risk-taking)"</span>)<span class="sc">+</span></span>
+<span id="cb19-1439"><a href="#cb19-1439" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC2 (Something else, who knows)"</span>)<span class="sc">+</span></span>
+<span id="cb19-1440"><a href="#cb19-1440" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-1441"><a href="#cb19-1441" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb19-1442"><a href="#cb19-1442" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-1443"><a href="#cb19-1443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1444"><a href="#cb19-1444" aria-hidden="true" tabindex="-1"></a>The authors also provide this (though you could extract it from the points in the figure above as well):</span>
+<span id="cb19-1445"><a href="#cb19-1445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1448"><a href="#cb19-1448" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-1449"><a href="#cb19-1449" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-1450"><a href="#cb19-1450" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-1451"><a href="#cb19-1451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1452"><a href="#cb19-1452" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dat[, .(<span class="at">mean =</span> <span class="fu">mean</span>(pc1), <span class="at">sd =</span> <span class="fu">sd</span>(pc2)),</span>
+<span id="cb19-1453"><a href="#cb19-1453" aria-hidden="true" tabindex="-1"></a>                  <span class="at">by =</span> .(group)])<span class="sc">+</span></span>
+<span id="cb19-1454"><a href="#cb19-1454" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">y =</span> mean, <span class="at">fill =</span> group))<span class="sc">+</span></span>
+<span id="cb19-1455"><a href="#cb19-1455" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">x =</span> group, <span class="at">ymin =</span> mean<span class="sc">-</span>sd, <span class="at">ymax =</span> mean<span class="sc">+</span>sd),</span>
+<span id="cb19-1456"><a href="#cb19-1456" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.3</span>)<span class="sc">+</span></span>
+<span id="cb19-1457"><a href="#cb19-1457" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">"Group of interest"</span>,</span>
+<span id="cb19-1458"><a href="#cb19-1458" aria-hidden="true" tabindex="-1"></a>                    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Treatment"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>,</span>
+<span id="cb19-1459"><a href="#cb19-1459" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Control"</span><span class="ot">=</span> <span class="st">"indianred"</span>))<span class="sc">+</span></span>
+<span id="cb19-1460"><a href="#cb19-1460" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Risk-taking (PC1)"</span>)<span class="sc">+</span></span>
+<span id="cb19-1461"><a href="#cb19-1461" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb19-1462"><a href="#cb19-1462" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb19-1463"><a href="#cb19-1463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1464"><a href="#cb19-1464" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-1465"><a href="#cb19-1465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1466"><a href="#cb19-1466" aria-hidden="true" tabindex="-1"></a>Is this data usable? </span>
+<span id="cb19-1467"><a href="#cb19-1467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1468"><a href="#cb19-1468" aria-hidden="true" tabindex="-1"></a>Before extracting these means±sd, we recommend looking for raw data or contacting the authors. If these prove to be fruitless, and your dataset is small and hungry, it might be worth using the PC1 scores. However, be certain that the PC axis is synthesizing variables that are otherwise considered legitimate responses in your dataset. </span>
+<span id="cb19-1469"><a href="#cb19-1469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1470"><a href="#cb19-1470" aria-hidden="true" tabindex="-1"></a>And be careful: you should conduct sensitivity analyses excluding this data to ensure that your results are robust. </span>
+<span id="cb19-1471"><a href="#cb19-1471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-1472"><a href="#cb19-1472" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Erick's reading note: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927 --&gt;</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

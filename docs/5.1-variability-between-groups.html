@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-09-22">
+<meta name="dcterms.date" content="2026-09-23">
 <title>Variability between groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -379,7 +379,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 22, 2026</p>
+      <p class="date">September 23, 2026</p>
     </div>
   </div>
   
@@ -425,6 +425,19 @@ window.Quarto = {
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"VRC"</span>,</span>
 <span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2.5</span>,</span>
 <span>       ni <span class="op">=</span> <span class="fl">15</span>, ri <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="citation" data-cites="Senior2026-oh">Senior et al. (<a href="#ref-Senior2026-oh" role="doc-biblioref">2026</a>)</span> recently demonstrated that using bivariate models with lnRoM and lnVR as response variables can increase statistical power to detect effects of treatments on both variation and mean responses. This is an interesting and little implemented method to incorporate both mean differences and variability into a single meta-analytic model.</p>
+</div>
 </div>
 </section></section><section id="sec-lnCVR" class="level2"><h2 class="anchored" data-anchor-id="sec-lnCVR">lnCVR</h2>
 <p><strong>lnCVR</strong> is the <em>log-transformed coefficient of variation ratio</em>. Its definition formula (prior to small sample bias correction) is:</p>
@@ -498,6 +511,9 @@ Nakagawa, S., R. Poulin, K. Mengersen, K. Reinhold, L. Engqvist, M. Lagisz, and 
 </div>
 <div id="ref-O-Dea2016-jy" class="csl-entry" role="listitem">
 O’Dea, R. E., D. W. A. Noble, S. L. Johnson, D. Hesselson, and S. Nakagawa. 2016. The role of non-genetic inheritance in evolutionary rescue: Epigenetic buffering, heritable bet hedging and epigenetic traps. Environ. Epigenet. 2:dvv014.
+</div>
+<div id="ref-Senior2026-oh" class="csl-entry" role="listitem">
+Senior, A. M., T. Dodgson, M. Lagisz, Y. Yang, and S. Nakagawa. 2026, January. Methods for the integrated meta-analysis of mean and variation effects. <a href="https://ecoevorxiv.org/repository/view/11379/" class="uri">https://ecoevorxiv.org/repository/view/11379/</a>.
 </div>
 <div id="ref-Stein2014-gj" class="csl-entry" role="listitem">
 Stein, A., K. Gerstner, and H. Kreft. 2014. Environmental heterogeneity as a universal driver of species richness across taxa, biomes and spatial scales. Ecol. Lett. 17:866–880.
@@ -1076,67 +1092,71 @@ Stein, A., K. Gerstner, and H. Kreft. 2014. Environmental heterogeneity as a uni
 <span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
 <span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## lnCVR {#sec-lnCVR}</span></span>
-<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>**lnCVR** is the *log-transformed coefficient of variation ratio*. Its definition formula (prior to small sample bias correction) is: </span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>@Senior2026-oh recently demonstrated that using bivariate models with lnRoM and lnVR as response variables can increase statistical power to detect effects of treatments on both variation and mean responses. This is an interesting and little implemented method to incorporate both mean differences and variability into a single meta-analytic model.</span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>lnCVR=\ln\left(\frac{s_1/m_1}{s_2/m_2}\right)</span>
-<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>$${#eq-lncvr}</span>
-<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>This effect size **is** standardized by the mean. As such, this effect size cannot accept negative mean values, requiring positive, ratio-scale data like the [lnRoM effect size](2.1-SMD-assumptions.qmd). (Note that standard devations can never be negative so **lnVR** is always calculable as long as standard deviations were reported, even if means are &lt;0).</span>
-<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>Importantly, lnCVR describes both mean differences between groups and differences in variability and has an exact mathematical relationship with **lnVR** and **lnRoM**:</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a><span class="fu">## lnCVR {#sec-lnCVR}</span></span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>**lnCVR** is the *log-transformed coefficient of variation ratio*. Its definition formula (prior to small sample bias correction) is: </span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>lnCVR=\ln\left(\frac{s_1/m_1}{s_2/m_2}\right)</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>$${#eq-lncvr}</span>
 <span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>lnCVR = lnVR - lnRoM</span>
-<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>$${#eq-lncvr-lnvr-lnrom}</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>This effect size **is** standardized by the mean. As such, this effect size cannot accept negative mean values, requiring positive, ratio-scale data like the [lnRoM effect size](2.1-SMD-assumptions.qmd). (Note that standard devations can never be negative so **lnVR** is always calculable as long as standard deviations were reported, even if means are &lt;0).</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>Importantly, lnCVR describes both mean differences between groups and differences in variability and has an exact mathematical relationship with **lnVR** and **lnRoM**:</span>
 <span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>Because **lnCVR** is defined by both **lnVR** and **lnRoM**, we recommend analyzing both lnVR and lnRoM (or SMD) separately instead of using lnCVR for most meta-analyses. Together, they will describe both differences in variability and differences in mean relationships.</span>
-<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>lnCVR = lnVR - lnRoM</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>$${#eq-lncvr-lnvr-lnrom}</span>
 <span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>**lnCVR** is intended to account for a common biological pattern: groups with larger means often also have larger variances. However, dividing by the mean makes an implicit scaling assumption. In simple terms, it works most naturally when the standard deviation increases roughly in proportion to the mean. Equivalently, variance then increases roughly with the square of the mean.</span>
-<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>That relationship differs among data types:</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>Because **lnCVR** is defined by both **lnVR** and **lnRoM**, we recommend analyzing both lnVR and lnRoM (or SMD) separately instead of using lnCVR for most meta-analyses. Together, they will describe both differences in variability and differences in mean relationships.</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Approximately normal data with constant variance:** the standard deviation may stay similar as the mean changes. The coefficient of variation will then change mechanically with the mean.</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>**lnCVR** is intended to account for a common biological pattern: groups with larger means often also have larger variances. However, dividing by the mean makes an implicit scaling assumption. In simple terms, it works most naturally when the standard deviation increases roughly in proportion to the mean. Equivalently, variance then increases roughly with the square of the mean.</span>
 <span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Poisson count data:** variance equals the mean, so standard deviation increases with the square root of the mean rather than directly with the mean. The coefficient of variation therefore decreases as the mean increases.</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>That relationship differs among data types:</span>
 <span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Negative-binomial count data:** variance can increase much faster than the mean. At large means, the standard deviation may be close to proportional to the mean, but the relationship depends on the dispersion parameter.</span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Approximately normal data with constant variance:** the standard deviation may stay similar as the mean changes. The coefficient of variation will then change mechanically with the mean.</span>
 <span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Proportions and other bounded responses:** variance is constrained by the mean and commonly shrinks near the boundaries. The mean–variance relationship can therefore be strong and nonlinear.</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Poisson count data:** variance equals the mean, so standard deviation increases with the square root of the mean rather than directly with the mean. The coefficient of variation therefore decreases as the mean increases.</span>
 <span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. In all cases, we recommend using both lnVR and lnCVR, as well as lnRoM or SMD. If the results are different, these sensitivity analyses can help you understand **why**.</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Negative-binomial count data:** variance can increase much faster than the mean. At large means, the standard deviation may be close to proportional to the mean, but the relationship depends on the dispersion parameter.</span>
 <span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a><span class="fu">#### How to calculate</span></span>
-<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with <span class="in">`measure = "CVR"`</span>. This effect size requires the same statistical ingredients as SMD and lnRoM:</span>
-<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVR"</span>,</span>
-<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
-<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
-<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
-<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnCVR as well. In <span class="in">`escalc`</span> this is specified with <span class="in">`measure="CVRC"`</span>.</span>
-<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVRC"</span>,</span>
-<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>        <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
-<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
-<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
-<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Proportions and other bounded responses:** variance is constrained by the mean and commonly shrinks near the boundaries. The mean–variance relationship can therefore be strong and nonlinear.</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>For these reasons, do not choose lnCVR automatically. First plot or model the relationship between group means and standard deviations across the dataset. Use lnCVR when *relative variability* is the intended estimand and its assumed mean–variance scaling is plausible. In all cases, we recommend using both lnVR and lnCVR, as well as lnRoM or SMD. If the results are different, these sensitivity analyses can help you understand **why**.</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a><span class="fu">#### How to calculate</span></span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>This can be calculated in <span class="in">`escalc`</span> with <span class="in">`measure = "CVR"`</span>. This effect size requires the same statistical ingredients as SMD and lnRoM:</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVR"</span>,</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>There is a paired version of lnCVR as well. In <span class="in">`escalc`</span> this is specified with <span class="in">`measure="CVRC"`</span>.</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVRC"</span>,</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>        <span class="at">m1i =</span> <span class="dv">15</span>, <span class="at">m2i =</span> <span class="dv">15</span>,</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">2.5</span>,</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>, <span class="at">ri =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

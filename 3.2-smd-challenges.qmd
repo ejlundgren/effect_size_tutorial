@@ -1225,7 +1225,7 @@ $$
 $$
 :::
 
-# Model estimates {#sec-model-estimates}
+# Model outputs {#sec-model-estimates}
 Many studies report adjusted contrasts from linear models, generalized models, or mixed-effects models instead of raw group means. These estimates are not automatically unusable. An adjusted contrast can be meta-analyzed directly when it estimates the intended quantity on a compatible scale and is accompanied by an SE, confidence interval, or sampling variance.
 
 Do not treat a model-derived SE as though it were the SD of observations within a group. The SE describes uncertainty in the model estimate. When the model contrast itself is the effect of interest, enter the contrast and its sampling variance directly using a generic inverse-variance approach.
@@ -1335,18 +1335,69 @@ Without that covariance, the uncertainty of the contrast generally cannot be rec
 
 **Hmmmm I also don't follow this**
 
-::: {.callout-warning}
-## PCAs / PCoAs — the lost minefield of ordination {#sec-ordination}
+## PCAs — risky business {#sec-ordination}
 
-A principal component is a weighted combination of the variables included in one particular dataset. PC1 in one study may represent body size, while PC1 in another may represent activity, condition, or a mixture of several traits. Its meaning can change with the variables included, their scaling, and the relationships among them. A PCoA axis similarly depends on the chosen distance measure and the observations included in that study.
+Imagine you are conducting a meta-analysis of risk-taking in animals. You are including a variety of behavioral responses: flight initiation distances, vigilance, activity rate, and so on. All of these are considered proxies for risk-taking (and you are of course looking at these both combined and separately because you are a sensitivity-analysis master).
 
-An SMD removes the numerical units of an outcome, but it does not make outcomes with different biological meanings equivalent. The direction of a PCA or PCoA axis is also arbitrary: the same axis can be plotted with its signs reversed. Pooling study-specific axes can therefore combine different biological responses or reverse the direction of some effects.
+Then you come upon a real stumper of a study. They used a principal components analysis (PCA) to synthesize the exact same variables you are interested in into a single ordination space. The first axis of this ordination space (PC1) has synthesized all the variables you are interested in into a single variable. This might look like this: 
 
-PCA or PCoA scores should not be included in an ordinary SMD/lnRoM meta-analysis unless all studies used a genuinely shared axis with the same biological meaning. This would require compatible variables and preprocessing, a common or demonstrably equivalent scoring rule, a prespecified way to align the direction, and group means, within-group SDs, and independent sample sizes calculated in that shared coordinate system. A meta-analysis made entirely from such shared PCA axes would be unusual; it would effectively be a meta-analysis of one consistently defined composite outcome.
+```{r}
+#| echo: false
+#| eval: true
 
-Centroids alone do not provide the within-group SD needed for an SMD. Do not infer an SD from an ordination ellipse unless its exact statistical definition makes that conversion possible. PERMANOVA statistics such as pseudo-$F$, $R^2$, and $p$ values describe a distance-based multivariate analysis and should not be converted into an ordinary SMD.
+dat <- data.table(pc1 = c(rnorm(n = 5, mean = -3, sd = 1), rnorm(n = 5, mean = 2, sd = 1) ),
+                  pc2 = c(rnorm(n = 5, mean = 0, sd = 0.5), rnorm(n = 5, mean = 0, sd = 0.5)),
+                  group = c(rep("Treatment", 5), rep("Control", 5)))
+vec <- data.table(origin_pc1 = 0,
+                  origin_pc2 = 0,
+                  end_pc1 = c(-2.5, -3, 1.5),
+                  end_pc2 = c(.3, -0.1, 0.1),
+                  var = c("Vigilance", "Flight initiation distance", "Activity rate"))
 
-When possible, return to the original variables and choose outcomes that answer the biological question consistently across studies. If the original outcomes or a valid shared score cannot be obtained, record the ordination result as unavailable for the SMD analysis.
-:::
+ggplot()+
+  geom_point(data = dat, 
+             aes(x = pc1, y = pc2, fill = group),
+             shape = 21)+
+  geom_segment(data = vec,
+             aes(x = origin_pc1, y = origin_pc2,
+                 xend = end_pc1, yend = end_pc2))+
+  geom_text(data = vec,
+            aes(x = end_pc1+0.05, y = end_pc2+0.05,
+                label = var))+
+  scale_fill_manual("Group of interest",
+                    values = c("Treatment" = "dodgerblue",
+                               "Control"= "indianred"))+
+  scale_x_continuous(breaks = 1995:2005)+
+  xlab("PC1 (Risk-taking)")+
+  ylab("PC2 (Something else, who knows)")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+```
+
+The authors also provide this (though you could extract it from the points in the figure above as well):
+
+```{r}
+#| echo: false
+#| eval: true
+
+ggplot(data = dat[, .(mean = mean(pc1), sd = sd(pc2)),
+                  by = .(group)])+
+  geom_col(aes(x = group, y = mean, fill = group))+
+  geom_errorbar(aes(x = group, ymin = mean-sd, ymax = mean+sd),
+                width = 0.3)+
+  scale_fill_manual("Group of interest",
+                    values = c("Treatment" = "dodgerblue",
+                               "Control"= "indianred"))+
+  ylab("Risk-taking (PC1)")+
+  theme_bw()+
+  theme(panel.grid = element_blank())
+
+```
+
+Is this data usable? 
+
+Before extracting these means±sd, we recommend looking for raw data or contacting the authors. If these prove to be fruitless, and your dataset is small and hungry, it might be worth using the PC1 scores. However, be certain that the PC axis is synthesizing variables that are otherwise considered legitimate responses in your dataset. 
+
+And be careful: you should conduct sensitivity analyses excluding this data to ensure that your results are robust. 
 
 <!-- Erick's reading note: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927 -->
