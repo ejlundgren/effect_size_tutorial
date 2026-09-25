@@ -160,6 +160,28 @@ SAFE circumvents this by bootstrapping from the means and standard deviations un
 ##### Optimizing SAFE
 Cases where the means between groups are very similar may take a while to successfully run. Increase `SAFE_max_secs` and reduce `SAFE_boots` until your dataset produces finalized SAFE estimates, indicated by the `SAFE_complete` column. We recommend not reducing `SAFE_boots` less than 1e4 (1e5 and 1e6 are preferable).
 
+If your dataset is large, lnM can be time-consuming to calculate. Try increasing the number of cores in the `eff_size` call to apply SAFE in parallel:
+
+```{r}
+#| eval: false
+#| echo: true
+
+library("parallel")
+nCores <- detectCores() # Determine number of cores available on your computer
+
+out <- eff_size(x1 = x1, x2 = x2, 
+         sd1 = sd1, sd2 = sd2,
+         n1 = n1, n2 = n2,
+         data = dat,
+         bind = TRUE,
+         effect_type = "lnM",
+         verbose = FALSE,
+         SAFE = TRUE,
+         SAFE_boots = 1e6,
+         SAFE_max_secs = 15,
+         n_cores = nCores - 1) # Provide number cores - 1 to this argument
+
+```
 To learn more about SAFE see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do. 
 :::
 

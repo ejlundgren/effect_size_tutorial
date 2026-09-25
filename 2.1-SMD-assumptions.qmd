@@ -362,7 +362,7 @@ Is the relationship between 0.1 and 0.3 the same as the relationship between 10.
 
 This is a core question when considering the use of lnRoM and SMD. 
 
-SMD estimates are based on the difference between $m_1$ and $m_2$. As such, an SMD calculated on means of 0.1 and 0.3 is identical to an SMD calculated on means of 10.1 and 10.3. (as long as standard deviation is the same). This is because SMD is designed for interval-scale data.
+SMD estimates are based on the difference between $m_1$ and $m_2$. As such, an SMD calculated on means of 0.1 and 0.3 is identical to an SMD calculated on means of 10.1 and 10.3. (as long as standard deviation is the same). This is because SMD is designed for interval-scale data and describes **absolute** differences between treatment and control.
 
 lnRoM estimates will be **radically** different:
 
@@ -420,11 +420,21 @@ ggplot(data = dat,
 
 Wild, right?
 
-This is because lnRoM is based on ratio-scale data. 0s are **real** for lnRoM---true absences. 
+This is because lnRoM describes **relative** change---with multiplicative relationships between treatment and control. As such, 0s are **real** for lnRoM---true absences. 
 
 Think carefully about whether zeroes are real in your data. In many cases they may be: an abundance measurement of 0 is a true absence. With abundance, 0 is very different from 1---while 10 is very close to 11. 
 
 However, in other cases, this is not true and 0 is an arbitrary value on an interval scale. For example, measurements of biomass in grams can approach 0 simply because of our choice of precision (if you had measured in milligrams or nanograms then you'd still be far away from 0). Think about whether 0 is meaningful when considering whether lnRoM is the [estimand](1-effect-size-overview.qmd#sec-estimates-and-estimators) you intend to target. 
+
+:::.callout-important
+#### Conflating relative change with absolute change conflate meta-analytic conclusions and can flip results of metaregression 
+
+**Also, I think this should go further up in this page**
+
+@BECKS! Can we put the figures from your talk in here and cite those papers!?
+
+:::
+
 
 ## Values ≤ 0 {#sec-zero-values}
 Similarly, does your dataset have means ≤ 0? These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats. 
