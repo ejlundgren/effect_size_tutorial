@@ -174,7 +174,7 @@ We'll walk you through the use and interpretation of these effect sizes with a r
 The treatment mean is 2 g higher than the control mean. SMD will express that difference relative to variation among the plants in both treatments, whereas lnRoM will express it as a proportional change in the means alone, regardless of variation. We will use this example to develop and interpret both measures side by side.
 
 # Standardized Mean Difference (SMD) {#sec-smd}
-**SMD** is akin to a test statistic: it is the ratio of *signal* (the mean difference between two groups) and *noise* (the pooled standard deviation of those groups). You can see this in the point estimate formula for the definition formula of SMD (called Cohen's d):
+**SMD** is an effect size designed to quantify **absolute** differences between two groups, while controlling for variation. **SMD** is akin to a test statistic: it is the ratio of *signal* (the mean difference between two groups) and *noise* (the pooled standard deviation of those groups). You can see this in the point estimate formula for the definition formula of SMD (called Cohen's d):
 
 $$
 \begin{aligned}
@@ -247,11 +247,13 @@ Note these are approximations and should be treated simply as benchmarks for int
 Our final value of 0.76 equates to a moderately strong effect: a change in 0.76 standard deviations between the control and treatment groups.
 
 # Log-transformed ratio of means (lnRoM)
-lnRoM is intended for measurements on a **ratio scale**, which means the group means must be positive and greater than zero. It is not suitable when the means have opposite signs, which may happen when dealing with [before-after-control-impact](3.2-smd-challenges#sec-BACI) experimental designs. 
+lnRoM is intended to describe the **relative** differences between two groups---not absolute differences as in SMD. This might seem to be a trivial distinction from SMD but it has profound consequences for the results of meta-analysis (and can [even flip the direction of relationships in a metaregression](#sec-flip-signs)).
 
-lnRoM tells a very different story than SMD. The point estimate only accounts for the group means---all signal and no noise. This can lead to very meta-analytic results. For example, if all of the studies in your dataset found non-significant differences between a control and experimental treatment, an SMD-based meta-analysis is likely to also find very weak differences between those groups. 
+The lnRoM point estimate also only accounts for the group means---all signal and no noise. Instead, variability is captured by lnRoM's *sampling variance* estimates---which influence the *relative* weight of each effect size in your models. This can lead to very different meta-analytic results than SMD, or even than the primary studies. 
 
-However, an lnRoM-based meta-analysis may find strong and significant differences because the **lnRoM** *point estimate* only accounts for the mean, and not for variation. Instead, variability is captured by lnRoM's *sampling variance* estimates---which influence the *relative* weight of each effect size in your models. 
+For example, if all of the primary studies in your dataset found non-significant differences between a control and experimental treatment, an SMD-based meta-analysis is likely to also find a very weak overall effect, centered on 0.
+
+However, an lnRoM-based meta-analysis may find strong and significant differences because the **lnRoM** *point estimate* only accounts for the mean, and not for variation. 
 
 The point estimate definition formula for lnRoM makes it clear why:
 
@@ -262,6 +264,8 @@ lnRoM = \ln(\frac{m_1}{m_2})
 $${#eq-lnrom-definition}
 
 As you can see, this formula does not account for variability. The point estimate simply describes the ratio of means, with the natural logarithm making this comparable around zero. A ratio of 1 becomes $\ln(1)=0$; reciprocal ratios have equal magnitudes and opposite signs.
+
+**lnRoM** group means must be positive and greater than zero. It is not suitable when the means have opposite signs, which may happen when dealing with [before-after-control-impact](3.2-smd-challenges#sec-BACI) experimental designs. 
 
 Using our example biological data:
 $$
@@ -427,14 +431,13 @@ Think carefully about whether zeroes are real in your data. In many cases they m
 However, in other cases, this is not true and 0 is an arbitrary value on an interval scale. For example, measurements of biomass in grams can approach 0 simply because of our choice of precision (if you had measured in milligrams or nanograms then you'd still be far away from 0). Think about whether 0 is meaningful when considering whether lnRoM is the [estimand](1-effect-size-overview.qmd#sec-estimates-and-estimators) you intend to target. 
 
 :::.callout-important
-#### Conflating relative change with absolute change conflate meta-analytic conclusions and can flip results of metaregression 
+#### Conflating relative change with absolute change conflate meta-analytic conclusions and can flip results of metaregression {#sec-flip-signs}
 
 **Also, I think this should go further up in this page**
 
 @BECKS! Can we put the figures from your talk in here and cite those papers!?
 
 :::
-
 
 ## Values ≤ 0 {#sec-zero-values}
 Similarly, does your dataset have means ≤ 0? These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats. 
