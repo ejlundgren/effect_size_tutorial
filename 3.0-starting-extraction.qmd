@@ -86,12 +86,20 @@ Finally, following extraction, you'll want to evaluate the statistical distribut
 **Should change "Test for overdispersion" -> "Test numeric assumptions (e.g., overdispersion)"**
 
 :::callout-note
-#### Organizing sensitivity analyses
+#### Organizing sensitivity analyses {#sec-organizing-sensitivity-analyses}
 You'll see a common refrain throughout this tutorial---sensitivity analyses! 
 
 These can be extremely cumbersome---requiring you to run many many models. Typing each model out by hand or copy-and-pasting is prone to error and challenges in interpretation.
 
-We recommend creating a "model guide" and evaluating text strings in your model objects in a `for` loop or `foreach` loop to facilitate thorough sensitivity analyses. The `R` call `eval(parse(text = string))` can evaluate the text string `string` as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in `R`. 
+We recommend creating a "model guide" and evaluating text strings in your model objects in a `for` or `foreach` loop to facilitate thorough sensitivity analyses. 
+
+The `R` call `eval(parse(text = string))` can evaluate the text string `string` as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in `R`. For example:
+
+```{r}
+#| eval: true
+#| echo: true
+eval(parse(text = "1 + 1"))
+```
 
 For an example of the `R` code for such a workflow, see a recent example [here](https://ejlundgren.github.io/cat_evidence_review/3.2-run-models.html)
 :::
