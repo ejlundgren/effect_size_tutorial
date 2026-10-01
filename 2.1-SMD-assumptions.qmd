@@ -195,8 +195,8 @@ ggplot()+
                   shape = 21, size = 1.5)+
   scale_fill_manual("", values = c("indianred", "dodgerblue"))+
   theme_bw()+
-  xlab("Temperature")+
-  ylab("Mean ± SD Carbon")
+  xlab("Mean annual temperature")+
+  ylab("Mean ± SD Soil Carbon")
 
 ```
 
@@ -223,7 +223,7 @@ ggplot()+
 
 ```
 
-This seems to match what we see in the raw data---the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we'd find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in warmer climates and have little effect in cooler climates.
+This seems to match what we see in the raw data---the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we'd find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in *cooler* climates and have less effect in *warmer* climates.
 
 But what happens if we use lnRoM as our estimand?
 
@@ -245,7 +245,7 @@ ggplot()+
   ggtitle("lnRoM: Relative difference between groups, regardless of variation")
 
 ```
-Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns at lower temperatures?? 
+Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns in warmer climates?? 
 
 But also...How the hell did that happen?
 
@@ -253,7 +253,7 @@ This happened because lnRoM describes the **relative** difference between groups
 
 As you can imagine, the implications of overlooking these differences can lead to considerable problems. Meta-analyses commonly make policy recommendations that could be completely wrong because they used the wrong **estimand** for the job. 
 
-Now we'll dive a little deeper into the mathematics of these two estimands to pave the way to understand how to interpret them and to understand their mathematical assumptions. 
+Now we'll dive a little deeper into the mathematics of these two estimands, their interpretation, and their mathematical assumptions
 
 # Running biological example
   

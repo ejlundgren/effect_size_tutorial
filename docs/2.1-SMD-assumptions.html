@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-09-30">
+<meta name="dcterms.date" content="2026-10-01">
 <title>Continuous outcomes between two groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -411,7 +411,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 30, 2026</p>
+      <p class="date">October 1, 2026</p>
     </div>
   </div>
   
@@ -574,7 +574,7 @@ sd  &amp;= SE\sqrt{n},
 </div>
 </div>
 </div>
-<p>This seems to match what we see in the raw data—the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we’d find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in warmer climates and have little effect in cooler climates.</p>
+<p>This seems to match what we see in the raw data—the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we’d find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in <em>cooler</em> climates and have less effect in <em>warmer</em> climates.</p>
 <p>But what happens if we use lnRoM as our estimand?</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -584,11 +584,11 @@ sd  &amp;= SE\sqrt{n},
 </div>
 </div>
 </div>
-<p>Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns at lower temperatures??</p>
+<p>Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns in warmer climates??</p>
 <p>But also…How the hell did that happen?</p>
 <p>This happened because lnRoM describes the <strong>relative</strong> difference between groups—on a multiplicative scale. A small difference between groups near 0 produces a much stronger effect size than a bigger absolute difference for groups further from 0. We discuss this further <a href="#sec-near-zero-values">below.</a>.</p>
 <p>As you can imagine, the implications of overlooking these differences can lead to considerable problems. Meta-analyses commonly make policy recommendations that could be completely wrong because they used the wrong <strong>estimand</strong> for the job.</p>
-<p>Now we’ll dive a little deeper into the mathematics of these two estimands to pave the way to understand how to interpret them and to understand their mathematical assumptions.</p>
+<p>Now we’ll dive a little deeper into the mathematics of these two estimands, their interpretation, and their mathematical assumptions</p>
 </section></section><section id="running-biological-example" class="level1"><h1>Running biological example</h1>
 <p>We’ll walk you through the use and interpretation of these effect sizes with a running biological example. Imagine a warming experiment that measures plant biomass after one growing season:</p>
 <table class="caption-top table">
@@ -2054,8 +2054,8 @@ Nakagawa, S., D. W. A. Noble, M. Lagisz, R. Spake, W. Viechtbauer, and A. M. Sen
 <span id="cb30-199"><a href="#cb30-199" aria-hidden="true" tabindex="-1"></a>                  <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">size =</span> <span class="fl">1.5</span>)<span class="sc">+</span></span>
 <span id="cb30-200"><a href="#cb30-200" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">""</span>, <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"indianred"</span>, <span class="st">"dodgerblue"</span>))<span class="sc">+</span></span>
 <span id="cb30-201"><a href="#cb30-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb30-202"><a href="#cb30-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Temperature"</span>)<span class="sc">+</span></span>
-<span id="cb30-203"><a href="#cb30-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Mean ± SD Carbon"</span>)</span>
+<span id="cb30-202"><a href="#cb30-202" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Mean annual temperature"</span>)<span class="sc">+</span></span>
+<span id="cb30-203"><a href="#cb30-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Mean ± SD Soil Carbon"</span>)</span>
 <span id="cb30-204"><a href="#cb30-204" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-205"><a href="#cb30-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-206"><a href="#cb30-206" aria-hidden="true" tabindex="-1"></a></span>
@@ -2082,7 +2082,7 @@ Nakagawa, S., D. W. A. Noble, M. Lagisz, R. Spake, W. Viechtbauer, and A. M. Sen
 <span id="cb30-229"><a href="#cb30-229" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-230"><a href="#cb30-230" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb30-231"><a href="#cb30-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-232"><a href="#cb30-232" aria-hidden="true" tabindex="-1"></a>This seems to match what we see in the raw data---the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we'd find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in warmer climates and have little effect in cooler climates.</span>
+<span id="cb30-232"><a href="#cb30-232" aria-hidden="true" tabindex="-1"></a>This seems to match what we see in the raw data---the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we'd find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in *cooler* climates and have less effect in *warmer* climates.</span>
 <span id="cb30-233"><a href="#cb30-233" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-234"><a href="#cb30-234" aria-hidden="true" tabindex="-1"></a>But what happens if we use lnRoM as our estimand?</span>
 <span id="cb30-235"><a href="#cb30-235" aria-hidden="true" tabindex="-1"></a></span>
@@ -2104,7 +2104,7 @@ Nakagawa, S., D. W. A. Noble, M. Lagisz, R. Spake, W. Viechtbauer, and A. M. Sen
 <span id="cb30-253"><a href="#cb30-253" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"lnRoM: Relative difference between groups, regardless of variation"</span>)</span>
 <span id="cb30-254"><a href="#cb30-254" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-255"><a href="#cb30-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb30-256"><a href="#cb30-256" aria-hidden="true" tabindex="-1"></a>Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns at lower temperatures?? </span>
+<span id="cb30-256"><a href="#cb30-256" aria-hidden="true" tabindex="-1"></a>Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns in warmer climates?? </span>
 <span id="cb30-257"><a href="#cb30-257" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-258"><a href="#cb30-258" aria-hidden="true" tabindex="-1"></a>But also...How the hell did that happen?</span>
 <span id="cb30-259"><a href="#cb30-259" aria-hidden="true" tabindex="-1"></a></span>
@@ -2112,7 +2112,7 @@ Nakagawa, S., D. W. A. Noble, M. Lagisz, R. Spake, W. Viechtbauer, and A. M. Sen
 <span id="cb30-261"><a href="#cb30-261" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-262"><a href="#cb30-262" aria-hidden="true" tabindex="-1"></a>As you can imagine, the implications of overlooking these differences can lead to considerable problems. Meta-analyses commonly make policy recommendations that could be completely wrong because they used the wrong **estimand** for the job. </span>
 <span id="cb30-263"><a href="#cb30-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-264"><a href="#cb30-264" aria-hidden="true" tabindex="-1"></a>Now we'll dive a little deeper into the mathematics of these two estimands to pave the way to understand how to interpret them and to understand their mathematical assumptions. </span>
+<span id="cb30-264"><a href="#cb30-264" aria-hidden="true" tabindex="-1"></a>Now we'll dive a little deeper into the mathematics of these two estimands, their interpretation, and their mathematical assumptions</span>
 <span id="cb30-265"><a href="#cb30-265" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-266"><a href="#cb30-266" aria-hidden="true" tabindex="-1"></a><span class="fu"># Running biological example</span></span>
 <span id="cb30-267"><a href="#cb30-267" aria-hidden="true" tabindex="-1"></a>  </span>
