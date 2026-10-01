@@ -1,6 +1,6 @@
 ---
-title: "An overview of effect sizes"
-subtitle: "Estimates, estimators, and estimands, oh my!"
+title: "A brief introduction to effect sizes and sampling variance"
+subtitle: "With which estimator shall I estimate my estimand?"
 date: today
 format: 
   html:
@@ -58,8 +58,6 @@ library("simplermarkdown")
 
 **I tried adding glossary popup definitions...It works inconsistently....It'll be integrated eventually though**
 
-# A brief introduction to effect sizes and sampling variance  {#sec-introduction-to-effect-sizes}
-
 Meta-analytic effect sizes are statistics that summarize statistical distributions. Meta-analytic effect sizes allow researchers to synthesize data across different studies to answer big questions and to generate overall synthetic estimates. Effect sizes are no trivial thing: they are tiny models, with their own assumptions, rules of interpretation, and numeric challenges.
 
 Meta-analytic effect sizes have two parts: the **point estimate** and **sampling variance**. Point estimates are the target of interest. For example, the difference in cancer rates between two treatment groups, the proportional change in average body size between two treatments, the relationship between two continuous variables, or even just a description of a single overall condition. 
@@ -70,14 +68,15 @@ This relationship is key to meta-analysis and means that instead of simply tally
 
 ::: callout-note
 ##### Random effect meta-analytic models reduce the influence of sampling variance
-**Depending on how I feel when I read this, this sounds too soon. I think we have some audience questions...I think we have to assume that whoever is reading this knows what a meta-analysis is. Otherwise this EXPLODES. But maybe we can just make the earlier section on this page better? It's pretty rough right now**
 
 In a common-effects meta-analytic model (which we don't recommend in ecology and evolution), an effect size's weight is one over its sampling variance ($1/vi$). In the random-effects and multilevel models you will actually fit, weight is one over the sampling variance *plus* the between-study variance $\tau^2$. That extra term acts as a floor on everyone's uncertainty and compresses the differences between studies considerably: with a moderate $\tau^2$ of $0.1$, a twentyfold gap in sampling variance shrinks to roughly fivefold. Large studies still dominate, but far less than the raw sample sizes suggest.
+
+**Sometimes this feels too soon. I think there are some questions about audience---how much do they already know when they read this? Perhaps we need a section here that's more generally instructive**
 :::
 
 # Effect size types {#sec-effect-size-types}
 
-We commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (e.g., means) of a response variable between two groups (e.g., a categorical variable) or in relationship to a continuous predictor variable:
+We commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (i.e., means) of a response variable between two groups (i.e., a categorical variable) or in relationship to a continuous predictor variable:
 
 1)  standardized mean difference (SMD) and log-transformed ratio of means (lnRoM)
 
@@ -92,11 +91,11 @@ The effect sizes in this tutorial in this tutorial are **standardized**, which a
 
 These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.
 
-![Effect size types](figures/flowcharts_diagrams/effect-size-types.jpg) 
+
 **All schematic figures will be redone and made pretty...And we all have to make a decision about WHAT figures to have**
+![Effect size types](figures/flowcharts_diagrams/effect-size-types.jpg) 
 
-
-When the response variable is continuous and compared between two groups, for instance comparing between a control and experimental treatment, then the effect sizes you can use are Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**, often referred to as the log response ratio or lnRR). These effect sizes differ in their intention, interpretability, and mathematical assumptions, which we cover [here.](2.1-SMD-assumptions.qmd). 
+When the response variable is continuous and compared between two groups, for instance comparing between a control and experimental treatment, then the effect sizes you can use are Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**, also referred to as the log response ratio or lnRR). These effect sizes differ in their intention, interpretability, and mathematical assumptions, which we cover [here.](2.1-SMD-assumptions.qmd). 
 
 When the response is a binary outcome, e.g., the number or percent that lived or died, compared between two groups, we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). This is the type of data you may encounter in contingency tables and would, in an introductory stats class, learn to analyze with a Chi-square goodness of fit test.
 
@@ -104,7 +103,7 @@ When the response is a binary outcome, e.g., the number or percent that lived or
 Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). For that reason we use lnRoM throughout this tutorial to refer to log-transformed ratio of means and lnRR to refer to log risk ratio. 
 :::
 
-Correlations between two continuous variables are analyzed as Fisher's r-t-z-transformed correlation coefficient (**Zr**). These generally involve continuous predictor and response variables. However, you can also calculate correlation coefficients for discrete predictors and discrete responses, which may be necessary in some peculiar cases. This is the workhorse for meta-analyses based on observational data.
+Correlations between two continuous variables are analyzed as Fisher's r-t-z-transformed correlation coefficients (**Zr**). These generally involve continuous predictor and response variables. However, you can also calculate correlation coefficients for discrete predictors and discrete responses, which may be necessary in some peculiar cases. This is the workhorse for meta-analyses based on observational data.
 
 Finally, it is also possible to convert between these main effect size types, which we discuss [here](4-converting-effect-sizes.qmd). This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data [@borenstein2021] or splitting your data into many separate models, each of which lack statistical power. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the [*unit of replication*](3.1-universal-challenges.qmd#sec-sample-size).
 
@@ -121,7 +120,9 @@ If you use an SMD or lnRoM-type effect size, then you should treat the *differen
 
 An alternative is to calculate [Zr](2.3-Zr-assumptions.qmd) correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. 
 
-In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used >2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or pesticide dosages). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the experimental groups explicitly (e.g., the temperature of each treatment) as predictors in your meta-analytic model. **Are there statistical reasons not to? E.g., inflating sample size or something?**
+In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used >2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or pesticide dosages). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the experimental groups explicitly (e.g., the temperature of each treatment) as predictors in your meta-analytic model. 
+
+**Are there statistical reasons not to? E.g., inflating sample size?**
 
 This applies both to continuous data summarized by mean±sd as well as proportions (binary outcome data). We describe single-group effect sizes for means and proportions in the appendix, [here](5.3-single-group-effect-sizes.qmd).
 
@@ -148,6 +149,7 @@ rm(list = ls())
 if(!requireNamespace("metatools")) {
   pak::pak("ejlundgren/metatools")
 }
+
 library("metatools")
 library("metafor")
 ```
@@ -167,7 +169,7 @@ escalc(measure = "SMD",
 
 The effect size point estimate is returned as `yi` and the sampling variance as `vi`.
 
-In `eff_size`, this is similar. Except (**and this can be changed**) that the argument names are slightly different (`x` instead of `m` for the means and no `i`):
+In `eff_size`, this is similar except that the argument names are slightly different (`x` instead of `m` for the means and no `i`) **(I can change it to m1 or m2)**
 
 ```{r}
 #| eval: true
@@ -180,13 +182,16 @@ eff_size(effect_type = "SMD",
          n1 = 15, n2 = 17)
 ```
 
-`eff_size` has built in functionality to calculate [**lnM**](5.2-differences-in-magnitude.qmd) with a fancy bootstrapping method, which we'll discuss later. `eff_size` also, by switching `default_formulas = FALSE`, returns multiple estimators of the same effect size. 
+`eff_size` is useful in some cases. Primarily because `eff_size` has built in functionality to calculate [**lnM**](5.2-differences-in-magnitude.qmd) with a fancy bootstrapping method, which we'll discuss later. 
+
+`eff_size` also, by switching `default_formulas = FALSE`, returns multiple estimators of the same effect size. 
 
 Now, you may be thinking, what the hell is an estimator? Why are there multiple estimators for the same effect size? 
 
-Let us explain. We'll start by talking about **estimands**
+Let us explain. We'll start by talking about **estimands**, which is what estimators are trying to estimate. 
 
 # Estimands, estimators, and estimates {#sec-estimates-and-estimators}
+
 **Maybe this should move to top of page...**
 
 The word **estimand** looks like a typo. But it isn't. An **estimand** is the target of a study: the precise thing we want to know. For example, are patients more likely to survive when given a drug relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? 
