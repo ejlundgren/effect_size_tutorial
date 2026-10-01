@@ -152,6 +152,9 @@ if(!requireNamespace("metatools")) {
 
 library("metatools")
 library("metafor")
+
+# Also load dplyr for some data stuff down the line:
+library("dplyr")
 ```
 
 Calculating an effect size with either of these functions is easy. Let's demonstrate with a study that compared the mean±SD between two groups. With `escalc`, `m1i` and `m2i` are the means of group 1 and 2, `sd1i` and `sd2i` are the standard deviations (not standard errors!) of groups 1 and 2, and `n1i` and `n2i` are the sample sizes. The effect size type is specified with the `measure` argument. Here we'll calculate Standardized Mean Difference (SMD):
@@ -192,7 +195,7 @@ Let us explain. We'll start by talking about **estimands**, which is what estima
 
 # Estimands, estimators, and estimates {#sec-estimates-and-estimators}
 
-**Maybe this should move to top of page...**
+**Maybe this should move to top of page?**
 
 The word **estimand** looks like a typo. But it isn't. An **estimand** is the target of a study: the precise thing we want to know. For example, are patients more likely to survive when given a drug relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? 
 
@@ -221,7 +224,7 @@ There are 5 attributes to estimands:
 > Is the outcome of interest odds of survival of individuals between the placebo and control group? The ratio of species richness between logging treatments? Or the difference in richness between logging treatments?
 
 :::callout-important
-You might note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis [REF]. 
+You might note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis [@Morgan2018-za]. 
 :::
 
 These questions are essential to consider when designing a meta-analysis and choosing the effect size to use. 
@@ -232,6 +235,7 @@ One issue with meta-analysis is that we are often forced to include studies that
 This is especially true if you're including both experimental and observational (or quasi-experimental) data. Experimental data generally concerns the same target population as the control population. However, observational or quasi-experimental data are forced to compare separate populations. **CITE BECKS ONCE PREPRINTED**
 
 This is not to say that conducting a meta-analysis is not a worthy use of time---it is still the best way to synthesize knowledge---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.
+
 :::
 
 Estimands also have a mathematical dimension: the *true* mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the *difference* in a continuous outcome between two treatment groups. It is defined as:
@@ -246,13 +250,6 @@ With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experime
 
 However, this definition formula can produce {{< glossary bias display=biased >}} results when sample size is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. 
 
-:::callout-note
-##### Bias 
-If it's been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand---the population mean height and its dispersion (i.e., standard deviation). However, you're unlikely to measure everyone's height. You therefore measure the height of as many individuals as you can and calculate a *sample mean* which estimates your *estimand*---the population mean. If your sample size is low or non-random your sample mean is likely a **biased** estimate of the true population mean height.
-
-**This is probably going to make statisticians quiver...Please fix but keep it readable**
-:::
-
 For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. 
 
 Hedges' g multiples Cohen's d by a correction factor ($J$) to the math above to account for small sample sizes. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.
@@ -266,6 +263,116 @@ g &= J*d.
 $${#eq-hedges-g}
 
 Both Cohen's d and Hedges' g are different estimators of the **estimand** of SMD---a mathematical description of the difference between two groups, standardized by shared standard deviation. 
+
+
+::: {.callout-note collapse="true"}
+##### Click for explanation of bias 
+If it's been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand---the population mean height and its dispersion (i.e., standard deviation). However, you're unlikely to measure everyone's height. You therefore measure the height of as many individuals as you can and calculate a *sample mean* which estimates your *estimand*---the population mean. If your sample size is low or non-random your sample mean is likely a **biased** estimate of the true population mean height. Bias is thus the difference between your estimate and the truth. 
+
+The bias of a meta-analytic effect size estimator can be calculated in 4 steps:
+
+1. Calculate the "true" effect size with the estimand formula based on your "true" values (i.e., group means, standard deviations, and sample size). The estimand formula in `escalc` for SMD can be accessed with `correct=FALSE`. This is your **estimand:**
+
+```{r}
+#| echo: true
+#| eval: true
+
+true_m1 <- 10
+true_sd1 <- 2
+true_m2 <- 14
+true_sd2 <- 2.5
+true_n1 <- 15
+true_n2 <- 15
+
+estimand <- escalc(measure = "SMD",
+                   correct = FALSE,
+                   m1i = true_m1, m2i = true_m2,
+                   sd1i = true_sd1, sd2i = true_sd2,
+                   n1 = true_n1, n2 = true_n2)
+estimand
+
+```
+
+2. Draw data from the appropriate data generating distribution (e.g., `rnorm` for normally distributed data) with these same "true" values. Do this 1000 times.
+
+```{r}
+#| echo: true
+#| eval: true
+
+res <- list()
+
+for(i in 1:1000){
+  # group 1 simulated data:
+  res[[i]] <- data.frame(group_1 = rnorm(n = true_n1, # group 1 simulated data
+                                     mean = true_m1,
+                                     sd = true_sd1),
+                         group_2 = rnorm(n = true_n2, # group 2 simulated data
+                                         mean = true_m2,
+                                         sd = true_sd2),
+                         iter = i)
+}
+res <- bind_rows(res)
+
+head(res)
+
+```
+
+3. Summarize this randomly drawn distribution into means and standard deviations per iteration and calculate your effect size. These are your **estimates**. We'll calculate both Cohen's d (the definition formula) and Hedges' g (the small sample size bias corrected estimator). After calculating them for each simulated dataset, you then take the mean estimate. Since calculating bias for sampling variance is a bit more complex, we'll just focus on the point estimate here:
+
+```{r}
+#| echo: true
+#| eval: true
+
+res_summarized <- res %>%
+  group_by(iter) %>%
+  summarize(m1 = mean(group_1), sd1 = sd(group_1), n1 = length(group_1),
+            m2 = mean(group_2), sd2 = sd(group_2), n2 = length(group_2))
+
+estimate_d <- escalc(measure = "SMD",
+                   correct = FALSE,
+                   append = FALSE,
+                   data = res_summarized, 
+                   m1i = m1, m2i = m2,
+                   sd1i = sd1, sd2i = sd2,
+                   n1 = n1, n2 = n2) %>%
+  mutate(estimator = "Cohen's d")
+
+estimate_g <- escalc(measure = "SMD",
+                   correct = TRUE,
+                   append = FALSE,
+                   data = res_summarized, 
+                   m1i = m1, m2i = m2,
+                   sd1i = sd1, sd2i = sd2,
+                   n1 = n1, n2 = n2) %>%
+  mutate(estimator = "Hedges' g")
+
+estimates <- rbind(estimate_d, estimate_g)
+
+mean_point_estimate <- estimates %>%
+  group_by(estimator) %>%
+  summarize(yi_mean_estimate = mean(yi))
+
+mean_point_estimate
+
+```
+
+4. Subtract the estimand from the *mean* of the estimates. This your **bias.**
+
+```{r}
+
+bias <- mean_point_estimate %>%
+  bind_cols(estimand = estimand$yi) %>%
+  mutate(bias = estimand - yi_mean_estimate)
+
+bias
+
+```
+
+As you can see, bias is considerably lower for Hedges' g (~0.009) than for Cohen's d (~0.06).
+
+Kinda crazy that that works right?
+
+:::
 
 All of this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. There are sometimes multiple alternative estimators for the same estimand, which perform better or worse under different conditions. 
 
@@ -293,9 +400,9 @@ escalc(m1i = 10, m2i = 6,
 ```
 
 
-::: callout-note
-##### `eff_size`
-Our function, `eff_this`, is similar to `escalc` but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set `default_formulas=FALSE`---and the exact formula used. This can be useful if your data does not meet certain assumptions (which we will cover in the effect size specific pages). Run the function to see the potential supported formulas and their inputs.
+:::{.callout-note collapse="true"}
+##### Click here to see our custom function `metatools::eff_size`
+Our function, `eff_this`, is similar to `escalc` but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set `default_formulas=FALSE`---and it returns the exact formulas used. Run the function to see the potential supported formulas and their inputs.
 
 ```{r}
 #| eval: true
@@ -332,6 +439,8 @@ eff_size(x1 = 10, x2 = 6,
 `yi_first` and `vi_first` are the definition formulas (@eq-cohens-d and @eq-hedges-g) and the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
 You'll see in future sections that certain data types may require alternative estimators, which are provided within `eff_size`. For example, `escalc` returns the bias-corrected lnRoM point estimate by default [@Lajeunesse2015-gw]. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as `yi_second` and `yi_first`, respectively, by `eff_size`. See [here](2.1-SMD-assumptions.qmd) for a fuller discussion.
+
+The most important reason to use `eff_size` is to calculate **lnM**---which requires SAFE bootstrapping. This is discussed in the [lnM page](5.2-differences-in-magnitude.qmd)
 :::
 
 ## Alternative estimators {#sec-alternative-estimators}

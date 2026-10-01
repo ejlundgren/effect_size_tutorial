@@ -386,8 +386,7 @@ window.Quarto = {
 
 
 </header><p>While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we’re interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.</p>
-<p>For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock <span class="citation" data-cites="Dhungana2026-qv">(<a href="#ref-Dhungana2026-qv" role="doc-biblioref">Dhungana et al. 2026</a>)</span>. These single-group proportions can be converted to effect size point estimates and sampling variance.</p>
-<p>This allows you to conducted weighted meta-analysis, which will control for differences in the precision of each measurement. Moreover, metaregression can allow you to evaluate the influence of moderators (e.g., human density, elevation, prey density) on these statistics.</p>
+<p>For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock <span class="citation" data-cites="Dhungana2026-qv">(<a href="#ref-Dhungana2026-qv" role="doc-biblioref">Dhungana et al. 2026</a>)</span>. These single-group proportions can be converted to effect size point estimates and sampling variance, allowing you to fit weighted meta-analytic models.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1007,140 +1006,138 @@ Dhungana, R., A. Aryal, and D. Ramp. 2026. Establishing an empirical benchmark o
 <span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we're interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.</span>
 <span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock <span class="co">[</span><span class="ot">@Dhungana2026-qv</span><span class="co">]</span>. These single-group proportions can be converted to effect size point estimates and sampling variance.</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock <span class="co">[</span><span class="ot">@Dhungana2026-qv</span><span class="co">]</span>. These single-group proportions can be converted to effect size point estimates and sampling variance, allowing you to fit weighted meta-analytic models. </span>
 <span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>This allows you to conducted weighted meta-analysis, which will control for differences in the precision of each measurement. Moreover, metaregression can allow you to evaluate the influence of moderators (e.g., human density, elevation, prey density) on these statistics.</span>
-<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>In some situations, even experimental comparisons may potentially be better to analyze as a single-group effect size. For example, if most of your studies used &gt;2 experimental groups or if experimental treatments were extremely different than each other.</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>In some situations, even experimental comparisons may potentially be better to analyze as a single-group effect size. For example, if most of your studies used &gt;2 experimental groups or if experimental treatments were extremely different than each other.</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>Imagine you are doing a meta-analysis on the effects of different temperatures on the growth rates of toads. Most studies use several temperature treatments. Instead of calculating two-group effect sizes between each experimental treatment and control (e.g. with SMD or lnRoM), you could calculate single group effect sizes for each group, and then use the experimental temperature directly as a predictor in a metaregression. </span>
 <span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>Imagine you are doing a meta-analysis on the effects of different temperatures on the growth rates of toads. Most studies use several temperature treatments. Instead of calculating two-group effect sizes between each experimental treatment and control (e.g. with SMD or lnRoM), you could calculate single group effect sizes for each group, and then use the experimental temperature directly as a predictor in a metaregression. </span>
-<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>**Has anyone actually done that? And if not, why?**</span>
-<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a><span class="fu"># Continuous data (means ± SD) {#sec-continuous-data}</span></span>
-<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>The single-group corollary to SMD and lnRoM consist of continuous data summarized into a mean and measurement of error (e.g. standard deviation, standard error). </span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>**Has anyone actually done that? And if not, why?**</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="fu"># Continuous data (means ± SD) {#sec-continuous-data}</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>The single-group corollary to SMD and lnRoM consist of continuous data summarized into a mean and measurement of error (e.g. standard deviation, standard error). </span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>There are two main effect size <span class="co">[</span><span class="ot">estimands</span><span class="co">](1-effect-size-overview.qmd)</span> that can be calculated from these types of data: *single-group standardized means* and *log-transformed means*. </span>
 <span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>There are two main effect size <span class="co">[</span><span class="ot">estimands</span><span class="co">](1-effect-size-overview.qmd)</span> that can be calculated from these types of data: *single-group standardized means* and *log-transformed means*. </span>
-<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group means {#sec-standardized-mean}</span></span>
-<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>The *single group standardized mean* is the mean divided by standard deviation ($yi=\frac{m}{sd}$) to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.</span>
-<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span> this can be calculated with <span class="in">`measure="SMN"`</span>:</span>
-<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMN"</span>,</span>
-<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
-<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Single group means {#sec-standardized-mean}</span></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>The *single group standardized mean* is the mean divided by standard deviation ($yi=\frac{m}{sd}$) to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span> this can be calculated with <span class="in">`measure="SMN"`</span>:</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMN"</span>,</span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>This, like SMD, can be interpreted as the number of standard deviations the mean is from 0. Given that standard deviation influences the mean, this effect size may be less preferred with overdispersed data (as with SMD). See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span>, where we discuss how to diagnose overdispersion in your data.</span>
 <span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>This, like SMD, can be interpreted as the number of standard deviations the mean is from 0. Given that standard deviation influences the mean, this effect size may be less preferred with overdispersed data (as with SMD). See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span>, where we discuss how to diagnose overdispersion in your data.</span>
-<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a><span class="fu">## Log-transformed mean {#sec-log-mean}</span></span>
-<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>The *log-transformed mean* ($yi=\log(m)$) is a single group corollary to lnRoM. This effect size cannot accept negative values. <span class="co">[</span><span class="ot">As with lnRoM</span><span class="co">](2.1-SMD-assumptions.qmd)</span>, the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.</span>
-<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
-<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MNLN"</span>,</span>
-<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
-<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## Log-transformed mean {#sec-log-mean}</span></span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>The *log-transformed mean* ($yi=\log(m)$) is a single group corollary to lnRoM. This effect size cannot accept negative values. <span class="co">[</span><span class="ot">As with lnRoM</span><span class="co">](2.1-SMD-assumptions.qmd)</span>, the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>:</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"MNLN"</span>,</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">10</span>,</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>As such, this effect size is likely better suited for <span class="co">[</span><span class="ot">overdispersed</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span> data. </span>
 <span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>As such, this effect size is likely better suited for <span class="co">[</span><span class="ot">overdispersed</span><span class="co">](2.1-SMD-assumptions.qmd#sec-overdispersion)</span> data. </span>
-<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single group variability {#sec-single-group-variability}</span></span>
-<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>Much as we can meta-analyze differences in variability between two groups with the lnVR and lnCVR effect sizes, we can also summarize the variability of single groups with the *log-transformed standard deviation* and *log-transformed coefficient of variation* effect sizes. </span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single group variability {#sec-single-group-variability}</span></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>Much as we can meta-analyze differences in variability between two groups with the lnVR and lnCVR effect sizes, we can also summarize the variability of single groups with the *log-transformed standard deviation* and *log-transformed coefficient of variation* effect sizes. </span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>As with <span class="co">[</span><span class="ot">lnVR</span><span class="co">](#sec-lnVR)</span>, *log-transformed standard deviation* ($log(sd)$) is not standardized by the mean and thus must be compared to studies using the same units of measurement. </span>
 <span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>As with <span class="co">[</span><span class="ot">lnVR</span><span class="co">](#sec-lnVR)</span>, *log-transformed standard deviation* ($log(sd)$) is not standardized by the mean and thus must be compared to studies using the same units of measurement. </span>
-<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>To calculate *log-transformed standard deviation* in <span class="in">`R`</span>:</span>
-<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SDLN"</span>,</span>
-<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>To calculate *log-transformed standard deviation* in <span class="in">`R`</span>:</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SDLN"</span>,</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>The *log-transformed coefficient of variation* ($log(sd/m)$) is standardized by the mean, just like <span class="co">[</span><span class="ot">lnCVR</span><span class="co">](#sec-lnCVR)</span>, and can thus be used to compare data with different units of measurements. In <span class="in">`R`</span>:</span>
 <span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>The *log-transformed coefficient of variation* ($log(sd/m)$) is standardized by the mean, just like <span class="co">[</span><span class="ot">lnCVR</span><span class="co">](#sec-lnCVR)</span>, and can thus be used to compare data with different units of measurements. In <span class="in">`R`</span>:</span>
-<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVLN"</span>,</span>
-<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
-<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">15</span>,</span>
-<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
-<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single group proportions {#sec-proportions}</span></span>
-<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>The single group measurements so far concern continuous data. However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to <span class="co">[</span><span class="ot">lnOR and lnRR</span><span class="co">](2.2-lnOR-assumptions.qmd)</span> type effect sizes. As with lnOR and lnRR, these concern outcomes that can only occur **once** to each individual (or plot). See <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-event-counts)</span> for binary outcomes that can occur multiple times per individual.</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"CVLN"</span>,</span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>       <span class="at">sdi =</span> <span class="fl">1.5</span>,</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>       <span class="at">mi =</span> <span class="dv">15</span>,</span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>)</span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a><span class="fu"># Single group proportions {#sec-proportions}</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>The single group measurements so far concern continuous data. However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to <span class="co">[</span><span class="ot">lnOR and lnRR</span><span class="co">](2.2-lnOR-assumptions.qmd)</span> type effect sizes. As with lnOR and lnRR, these concern outcomes that can only occur **once** to each individual (or plot). See <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-event-counts)</span> for binary outcomes that can occur multiple times per individual.</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>These effect sizes take into account the total number of individuals and the number of individuals that experienced a binary outcome (e.g., mortality). There are several options for single group proportional data in <span class="in">`escalc`</span>. Of these, it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* are the most numerically stable.</span>
 <span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>These effect sizes take into account the total number of individuals and the number of individuals that experienced a binary outcome (e.g., mortality). There are several options for single group proportional data in <span class="in">`escalc`</span>. Of these, it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* are the most numerically stable.</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>These different versions have different numeric assumptions</span>
 <span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>These different versions have different numeric assumptions</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>**I'm basically taking this from Gemini, which I don't like doing....because it's so often wrong**</span>
 <span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>**I'm basically taking this from Gemini, which I don't like doing....because it's so often wrong**</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**log-transformed proportion**: This effect size appears to be best when proportions are low (e.g., p &lt; 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with <span class="in">`exp(yi)`</span>). Specified with "PLN" in <span class="in">`escalc`</span>. </span>
 <span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**log-transformed proportion**: This effect size appears to be best when proportions are low (e.g., p &lt; 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with <span class="in">`exp(yi)`</span>). Specified with "PLN" in <span class="in">`escalc`</span>. </span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**logit-transformed proportion**: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for <span class="co">[</span><span class="ot">lnOR</span><span class="co">](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation)</span> after exponentiating (<span class="in">`exp(yi)`</span>). Specified with "PLO" in <span class="in">`escalc`</span>.</span>
 <span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**logit-transformed proportion**: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for <span class="co">[</span><span class="ot">lnOR</span><span class="co">](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation)</span> after exponentiating (<span class="in">`exp(yi)`</span>). Specified with "PLO" in <span class="in">`escalc`</span>.</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**probit-transformed proportion**: This effect size is often used for toxicological or dose-response models, like <span class="co">[</span><span class="ot">LC50</span><span class="co">](3.3-lnOR-challenges.qmd#sec-lc50)</span>, and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in <span class="in">`escalc`</span>.</span>
 <span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**probit-transformed proportion**: This effect size is often used for toxicological or dose-response models, like <span class="co">[</span><span class="ot">LC50</span><span class="co">](3.3-lnOR-challenges.qmd#sec-lc50)</span>, and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in <span class="in">`escalc`</span>.</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>**I'd love to have this confirmed**</span>
 <span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>**I'd love to have this confirmed**</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>For all of these effect sizes, <span class="in">`xi`</span> is the number of individuals experiencing the event of interest and <span class="in">`ni`</span> is the total number of individuals:</span>
 <span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>For all of these effect sizes, <span class="in">`xi`</span> is the number of individuals experiencing the event of interest and <span class="in">`ni`</span> is the total number of individuals:</span>
-<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"PLO"</span>,</span>
-<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>,</span>
-<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>       <span class="at">xi =</span> <span class="dv">10</span>)</span>
-<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a><span class="fu"># Event counts {#sec-event-counts}</span></span>
-<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>The binary outcome data above concerns discrete outcomes that can only occur once per individual. Being dead.</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"PLO"</span>,</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>       <span class="at">ni =</span> <span class="dv">15</span>,</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>       <span class="at">xi =</span> <span class="dv">10</span>)</span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a><span class="fu"># Event counts {#sec-event-counts}</span></span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>The binary outcome data above concerns discrete outcomes that can only occur once per individual. Being dead.</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>What about binary outcomes that can happen multiple times? Like the number of times a bird breeds or a plot burns?</span>
 <span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>What about binary outcomes that can happen multiple times? Like the number of times a bird breeds or a plot burns?</span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>These types of data are referred to as event counts or person-time data. We briefly discussed two group effect size estimands for these types of data <span class="co">[</span><span class="ot">here</span><span class="co">](2.2-lnOR-assumptions.qmd#sec-other-binary-outcomes)</span> but there are also single group effect sizes that may be useful.</span>
 <span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>These types of data are referred to as event counts or person-time data. We briefly discussed two group effect size estimands for these types of data <span class="co">[</span><span class="ot">here</span><span class="co">](2.2-lnOR-assumptions.qmd#sec-other-binary-outcomes)</span> but there are also single group effect sizes that may be useful.</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>These effect sizes require the total number of events (<span class="in">`xi`</span> in <span class="in">`escalc`</span>) and the total number of person-times (<span class="in">`ti`</span>). For instance, if 30 people were monitored for a total of 10 years, the person-times would be $30 * 10 = 300$. </span>
 <span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>These effect sizes require the total number of events (<span class="in">`xi`</span> in <span class="in">`escalc`</span>) and the total number of person-times (<span class="in">`ti`</span>). For instance, if 30 people were monitored for a total of 10 years, the person-times would be $30 * 10 = 300$. </span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>, there is support for several effect sizes to describe single-group event count data. These effect sizes are little used and so we do not know which are preferred. </span>
 <span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>In <span class="in">`escalc`</span>, there is support for several effect sizes to describe single-group event count data. These effect sizes are little used and so we do not know which are preferred. </span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**raw incidence rate:** This effect size is raw and untransformed and thus likely has distributional properties that are unpleasant to model. It is specified by <span class="in">`measure="IR"`</span> in <span class="in">`escalc`</span>.</span>
 <span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**raw incidence rate:** This effect size is raw and untransformed and thus likely has distributional properties that are unpleasant to model. It is specified by <span class="in">`measure="IR"`</span> in <span class="in">`escalc`</span>.</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**log-transformed incidence rate:** This effect size is log transformed and so is centered on 0 and ranges from $-\infty$ to $\infty$. It is specified by <span class="in">`measure="IRLN"`</span> and we believe is probably the best option for meta-analysis.</span>
 <span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**log-transformed incidence rate:** This effect size is log transformed and so is centered on 0 and ranges from $-\infty$ to $\infty$. It is specified by <span class="in">`measure="IRLN"`</span> and we believe is probably the best option for meta-analysis.</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**square root transformed incidence rate:** This is a square-root transformed incidence rate. It is specified with <span class="in">`measure="IRS"`</span>. We're not sure when or if you should use this.</span>
 <span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**square root transformed incidence rate:** This is a square-root transformed incidence rate. It is specified with <span class="in">`measure="IRS"`</span>. We're not sure when or if you should use this.</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Freeman-Tukey transformed incidence rate:** This is a mystery to us as well. Maybe it's good maybe it's not. It is specified with <span class="in">`measure="IRFT"`</span>. </span>
 <span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Freeman-Tukey transformed incidence rate:** This is a mystery to us as well. Maybe it's good maybe it's not. It is specified with <span class="in">`measure="IRFT"`</span>. </span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>***Of these, we believe that XYZ are the most appropriate for analysis in meta-analysis models.????***</span>
 <span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>***Of these, we believe that XYZ are the most appropriate for analysis in meta-analysis models.????***</span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>With data types where there are several alternative estimands (e.g., the 4 above), we recommend calculating all 4, visually evaluating their numeric distributions (e.g., how normally distributed are they) and then fitting separate models on the different candidate effect sizes. If the overall results are similar, hurray! If not, think about why and report everything. </span>
 <span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>With data types where there are several alternative estimands (e.g., the 4 above), we recommend calculating all 4, visually evaluating their numeric distributions (e.g., how normally distributed are they) and then fitting separate models on the different candidate effect sizes. If the overall results are similar, hurray! If not, think about why and report everything. </span>
-<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

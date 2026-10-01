@@ -1,6 +1,6 @@
 ---
 title: "Continuous outcomes between two groups"
-subtitle: "Standardized mean differences, log ratios of means, and related biological questions"
+subtitle: "Standardized Mean Differences, log-transformed Ratio of Means, and related questions"
 date: today
 format: 
   html:
@@ -91,6 +91,7 @@ Before choosing an effect size, think carefully about the [**estimand**](1-effec
 | Are you only interested in the magnitude of difference, regardless of direction? | log-magnitude (**lnM**) |
 | Which group is more variable than the other? | log variability ratio or coefficient of variation (**lnVR**, **lnCVR**) |
 
+
 In this chapter, we focus on **SMD** and **lnRoM** effect size estimands. These are essential effect sizes for comparing the **mean** responses of continuous variables between two groups. We dedicate this chapter to understanding the mathematical operation of these effect sizes, their assumptions, and how to interpret them.
 
 In addition to SMD and lnRoM, comparisons of continuous responses between two groups can often be complimented by analyses of different effect sizes, which capture more than just mean differences. **lnM** describes the magnitude of differences between two groups, regardless of direction, while **lnVR/lnCVR** describe differences in variability between two groups. These require the same statistical ingredients as **SMD** and **lnRoM**. We discuss lnM [here](5.2-differences-in-magnitude.qmd) and lnCVR/lnVR [here](5.1-variability-between-groups.qmd)
@@ -153,22 +154,25 @@ where $c$ is the critical value used to construct the interval. For a large-samp
 :::
 
 # What's the difference between SMD and lnRoM?
-SMD and lnRoM describe similar things: the difference in a continuous variable between two groups. Yet their interpretation, and their assumptions, are very different. As such, they are different estimands and answer different questions. These can be summarized here:
+SMD and lnRoM describe similar things: the difference in a continuous variable between two groups. 
+
+Many people think of SMD and lnRoM as largely interchangeable. Yet their interpretation, and their assumptions, are very different. lnRoM and SMD are fundamentally different estimands, designed to answer different questions. Some of these differences can be summarized here:
 
 | Data property | SMD | lnRoM |
 |---|---|---|
 | Should the point estimate account for variability | Yes | No |
 | Mean must be > 0 | No | Yes |
-| Can the estimates be back-transformed directly to percent change? | No | Yes |
-| Does the effect size describe absolute change?  | Yes | No |
+| Can the estimates be back-transformed to percent change? | No | Yes |
+| Does the effect size describe **absolute** change?  | Yes | No |
 
-The distinction between these properties may not be immediately obvious. For many of us authors, some of them were quite revelatory when simulated. Before we wade into the math of these effect sizes, and their assumptions, we'll give you an example to bring the point home:
+The distinction between these properties may not be immediately obvious. For many of us authors, some of them were quite revelatory when we finally saw it. Before we wade into the math of these effect sizes, and their assumptions, we'll give you an example to bring the point home:
 
 ### lnRoM and SMD can tell profoundly different stories {#sec-flip-signs}
 
 Imagine you are doing a meta-analysis of the effects of a treatment---let's say controlled burning---on soil carbon. To explain the heterogeneity in your dataset you are also interested in testing the influence of moderators on the relationship between burning and soil carbon.
 
-Let's imagine that the raw means and standard deviation for three studies look like this along a spatial temperature gradient:
+Let's imagine that the raw means and standard deviation for three studies look like this along a mean annual temperature gradient:
+
 ```{r}
 #| eval: true
 #| echo: false
@@ -200,7 +204,7 @@ ggplot()+
 
 ```
 
-We are interested in the influence of *burning* on soil carbon. As such our effect size **estimand** needs to describe the relationship between the burned mean and control means (the blue and red points) and standard deviations (the error bars) at each temperature measurement. 
+We are interested in the influence of *burning* on soil carbon. As such we want an effect size **estimand** that describes the relationship between the burned treatment and the control at each temperature measurement. 
 
 If you calculate and plot SMD for each pair of points along our temperature gradient, we see that the effect of the treatment is negatively related to temperature:
 
@@ -245,6 +249,7 @@ ggplot()+
   ggtitle("lnRoM: Relative difference between groups, regardless of variation")
 
 ```
+
 Wowza! Look at that! A complete reversal of the relationship with the moderator! Maybe policymakers should do more controlled burns in warmer climates?? 
 
 But also...How the hell did that happen?
@@ -253,9 +258,11 @@ This happened because lnRoM describes the **relative** difference between groups
 
 As you can imagine, the implications of overlooking these differences can lead to considerable problems. Meta-analyses commonly make policy recommendations that could be completely wrong because they used the wrong **estimand** for the job. 
 
-Now we'll dive a little deeper into the mathematics of these two estimands, their interpretation, and their mathematical assumptions
+Now we'll dive a little deeper into the mathematics of these two estimands, their interpretation, and their mathematical assumptions.
 
-# Running biological example
+--- 
+
+# A running biological example
   
 We'll walk you through the use and interpretation of these effect sizes with a running biological example. Imagine a warming experiment that measures plant biomass after one growing season:
 
@@ -444,6 +451,8 @@ In `R`, we can convert to % change as follows:
 yi <- 0.18
 100 * (exp(yi) - 1)
 ```
+
+--- 
 
 # Assumptions {#sec-assumptions-and-properties}
 
@@ -728,7 +737,7 @@ If a lot of your data is overdispersed, one option is to compare the bias-correc
 In current versions of `metafor`, you can calculate the uncorrected estimator with `correct = FALSE`; it is not the default. We also recommend conducting sensitivity analyses that exclude data identified as potentially problematic using clearly specified criteria, and comparing sampling-variance weights with effective-sample-size weights when justified [@Nakagawa2023-tn].
 
 ::: {.callout-note collapse="true"}
-#### Click to see a demonstration of a workflow to check and respond to overdispersion</summary>
+#### Click to see a demonstration of a workflow to check and respond to overdispersion
 
 Let's do this in `R` with a $CV>2$ threshold and the Geary-Lajuennesse threshold of 3, using a dataset provided by the `metafor` package:
 
@@ -922,7 +931,9 @@ This is a good reason to use lnRoM but has to be weighed against the other numer
 
 
 # Conclusion: SMD or lnRoM
-As hopefully we've made clear, the choice between lnRoM and SMD does not simply come down to the incalculability of lnRoM with negative values. It's far more nuanced. We recommend that these choices of estimands makes you think hard about your research question: 
+We suspect that many researchers choose between SMD and lnRoM simply because of negative values---we know some of us certainly have! However, we hope we've made clear that these effect sizes are hardly interchangeable. It's far more nuanced. 
+
+We recommend that this makes you think hard about your research question: 
 
 - Are you interested in relative or absolute differences between treatment groups?
 
@@ -930,7 +941,9 @@ As hopefully we've made clear, the choice between lnRoM and SMD does not simply 
 
 - How much data is lost by using lnRoM due to negative values?
 
-It may very well be that the best course of action is to use both effect sizes and to report their results accordingly: lnRoM as multiplicative relative relationships and SMD as linear absolute relationships. This reporting, alongside analysis of variability between groups ([lnVR/lnCVR](5.1-variability-between-groups.qmd)) can provide a rich and nuanced understanding of your research question.
+It may very well be that the best course of action is to use both effect sizes and to report their results accordingly: lnRoM to describe multiplicative relative relationships and SMD to describe linear absolute differences 
+
+This, alongside complimentary analyses of the variability between groups ([lnVR/lnCVR](5.1-variability-between-groups.qmd)) can provide a rich and nuanced understanding of your research question.
 
 As always, couple these considerations with care and sensitivity analyses, especially if your data is overdispersed. 
 
@@ -940,22 +953,20 @@ As you can see, choosing between lnRoM and SMD hinges upon a number of factors: 
 
 In addition to reporting and justifying your decisions to use SMD or lnRoM, we also recommend conducting analyses across the range of choices: fitting models with both SMD and lnRoM, including and excluding overdispersed data, and potentially using the inverse of effective sample size instead of sampling variance as a model weight [@Nakagawa2023-tn]. 
 
-The number of sensitivity analyses can become daunting! No doubt. We provide some suggestions on how to organize these [here.](3.0-starting-extraction.qmd#sec-organizing-sensitivity-analyses)
+The number of sensitivity analyses can become daunting! No doubt. It sucks. We provide some suggestions on how to organize these [here.](3.0-starting-extraction.qmd#sec-organizing-sensitivity-analyses)
 :::
 
-# Alternative estimators {#sec-alternative-estimators}
-
-## Paired designs {#sec-paired-designs}
+# Paired designs {#sec-paired-designs}
 
 There are alternative estimators for SMD and lnRoM can account for *paired* designs, that is for correlated variance between groups 1 and 2. 
 
 For the most part, these paired estimators *reduce* the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the covariance between your treatment groups.
 
 :::callout-note
-By paired designs, we mean ***within*** an effect size: e.g., pairing between $m1$ and $m2$. Covariance ***between*** multiple effect sizes within a study or across studies needs to be handled with your model's random effects. We discuss this briefly [here.](3.1-universal-challenges.qmd#sec-non-independence)
+By paired designs, we mean ***within*** an effect size: e.g., pairing between $m_1$ and $m_2$. Covariance ***between*** multiple effect sizes within a study or across studies needs to be handled with your model's random effects. We discuss this briefly [here.](3.1-universal-challenges.qmd#sec-non-independence)
 :::
 
-In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals, which is pronounced "rho" and symbolized as `r` in most `R` code. 
+In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals. This parameter is pronounced "rho" and symbolized as `ri` in most `R` code. 
 
 Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.
 
