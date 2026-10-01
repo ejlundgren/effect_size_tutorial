@@ -622,5 +622,258 @@
       "Effect size assumptions & interpretation",
       "Discrete outcomes between two groups"
     ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html",
+    "href": "3.2-smd-challenges.html",
+    "title": "Continuous outcomes between two groups",
+    "section": "",
+    "text": "These are among the most commonly used effect size types in meta-analyses. These effect sizes compare a continuous response variable between two discrete categorical predictors (e.g., Control vs Experiment). By continuous, we mean a measurement summarized by its central tendency (mean, median) and dispersion (variance, standard deviation, standard error) across replicates. These replicates are the sample size.\nThe primary effect sizes that can be calculated with this data are standardized mean difference (SMD) and log-transformed ratio of means (lnRoM). Please see here for a more thorough description of these effect sizes, their assumptions, and their interpretation. In general, the extraction for these effect sizes is similar. However, as you will see, some data types constrain you to only using SMD because of values ≤ 0 or because of model estimates (t statistics), which only SMD can handle.\n\n\n\n\n\n\nImportant\n\n\n\nThe primary aim of this tutorial is to align extractions with target estimands of SMD and lnRoM (see here).\nHowever, some of the extraction challenges in this page are naturally suited for alternative estimands that account for different study designs. These alternative estimands are not interchangeable with meta-analyses focused on SMD or lnRoM. When these cases show up, we acknowledge the “ideal” estimands but present solutions to allow calculation of SMD and lnRoM target estimands. We also briefly discuss these alternative estimands in the escalc cheatsheet. If your entire meta-analysis consists of these situations, then you may want to use these alternative estimands directly.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-simple-cases",
+    "href": "3.2-smd-challenges.html#sec-simple-cases",
+    "title": "Continuous outcomes between two groups",
+    "section": "The simple cases",
+    "text": "The simple cases\nWe’ll start with the simplest figure types, mostly in order to contrast with more complex types. If you’re using metaDigitise() to extract data (Pick et al. 2018), the function will guide you through calibrating the axes and selecting the top of the error bars and the top of the bars themselves (the mean). If the figure reports standard error (\\(se\\)), metaDigitise() will convert it automatically to standard deviation (\\(sd\\)). Always be aware of what the error type the figures (or text) are reporting.\n\n\n\n\n\n\n\n\nBox plots are also straightforward and involve extracting the minimum, lower quartile, median, upper quartile, and maximum values. metaDigitise() will walk you through that extraction and will automatically convert the interquartile range and median to mean±SD.\n\n\n\n\n\n\n\n\nIt’s also common to see figures like this with more complex non-independence structures. These can be dealt with by digitizing only the final time point or by controlling for non-independence with random effects (see here for a brief discussion of these issues).\n\n\n\n\n\n\n\n\nLet’s move on to more complex situations.\n\n\n\n\n\n\nImportant3-dimensional plots\n\n\n\nThere was a brief unfortunate period in the 1990s when these became popular. 3D plots often depicted multivariate histograms, as well as other data types such as bar charts.\nWe won’t discuss these much here, we just want to acknowledge your pain if you come across one. Hopefully the general plot designs will be similar to those covered in this tutorial. We believe that WebPlotDigitizer has options to calibrate 3D plots. Alternatively, popular LLMs (e.g., Gemini or Claude or ChatGPT) are likely able to extract this data.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-histograms",
+    "href": "3.2-smd-challenges.html#sec-histograms",
+    "title": "Continuous outcomes between two groups",
+    "section": "Histograms",
+    "text": "Histograms\nIt’s also common to see the outcome variable of the two discrete predictor groups plotted as separate histograms:\n\n\n\n\n\n\n\n\nmetaDigitise() luckily has built-in functionality for dealing with histograms. The function will guide you through each step, which requires calibrating the axes and then clicking on the left and right corners of each bar. It’ll then convert the extracted distributions into means±sd. This can be time-consuming. You can also try getting an LLM model to do it for you.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-violin-density-plots",
+    "href": "3.2-smd-challenges.html#sec-violin-density-plots",
+    "title": "Continuous outcomes between two groups",
+    "section": "Violin and density plots",
+    "text": "Violin and density plots\nThe beauty of modern plotting techniques has led to a proliferation of new ways to visualize data. Like violin plots.\n\n\n\n\n\n\n\n\nViolin plots are basically a vertical version of a density plot:\n\n\n\n\n\n\n\n\nA violin or density plot shows a smoothed estimate of the distribution, rather than the original observations. Its shape depends partly on plotting choices, especially how much smoothing was used. This means that the width of a violin cannot be read as a standard deviation, and the bumps should not be treated as individual observations.\nThe example below draws the same observations three times. Only the smoothing changes. The sample mean and SD are therefore identical in every panel, even though the distributions appear to have different shapes.\n\n\n\n\nThe same observations displayed using three different amounts of smoothing. Changing the plotting settings changes the apparent shape, but it does not change the observations, their mean, or their SD.\n\n\n\nFor an SMD or lnRoM, we recommend the following extraction order:\n\nLook elsewhere first. Check the text, tables, figure caption, supplementary files, and data repository for the mean, SD, and sample size.\nIf individual observations are visible, digitize those observations. Calculate the mean and SD from the extracted values. Points may overlap, so use the reported sample size rather than counting the visible points whenever possible.\nIf the plot contains summary markers, extract only statistics that the caption or legend defines. A dot could represent either a mean or a median, and bars could represent an SD, interquartile range, or confidence interval. Their meaning should not be guessed from their appearance.\nIf only the violin or density outline is available, contact the authors. If the required statistics cannot be obtained, record the outcome as unavailable for calculating an SMD or lnRoM.\n\n\n\n\n\n\n\nWarningDo not estimate the SD from the width of the violin\n\n\n\nThe outline is influenced by the smoothing method and bandwidth. Violin plots may also be scaled to have the same area or maximum width even when their sample sizes differ. The width therefore does not provide an SD or, unless the plotting method explicitly says otherwise, a sample size.\n\n\nIt is technically possible to digitize the outline at many outcome values and use its width to reconstruct the displayed density. We do not recommend this as a routine extraction method. The variance of the displayed density includes variation introduced by smoothing, so it is not necessarily the variance of the original observations. Recovering the original SD would require details such as the kernel, bandwidth, trimming, and any axis transformation, as well as a separately reported sample size. If such a reconstruction is attempted, label it as an estimated result, validate it against the plotted curve, and test whether excluding it changes the meta-analysis.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-proportion-data-no-error",
+    "href": "3.2-smd-challenges.html#sec-proportion-data-no-error",
+    "title": "Continuous outcomes between two groups",
+    "section": "Proportion data (0-1) bounded without error",
+    "text": "Proportion data (0-1) bounded without error\nSometimes SMD/lnRoM design types will present the total % of a population for a study design that is otherwise indistinguishable from other SMD/lnRoM studies in your dataset.\nFor an individual binary outcome coded 1 when the event occurs and 0 otherwise, the mean is the event proportion \\(p\\). Its variance and standard deviation are determined by \\(p\\):\n\\[\\begin{aligned}\n&m = p \\\\\n&Var = p(1-p) \\\\\n&sd = \\sqrt{p(1-p)}. \\\\\n\\end{aligned}\\]\nThe expected number of events among \\(N_{total}\\) individuals is \\(pN_{total}\\), but that count is not the mean of the individual 0/1 outcomes. These formulas describe individual binary observations; they do not give the standard deviation among site-level or trial-level proportions.\nIf you’re facing this type of data in your meta-analysis you may want to consider whether SMD/lnRoM are the correct effect sizes for your meta-analysis. This type of data is meant to be analyzed with an lnOR type effect size. Alternatively, if these are rare scenarios in your meta-analysis, you may also consider calculating lnOR from these data and converting the lnOR point estimate and sampling variance to SMD. See here for a tutorial on effect size conversions and their assumptions.\nNote that these conversions constrain you to using SMD: it is not possible to convert lnOR to lnRoM.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-proportion-data-with-error",
+    "href": "3.2-smd-challenges.html#sec-proportion-data-with-error",
+    "title": "Continuous outcomes between two groups",
+    "section": "Mean±sd proportion data (0-1)",
+    "text": "Mean±sd proportion data (0-1)\nSuppose a study measures a proportion for each independent site and then reports the mean and SD across sites. These observations cannot be less than 0 or greater than 1. The boundaries therefore constrain how much the observations can vary, and that constraint depends on the mean.\nThis mean–variance relationship can make comparisons on the original scale strongly heteroscedastic. To calculate SMD or lnRoM from 0-1 bounded data, you should transform your means and standard deviation to stretch values into an approximation of normality.\nThe arcsine-square-root transformation does this (Macartney et al. 2022):\n\\[\ng(x)=\\arcsin(\\sqrt{x}).\n\\]\nThe transformation stretches values near 0 and 1 more than values near 0.5. If the individual proportions are available, transform each observation and then calculate the transformed mean and SD directly. If only the original mean \\(m\\) and SD \\(sd\\) are reported, the delta method provides the following approximation:\n\\[\\begin{aligned}\n&m' \\approx \\arcsin(\\sqrt{m})\\\\\n&sd' \\approx \\frac{sd}{2\\sqrt{m(1-m)}}.\\\\\n\\end{aligned}\\]\nThe denominator becomes smaller near 0 or 1, so the transformation expands an original-scale SD near a boundary more than an equally sized SD near 0.5. This reduces some of the mechanical dependence between the mean and the available variance.\nIn R:\n\nm = 0.7\nsd = 0.1\n\nm_trans &lt;- asin(sqrt(m))\nsd_trans &lt;- sd / (2 * sqrt(m * (1 - m)))\n\nc(\"transformed_mean\" = m_trans, \"transformed_sd\" = sd_trans)\n\ntransformed_mean   transformed_sd \n       0.9911566        0.1091089 \n\n\nThis is only a local approximation. In general, transforming a reported mean does not give exactly the same answer as averaging the transformed observations, and the approximated \\(sd'\\) does not necessarily equal their transformed SD. The approximation can be poor when the mean is very close to 0 or 1 or when the observations are widely dispersed. It is undefined when \\(m\\) is exactly 0 or 1.\nWhen the approximation is appropriate, an SMD can be calculated from the transformed means and SDs and interpreted as a standardized contrast on the transformed scale. The sample size remains the number of independent sites, plots, or trials represented by the reported SD.\nDo not use the transformed means to calculate an lnRoM and interpret it as a proportional change on the original scale. The arcsine transformation changes the ratio between values. If an lnRoM answers the biological question, calculate it from the original positive means and address its assumptions directly.\nUnfold the section below if you want to see a full demonstration of the relationship between means and standard deviation in proportion data:\n\n\n\n\n\n\nNote\n\n\n\n\n\nFor a proportion \\(X\\) with population mean \\(\\mu\\), the population variance cannot exceed:\n\\[\nVar(X) \\leq \\mu(1-\\mu).\n\\]\nThe largest possible population SD is therefore \\(\\sqrt{\\mu(1-\\mu)}\\). It is largest when the mean is 0.5 and approaches zero as the mean approaches either boundary. For example, the maximum population SD is 0.50 when the mean is 0.50, but only about 0.22 when the mean is 0.05 or 0.95. A group with a mean near a boundary simply has less room to vary on the original scale.\n\n\n\n\nThe possible population SD of an outcome bounded between 0 and 1 depends on its mean. The blue region contains possible combinations; the dark curve is the maximum SD, not the expected SD.\n\n\n\nThe curve is an upper boundary, not a formula for estimating a missing SD. Binary observations coded 0 and 1 reach this boundary because their variance is exactly \\(p(1-p)\\). Proportions measured across sites, plots, or trials can have any SD below the boundary. Their actual variation also depends on factors such as the number of individuals contributing to each proportion, differences among sites, and clustering.\n\n\n\n\n\n\nNote\n\n\n\nThe figure shows the population relationship. A reported sample SD usually uses \\(n-1\\) in its denominator. Its corresponding finite-sample bound is \\(sd^2 \\leq [n/(n-1)]m(1-m)\\), so a sample SD can sit slightly above the curve, especially when the number of independent units is small.\n\n\n\n\n\n\n\n\n\n\n\nCautionBinary counts and summarized proportions\n\n\n\nIf a paper reports an exact event count and denominator, such as 17 survivors among 25 animals, those values can be entered directly into an lnOR or lnRR calculation. If the rest of your meta-analysis is of SMD/lnRoM type data, you can convert the calculated lnOR effect size to SMD (but not to lnRoM). See our converting effect sizes page.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-differences",
+    "href": "3.2-smd-challenges.html#sec-differences",
+    "title": "Continuous outcomes between two groups",
+    "section": "Differences",
+    "text": "Differences\nSome studies used paired designs where, instead of reporting each pair separately, they subtract the paired samples from each other and report mean±error of the difference.\n\n\n\n\n\n\n\n\nTo calculate our target estimand of SMD or lnRoM with this data, we can extract the difference from the boxplot, and convert the medians and interquartile ranges to means±sd. This dataset would look like this:\n\n\n\\(mean_{difference}\\)\n\\(sd_{difference}\\)\n\n\n-4.73643\n1.7460945\n\n\nTo calculate SMD (which is necessary because we are no longer dealing with ratio-scale data and negative values are likely), we have to be creative.\n\nSet the mean difference to either the control or experimental group, depending on the direction of the rest of your dataset (e.g., positive or negative).\nUse \\(sd_{difference}\\) for both the control and the experimental group.\n\nAs such your data will look like this:\n\n\n\n\n\n\n\n\n\\(mean_{control}\\)\n\\(sd_{control}\\)\n\\(mean_{experiment}\\)\n\\(sd_{experiment}\\)\n\n\n-4.73643\n1.7460945\n0\n1.7460945\n\n\nSince the data is paired, you should use a paired (but comparable) version of SMD to calculate your effect sizes.\nIn metafor::escalc, this would be measure = \"SMCRP\":\n\nescalc(measure = \"SMCRP\",\n       data = diff_dt,\n       m1i = mean_control, \n       m2i = mean_experiment,\n       sd1i = sd_control, \n       sd2i = sd_experiment,\n       ri = 0.5,\n       ni = 15)\n\n\n  mean_control sd_control mean_experiment sd_experiment      yi     vi \n1     -4.73643   1.746095               0      1.746095 -2.6206 0.2097 \n\n\nCases like this should be flagged for sensitivity analysis.\n\n\n\n\n\n\nNoteAlternative estimand: Standardized Mean Change\n\n\n\n\n\nThe example above is ideally suited for a different estimand: standardized mean change. Unfortunately, this estimand is not comparable to SMD.\nIn metafor::escalc, this estimand can be calculated with measure = \"SMCC\":\n\nescalc(measure = \"SMCC\",\n       m1i = -8.11, m2i = 0,\n       sd1i = 1.27, sd2i = 0,\n       ri = 0.5,\n       ni = 15)",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-ratios",
+    "href": "3.2-smd-challenges.html#sec-ratios",
+    "title": "Continuous outcomes between two groups",
+    "section": "Ratios of control and treatment groups",
+    "text": "Ratios of control and treatment groups\nSome studies report a response ratio directly. Before extracting it, determine how it was calculated. Two similar-looking summaries estimate different quantities.\nIf the ratio is of two group means:\n\\[\nRR_{means}=\\frac{\\bar{x}_{treatment}}{\\bar{x}_{control}}.\n\\]\nIts natural logarithm is the usual lnRoM point estimate. To calculate its usual sampling variance, we still need information about the uncertainty of both group means and whether the groups were independent or paired. A single reported ratio without an SE, confidence interval, group SDs, or other usable uncertainty is not usable, unfortunately.\nHowever, a study may instead calculate ratios at the observational-scale between paired measurements: \\[\nRR_i=\\frac{x_{treatment,i}}{x_{control,i}}.\n\\]\nThe mean of the individual ratios is generally not equal to the ratio of the group means. Likewise, the logarithm of the mean ratio is generally not equal to the mean of the logged ratios. To the best of our knowledge, this data is lost and can’t be recovered. Contact the authors or scour their supplement.\nI don’t follow this, Santi: If the study reports the mean of the paired log ratios and its SE, use that reported estimate and sampling variance directly when it matches the intended estimand. If it reports an SD across paired log ratios, the SE is \\(SD/\\sqrt{n}\\) and the sampling variance is \\(SD^2/n\\), where \\(n\\) is the number of independent pairs. Do not convert a reported ratio to SMD unless the assumptions and required information for that conversion are satisfied.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-effect-sizes-directly-reported",
+    "href": "3.2-smd-challenges.html#sec-effect-sizes-directly-reported",
+    "title": "Continuous outcomes between two groups",
+    "section": "Results reported as an effect size itself",
+    "text": "Results reported as an effect size itself\nA similar situation is when studies report their results as an effect size itself (e.g., SMD or lnRoM). These could be extracted directly as your effect size except that in our experience these studies rarely report a measure of dispersion (sampling variance, or SD or SE which could be converted to variance).\nIf a measure of error is reported then you can use these effect sizes directly or convert them to your target effect size. See here on how to convert between effect size types.\nIf a measurement of error is provided, then you can extract the data as is, and convert that error to sampling variance. For example, if SMD ± standard error was plotted, the sampling variance is \\[vi = SE^2\\].\nIf a study reports standardized mean differences (e.g., Cohen’s d), which is uncorrected estimator of SMD, you can use escalc to convert it to Hedges' g, the dominant estimator of SMD by specifying Cohen’s d as the di argument:\n\nescalc(measure = \"SMD\",\n       di = 5, \n       n1i = 10, n2i = 10)\n\n\n      yi     vi \n1 4.7882 0.7732 \n\n\nIn many other cases, there’s nothing you can do but email the authors and hope they still have their raw data.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-BACI",
+    "href": "3.2-smd-challenges.html#sec-BACI",
+    "title": "Continuous outcomes between two groups",
+    "section": "Before-after-control-impact designs",
+    "text": "Before-after-control-impact designs\nBefore-after control-impact (BACI) designs are considered gold standard experimental designs. Yet most meta-analyses ignore the before treatment and only extract and analyze the ‘after’ treatments. Here is a BACI figure:\n\n\n\n\n\n\n\n\nIn this case, only extracting and analyzing the ‘after’ data isn’t a big deal, because the differences in the ‘before’ groups in the control and treatment are minimal.\nHowever, what about a more problematic result, where there’s a big difference in before conditions between the control and treatment?\n\n\n\n\n\n\n\n\nYou may also see time series, where the first measurement in the time series is before the treatment. This presents similar conundrums. In that case, it may seem like the easiest bet is just to ignore the before data but, if there were differences between treatments in the before step, this leads to similar problems.\n\n\n\n\n\n\nNote\n\n\n\nThere are alternative estimands for this type of study design [CITE BECKER]. If your meta-analysis only includes these study designs, then you should use them. See the escalc cheatsheet for the measure options. However, we expect that you are encountering this study design in a meta-analysis otherwise using standard SMD or lnRoM effect sizes.\n\n\nIf you decide to include studies like this, we believe that the best solution is to calculate the difference between the before and after group means and use the after treatment standard deviation in your calculations.\nThe extracted dataset would look like this:\n\n\n\n\n\n\n\n\n\n\nmean_diff_control\nsd_after_control\nmean_diff_impact\nsd_after_impact\n\n\n4.434406\n1.074747\n5.806199\n0.973266\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nBACI designs often lead to negative values from subtracting the before treatment from the after treatments—which requires you to use SMD instead of lnRoM as your estimand.\n\n\nYou can also imagine that this data bears certain assumptions—especially from ignoring the before standard deviation. It might be acceptable to average the before and after standard deviations—we don’t know. Regardless, we recommend sensitivity analyses including and excluding this data and potentially using either averaged or before standard deviation to see if that changes results.\nThe final effect size can be calculated as normal:\n\nescalc(measure = \"SMD\",\n       m2i = mean_diff_control,\n       sd2i = sd_after_control,\n       m1i = mean_diff_impact,\n       sd1i = sd_after_impact,\n       n1i = 15,\n       n2i = 15,\n       data = dt_wide,\n       append = FALSE)\n\n\n      yi     vi \n1 1.3018 0.1616 \n\n\nNote that you may wish to use a paired estimator for this if the control and impact groups were paired spatially (they cannot be paired temporally).\nThese 4 group designs may appear in other contexts than pre and post treatment and can be fairly in common in ecological field experiments. For example, to understand if reintroduced wild dogs indirectly affect vegetation by reducing dik-dik browsing and abundance, Ford et al. (2015) placed controls and exclosures in areas with and without wild dogs, predicting that the difference between controls and exclosures would be greatest where there are no wild dogs.\n\n\n\n\n\n\n\n\nThe same difference-in-differences logic above applies to this crossed design.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-percent-change",
+    "href": "3.2-smd-challenges.html#sec-percent-change",
+    "title": "Continuous outcomes between two groups",
+    "section": "% Change",
+    "text": "% Change\nSometimes BACI type data is presented directly as percent change, which saves us some of the steps above.\n\n\n\n\n\n\n\n\nIn this case, use the percent change values directly to calculate SMD. You will not be able to use lnRoM in these cases because of negative values.\nBecause this data has been transformed into a percent, if this percent is bounded between 0 and 100, you may have to convert it to a proportion and arcsin transform it to reduce boundary issues. See here for further discussion of this transformation.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-crossed-discrete-design",
+    "href": "3.2-smd-challenges.html#sec-crossed-discrete-design",
+    "title": "Continuous outcomes between two groups",
+    "section": "Discrete x discrete crossed design",
+    "text": "Discrete x discrete crossed design\nSometimes you are interested explicitly in interactions between two treatments. In most studies one of the treatments you are interested in would otherwise be a moderator (e.g., not crossed with the main experimental comparison), however in others you find a fully crossed design.\n\n\n\n\n\n\n\n\nIn these cases, you’ll need to record these crossed moderators in separate columns in your dataset. If your meta-analysis is explicitly interested in those moderators, you’ve scored a major win! If not, then these crossed moderators can be ignored (but should be factored into the non-independence variables in your dataset accordingly).",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-continuous-x-discrete-crossed-design",
+    "href": "3.2-smd-challenges.html#sec-continuous-x-discrete-crossed-design",
+    "title": "Continuous outcomes between two groups",
+    "section": "Continuous x discrete crossed design",
+    "text": "Continuous x discrete crossed design\nHowever, sometimes interactions will be between continuous and discrete variables:\n\n\n\n\n\n\n\n\nIn this case, you could extract each point for the control group and the treatment group and calculate mean±SD across the continuous variable. But, if the continuous variable was a key moderator of interest in your analysis, it’d be lost from your meta-analysis.\nAlternatively, you could calculate two Zr effect sizes, one for the ‘control group’ and one for the ‘treatment group’. The control group and moderator factor would then be a moderator—if this is how the rest of your dataset is designed.\nAs you can see, there might be no perfect solution. Care and thought are necessary to make this type of data comparable to other effect sizes in your dataset.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-time-series",
+    "href": "3.2-smd-challenges.html#sec-time-series",
+    "title": "Continuous outcomes between two groups",
+    "section": "Time series with a binary predictor",
+    "text": "Time series with a binary predictor\nSometimes the data is presented as a time series with a discrete intervention at one point in the time series, such as the introduction or eradication of a species. For example:\n\n\n\n\n\n\n\n\nThe measurements before and after the intervention form one interrupted time series. Consecutive years are usually serially correlated, and the five years before the intervention are not naturally paired one-to-one with the five years after it. Treating the points as independent group replicates, or automatically using a paired SMD estimator, would give the wrong sampling structure.\nThe preferred result to extract is usually an estimated intervention effect from a time-series. If the paper reports only the plotted values, record the time sequence and consider whether a prespecified summary or a time-series analysis is possible. The number of plotted years should not automatically be entered as an independent sample size.\nYou’ll also encounter cases with only a few measurements on one side of the intervention:\n\n\n\n\n\n\n\n\nIn most cases, we expect you’ll exclude this data. However, if data is extremely limited you may want to take the mean±sd of the two groups (in this case “Present” and “Eradicated”) and calculate SMD or lnRoM. You could also calculate a correlation coefficient (Zr), treating the two groups as \\(0\\) or \\(1\\).\nIn either case, this requies calculating summary statistics off of non-independent samples. We therefore recommend, if you think this data is essential to include, to conduct sensitivity analyses including and excluding data summarized off of non-independent measurements. See our discussion of replication and non-independence here.\n\n\n\n\n\n\nImportantRecord the level of every summary\n\n\n\nFor every extracted mean and SD, record whether it summarizes measurements across individuals, space, time, or a combination of these. Also record the experimental or sampling unit that received the treatment. These fields make it possible to recognize incompatible units of replication or directions of summaries and to plan your sensitivity analyses.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-smd-reconstructing-data",
+    "href": "3.2-smd-challenges.html#sec-smd-reconstructing-data",
+    "title": "Continuous outcomes between two groups",
+    "section": "Time series with error bars",
+    "text": "Time series with error bars\nWhat do you do if each of these measurements has associated error?\n\n\n\n\n\n\n\n\nIn this case, we recommend choosing the time point before and after the intervention and extracting the means and sd for an SMD or lnRoM effect size. This ignores what may seem like an obvious and important pattern from the earlier and later measurements. However, sadly, the observational study design lack spatial controls, meaning that the pattern is lost to the sea of unusable data.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-geometric-mean",
+    "href": "3.2-smd-challenges.html#sec-geometric-mean",
+    "title": "Continuous outcomes between two groups",
+    "section": "Geometric mean",
+    "text": "Geometric mean\nSome studies report geometric means instead of arithmetic means. If the response is log-normally distributed and the reported dispersion is a geometric standard deviation, the geometric mean (\\(m_{geo}\\)) and geometric SD (\\(sd_{geo}\\)) can be converted to an arithmetic mean (\\(m_a\\)) and arithmetic SD (\\(sd_a\\)):\n\\[\\begin{aligned}\n&Var_{ln} = log(sd_{geo})^2 \\\\\n&m_a = m_{geo} * e^{\\frac{Var_{ln}}{2}} \\\\\n&sd_a = m_a * \\sqrt{e^{Var_{ln}} - 1} \\\\\n\\end{aligned}\\]\nIn R:\n\nsd_g &lt;- 2.5\nm_g &lt;- 31\n\nvar_ln &lt;- log(sd_g)^2\nm_a &lt;- m_g * exp(var_ln/2)\nsd_a &lt;- m_a * sqrt(exp(var_ln) - 1)\n\nc(\"final_mean\" = m_a, \"final_sd\" = sd_a)\n\nfinal_mean   final_sd \n  47.17111   54.10126 \n\n\nThe arithmetic SD can be much larger than the geometric SD because a geometric SD is a multiplicative factor rather than a dispersion measured in the response’s original units.\n\n\n\n\n\n\nWarning\n\n\n\nDo not apply this conversion when the reported error is an arithmetic SD, SE, or confidence interval around a geometric mean.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#means-or-standard-deviations-equal-to-0",
+    "href": "3.2-smd-challenges.html#means-or-standard-deviations-equal-to-0",
+    "title": "Continuous outcomes between two groups",
+    "section": "Means or standard deviations equal to 0",
+    "text": "Means or standard deviations equal to 0\nA zero mean and a zero standard deviation create different problems. However this situation is possible with extreme results: every single island with an introduced predator (your predictor) has 0 prey (your response variable). In this case, the mean for the islands with introduced predators would be 0 with a standard deviation of 0.\nSMD can include zero or negative means as long as at least groups’ standard deviation is \\(&gt;0\\). In this case, your data is almost certainly heteroscedastic and you should use the SMDH formulation of SMD (measure = \"SMDH\" in escalc). This has to be applied to all the data in your dataset. In ecological meta-analysis, we expect that SMDH is likely the preferred formulation because heteroscedasticity is common (and a subject interesting in its own right, see our discussion of variability effect sizes)\n\n\n\n\n\n\nWarning\n\n\n\nIf both groups have an SD of 0, the usual SMD is undefined because there is no within-group variation with which to standardize the mean difference.\n\n\nThe lnRoM point estimate requires two positive means on a meaningful ratio scale. It is undefined when either mean is 0. Rather than adding the same arbitrary constant, such as 0.01, to every kind of response, you can define the smallest positive resolution for each outcome before calculating effect sizes. This is the smallest positive change that the biology, measurement method, and study design could have reported. It might represent one crossing, one animal, one colony, or the detection limit of an assay.\nFor example, imagine an elevated-plus-maze trial in which open-side crossings are recorded as integer counts for each animal. One crossing is the smallest positive individual value. If a group contains \\(n\\) animals, the smallest positive group mean is:\n\\[\n\\delta_{mean}=\\frac{1}{n}.\n\\]\nIf the reported group mean is 0, it can be replaced with \\(\\delta_{mean}\\) for the zero-corrected analysis. More generally, if the smallest positive individual increment is \\(q\\), then:\n\\(\\delta_{mean}=q/n\\).\nA zero SD is an observed statement that every recorded value in that group was identical, so first retain it whenever the chosen estimator permits it. If a positive SD is required to retain an otherwise unusable comparison, treat its replacement as an explicit imputation. For integer counts, the smallest nonzero sample SD occurs when one observation differs from the others by one count:\n\\[\n\\delta_{SD}=\\frac{1}{\\sqrt{n}},\n\\]\nor \\(q/\\sqrt{n}\\) when the smallest positive increment is \\(q\\). This value depends on the measurement resolution and sample size; it is not a universal constant. Because it corresponds to an observable change in that particular outcome, it is more biologically interpretable and less arbitrary than adding the same constant to unrelated outcomes.\nDEMONSTRATE IN R\n\n\n\n\n\n\nCaution\n\n\n\nThis is a pragmatic, outcome-resolution-based imputation rather than a recovery of the observed data. Its biological basis makes it less arbitrary than applying one constant to every outcome, but it remains an assumption: a reported zero does not show that the smallest positive event actually occurred. It also changes the reported data and can strongly affect an lnRoM when a mean is 0. Define the rule before examining results. For every corrected value, record the original value, the replacement, the outcome-specific resolution, and the reason for the correction. Always repeat the meta-analysis after excluding all effect sizes that required a minimum-value correction and report whether the conclusion changes.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-callout-missing-error-bars",
+    "href": "3.2-smd-challenges.html#sec-callout-missing-error-bars",
+    "title": "Continuous outcomes between two groups",
+    "section": "Missing error bars",
+    "text": "Missing error bars\nMany studies report means but do not report error, which can lead to a tragic loss of data.\nHowever, it is possible to use cross-study average coefficient of variation (\\(CV\\)) to calculate lnRoM point estimates and sampling variance for studies that did not report error (Nakagawa et al. 2023). Remember that \\(CV = sd/m\\). Unfortunately, given that standard deviation is baked in, this is not possible for SMD effect sizes.\nThis can potentially retain studies that would otherwise be excluded, provided the means are positive and lnRoM answers the biological question. It does not make the missing SDs known: it replaces them with information estimated across other studies.\nStart by checking the article, supplement, repository, and other reported statistics, and contact the authors when practical. Then decide in advance how missing SDs will be handled. Nakagawa et al. (2023) describes two average-CV approaches:\n\nMissing-cases approach: use observed study-specific SDs where available and an average CV to estimate sampling variances only for cases with missing SDs.\nAll-cases approach: use average-CV sampling variances for every effect size, creating a consistent weighting scheme across studies with and without reported SDs.\n\nNeither approach should be selected because it gives a preferred result. Compare them with a complete-case analysis and report the proportion of effects with missing SDs, the CV estimator, and how the conclusion changes.\nCurrent versions of metafor::escalc() support average-CV sampling-variance options for lnRoM through vtype = \"AV\" and vtype = \"AVHO\"; check the package documentation and validate the intended group-specific or homoscedastic-CV formulation before using it.\n^This was an AI hallucination as far as I can tell… :(\nLet’s demonstrate. We’ll load a dataset included in metafor and set some standard deviations to NA and then use both the missing-cases and all-cases approach.\n\ndata(dat.gibson2002)\n\n# First filter out means that are NA\ndat.gibson2002 &lt;- dat.gibson2002 %&gt;%\n  filter(!is.na(m1i) & !is.na(m2i))\n\n# Set the sd of 2 rows to NA\ndat.gibson2002[sample(nrow(dat.gibson2002), 2), ]$sd1i &lt;- NA\n\n# Use \"AV\" to use missing cases to calculate effect size:\nres &lt;- escalc(data = dat.gibson2002,\n              measure = \"ROM\",\n              vtype = \"AVHO\",\n              m1i = m1i, m2i = m2i, \n              sd1i = sd1i, sd2i = sd2i,\n              n1i = n1i, n2i = n2i)\n# I don't know why `yi` is NA but `vi` isn't....So maybe it did work but there's a bug???\n\nThis didn’t work, so suspect an AI hallucination…\n\n\n\n\n\n\nNote\n\n\n\nNote that for sensitivity analyses, you should consider (at least) three analysis sets:\n\nUsing only the studies that reported standard deviation (and using the yi and vi returned by escalc)\nUsing the yi and vi returned by escalc alongside the “missing cases” calculations of yi and vi\nUsing the yi and vi from the “all-cases” method.\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nIf your data is overdispersed, then an alternative is to calculate the inverse of effective sample size (\\(1/N_0\\)), and use this as your model weight. See above and Nakagawa et al. (2023). Note that doing so limits you to lnRoM, since SMD requires \\(sd\\) in the point estimator formula and thus requires \\(sd\\) directly.\nEffective sample size is defined as: \\[\n\\begin{aligned}\n&N_{0} = \\frac{4n_1n_2}{n_1 + n_2}\\\\\n\\end{aligned}\n\\]",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-t-statistic",
+    "href": "3.2-smd-challenges.html#sec-t-statistic",
+    "title": "Continuous outcomes between two groups",
+    "section": "From the t statistic",
+    "text": "From the t statistic\nCalculating SMD from test statistics depends on whether the data come from a paired design (in which case df = n-1) or an independent two-sample design (df = n_1 + n_2 - 2). This is the formula for calculating SMD from a unpaired, two-sample design t test statistic:\n\\[\\begin{aligned}\n&d=t*\\sqrt{\\frac{1}{n_1} + \\frac{1}{n_2}} \\\\\n&J= 1 - \\frac{3}{4(n_1 + n_2 - 2) - 1} \\\\\n&g=J*d \\\\\n&Var(g) = \\frac{n_1 + n_2}{n_1 n_2} + \\frac{g^2}{2(n_1 + n_2 - 2)} \\\\\n\\end{aligned}\\]\nIn escalc you simply specify the t statistic (with ti), as well as sample sizes for each group (n1, n2) and use measure “SMD”, which will return the unpaired SMD estimate.\n\nt = -1.5\nn1 = 15\nn2 = 15\n\nescalc(measure = \"SMD\",\n       ti = t,\n       n1i = n1,\n       n2i = n2)\n\n\n       yi     vi \n1 -0.5329 0.1381 \n\n\nFor a paired design, a paired \\(t\\) statistic can be converted to a standardized mean change based on the SD of the change scores:\nTHIS IS A DIFFERENT ESTIMAND. IS THERE A WAY TO CALCULATE PAIRED SMD (“SMCRP”) FROM PAIRED T TEST?\n\\[\\begin{aligned}\n&d=\\frac{t}{\\sqrt{n}} \\\\\n&J= 1 - \\frac{3}{4(n - 1) - 1} \\\\\n&g=J*d\\\\\n&Var(g) = \\frac{1}{n} + \\frac{g^2}{2(n - 1)} \\\\\n\\end{aligned}\\]\nIn metafor, use SMCC and supply the number of pairs:\n\nt = -1.5\nn_pairs = 15\n\n# escalc(measure = \"SMCRP\",\n#        ti = t, ri = 0.5,\n#        ni = n_pairs)\n\nescalc(measure = \"SMCC\",\n       ti = t,\n       ni = n_pairs)\n\n\n       yi     vi \n1 -0.3661 0.0711 \n\n\nBut is this comparable to other SMD values?\nThis effect uses the SD of the change scores as its denominator. It should not be assumed to estimate exactly the same standardized quantity as an independent-groups SMD that uses a pooled raw-score SD.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-p-values",
+    "href": "3.2-smd-challenges.html#sec-p-values",
+    "title": "Continuous outcomes between two groups",
+    "section": "From p values:",
+    "text": "From p values:\nWhen only a two-sided \\(p\\) value from an independent two-group \\(t\\) test is reported, escalc uses the unusual convention that the sign attached to the input \\(p\\) value supplies the missing effect direction. Confirm the direction from the reported means, figure, or text before using this route.\n\np = -0.07\nn1 = 15\nn2 = 15\n\nescalc(measure = \"SMD\",\n       pi = p,\n       n1i = n1,\n       n2i = n2)\n\n\n       yi     vi \n1 -0.6693 0.1408",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-f-statistic",
+    "href": "3.2-smd-challenges.html#sec-f-statistic",
+    "title": "Continuous outcomes between two groups",
+    "section": "From F statistic",
+    "text": "From F statistic\nFor a test with one numerator degree of freedom, \\(|t|=\\sqrt{F}\\). The \\(F\\) statistic does not contain the direction of the contrast, so the sign must come from reported means, a coefficient, a figure, or clear text. An omnibus \\(F\\) test with more than two groups or more than one numerator degree of freedom does not identify one two-group SMD by itself.\nNeeds clarification. How to calculate.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-least-square-means",
+    "href": "3.2-smd-challenges.html#sec-least-square-means",
+    "title": "Continuous outcomes between two groups",
+    "section": "Least Square Means (LS Means) or Estimated Marginal Means",
+    "text": "Least Square Means (LS Means) or Estimated Marginal Means\nEstimated marginal means are adjusted model predictions. They are not interchangeable with raw arithmetic means, and their SEs are not within-group SDs.\nPrefer a directly reported pairwise contrast ?? between the estimated marginal means together with its SE or confidence interval. That adjusted contrast can be synthesized using its own sampling variance if it matches the intended estimand and its adjustment set is sufficiently comparable with the other included effects.\nIf only two estimated marginal means and their separate SEs are reported, the SE of their difference also depends on their covariance:\n\\[\nVar(\\hat\\mu_1-\\hat\\mu_2)=SE_1^2+SE_2^2-2Cov(\\hat\\mu_1,\\hat\\mu_2).\n\\]\nWithout that covariance, the uncertainty of the contrast generally cannot be reconstructed exactly. Do not insert the two model SEs into the sd1i and sd2i arguments of an ordinary SMD calculation.\nHmmmm I also don’t follow this",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
+  },
+  {
+    "objectID": "3.2-smd-challenges.html#sec-ordination",
+    "href": "3.2-smd-challenges.html#sec-ordination",
+    "title": "Continuous outcomes between two groups",
+    "section": "PCAs — risky business",
+    "text": "PCAs — risky business\nImagine you are conducting a meta-analysis of risk-taking in animals. You are including a variety of behavioral responses: flight initiation distances, vigilance, activity rate, and so on. All of these are considered proxies for risk-taking (and you are of course looking at these both combined and separately because you are a sensitivity-analysis master).\nThen you come upon a real stumper of a study. They used a principal components analysis (PCA) to synthesize the exact same variables you are interested in into a single ordination space. The first axis of this ordination space (PC1) has synthesized all the variables you are interested in into a single variable. This might look like this:\n\n\n\n\n\n\n\n\nThe authors also provide this (though you could extract it from the points in the figure above as well):\n\n\n\n\n\n\n\n\nIs this data usable?\nBefore extracting these means±sd, we recommend looking for raw data or contacting the authors. If these prove to be fruitless, and your dataset is small and hungry, it might be worth using the PC1 scores. However, be certain that the PC axis is synthesizing variables that are otherwise considered legitimate responses in your dataset.\nAnd be careful: you should conduct sensitivity analyses excluding this data to ensure that your results are robust.",
+    "crumbs": [
+      "Extracting effect sizes",
+      "Continuous outcome between two groups"
+    ]
   }
 ]
