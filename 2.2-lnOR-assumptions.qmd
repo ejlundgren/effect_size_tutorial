@@ -47,7 +47,10 @@ rm(list = ls())
 if (!requireNamespace("metafor", quietly = TRUE)) {
     install.packages("metafor")
 }
+
 library("metafor")
+library("dplyr")
+library("tidyr")
 
 ```
 
@@ -61,6 +64,7 @@ Calculating dichotomous effect sizes requires organizing frequency data into a s
 | **Control (e.g., Ambient Conditions)**   | c                                  | d                              | c + d     |
 
 Let's create a running example that we'll use throughout:
+
 ```{r}
 #| eval: true
 #| echo: true
@@ -74,12 +78,18 @@ dat_dichotomous <- data.frame(
   di = c(90, 35)  # Uninfected in control (ambient)
 )
 
+knitr::kable(dat_dichotomous)
 ```
 
+We'll then discuss the two main effect size estimands, log Odds Ratio (**lnOR**) and log Risk Ratio (**lnRR**), used to analyze these types of data. 
+
+:::callout-important
+Note that if the data concerns binary events that occur *multiple times* to the *same* individual (i.e., the number of times a plot burns or the number of times a bird breeds) then you need to use a separate class of effect sizes (incident rate ratios). We describe these at the [end](#sec-other-binary-outcomes). 
+:::
 
 ### log Odds Ratio (OR)
 
-The Odds Ratio (OR) compares the odds of an ecological event happening in a treatment or exposed group to the odds of it happening in a control group. Odds measure the probability of an event happening versus not happening (ranging from 0 to infinity).
+The Odds Ratio (OR) compares the odds of an outcome happening in a treatment or exposed group to the odds of it happening in a control group. Odds measure the probability of an event happening versus not happening (ranging from 0 to infinity), with 1 indicating equal probabilities of the event happening between the control and experimental group. The math of odds ratio is as below. Remember that $a$ and $b$ indicate number of individuals in the experimental group and $c$ and $d$ the number of individuals in the control group.
 
 $$\begin{aligned}
 &OR=\frac{a \times d}{b \times c} \\
@@ -91,16 +101,7 @@ $$\begin{aligned}
 &lnOR = log(OR)\\
 \end{aligned}$${#eq-lnOR}
 
-::: {.callout-note collapse="true"}
-### Click to see how log transformation alters the distribution of the odds ratio
-
-```{r}
-# Blah blah blah
-```
-:::
-
-
-Let's calculate lnOR for our running example data:
+Let's calculate lnOR for our example data:
 
 ```{r}
 # Calculate Log Odds Ratio (ln OR)
@@ -111,7 +112,7 @@ dat_or <- escalc(measure = "OR",
 dat_or
 ```
 
-To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates ($e^{lnOR}$) to convert them back to Odds Ratios. You can also do this to the model derived confidence intervals.
+To interpret odds ratios in plain english, you can exponentiate the effect sizes or model estimates ($e^{lnOR}$) to convert them back to Odds Ratios. You can also do this to the model derived estimates and confidence intervals.
 
 Let's convert and interpret a lnOR effect of 0.18 in plain english. First, we convert it to back to an Odds Ratio:
 
@@ -121,8 +122,7 @@ exp(0.18)
 
 ```
 
-
-Interpret Odds Ratios as follows:
+Interpret Odds Ratios (after exponentiating) as follows:
 
 - **OR = 1:** Equal odds between the comparison groups (e.g., a stressor has no effect on mortality odds).
 
@@ -223,9 +223,9 @@ In plain english, you can write an RR of ~1.50 as:
 
 > The outcome is 50% *more likely* in the exposure group than the control group.
 
-2. You can also report RR directly, which is easiest to interpret than OR. 
+2. You can also report RR directly, which is easier to interpret than OR. 
 
-> The exposure group was 1.50 times as likely to experience the outcome than the control group
+> The exposure group was 1.50 times more likely to experience the outcome than the control group
 
 #### lnRR Sampling Variance
 
@@ -235,8 +235,6 @@ $$Var(\ln RR)=\frac{1}{a}-\frac{1}{a+b}+\frac{1}{c}-\frac{1}{c+d}$$
 
 #### Continuity correction
 lnRR breaks down when $a$ or $c$ equal 0 and thus also requires a continuity correction. For lnRR, you add 0.5 to the affected group (not both groups) and add 1 to n1 or n2, respectively.
-
-
 
 :::callout-important
 #### Defining the Target Event
@@ -249,7 +247,7 @@ You must rigorously define your target "event". It can be easy to accidentally s
 
 - **RR:** The estimate, its precision, and statistical significance all change dramatically---which is a [troubling](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3) mathematical property of RR.
 
-*Best practice:* Define the less common event as the target event to minimize mathematical errors and inter-study heterogeneity. Be sure to change your column names to be informative and to reduce data input errors. We recommend color-coding your columns in Excel to further reduce potential confusion.
+*Best practice:* Define the less common event as the target event to minimize mathematical errors and inter-study heterogeneity. Be sure to change your column names to be informative and to reduce data input errors. We also recommend color-coding your columns in your spreadsheet to reduce potential confusion.
 :::
 
 # When to use lnOR or lnRR
@@ -279,7 +277,6 @@ Peto's method in `escalc` is `measure="PETO"`
 ##### Paired or longitudinal outcome data
 
 Is this provided by the matched pairs contingency tables in `escalc`? If so, can they be compared to unpaired estimators or does the entire meta-analysis need to focus on these alone?
-
 :::
 
 :::callout-note
@@ -324,7 +321,7 @@ Example: Comparing colonisation by a specialist butterfly between isolated habit
 
 The RR (1.75) shows that corridors increase the probability of colonisation by 75% relative to isolated patches. The RD (0.15) expresses the same results as an absolute change: 15 additional patches colonised per 100, or roughly serve corridors required for each additional colonisation (NNM ≈ 6.7). Because an RR of 1.75 would correspond to a much smaller absolute gain at a lower baseline (e.g., 3 additional patches per 100 if only 4% of isolated patches were colonised), the RD is the measure needed to judge whether corridor construction justifies its cost.
 
-### Comparing odds ratio, risk ratio and risk difference
+### Comparing odds ratio and risk ratio
 
 **Shouldn't one be used with rare outcomes and the other with more common outcomes?**
 
@@ -339,6 +336,73 @@ The relationship between these measures can be summarised simply:
 - **OR vs. RR:** Both describe relative effects, but OR is based on odds and RR is based on probability. They are approximately equivalent only when the outcome is rare.
 - **RR vs. RD:** Both use probability, but RR describes proportional change while RD describes the actual change in probability.
 - **OR vs. RD:** OR describes relative change on an odds scale, whereas RD describes absolute change. The same OR can produce very different RDs depending on baseline risk.
+
+
+# Multiple events per individual {#sec-other-binary-outcomes}
+lnOR and lnRR are the most commonly used effect sizes for binary outcomes that can occur only a single time per individual. You can only die once. 
+
+However, what if you're looking at data that reports a binary outcome that can occur multiple times to the same individual? For instance, the number of infections or the number of times a plot burns or the number of times an individual breeds. 
+
+Instead of comparing the number of events per individual to the number of non-events per individual, this data concerns the number of events relative to the number of individuals and the time they were monitored. This data is referred to as event counts or person-time data.
+
+The three main **estimands** are the **log incidence rate ratio**, **incidence rate difference**, and **square-root transformed incidence rate difference**.  
+
+**Which of these effect sizes is best? No indication in `escalc**
+
+These effect sizes are supported in `escalc` with `measure` options of "IRR", "IRD", and "IRSD" respectively. All of these effect sizes require `x1i`, `x2i` (which describe the number of events) and `t1i` and `t2i` which is total 'person' times (total time monitored across individuals). Note that you need to standardize the total time monitored before calculating.
+
+The data for this type of effect size might look like this:
+```{r}
+#| echo: false
+dat <- data.frame(number_events = c(5, 15),
+                  number_individuals_monitored = c(15, 15),
+                  total_years_monitored = c(5, 5),
+                  treatment = c("experiment","control"))
+knitr::kable(dat)
+
+```
+
+First, we calculate total person-time:
+
+```{r}
+
+dat <- dat %>% 
+  mutate(total_person_time = number_individuals_monitored * total_years_monitored)
+knitr::kable(dat)
+
+```
+Note that you need to standardize the time units between studies (e.g., if some studies reported months instead of years).
+
+Then we make our data wide:
+```{r}
+library("tidyr")
+
+dat_wide <- dat %>%
+  select(treatment, number_events, total_person_time) %>%
+  pivot_wider(names_from = "treatment",
+              values_from = c("number_events", "total_person_time"))
+  
+knitr::kable(dat_wide)
+
+```
+
+Then calculate the log incidence rate ratio in `escalc`:
+
+```{r}
+
+out <- escalc(measure = "IRR",
+       data = dat_wide,
+       x1i = number_events_experiment, x2i = number_events_control,
+       t1i = total_person_time_experiment, t2i = total_person_time_control)
+
+knitr::kable(out)
+```
+
+
+These effect sizes are not commonly used in ecology and evolution, so we will not discuss these much more. However, data like this should **not** be analyzed with lnOR or lnRR like other binary outcomes.
+
+
+---
 
 # Outtakes
 

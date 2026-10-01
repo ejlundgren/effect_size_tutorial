@@ -72,23 +72,25 @@ library("crayon")
 
 While most meta-analyses concern the relationships between two variables, often reflecting experimental treatments, sometimes we're interested in summarizing single-group measurements and then analyzing these measurements in relation to moderators.
 
-For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock [@Dhungana2026-qv]. These single-group proportions can be converted to effect sizes (so that they obtain a sampling variance estimation). You can then use metaregression to evaluate the influence of various moderators (e.g., human density, elevation, prey density) on predator depredation rates of livestock.
+For example, imagine you want to understand the drivers of predator attacks on livestock. Various studies have reported predator diets or kill frequencies, allowing you to obtain the proportion of diet that contains livestock [@Dhungana2026-qv]. These single-group proportions can be converted to effect size point estimates and sampling variance.
+
+This allows you to conducted weighted meta-analysis, which will control for differences in the precision of each measurement. Moreover, metaregression can allow you to evaluate the influence of moderators (e.g., human density, elevation, prey density) on these statistics.
 
 :::callout-important
-In some situations, even experimental comparisons may potentially be better to analyze as a single-group effect size. For example, if most studies used >2 experimental groups or if experimental treatments were extremely different than each other. 
+In some situations, even experimental comparisons may potentially be better to analyze as a single-group effect size. For example, if most of your studies used >2 experimental groups or if experimental treatments were extremely different than each other.
 
-Such cases may include separate temperature treatments or measurements at different predator densities.
+Imagine you are doing a meta-analysis on the effects of different temperatures on the growth rates of toads. Most studies use several temperature treatments. Instead of calculating two-group effect sizes between each experimental treatment and control (e.g. with SMD or lnRoM), you could calculate single group effect sizes for each group, and then use the experimental temperature directly as a predictor in a metaregression. 
 
-For example, instead of calculating two-group effect sizes between each experimental treatment and the control (e.g., SMD, lnRoM, or lnOR, lnRR), you could calculate single group effect sizes for each group, and then use the various experimental groups as predictors in a metaregression. 
+**Has anyone actually done that? And if not, why?**
 :::
 
 # Continuous data (means ± SD) {#sec-continuous-data}
 The single-group corollary to SMD and lnRoM consist of continuous data summarized into a mean and measurement of error (e.g. standard deviation, standard error). 
 
-There are two main effect sizes that can be calculated from these types of data: *single-group standardized means* and *log-transformed means*. 
+There are two main effect size [estimands](1-effect-size-overview.qmd) that can be calculated from these types of data: *single-group standardized means* and *log-transformed means*. 
 
 ## Single group means {#sec-standardized-mean}
-The *single group standardized mean* is the mean divided by standard deviation ($\frac{m}{sd}$) to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.
+The *single group standardized mean* is the mean divided by standard deviation ($yi=\frac{m}{sd}$) to create a unit-free index, similar to SMD. As such, this effect size can accept values ≤ 0.
 
 In `escalc` this can be calculated with `measure="SMN"`:
 ```{r}
@@ -105,7 +107,7 @@ escalc(measure = "SMN",
 This, like SMD, can be interpreted as the number of standard deviations the mean is from 0. Given that standard deviation influences the mean, this effect size may be less preferred with overdispersed data (as with SMD). See [here](2.1-SMD-assumptions.qmd#sec-overdispersion), where we discuss how to diagnose overdispersion in your data.
 
 ## Log-transformed mean {#sec-log-mean}
-The *log-transformed mean* ($\log(m)$) is a single group corollary to lnRoM. This effect size cannot accept negative values. [As with lnRoM](2.1-SMD-assumptions.qmd), the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.
+The *log-transformed mean* ($yi=\log(m)$) is a single group corollary to lnRoM. This effect size cannot accept negative values. [As with lnRoM](2.1-SMD-assumptions.qmd), the point estimate for log-transformed mean is not influenced by standard deviation, which is instead accounted for by the sampling variance estimate.
 
 In `escalc`:
 ```{r}
@@ -152,19 +154,19 @@ escalc(measure = "CVLN",
 
 
 # Single group proportions {#sec-proportions}
-The single group measurements so far pertained to normal data (or at least quasi-normal data). However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to [lnOR and lnRR](2.2-lnOR-assumptions.qmd) type effect sizes.
+The single group measurements so far concern continuous data. However, there are also single group effect sizes concerned with the probability of binary outcomes (e.g., binomial data). These are the single group corollaries to [lnOR and lnRR](2.2-lnOR-assumptions.qmd) type effect sizes. As with lnOR and lnRR, these concern outcomes that can only occur **once** to each individual (or plot). See [below](#sec-event-counts) for binary outcomes that can occur multiple times per individual.
 
-These effect sizes take into account the total number of individuals and the number of individuals that experienced the binary outcome (e.g., mortality). There are several options for single group proportional data like this in `escalc` of which it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* are the most numerically stable.
+These effect sizes take into account the total number of individuals and the number of individuals that experienced a binary outcome (e.g., mortality). There are several options for single group proportional data in `escalc`. Of these, it appears that the *log-transformed proportion*, *logit-transformed proportion (log odds)*, and *probit-transformed proportion* are the most numerically stable.
 
 These different versions have different numeric assumptions
 
-**I'm basically taking this from Gemini, which I really don't like doing....because it's so often wrong**
+**I'm basically taking this from Gemini, which I don't like doing....because it's so often wrong**
 
-- *log-transformed proportion*: This effect size appears to be best when proportions are low (e.g., p < 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with `exp(yi)`). Specified with "PLN" in `escalc`. 
+- **log-transformed proportion**: This effect size appears to be best when proportions are low (e.g., p < 0.2) and when values rarely reach 1. Values of 0 require the addition of a small constant. Model estimates produced with this effect size can be exponentiated back to proportion scale for interpretation (e.g., with `exp(yi)`). Specified with "PLN" in `escalc`. 
 
-- *logit-transformed proportion*: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for [lnOR](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation) after exponentiating (`exp(yi)`). Specified with "PLO" in `escalc`.
+- **logit-transformed proportion**: This is the best choice when proportions are between 0.2 and 0.8. Proportions of 0 and 1 require data correction (e.g., adding or subtracting a small constant). This effect size is interpreted as log odds, the same as for [lnOR](2.2-lnOR-assumptions.qmd#sec-lnOR-interpretation) after exponentiating (`exp(yi)`). Specified with "PLO" in `escalc`.
 
-- *probit-transformed proportion*: This effect size is often used for toxicological or dose-response models, like [LC50](3.3-lnOR-challenges.qmd#sec-lc50), and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in `escalc`.
+- **probit-transformed proportion**: This effect size is often used for toxicological or dose-response models, like [LC50](3.3-lnOR-challenges.qmd#sec-lc50), and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in `escalc`.
 
 **I'd love to have this confirmed**
 
@@ -180,11 +182,28 @@ escalc(measure = "PLO",
        xi = 10)
 ```
 
-## Event counts {#sec-event-counts}
-**I'm not sure I understand this versus binary outcomes...It seems to take the same exact inputs except `ti` = total person-times at risk (equivalent to `ni`)...**
+# Event counts {#sec-event-counts}
+The binary outcome data above concerns discrete outcomes that can only occur once per individual. Being dead.
+
+What about binary outcomes that can happen multiple times? Like the number of times a bird breeds or a plot burns?
+
+These types of data are referred to as event counts or person-time data. We briefly discussed two group effect size estimands for these types of data [here](2.2-lnOR-assumptions.qmd#sec-other-binary-outcomes) but there are also single group effect sizes that may be useful.
+
+These effect sizes require the total number of events (`xi` in `escalc`) and the total number of person-times (`ti`). For instance, if 30 people were monitored for a total of 10 years, the person-times would be $30 * 10 = 300$. 
+
+In `escalc`, there is support for several effect sizes to describe single-group event count data. These effect sizes are little used and so we do not know which are preferred. 
+
+- **raw incidence rate:** This effect size is raw and untransformed and thus likely has distributional properties that are unpleasant to model. It is specified by `measure="IR"` in `escalc`.
+
+- **log-transformed incidence rate:** This effect size is log transformed and so is centered on 0 and ranges from $-\infty$ to $\infty$. It is specified by `measure="IRLN"` and we believe is probably the best option for meta-analysis.
+
+- **square root transformed incidence rate:** This is a square-root transformed incidence rate. It is specified with `measure="IRS"`. We're not sure when or if you should use this.
+
+- **Freeman-Tukey transformed incidence rate:** This is a mystery to us as well. Maybe it's good maybe it's not. It is specified with `measure="IRFT"`. 
+
+***Of these, we believe that XYZ are the most appropriate for analysis in meta-analysis models.????***
+
+With data types where there are several alternative estimands (e.g., the 4 above), we recommend calculating all 4, visually evaluating their numeric distributions (e.g., how normally distributed are they) and then fitting separate models on the different candidate effect sizes. If the overall results are similar, hurray! If not, think about why and report everything. 
 
 
-## Time to event???? 
-
-**GAH**
 
