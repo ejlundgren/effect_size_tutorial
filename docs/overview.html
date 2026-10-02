@@ -615,10 +615,11 @@ g &amp;= J*d.
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>If it’s been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand—the population mean height and its dispersion (i.e., standard deviation). However, you’re unlikely to measure everyone’s height. You therefore measure the height of as many individuals as you can and calculate a <em>sample mean</em> which estimates your <em>estimand</em>—the population mean. If your sample size is low or non-random your sample mean is likely a <strong>biased</strong> estimate of the true population mean height. Bias is thus the difference between your estimate and the truth.</p>
-<p>The bias of a meta-analytic effect size estimator can be calculated in 4 steps:</p>
+<p>If it’s been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand—the <em>population mean</em> height and its dispersion (i.e., standard deviation).</p>
+<p>However, you’re unlikely to measure everyone’s height. You therefore sample the population and calculate a <em>sample mean</em>. This sample mean is an estimate of your <em>estimand</em>—the <em>population mean</em>. If your sample size is low or if your measurements are non-random your sample mean is likely a <strong>biased</strong> estimate of the true population mean height. Bias is the difference between your estimate and the truth.</p>
+<p>The bias of a meta-analytic effect size estimator can be calculated in 5 steps:</p>
 <ol type="1">
-<li>Calculate the “true” effect size with the estimand formula based on your “true” values (i.e., group means, standard deviations, and sample size). The estimand formula in <code>escalc</code> for SMD can be accessed with <code>correct=FALSE</code>. This is your <strong>estimand:</strong>
+<li>Calculate the “true” effect size with the estimand formula based on your “true” values (i.e., group means, standard deviations, and sample size). The estimand (definition) formula in <code>escalc</code> for SMD can be accessed with <code>correct=FALSE</code>. This is your <strong>estimand:</strong>
 </li>
 </ol>
 <div class="cell">
@@ -642,13 +643,13 @@ g &amp;= J*d.
 </div>
 </div>
 <ol start="2" type="1">
-<li>Draw data from the appropriate data generating distribution (e.g., <code>rnorm</code> for normally distributed data) with these same “true” values. Do this 1000 times.</li>
+<li>Draw data from the appropriate data generating process (e.g., <code>rnorm</code> for normally distributed data) with these same “true” values. Do this 1,000 times. These are your populations:</li>
 </ol>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">{</span></span>
-<span>  <span class="co"># group 1 simulated data:</span></span>
+<span>  </span>
 <span>  <span class="va">res</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>group_1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">true_n1</span>, <span class="co"># group 1 simulated data</span></span>
 <span>                                     mean <span class="op">=</span> <span class="va">true_m1</span>,</span>
 <span>                                     sd <span class="op">=</span> <span class="va">true_sd1</span><span class="op">)</span>,</span>
@@ -661,17 +662,17 @@ g &amp;= J*d.
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    group_1  group_2 iter
-1  7.313624 18.36361    1
-2  7.212884 12.97530    1
-3 12.347138 12.52064    1
-4 10.660284 11.46118    1
-5  8.721106 13.14753    1
-6 12.543739 17.07088    1</code></pre>
+<pre><code>    group_1   group_2 iter
+1 10.999460  9.729841    1
+2  7.678478 12.981672    1
+3  7.524269 14.216237    1
+4 11.426461 12.796406    1
+5  6.692921 13.598809    1
+6 14.914582 13.066562    1</code></pre>
 </div>
 </div>
 <ol start="3" type="1">
-<li>Summarize this randomly drawn distribution into means and standard deviations per iteration and calculate your effect size. These are your <strong>estimates</strong>. We’ll calculate both Cohen’s d (the definition formula) and Hedges’ g (the small sample size bias corrected estimator). After calculating them for each simulated dataset, you then take the mean estimate. Since calculating bias for sampling variance is a bit more complex, we’ll just focus on the point estimate here:</li>
+<li>Summarize these randomly drawn populations into means and standard deviations per iteration and calculate your effect size. We’ll calculate both Cohen’s d (the definition formula) and Hedges’ g (the small sample size bias corrected estimator). These effect sizes are your <strong>estimates</strong>.</li>
 </ol>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">res_summarized</span> <span class="op">&lt;-</span> <span class="va">res</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
@@ -697,9 +698,14 @@ g &amp;= J*d.
 <span>                   n1 <span class="op">=</span> <span class="va">n1</span>, n2 <span class="op">=</span> <span class="va">n2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>estimator <span class="op">=</span> <span class="st">"Hedges' g"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">estimate_d</span>, <span class="va">estimate_g</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">mean_point_estimate</span> <span class="op">&lt;-</span> <span class="va">estimates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="va">estimates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">estimate_d</span>, <span class="va">estimate_g</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol start="4" type="1">
+<li>Now take the average of your estimates. Note that calculating bias for sampling variance is a bit more complex, so we’ll just focus on the point estimate here. Subtract the estimand from the <em>mean</em> of the estimates. This your <strong>bias:</strong>
+</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mean_point_estimate</span> <span class="op">&lt;-</span> <span class="va">estimates</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">estimator</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarize</a></span><span class="op">(</span>yi_mean_estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">yi</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -708,26 +714,20 @@ g &amp;= J*d.
 <pre><code># A tibble: 2 × 2
   estimator yi_mean_estimate
   &lt;chr&gt;                &lt;dbl&gt;
-1 Cohen's d            -1.84
-2 Hedges' g            -1.79</code></pre>
+1 Cohen's d            -1.80
+2 Hedges' g            -1.76</code></pre>
 </div>
-</div>
-<ol start="4" type="1">
-<li>Subtract the estimand from the <em>mean</em> of the estimates. This your <strong>bias.</strong>
-</li>
-</ol>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bias</span> <span class="op">&lt;-</span> <span class="va">mean_point_estimate</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bias</span> <span class="op">&lt;-</span> <span class="va">mean_point_estimate</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_cols.html">bind_cols</a></span><span class="op">(</span>estimand <span class="op">=</span> <span class="va">estimand</span><span class="op">$</span><span class="va">yi</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>bias <span class="op">=</span> <span class="va">estimand</span> <span class="op">-</span> <span class="va">yi_mean_estimate</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">bias</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 4
-  estimator yi_mean_estimate estimand   bias
-  &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
-1 Cohen's d            -1.84    -1.77 0.0721
-2 Hedges' g            -1.79    -1.77 0.0224</code></pre>
+  estimator yi_mean_estimate estimand    bias
+  &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+1 Cohen's d            -1.80    -1.77  0.0379
+2 Hedges' g            -1.76    -1.77 -0.0109</code></pre>
 </div>
 </div>
 <p>As you can see, bias is considerably lower for Hedges’ g (~0.009) than for Cohen’s d (~0.06).</p>
@@ -739,7 +739,7 @@ g &amp;= J*d.
 <p>There are also slightly different estimands within the same effect size category that are designed for different data types—but are not comparable to other estimands.</p>
 <p>In general, <code>escalc</code> uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, <code>escalc</code> uses Hedges’ g. You can choose to use the first-order definition formula estimates by setting the parameter <code>corrected</code> to <code>FALSE</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The default, corrected estimate (Hedges g):</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The default, corrected estimate (Hedges g):</span></span>
 <span><span class="fu"><a href="https://wviechtb.github.io/metafor/reference/escalc.html">escalc</a></span><span class="op">(</span>m1i <span class="op">=</span> <span class="fl">10</span>, m2i <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">1.5</span>,</span>
 <span>       n1i <span class="op">=</span> <span class="fl">15</span>, n2i <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -749,7 +749,7 @@ g &amp;= J*d.
       yi     vi 
 1 2.5945 0.2455 </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The uncorrected estimate (Cohen's d):</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># The uncorrected estimate (Cohen's d):</span></span>
 <span><span class="fu"><a href="https://wviechtb.github.io/metafor/reference/escalc.html">escalc</a></span><span class="op">(</span>m1i <span class="op">=</span> <span class="fl">10</span>, m2i <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">1.5</span>,</span>
 <span>       n1i <span class="op">=</span> <span class="fl">15</span>, n2i <span class="op">=</span> <span class="fl">15</span>,</span>
@@ -775,7 +775,7 @@ g &amp;= J*d.
 <div class="callout-body-container callout-body">
 <p>Our function, <code>eff_this</code>, is similar to <code>escalc</code> but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set <code>default_formulas=FALSE</code>—and it returns the exact formulas used. Run the function to see the potential supported formulas and their inputs.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/metatools/man/eff_size.html">eff_size</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/metatools/man/eff_size.html">eff_size</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Effect type name must be specified with 'effect_type' argument and provide necessary variables (named in arguments to function call) to match formula equations.
@@ -804,11 +804,11 @@ Returning effect size names &amp; required variables for reference.</code></pre>
 </div>
 <p>You can also look at the documentation:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">?</span><span class="va">eff_size</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">?</span><span class="va">eff_size</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now let’s calculate SMD:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/metatools/man/eff_size.html">eff_size</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fl">10</span>, x2 <span class="op">=</span> <span class="fl">6</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/metatools/man/eff_size.html">eff_size</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fl">10</span>, x2 <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>       sd1 <span class="op">=</span> <span class="fl">1.5</span>, sd2 <span class="op">=</span> <span class="fl">1.5</span>,</span>
 <span>       n1 <span class="op">=</span> <span class="fl">15</span>, n2 <span class="op">=</span> <span class="fl">15</span>,</span>
 <span>       default_formulas <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -1347,485 +1347,489 @@ Wooster, E. I. F., E. J. Lundgren, D. G. Nimmo, M. A. Cowan, E. C. Fricke, A. S.
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A brief introduction to effect sizes and sampling variance"</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "With which estimator shall I estimate my estimand?"</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "overview.html"</span></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
-<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
-<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
-<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
-<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
-<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
-<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
-<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
-<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
-<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
-<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
-<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
-<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
-<span id="cb26-44"><a href="#cb26-44" aria-hidden="true" tabindex="-1"></a><span class="an">csl:</span><span class="co"> ecology.csl</span></span>
-<span id="cb26-45"><a href="#cb26-45" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb26-46"><a href="#cb26-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-49"><a href="#cb26-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-50"><a href="#cb26-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb26-51"><a href="#cb26-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-52"><a href="#cb26-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
-<span id="cb26-53"><a href="#cb26-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-54"><a href="#cb26-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
-<span id="cb26-55"><a href="#cb26-55" aria-hidden="true" tabindex="-1"></a><span class="co"># library("glossary") </span></span>
-<span id="cb26-56"><a href="#cb26-56" aria-hidden="true" tabindex="-1"></a><span class="co"># glossary_path("glossary.yml")</span></span>
-<span id="cb26-57"><a href="#cb26-57" aria-hidden="true" tabindex="-1"></a><span class="co"># glossary_style("purple", "underline")</span></span>
-<span id="cb26-58"><a href="#cb26-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-59"><a href="#cb26-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-60"><a href="#cb26-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-61"><a href="#cb26-61" aria-hidden="true" tabindex="-1"></a>**I tried adding glossary popup definitions...It works inconsistently....It'll be integrated eventually though**</span>
-<span id="cb26-62"><a href="#cb26-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-63"><a href="#cb26-63" aria-hidden="true" tabindex="-1"></a>Meta-analytic effect sizes are statistics that summarize statistical distributions. Meta-analytic effect sizes allow researchers to synthesize data across different studies to answer big questions and to generate overall synthetic estimates. Effect sizes are no trivial thing: they are tiny models, with their own assumptions, rules of interpretation, and numeric challenges.</span>
-<span id="cb26-64"><a href="#cb26-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-65"><a href="#cb26-65" aria-hidden="true" tabindex="-1"></a>Meta-analytic effect sizes have two parts: the **point estimate** and **sampling variance**. Point estimates are the target of interest. For example, the difference in cancer rates between two treatment groups, the proportional change in average body size between two treatments, the relationship between two continuous variables, or even just a description of a single overall condition. </span>
-<span id="cb26-66"><a href="#cb26-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-67"><a href="#cb26-67" aria-hidden="true" tabindex="-1"></a>Sampling variance is the associated uncertainty around these estimates, based on sample size and/or standard deviation. Both point estimates and sampling variance are essential to fit meta-analytic models because sampling variance is used as a weight. In this way, effect sizes with *lower* sampling variance have higher weight in meta-analytic models. </span>
-<span id="cb26-68"><a href="#cb26-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a>This relationship is key to meta-analysis and means that instead of simply tallying the number of studies in-support or not of a given question, we can produce a weighted average---and we can conduct metaregression to ask how other variables influence our question.</span>
-<span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
-<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Random effect meta-analytic models reduce the influence of sampling variance</span></span>
-<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a>In a common-effects meta-analytic model (which we don't recommend in ecology and evolution), an effect size's weight is one over its sampling variance ($1/vi$). In the random-effects and multilevel models you will actually fit, weight is one over the sampling variance *plus* the between-study variance $\tau^2$. That extra term acts as a floor on everyone's uncertainty and compresses the differences between studies considerably: with a moderate $\tau^2$ of $0.1$, a twentyfold gap in sampling variance shrinks to roughly fivefold. Large studies still dominate, but far less than the raw sample sizes suggest.</span>
-<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a>**Sometimes this feels too soon. I think there are some questions about audience---how much do they already know when they read this? Perhaps we need a section here that's more generally instructive**</span>
-<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-78"><a href="#cb26-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-79"><a href="#cb26-79" aria-hidden="true" tabindex="-1"></a><span class="fu"># Effect size types {#sec-effect-size-types}</span></span>
-<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a>We commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (i.e., means) of a response variable between two groups (i.e., a categorical variable) or in relationship to a continuous predictor variable:</span>
-<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a>1)  standardized mean difference (SMD) and log-transformed ratio of means (lnRoM)</span>
-<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a>2)  log odds ratio (lnOR) and log risk ratio (lnRR)</span>
-<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a>3)  correlation coefficient (Zr)</span>
-<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
-<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a><span class="fu">### Standardized and unstandardized effect sizes</span></span>
-<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a>The effect sizes in this tutorial in this tutorial are **standardized**, which allows comparison across different units of measurement. However, in some disciplines, it is customary to use unstandardized effect sizes (such as mean difference), because standardized research protocols ensure that all studies use the same scale of measurement.</span>
-<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.</span>
-<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-97"><a href="#cb26-97" aria-hidden="true" tabindex="-1"></a>**All schematic figures will be redone and made pretty...And we all have to make a decision about WHAT figures to have**</span>
-<span id="cb26-98"><a href="#cb26-98" aria-hidden="true" tabindex="-1"></a><span class="al">![Effect size types](figures/flowcharts_diagrams/effect-size-types.jpg)</span> </span>
-<span id="cb26-99"><a href="#cb26-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-100"><a href="#cb26-100" aria-hidden="true" tabindex="-1"></a>When the response variable is continuous and compared between two groups, for instance comparing between a control and experimental treatment, then the effect sizes you can use are Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**, also referred to as the log response ratio or lnRR). These effect sizes differ in their intention, interpretability, and mathematical assumptions, which we cover <span class="co">[</span><span class="ot">here.</span><span class="co">](2.1-SMD-assumptions.qmd)</span>. </span>
-<span id="cb26-101"><a href="#cb26-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-102"><a href="#cb26-102" aria-hidden="true" tabindex="-1"></a>When the response is a binary outcome, e.g., the number or percent that lived or died, compared between two groups, we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). This is the type of data you may encounter in contingency tables and would, in an introductory stats class, learn to analyze with a Chi-square goodness of fit test.</span>
-<span id="cb26-103"><a href="#cb26-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-104"><a href="#cb26-104" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb26-105"><a href="#cb26-105" aria-hidden="true" tabindex="-1"></a>Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). For that reason we use lnRoM throughout this tutorial to refer to log-transformed ratio of means and lnRR to refer to log risk ratio. </span>
-<span id="cb26-106"><a href="#cb26-106" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-107"><a href="#cb26-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-108"><a href="#cb26-108" aria-hidden="true" tabindex="-1"></a>Correlations between two continuous variables are analyzed as Fisher's r-t-z-transformed correlation coefficients (**Zr**). These generally involve continuous predictor and response variables. However, you can also calculate correlation coefficients for discrete predictors and discrete responses, which may be necessary in some peculiar cases. This is the workhorse for meta-analyses based on observational data.</span>
-<span id="cb26-109"><a href="#cb26-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-110"><a href="#cb26-110" aria-hidden="true" tabindex="-1"></a>Finally, it is also possible to convert between these main effect size types, which we discuss <span class="co">[</span><span class="ot">here</span><span class="co">](4-converting-effect-sizes.qmd)</span>. This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data <span class="co">[</span><span class="ot">@borenstein2021</span><span class="co">]</span> or splitting your data into many separate models, each of which lack statistical power. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the <span class="co">[</span><span class="ot">*unit of replication*</span><span class="co">](3.1-universal-challenges.qmd#sec-sample-size)</span>.</span>
-<span id="cb26-111"><a href="#cb26-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-112"><a href="#cb26-112" aria-hidden="true" tabindex="-1"></a>Finally, we note that there are other effect size types that may be complimentary or alternatives to the effect sizes we describe above. These include effect sizes for estimating differences in variability between two groups <span class="co">[</span><span class="ot">(lnCVR)</span><span class="co">](5.1-variability-between-groups.qmd)</span> <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>, differences in magnitude between two groups regardless of direction <span class="co">[</span><span class="ot">(lnM)</span><span class="co">](5.2-differences-in-magnitude.qmd)</span> <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>, and effect sizes for <span class="co">[</span><span class="ot">single-group descriptive statistics</span><span class="co">](5.3-single-group-effect-sizes.qmd)</span>. </span>
-<span id="cb26-113"><a href="#cb26-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-114"><a href="#cb26-114" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb26-115"><a href="#cb26-115" aria-hidden="true" tabindex="-1"></a><span class="fu">### Effect size types are not always clearcut {#sec-effect-size-options}</span></span>
-<span id="cb26-116"><a href="#cb26-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-117"><a href="#cb26-117" aria-hidden="true" tabindex="-1"></a>The choice of what effect size to use may seem very simple. For example, if you are analyzing studies that report a continuous response variable between two groups, then SMD/lnRoM effect sizes seem like the obvious choice. </span>
-<span id="cb26-118"><a href="#cb26-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-119"><a href="#cb26-119" aria-hidden="true" tabindex="-1"></a>However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey <span class="co">[</span><span class="ot">like in [@Wallach2025-ta]</span><span class="co">]</span>. Many studies present results that look like SMD-type data: comparing mean±SD of prey abundance in areas with high predator abundance to areas with low predator abundance, due to a culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.</span>
-<span id="cb26-120"><a href="#cb26-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-121"><a href="#cb26-121" aria-hidden="true" tabindex="-1"></a>If you use an SMD or lnRoM-type effect size, then you should treat the *difference* in density between treatments as a moderator in your meta-analytic models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators---because each would then need an interaction to this density variable.</span>
-<span id="cb26-122"><a href="#cb26-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-123"><a href="#cb26-123" aria-hidden="true" tabindex="-1"></a>An alternative is to calculate <span class="co">[</span><span class="ot">Zr</span><span class="co">](2.3-Zr-assumptions.qmd)</span> correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. </span>
-<span id="cb26-124"><a href="#cb26-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-125"><a href="#cb26-125" aria-hidden="true" tabindex="-1"></a>In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used &gt;2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or pesticide dosages). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the experimental groups explicitly (e.g., the temperature of each treatment) as predictors in your meta-analytic model. </span>
-<span id="cb26-126"><a href="#cb26-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-127"><a href="#cb26-127" aria-hidden="true" tabindex="-1"></a>**Are there statistical reasons not to? E.g., inflating sample size?**</span>
-<span id="cb26-128"><a href="#cb26-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-129"><a href="#cb26-129" aria-hidden="true" tabindex="-1"></a>This applies both to continuous data summarized by mean±sd as well as proportions (binary outcome data). We describe single-group effect sizes for means and proportions in the appendix, <span class="co">[</span><span class="ot">here</span><span class="co">](5.3-single-group-effect-sizes.qmd)</span>.</span>
-<span id="cb26-130"><a href="#cb26-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-131"><a href="#cb26-131" aria-hidden="true" tabindex="-1"></a>Finally, it is also possible to formulate custom effect sizes that may help simplify these situations by explicitly including sources of nuisance heterogeneity in your effect size calculation. See our section <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-custom-effect-sizes)</span> and @Noble2022-pl for discussion about the potential to formulate custom effect sizes.</span>
-<span id="cb26-132"><a href="#cb26-132" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-133"><a href="#cb26-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-134"><a href="#cb26-134" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to calculate effect sizes &amp; sampling variance {#sec-calculating-effect-sizes}</span></span>
-<span id="cb26-135"><a href="#cb26-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-136"><a href="#cb26-136" aria-hidden="true" tabindex="-1"></a>The dominant function used to calculate effect sizes and sampling variance in <span class="in">`R`</span> is the function <span class="in">`escalc`</span> in the package <span class="in">`metafor`</span> <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span>. <span class="in">`escalc`</span> takes effect-size-specific summary statistics and a variable specifying the effect size type (specified with the <span class="in">`measure`</span> argument).</span>
-<span id="cb26-137"><a href="#cb26-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a>At certain points we will also use our own custom function, <span class="in">`eff_size`</span> **(currently called eff_size but eff_this could be funny...)** which can do most of what <span class="in">`escalc`</span> can do but also a few niche things that <span class="in">`escalc`</span> currently doesn't support.</span>
-<span id="cb26-139"><a href="#cb26-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-140"><a href="#cb26-140" aria-hidden="true" tabindex="-1"></a>To start, we'll clean the environment and we will install a custom package, <span class="in">`metatools`</span>, that we developed to go alongside this tutorial. <span class="in">`metatools`</span> contains the function <span class="in">`eff_size`</span> and a function for converting between effect sizes (<span class="in">`convert_effect_sizes`</span>, see our tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](4-converting-effect-sizes.qmd)</span>). </span>
-<span id="cb26-141"><a href="#cb26-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-142"><a href="#cb26-142" aria-hidden="true" tabindex="-1"></a>We'll install <span class="in">`metatools`</span> with <span class="in">`pak::pak`</span> and we'll load <span class="in">`metafor`</span>, the workhorse of meta-analysis in R:</span>
-<span id="cb26-143"><a href="#cb26-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-146"><a href="#cb26-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-147"><a href="#cb26-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-148"><a href="#cb26-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-149"><a href="#cb26-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-150"><a href="#cb26-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-151"><a href="#cb26-151" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
-<span id="cb26-152"><a href="#cb26-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-153"><a href="#cb26-153" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"metatools"</span>)) {</span>
-<span id="cb26-154"><a href="#cb26-154" aria-hidden="true" tabindex="-1"></a>  pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"ejlundgren/metatools"</span>)</span>
-<span id="cb26-155"><a href="#cb26-155" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb26-156"><a href="#cb26-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-157"><a href="#cb26-157" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metatools"</span>)</span>
-<span id="cb26-158"><a href="#cb26-158" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
-<span id="cb26-159"><a href="#cb26-159" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-160"><a href="#cb26-160" aria-hidden="true" tabindex="-1"></a><span class="co"># Also load dplyr for some data stuff down the line:</span></span>
-<span id="cb26-161"><a href="#cb26-161" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
-<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-164"><a href="#cb26-164" aria-hidden="true" tabindex="-1"></a>Calculating an effect size with either of these functions is easy. Let's demonstrate with a study that compared the mean±SD between two groups. With <span class="in">`escalc`</span>, <span class="in">`m1i`</span> and <span class="in">`m2i`</span> are the means of group 1 and 2, <span class="in">`sd1i`</span> and <span class="in">`sd2i`</span> are the standard deviations (not standard errors!) of groups 1 and 2, and <span class="in">`n1i`</span> and <span class="in">`n2i`</span> are the sample sizes. The effect size type is specified with the <span class="in">`measure`</span> argument. Here we'll calculate Standardized Mean Difference (SMD):</span>
-<span id="cb26-165"><a href="#cb26-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">m2i =</span> <span class="dv">10</span>, </span>
-<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.7</span>,</span>
-<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">17</span>)</span>
-<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a>The effect size point estimate is returned as <span class="in">`yi`</span> and the sampling variance as <span class="in">`vi`</span>.</span>
-<span id="cb26-180"><a href="#cb26-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-181"><a href="#cb26-181" aria-hidden="true" tabindex="-1"></a>In <span class="in">`eff_size`</span>, this is similar except that the argument names are slightly different (<span class="in">`x`</span> instead of <span class="in">`m`</span> for the means and no <span class="in">`i`</span>) **(I can change it to m1 or m2)**</span>
-<span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-188"><a href="#cb26-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-189"><a href="#cb26-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-191"><a href="#cb26-191" aria-hidden="true" tabindex="-1"></a>         <span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
-<span id="cb26-192"><a href="#cb26-192" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.7</span>,</span>
-<span id="cb26-193"><a href="#cb26-193" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">17</span>)</span>
-<span id="cb26-194"><a href="#cb26-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-195"><a href="#cb26-195" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a><span class="in">`eff_size`</span> is useful in some cases. Primarily because <span class="in">`eff_size`</span> has built in functionality to calculate <span class="co">[</span><span class="ot">**lnM**</span><span class="co">](5.2-differences-in-magnitude.qmd)</span> with a fancy bootstrapping method, which we'll discuss later. </span>
-<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-198"><a href="#cb26-198" aria-hidden="true" tabindex="-1"></a><span class="in">`eff_size`</span> also, by switching <span class="in">`default_formulas = FALSE`</span>, returns multiple estimators of the same effect size. </span>
-<span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a>Now, you may be thinking, what the hell is an estimator? Why are there multiple estimators for the same effect size? </span>
-<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a>Let us explain. We'll start by talking about **estimands**, which is what estimators are trying to estimate. </span>
-<span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estimands, estimators, and estimates {#sec-estimates-and-estimators}</span></span>
-<span id="cb26-205"><a href="#cb26-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-206"><a href="#cb26-206" aria-hidden="true" tabindex="-1"></a>**Maybe this should move to top of page?**</span>
-<span id="cb26-207"><a href="#cb26-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-208"><a href="#cb26-208" aria-hidden="true" tabindex="-1"></a>The word **estimand** looks like a typo. But it isn't. An **estimand** is the target of a study: the precise thing we want to know. For example, are patients more likely to survive when given a drug relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? </span>
-<span id="cb26-209"><a href="#cb26-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-210"><a href="#cb26-210" aria-hidden="true" tabindex="-1"></a>These are all estimands: the theoretical target. Primary studies and meta-analytic studies are all aiming to **estimate** an **estimand**.</span>
-<span id="cb26-211"><a href="#cb26-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a>There are 5 attributes to estimands:</span>
-<span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>The target population: who or what does the question apply to? </span>
-<span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Which patients are we trialling the drug on? Are we evaluating logging in all forests or in boreal forests? </span></span>
-<span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-218"><a href="#cb26-218" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What is the treatment that we're interested in? </span>
-<span id="cb26-219"><a href="#cb26-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-220"><a href="#cb26-220" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; What drug and at what dosage? How is "selective" logging defined relative to "clearcutting"?</span></span>
-<span id="cb26-221"><a href="#cb26-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-222"><a href="#cb26-222" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What endpoint are we interested in? </span>
-<span id="cb26-223"><a href="#cb26-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Survivorship, species richness, biomass, soil carbon, and so on</span></span>
-<span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-226"><a href="#cb26-226" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>How does our estimand deal with unexpected events?</span>
-<span id="cb26-227"><a href="#cb26-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-228"><a href="#cb26-228" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; How does the estimand handle death from other causes in our patients or wildfire or flooding in our logging experiment?</span></span>
-<span id="cb26-229"><a href="#cb26-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-230"><a href="#cb26-230" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>How do we summarize the effect of the treatment?</span>
-<span id="cb26-231"><a href="#cb26-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-232"><a href="#cb26-232" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Is the outcome of interest odds of survival of individuals between the placebo and control group? The ratio of species richness between logging treatments? Or the difference in richness between logging treatments?</span></span>
-<span id="cb26-233"><a href="#cb26-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-234"><a href="#cb26-234" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
-<span id="cb26-235"><a href="#cb26-235" aria-hidden="true" tabindex="-1"></a>You might note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis <span class="co">[</span><span class="ot">@Morgan2018-za</span><span class="co">]</span>. </span>
-<span id="cb26-236"><a href="#cb26-236" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-237"><a href="#cb26-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-238"><a href="#cb26-238" aria-hidden="true" tabindex="-1"></a>These questions are essential to consider when designing a meta-analysis and choosing the effect size to use. </span>
-<span id="cb26-239"><a href="#cb26-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-240"><a href="#cb26-240" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
-<span id="cb26-241"><a href="#cb26-241" aria-hidden="true" tabindex="-1"></a>One issue with meta-analysis is that we are often forced to include studies that had different primary study-level **estimands**. In these cases, the meta-analytic model may be making an overall effect for studies that are concerned with fundamentally different things. </span>
-<span id="cb26-242"><a href="#cb26-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-243"><a href="#cb26-243" aria-hidden="true" tabindex="-1"></a>This is especially true if you're including both experimental and observational (or quasi-experimental) data. Experimental data generally concerns the same target population as the control population. However, observational or quasi-experimental data are forced to compare separate populations. **CITE BECKS ONCE PREPRINTED**</span>
-<span id="cb26-244"><a href="#cb26-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-245"><a href="#cb26-245" aria-hidden="true" tabindex="-1"></a>This is not to say that conducting a meta-analysis is not a worthy use of time---it is still the best way to synthesize knowledge---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.</span>
-<span id="cb26-246"><a href="#cb26-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-247"><a href="#cb26-247" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-248"><a href="#cb26-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-249"><a href="#cb26-249" aria-hidden="true" tabindex="-1"></a>Estimands also have a mathematical dimension: the *true* mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the *difference* in a continuous outcome between two treatment groups. It is defined as:</span>
-<span id="cb26-250"><a href="#cb26-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-251"><a href="#cb26-251" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-252"><a href="#cb26-252" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-253"><a href="#cb26-253" aria-hidden="true" tabindex="-1"></a>d = \frac{m_1 - m_2}{sd_{pooled}}</span>
-<span id="cb26-254"><a href="#cb26-254" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-255"><a href="#cb26-255" aria-hidden="true" tabindex="-1"></a>$${#eq-cohens-d}</span>
-<span id="cb26-256"><a href="#cb26-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-257"><a href="#cb26-257" aria-hidden="true" tabindex="-1"></a>With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled}$ as the pooled standard deviation of those two groups. This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).</span>
-<span id="cb26-258"><a href="#cb26-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-259"><a href="#cb26-259" aria-hidden="true" tabindex="-1"></a>However, this definition formula can produce {{&lt; glossary bias display=biased &gt;}} results when sample size is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. </span>
-<span id="cb26-260"><a href="#cb26-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-261"><a href="#cb26-261" aria-hidden="true" tabindex="-1"></a>For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. </span>
-<span id="cb26-262"><a href="#cb26-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-263"><a href="#cb26-263" aria-hidden="true" tabindex="-1"></a>Hedges' g multiples Cohen's d by a correction factor ($J$) to the math above to account for small sample sizes. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.</span>
-<span id="cb26-264"><a href="#cb26-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-265"><a href="#cb26-265" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-266"><a href="#cb26-266" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-267"><a href="#cb26-267" aria-hidden="true" tabindex="-1"></a>df &amp;= n_1+n_2-2,<span class="sc">\\</span></span>
-<span id="cb26-268"><a href="#cb26-268" aria-hidden="true" tabindex="-1"></a>J &amp;\approx 1-\frac{3}{4df-1},<span class="sc">\\</span></span>
-<span id="cb26-269"><a href="#cb26-269" aria-hidden="true" tabindex="-1"></a>g &amp;= J*d.</span>
-<span id="cb26-270"><a href="#cb26-270" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-271"><a href="#cb26-271" aria-hidden="true" tabindex="-1"></a>$${#eq-hedges-g}</span>
-<span id="cb26-272"><a href="#cb26-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-273"><a href="#cb26-273" aria-hidden="true" tabindex="-1"></a>Both Cohen's d and Hedges' g are different estimators of the **estimand** of SMD---a mathematical description of the difference between two groups, standardized by shared standard deviation. </span>
-<span id="cb26-274"><a href="#cb26-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-275"><a href="#cb26-275" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-276"><a href="#cb26-276" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true"}</span>
-<span id="cb26-277"><a href="#cb26-277" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Click for explanation of bias </span></span>
-<span id="cb26-278"><a href="#cb26-278" aria-hidden="true" tabindex="-1"></a>If it's been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand---the population mean height and its dispersion (i.e., standard deviation). However, you're unlikely to measure everyone's height. You therefore measure the height of as many individuals as you can and calculate a *sample mean* which estimates your *estimand*---the population mean. If your sample size is low or non-random your sample mean is likely a **biased** estimate of the true population mean height. Bias is thus the difference between your estimate and the truth. </span>
-<span id="cb26-279"><a href="#cb26-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-280"><a href="#cb26-280" aria-hidden="true" tabindex="-1"></a>The bias of a meta-analytic effect size estimator can be calculated in 4 steps:</span>
-<span id="cb26-281"><a href="#cb26-281" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-282"><a href="#cb26-282" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Calculate the "true" effect size with the estimand formula based on your "true" values (i.e., group means, standard deviations, and sample size). The estimand formula in <span class="in">`escalc`</span> for SMD can be accessed with <span class="in">`correct=FALSE`</span>. This is your **estimand:**</span>
-<span id="cb26-283"><a href="#cb26-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-286"><a href="#cb26-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-287"><a href="#cb26-287" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-288"><a href="#cb26-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-289"><a href="#cb26-289" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-290"><a href="#cb26-290" aria-hidden="true" tabindex="-1"></a>true_m1 <span class="ot">&lt;-</span> <span class="dv">10</span></span>
-<span id="cb26-291"><a href="#cb26-291" aria-hidden="true" tabindex="-1"></a>true_sd1 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
-<span id="cb26-292"><a href="#cb26-292" aria-hidden="true" tabindex="-1"></a>true_m2 <span class="ot">&lt;-</span> <span class="dv">14</span></span>
-<span id="cb26-293"><a href="#cb26-293" aria-hidden="true" tabindex="-1"></a>true_sd2 <span class="ot">&lt;-</span> <span class="fl">2.5</span></span>
-<span id="cb26-294"><a href="#cb26-294" aria-hidden="true" tabindex="-1"></a>true_n1 <span class="ot">&lt;-</span> <span class="dv">15</span></span>
-<span id="cb26-295"><a href="#cb26-295" aria-hidden="true" tabindex="-1"></a>true_n2 <span class="ot">&lt;-</span> <span class="dv">15</span></span>
-<span id="cb26-296"><a href="#cb26-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-297"><a href="#cb26-297" aria-hidden="true" tabindex="-1"></a>estimand <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-298"><a href="#cb26-298" aria-hidden="true" tabindex="-1"></a>                   <span class="at">correct =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb26-299"><a href="#cb26-299" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> true_m1, <span class="at">m2i =</span> true_m2,</span>
-<span id="cb26-300"><a href="#cb26-300" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> true_sd1, <span class="at">sd2i =</span> true_sd2,</span>
-<span id="cb26-301"><a href="#cb26-301" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1 =</span> true_n1, <span class="at">n2 =</span> true_n2)</span>
-<span id="cb26-302"><a href="#cb26-302" aria-hidden="true" tabindex="-1"></a>estimand</span>
-<span id="cb26-303"><a href="#cb26-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-304"><a href="#cb26-304" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-305"><a href="#cb26-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-306"><a href="#cb26-306" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Draw data from the appropriate data generating distribution (e.g., <span class="in">`rnorm`</span> for normally distributed data) with these same "true" values. Do this 1000 times.</span>
-<span id="cb26-307"><a href="#cb26-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-310"><a href="#cb26-310" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-311"><a href="#cb26-311" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-312"><a href="#cb26-312" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-313"><a href="#cb26-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-314"><a href="#cb26-314" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb26-315"><a href="#cb26-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-316"><a href="#cb26-316" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>){</span>
-<span id="cb26-317"><a href="#cb26-317" aria-hidden="true" tabindex="-1"></a>  <span class="co"># group 1 simulated data:</span></span>
-<span id="cb26-318"><a href="#cb26-318" aria-hidden="true" tabindex="-1"></a>  res[[i]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">group_1 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> true_n1, <span class="co"># group 1 simulated data</span></span>
-<span id="cb26-319"><a href="#cb26-319" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">mean =</span> true_m1,</span>
-<span id="cb26-320"><a href="#cb26-320" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">sd =</span> true_sd1),</span>
-<span id="cb26-321"><a href="#cb26-321" aria-hidden="true" tabindex="-1"></a>                         <span class="at">group_2 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> true_n2, <span class="co"># group 2 simulated data</span></span>
-<span id="cb26-322"><a href="#cb26-322" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">mean =</span> true_m2,</span>
-<span id="cb26-323"><a href="#cb26-323" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">sd =</span> true_sd2),</span>
-<span id="cb26-324"><a href="#cb26-324" aria-hidden="true" tabindex="-1"></a>                         <span class="at">iter =</span> i)</span>
-<span id="cb26-325"><a href="#cb26-325" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb26-326"><a href="#cb26-326" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(res)</span>
-<span id="cb26-327"><a href="#cb26-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-328"><a href="#cb26-328" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res)</span>
-<span id="cb26-329"><a href="#cb26-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-330"><a href="#cb26-330" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-331"><a href="#cb26-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-332"><a href="#cb26-332" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Summarize this randomly drawn distribution into means and standard deviations per iteration and calculate your effect size. These are your **estimates**. We'll calculate both Cohen's d (the definition formula) and Hedges' g (the small sample size bias corrected estimator). After calculating them for each simulated dataset, you then take the mean estimate. Since calculating bias for sampling variance is a bit more complex, we'll just focus on the point estimate here:</span>
-<span id="cb26-333"><a href="#cb26-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-336"><a href="#cb26-336" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-337"><a href="#cb26-337" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-338"><a href="#cb26-338" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-339"><a href="#cb26-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-340"><a href="#cb26-340" aria-hidden="true" tabindex="-1"></a>res_summarized <span class="ot">&lt;-</span> res <span class="sc">%&gt;%</span></span>
-<span id="cb26-341"><a href="#cb26-341" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iter) <span class="sc">%&gt;%</span></span>
-<span id="cb26-342"><a href="#cb26-342" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">m1 =</span> <span class="fu">mean</span>(group_1), <span class="at">sd1 =</span> <span class="fu">sd</span>(group_1), <span class="at">n1 =</span> <span class="fu">length</span>(group_1),</span>
-<span id="cb26-343"><a href="#cb26-343" aria-hidden="true" tabindex="-1"></a>            <span class="at">m2 =</span> <span class="fu">mean</span>(group_2), <span class="at">sd2 =</span> <span class="fu">sd</span>(group_2), <span class="at">n2 =</span> <span class="fu">length</span>(group_2))</span>
-<span id="cb26-344"><a href="#cb26-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-345"><a href="#cb26-345" aria-hidden="true" tabindex="-1"></a>estimate_d <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-346"><a href="#cb26-346" aria-hidden="true" tabindex="-1"></a>                   <span class="at">correct =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb26-347"><a href="#cb26-347" aria-hidden="true" tabindex="-1"></a>                   <span class="at">append =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb26-348"><a href="#cb26-348" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> res_summarized, </span>
-<span id="cb26-349"><a href="#cb26-349" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
-<span id="cb26-350"><a href="#cb26-350" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
-<span id="cb26-351"><a href="#cb26-351" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1 =</span> n1, <span class="at">n2 =</span> n2) <span class="sc">%&gt;%</span></span>
-<span id="cb26-352"><a href="#cb26-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">estimator =</span> <span class="st">"Cohen's d"</span>)</span>
-<span id="cb26-353"><a href="#cb26-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-354"><a href="#cb26-354" aria-hidden="true" tabindex="-1"></a>estimate_g <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-355"><a href="#cb26-355" aria-hidden="true" tabindex="-1"></a>                   <span class="at">correct =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb26-356"><a href="#cb26-356" aria-hidden="true" tabindex="-1"></a>                   <span class="at">append =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb26-357"><a href="#cb26-357" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> res_summarized, </span>
-<span id="cb26-358"><a href="#cb26-358" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
-<span id="cb26-359"><a href="#cb26-359" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
-<span id="cb26-360"><a href="#cb26-360" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1 =</span> n1, <span class="at">n2 =</span> n2) <span class="sc">%&gt;%</span></span>
-<span id="cb26-361"><a href="#cb26-361" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">estimator =</span> <span class="st">"Hedges' g"</span>)</span>
-<span id="cb26-362"><a href="#cb26-362" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-363"><a href="#cb26-363" aria-hidden="true" tabindex="-1"></a>estimates <span class="ot">&lt;-</span> <span class="fu">rbind</span>(estimate_d, estimate_g)</span>
-<span id="cb26-364"><a href="#cb26-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-365"><a href="#cb26-365" aria-hidden="true" tabindex="-1"></a>mean_point_estimate <span class="ot">&lt;-</span> estimates <span class="sc">%&gt;%</span></span>
-<span id="cb26-366"><a href="#cb26-366" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(estimator) <span class="sc">%&gt;%</span></span>
-<span id="cb26-367"><a href="#cb26-367" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">yi_mean_estimate =</span> <span class="fu">mean</span>(yi))</span>
-<span id="cb26-368"><a href="#cb26-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-369"><a href="#cb26-369" aria-hidden="true" tabindex="-1"></a>mean_point_estimate</span>
-<span id="cb26-370"><a href="#cb26-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-371"><a href="#cb26-371" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-372"><a href="#cb26-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-373"><a href="#cb26-373" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Subtract the estimand from the *mean* of the estimates. This your **bias.**</span>
-<span id="cb26-374"><a href="#cb26-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-377"><a href="#cb26-377" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-378"><a href="#cb26-378" aria-hidden="true" tabindex="-1"></a>bias <span class="ot">&lt;-</span> mean_point_estimate <span class="sc">%&gt;%</span></span>
-<span id="cb26-379"><a href="#cb26-379" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(<span class="at">estimand =</span> estimand<span class="sc">$</span>yi) <span class="sc">%&gt;%</span></span>
-<span id="cb26-380"><a href="#cb26-380" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bias =</span> estimand <span class="sc">-</span> yi_mean_estimate)</span>
-<span id="cb26-381"><a href="#cb26-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-382"><a href="#cb26-382" aria-hidden="true" tabindex="-1"></a>bias</span>
-<span id="cb26-383"><a href="#cb26-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-384"><a href="#cb26-384" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-385"><a href="#cb26-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-386"><a href="#cb26-386" aria-hidden="true" tabindex="-1"></a>As you can see, bias is considerably lower for Hedges' g (~0.009) than for Cohen's d (~0.06).</span>
-<span id="cb26-387"><a href="#cb26-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-388"><a href="#cb26-388" aria-hidden="true" tabindex="-1"></a>Kinda crazy that that works right?</span>
-<span id="cb26-389"><a href="#cb26-389" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-390"><a href="#cb26-390" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-391"><a href="#cb26-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-392"><a href="#cb26-392" aria-hidden="true" tabindex="-1"></a>All of this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. There are sometimes multiple alternative estimators for the same estimand, which perform better or worse under different conditions. </span>
-<span id="cb26-393"><a href="#cb26-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-394"><a href="#cb26-394" aria-hidden="true" tabindex="-1"></a>There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. </span>
-<span id="cb26-395"><a href="#cb26-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-396"><a href="#cb26-396" aria-hidden="true" tabindex="-1"></a>In general, <span class="in">`escalc`</span> uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, <span class="in">`escalc`</span> uses Hedges' g. You can choose to use the first-order definition formula estimates by setting the parameter <span class="in">`corrected`</span> to <span class="in">`FALSE`</span>:</span>
-<span id="cb26-397"><a href="#cb26-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-398"><a href="#cb26-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-401"><a href="#cb26-401" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-402"><a href="#cb26-402" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-403"><a href="#cb26-403" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-404"><a href="#cb26-404" aria-hidden="true" tabindex="-1"></a><span class="co"># The default, corrected estimate (Hedges g):</span></span>
-<span id="cb26-405"><a href="#cb26-405" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">6</span>,</span>
-<span id="cb26-406"><a href="#cb26-406" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.5</span>,</span>
-<span id="cb26-407"><a href="#cb26-407" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>,</span>
-<span id="cb26-408"><a href="#cb26-408" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"SMD"</span>)</span>
-<span id="cb26-409"><a href="#cb26-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-410"><a href="#cb26-410" aria-hidden="true" tabindex="-1"></a><span class="co"># The uncorrected estimate (Cohen's d):</span></span>
-<span id="cb26-411"><a href="#cb26-411" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">6</span>,</span>
-<span id="cb26-412"><a href="#cb26-412" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.5</span>,</span>
-<span id="cb26-413"><a href="#cb26-413" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>,</span>
-<span id="cb26-414"><a href="#cb26-414" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
-<span id="cb26-415"><a href="#cb26-415" aria-hidden="true" tabindex="-1"></a>       <span class="at">correct =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb26-416"><a href="#cb26-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-417"><a href="#cb26-417" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-418"><a href="#cb26-418" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-419"><a href="#cb26-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-420"><a href="#cb26-420" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
-<span id="cb26-421"><a href="#cb26-421" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Click here to see our custom function `metatools::eff_size`</span></span>
-<span id="cb26-422"><a href="#cb26-422" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_this`</span>, is similar to <span class="in">`escalc`</span> but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set <span class="in">`default_formulas=FALSE`</span>---and it returns the exact formulas used. Run the function to see the potential supported formulas and their inputs.</span>
-<span id="cb26-423"><a href="#cb26-423" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-426"><a href="#cb26-426" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-427"><a href="#cb26-427" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb26-428"><a href="#cb26-428" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-429"><a href="#cb26-429" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-430"><a href="#cb26-430" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-431"><a href="#cb26-431" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>()</span>
-<span id="cb26-432"><a href="#cb26-432" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-433"><a href="#cb26-433" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-434"><a href="#cb26-434" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-435"><a href="#cb26-435" aria-hidden="true" tabindex="-1"></a>You can also look at the documentation:</span>
-<span id="cb26-438"><a href="#cb26-438" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-439"><a href="#cb26-439" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb26-440"><a href="#cb26-440" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb26-441"><a href="#cb26-441" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-442"><a href="#cb26-442" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-443"><a href="#cb26-443" aria-hidden="true" tabindex="-1"></a>?eff_size</span>
-<span id="cb26-444"><a href="#cb26-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-445"><a href="#cb26-445" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-446"><a href="#cb26-446" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-447"><a href="#cb26-447" aria-hidden="true" tabindex="-1"></a>Now let's calculate SMD:</span>
-<span id="cb26-448"><a href="#cb26-448" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-451"><a href="#cb26-451" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb26-452"><a href="#cb26-452" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
-<span id="cb26-453"><a href="#cb26-453" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-454"><a href="#cb26-454" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">10</span>, <span class="at">x2 =</span> <span class="dv">6</span>,</span>
-<span id="cb26-455"><a href="#cb26-455" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
-<span id="cb26-456"><a href="#cb26-456" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
-<span id="cb26-457"><a href="#cb26-457" aria-hidden="true" tabindex="-1"></a>       <span class="at">default_formulas =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb26-458"><a href="#cb26-458" aria-hidden="true" tabindex="-1"></a>       <span class="at">effect_type =</span> <span class="st">"SMD"</span>)</span>
-<span id="cb26-459"><a href="#cb26-459" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-460"><a href="#cb26-460" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb26-461"><a href="#cb26-461" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-462"><a href="#cb26-462" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas (@eq-cohens-d and @eq-hedges-g) and the <span class="in">`_second`</span> variables are the bias-corrected estimates (in this case Hedges' g). If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that <span class="in">`escalc`</span> returns).</span>
-<span id="cb26-463"><a href="#cb26-463" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-464"><a href="#cb26-464" aria-hidden="true" tabindex="-1"></a>You'll see in future sections that certain data types may require alternative estimators, which are provided within <span class="in">`eff_size`</span>. For example, <span class="in">`escalc`</span> returns the bias-corrected lnRoM point estimate by default <span class="co">[</span><span class="ot">@Lajeunesse2015-gw</span><span class="co">]</span>. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as <span class="in">`yi_second`</span> and <span class="in">`yi_first`</span>, respectively, by <span class="in">`eff_size`</span>. See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for a fuller discussion.</span>
-<span id="cb26-465"><a href="#cb26-465" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-466"><a href="#cb26-466" aria-hidden="true" tabindex="-1"></a>The most important reason to use <span class="in">`eff_size`</span> is to calculate **lnM**---which requires SAFE bootstrapping. This is discussed in the <span class="co">[</span><span class="ot">lnM page</span><span class="co">](5.2-differences-in-magnitude.qmd)</span></span>
-<span id="cb26-467"><a href="#cb26-467" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb26-468"><a href="#cb26-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-469"><a href="#cb26-469" aria-hidden="true" tabindex="-1"></a><span class="fu">## Alternative estimators {#sec-alternative-estimators}</span></span>
-<span id="cb26-470"><a href="#cb26-470" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-471"><a href="#cb26-471" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators that are similar to the primary effect size flavors covered here yet have small differences that can be difficult to disentangle. These are often rarely used despite their potential utility to meta-analyses.</span>
-<span id="cb26-472"><a href="#cb26-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-473"><a href="#cb26-473" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors in the same model. Others cannot.</span>
-<span id="cb26-474"><a href="#cb26-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-475"><a href="#cb26-475" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors account for paired designs---i.e., non-independence between control and experimental groups. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account for this non-independence.</span>
-<span id="cb26-476"><a href="#cb26-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-477"><a href="#cb26-477" aria-hidden="true" tabindex="-1"></a>Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same, or nearly the same, regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.</span>
-<span id="cb26-478"><a href="#cb26-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-479"><a href="#cb26-479" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](6-escalc-cheatsheet.qmd)</span> with some charts of compatibility between the different estimators in <span class="in">`escalc`</span>.</span>
-<span id="cb26-480"><a href="#cb26-480" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-481"><a href="#cb26-481" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes {#sec-custom-effect-sizes}</span></span>
-<span id="cb26-482"><a href="#cb26-482" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-483"><a href="#cb26-483" aria-hidden="true" tabindex="-1"></a>You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method <span class="co">[</span><span class="ot">see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do</span><span class="co">]</span>.</span>
-<span id="cb26-484"><a href="#cb26-484" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-485"><a href="#cb26-485" aria-hidden="true" tabindex="-1"></a>Custom effect sizes (or at least rare effect sizes) can also be useful even with data that may seem readily synthesizable with already available effect sizes.</span>
-<span id="cb26-486"><a href="#cb26-486" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-487"><a href="#cb26-487" aria-hidden="true" tabindex="-1"></a>For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator (while accounting for the shared control in your random effects).</span>
-<span id="cb26-488"><a href="#cb26-488" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-489"><a href="#cb26-489" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.</span>
-<span id="cb26-490"><a href="#cb26-490" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-491"><a href="#cb26-491" aria-hidden="true" tabindex="-1"></a>Another way of solving this problem is to use an effect size that explicitly includes the temperature difference <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span>. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the two temperature treatments ($T_{1,2}$): </span>
-<span id="cb26-492"><a href="#cb26-492" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-493"><a href="#cb26-493" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb26-494"><a href="#cb26-494" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
-<span id="cb26-495"><a href="#cb26-495" aria-hidden="true" tabindex="-1"></a>&amp;Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}<span class="sc">\\</span></span>
-<span id="cb26-496"><a href="#cb26-496" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
-<span id="cb26-497"><a href="#cb26-497" aria-hidden="true" tabindex="-1"></a>$${#eq-3}</span>
-<span id="cb26-498"><a href="#cb26-498" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-499"><a href="#cb26-499" aria-hidden="true" tabindex="-1"></a>Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by @havird2020 using the Delta method) or with the <span class="co">[</span><span class="ot">SAFE method</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> <span class="co">[</span><span class="ot">@Nakagawa2025-do</span><span class="co">]</span>. These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). </span>
-<span id="cb26-500"><a href="#cb26-500" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-501"><a href="#cb26-501" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this may be the best way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly within your custom effect size. See <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span> for a thorough discussion of these matters. </span>
-<span id="cb26-502"><a href="#cb26-502" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-503"><a href="#cb26-503" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "A brief introduction to effect sizes and sampling variance"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "With which estimator shall I estimate my estimand?"</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "overview.html"</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a><span class="an">csl:</span><span class="co"> ecology.csl</span></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="co"># library("glossary") </span></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="co"># glossary_path("glossary.yml")</span></span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a><span class="co"># glossary_style("purple", "underline")</span></span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>**I tried adding glossary popup definitions...It works inconsistently....It'll be integrated eventually though**</span>
+<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>Meta-analytic effect sizes are statistics that summarize statistical distributions. Meta-analytic effect sizes allow researchers to synthesize data across different studies to answer big questions and to generate overall synthetic estimates. Effect sizes are no trivial thing: they are tiny models, with their own assumptions, rules of interpretation, and numeric challenges.</span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>Meta-analytic effect sizes have two parts: the **point estimate** and **sampling variance**. Point estimates are the target of interest. For example, the difference in cancer rates between two treatment groups, the proportional change in average body size between two treatments, the relationship between two continuous variables, or even just a description of a single overall condition. </span>
+<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>Sampling variance is the associated uncertainty around these estimates, based on sample size and/or standard deviation. Both point estimates and sampling variance are essential to fit meta-analytic models because sampling variance is used as a weight. In this way, effect sizes with *lower* sampling variance have higher weight in meta-analytic models. </span>
+<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>This relationship is key to meta-analysis and means that instead of simply tallying the number of studies in-support or not of a given question, we can produce a weighted average---and we can conduct metaregression to ask how other variables influence our question.</span>
+<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a>::: callout-note</span>
+<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Random effect meta-analytic models reduce the influence of sampling variance</span></span>
+<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a>In a common-effects meta-analytic model (which we don't recommend in ecology and evolution), an effect size's weight is one over its sampling variance ($1/vi$). In the random-effects and multilevel models you will actually fit, weight is one over the sampling variance *plus* the between-study variance $\tau^2$. That extra term acts as a floor on everyone's uncertainty and compresses the differences between studies considerably: with a moderate $\tau^2$ of $0.1$, a twentyfold gap in sampling variance shrinks to roughly fivefold. Large studies still dominate, but far less than the raw sample sizes suggest.</span>
+<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>**Sometimes this feels too soon. I think there are some questions about audience---how much do they already know when they read this? Perhaps we need a section here that's more generally instructive**</span>
+<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a><span class="fu"># Effect size types {#sec-effect-size-types}</span></span>
+<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a>We commit the majority of this tutorial to effect sizes that are concerned with the difference in central tendencies (i.e., means) of a response variable between two groups (i.e., a categorical variable) or in relationship to a continuous predictor variable:</span>
+<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a>1)  standardized mean difference (SMD) and log-transformed ratio of means (lnRoM)</span>
+<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a>2)  log odds ratio (lnOR) and log risk ratio (lnRR)</span>
+<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a>3)  correlation coefficient (Zr)</span>
+<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb27-90"><a href="#cb27-90" aria-hidden="true" tabindex="-1"></a><span class="fu">### Standardized and unstandardized effect sizes</span></span>
+<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a>The effect sizes in this tutorial in this tutorial are **standardized**, which allows comparison across different units of measurement. However, in some disciplines, it is customary to use unstandardized effect sizes (such as mean difference), because standardized research protocols ensure that all studies use the same scale of measurement.</span>
+<span id="cb27-92"><a href="#cb27-92" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-93"><a href="#cb27-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a>These three effect size classes are determined by the types of data involved in your research question. In particular, whether the response and predictors variables are continuous or discrete.</span>
+<span id="cb27-95"><a href="#cb27-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-96"><a href="#cb27-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a>**All schematic figures will be redone and made pretty...And we all have to make a decision about WHAT figures to have**</span>
+<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a><span class="al">![Effect size types](figures/flowcharts_diagrams/effect-size-types.jpg)</span> </span>
+<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a>When the response variable is continuous and compared between two groups, for instance comparing between a control and experimental treatment, then the effect sizes you can use are Standardized Mean Difference (**SMD**) or the log-transformed ratio of means (**lnRoM**, also referred to as the log response ratio or lnRR). These effect sizes differ in their intention, interpretability, and mathematical assumptions, which we cover <span class="co">[</span><span class="ot">here.</span><span class="co">](2.1-SMD-assumptions.qmd)</span>. </span>
+<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>When the response is a binary outcome, e.g., the number or percent that lived or died, compared between two groups, we analyze the data as log odds ratio (**lnOR**) or the log risk ratio (**lnRR**). This is the type of data you may encounter in contingency tables and would, in an introductory stats class, learn to analyze with a Chi-square goodness of fit test.</span>
+<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a>Note that many refer to lnRoM as lnRR (the log response ratio). However, lnRR is also the abbreviation for the log risk ratio (see below). For that reason we use lnRoM throughout this tutorial to refer to log-transformed ratio of means and lnRR to refer to log risk ratio. </span>
+<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a>Correlations between two continuous variables are analyzed as Fisher's r-t-z-transformed correlation coefficients (**Zr**). These generally involve continuous predictor and response variables. However, you can also calculate correlation coefficients for discrete predictors and discrete responses, which may be necessary in some peculiar cases. This is the workhorse for meta-analyses based on observational data.</span>
+<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a>Finally, it is also possible to convert between these main effect size types, which we discuss <span class="co">[</span><span class="ot">here</span><span class="co">](4-converting-effect-sizes.qmd)</span>. This may be important when you find yourself with limited data. If your dataset is small, sticking to one effect size type may bias your results by excluding otherwise usable data <span class="co">[</span><span class="ot">@borenstein2021</span><span class="co">]</span> or splitting your data into many separate models, each of which lack statistical power. However, we suggest that care should be taken in ensuring that data is comparable, especially in terms of the <span class="co">[</span><span class="ot">*unit of replication*</span><span class="co">](3.1-universal-challenges.qmd#sec-sample-size)</span>.</span>
+<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a>Finally, we note that there are other effect size types that may be complimentary or alternatives to the effect sizes we describe above. These include effect sizes for estimating differences in variability between two groups <span class="co">[</span><span class="ot">(lnCVR)</span><span class="co">](5.1-variability-between-groups.qmd)</span> <span class="co">[</span><span class="ot">@Nakagawa2015-tq</span><span class="co">]</span>, differences in magnitude between two groups regardless of direction <span class="co">[</span><span class="ot">(lnM)</span><span class="co">](5.2-differences-in-magnitude.qmd)</span> <span class="co">[</span><span class="ot">@Nakagawa2026-wn</span><span class="co">]</span>, and effect sizes for <span class="co">[</span><span class="ot">single-group descriptive statistics</span><span class="co">](5.3-single-group-effect-sizes.qmd)</span>. </span>
+<span id="cb27-113"><a href="#cb27-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a><span class="fu">### Effect size types are not always clearcut {#sec-effect-size-options}</span></span>
+<span id="cb27-116"><a href="#cb27-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a>The choice of what effect size to use may seem very simple. For example, if you are analyzing studies that report a continuous response variable between two groups, then SMD/lnRoM effect sizes seem like the obvious choice. </span>
+<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a>However, this can sometimes be misleading. For example, imagine you're meta-analyzing the effect of a predator on the abundance of their prey <span class="co">[</span><span class="ot">like in [@Wallach2025-ta]</span><span class="co">]</span>. Many studies present results that look like SMD-type data: comparing mean±SD of prey abundance in areas with high predator abundance to areas with low predator abundance, due to a culling treatment. However, the 'low' predator treatment still has predators---albeit at lower density.</span>
+<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a>If you use an SMD or lnRoM-type effect size, then you should treat the *difference* in density between treatments as a moderator in your meta-analytic models. This can lead to complex models, especially if you are interested in evaluating the influence of other moderators---because each would then need an interaction to this density variable.</span>
+<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a>An alternative is to calculate <span class="co">[</span><span class="ot">Zr</span><span class="co">](2.3-Zr-assumptions.qmd)</span> correlation coefficients for this data, treating the predator density as a continuous predictor. These decisions are non-trivial and should be carefully thought through. </span>
+<span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a>In some situations, even experimental data may, potentially, be better analyzed as a single-group effect sizes if most studies used &gt;2 experimental groups or if experimental treatments were extremely heterogeneous (e.g., different temperature treatments or pesticide dosages). Instead of calculating effect sizes that explicitly compare each experimental treatment to a control, you could calculate single group effect sizes for each group, and then use the experimental groups explicitly (e.g., the temperature of each treatment) as predictors in your meta-analytic model. </span>
+<span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a>**Are there statistical reasons not to? E.g., inflating sample size?**</span>
+<span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-129"><a href="#cb27-129" aria-hidden="true" tabindex="-1"></a>This applies both to continuous data summarized by mean±sd as well as proportions (binary outcome data). We describe single-group effect sizes for means and proportions in the appendix, <span class="co">[</span><span class="ot">here</span><span class="co">](5.3-single-group-effect-sizes.qmd)</span>.</span>
+<span id="cb27-130"><a href="#cb27-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-131"><a href="#cb27-131" aria-hidden="true" tabindex="-1"></a>Finally, it is also possible to formulate custom effect sizes that may help simplify these situations by explicitly including sources of nuisance heterogeneity in your effect size calculation. See our section <span class="co">[</span><span class="ot">below</span><span class="co">](#sec-custom-effect-sizes)</span> and @Noble2022-pl for discussion about the potential to formulate custom effect sizes.</span>
+<span id="cb27-132"><a href="#cb27-132" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-133"><a href="#cb27-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-134"><a href="#cb27-134" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to calculate effect sizes &amp; sampling variance {#sec-calculating-effect-sizes}</span></span>
+<span id="cb27-135"><a href="#cb27-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-136"><a href="#cb27-136" aria-hidden="true" tabindex="-1"></a>The dominant function used to calculate effect sizes and sampling variance in <span class="in">`R`</span> is the function <span class="in">`escalc`</span> in the package <span class="in">`metafor`</span> <span class="co">[</span><span class="ot">@Viechtbauer2010-uq</span><span class="co">]</span>. <span class="in">`escalc`</span> takes effect-size-specific summary statistics and a variable specifying the effect size type (specified with the <span class="in">`measure`</span> argument).</span>
+<span id="cb27-137"><a href="#cb27-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a>At certain points we will also use our own custom function, <span class="in">`eff_size`</span> **(currently called eff_size but eff_this could be funny...)** which can do most of what <span class="in">`escalc`</span> can do but also a few niche things that <span class="in">`escalc`</span> currently doesn't support.</span>
+<span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-140"><a href="#cb27-140" aria-hidden="true" tabindex="-1"></a>To start, we'll clean the environment and we will install a custom package, <span class="in">`metatools`</span>, that we developed to go alongside this tutorial. <span class="in">`metatools`</span> contains the function <span class="in">`eff_size`</span> and a function for converting between effect sizes (<span class="in">`convert_effect_sizes`</span>, see our tutorial <span class="co">[</span><span class="ot">here</span><span class="co">](4-converting-effect-sizes.qmd)</span>). </span>
+<span id="cb27-141"><a href="#cb27-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a>We'll install <span class="in">`metatools`</span> with <span class="in">`pak::pak`</span> and we'll load <span class="in">`metafor`</span>, the workhorse of meta-analysis in R:</span>
+<span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-146"><a href="#cb27-146" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-147"><a href="#cb27-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-148"><a href="#cb27-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-149"><a href="#cb27-149" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-150"><a href="#cb27-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-151"><a href="#cb27-151" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb27-152"><a href="#cb27-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-153"><a href="#cb27-153" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"metatools"</span>)) {</span>
+<span id="cb27-154"><a href="#cb27-154" aria-hidden="true" tabindex="-1"></a>  pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"ejlundgren/metatools"</span>)</span>
+<span id="cb27-155"><a href="#cb27-155" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-156"><a href="#cb27-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-157"><a href="#cb27-157" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metatools"</span>)</span>
+<span id="cb27-158"><a href="#cb27-158" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb27-159"><a href="#cb27-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-160"><a href="#cb27-160" aria-hidden="true" tabindex="-1"></a><span class="co"># Also load dplyr for some data stuff down the line:</span></span>
+<span id="cb27-161"><a href="#cb27-161" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb27-162"><a href="#cb27-162" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-163"><a href="#cb27-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-164"><a href="#cb27-164" aria-hidden="true" tabindex="-1"></a>Calculating an effect size with either of these functions is easy. Let's demonstrate with a study that compared the mean±SD between two groups. With <span class="in">`escalc`</span>, <span class="in">`m1i`</span> and <span class="in">`m2i`</span> are the means of group 1 and 2, <span class="in">`sd1i`</span> and <span class="in">`sd2i`</span> are the standard deviations (not standard errors!) of groups 1 and 2, and <span class="in">`n1i`</span> and <span class="in">`n2i`</span> are the sample sizes. The effect size type is specified with the <span class="in">`measure`</span> argument. Here we'll calculate Standardized Mean Difference (SMD):</span>
+<span id="cb27-165"><a href="#cb27-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-168"><a href="#cb27-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-169"><a href="#cb27-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-170"><a href="#cb27-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-171"><a href="#cb27-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-172"><a href="#cb27-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-173"><a href="#cb27-173" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb27-174"><a href="#cb27-174" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">12</span>, <span class="at">m2i =</span> <span class="dv">10</span>, </span>
+<span id="cb27-175"><a href="#cb27-175" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.7</span>,</span>
+<span id="cb27-176"><a href="#cb27-176" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">17</span>)</span>
+<span id="cb27-177"><a href="#cb27-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-178"><a href="#cb27-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-179"><a href="#cb27-179" aria-hidden="true" tabindex="-1"></a>The effect size point estimate is returned as <span class="in">`yi`</span> and the sampling variance as <span class="in">`vi`</span>.</span>
+<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a>In <span class="in">`eff_size`</span>, this is similar except that the argument names are slightly different (<span class="in">`x`</span> instead of <span class="in">`m`</span> for the means and no <span class="in">`i`</span>) **(I can change it to m1 or m2)**</span>
+<span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-185"><a href="#cb27-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-186"><a href="#cb27-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-187"><a href="#cb27-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-188"><a href="#cb27-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-189"><a href="#cb27-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-190"><a href="#cb27-190" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">effect_type =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a>         <span class="at">x1 =</span> <span class="dv">12</span>, <span class="at">x2 =</span> <span class="dv">10</span>, </span>
+<span id="cb27-192"><a href="#cb27-192" aria-hidden="true" tabindex="-1"></a>         <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.7</span>,</span>
+<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>         <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">17</span>)</span>
+<span id="cb27-194"><a href="#cb27-194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-195"><a href="#cb27-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-196"><a href="#cb27-196" aria-hidden="true" tabindex="-1"></a><span class="in">`eff_size`</span> is useful in some cases. Primarily because <span class="in">`eff_size`</span> has built in functionality to calculate <span class="co">[</span><span class="ot">**lnM**</span><span class="co">](5.2-differences-in-magnitude.qmd)</span> with a fancy bootstrapping method, which we'll discuss later. </span>
+<span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a><span class="in">`eff_size`</span> also, by switching <span class="in">`default_formulas = FALSE`</span>, returns multiple estimators of the same effect size. </span>
+<span id="cb27-199"><a href="#cb27-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-200"><a href="#cb27-200" aria-hidden="true" tabindex="-1"></a>Now, you may be thinking, what the hell is an estimator? Why are there multiple estimators for the same effect size? </span>
+<span id="cb27-201"><a href="#cb27-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-202"><a href="#cb27-202" aria-hidden="true" tabindex="-1"></a>Let us explain. We'll start by talking about **estimands**, which is what estimators are trying to estimate. </span>
+<span id="cb27-203"><a href="#cb27-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-204"><a href="#cb27-204" aria-hidden="true" tabindex="-1"></a><span class="fu"># Estimands, estimators, and estimates {#sec-estimates-and-estimators}</span></span>
+<span id="cb27-205"><a href="#cb27-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-206"><a href="#cb27-206" aria-hidden="true" tabindex="-1"></a>**Maybe this should move to top of page?**</span>
+<span id="cb27-207"><a href="#cb27-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-208"><a href="#cb27-208" aria-hidden="true" tabindex="-1"></a>The word **estimand** looks like a typo. But it isn't. An **estimand** is the target of a study: the precise thing we want to know. For example, are patients more likely to survive when given a drug relative to a placebo group? Does selective logging lead to higher soil carbon than clearcutting? </span>
+<span id="cb27-209"><a href="#cb27-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-210"><a href="#cb27-210" aria-hidden="true" tabindex="-1"></a>These are all estimands: the theoretical target. Primary studies and meta-analytic studies are all aiming to **estimate** an **estimand**.</span>
+<span id="cb27-211"><a href="#cb27-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-212"><a href="#cb27-212" aria-hidden="true" tabindex="-1"></a>There are 5 attributes to estimands:</span>
+<span id="cb27-213"><a href="#cb27-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-214"><a href="#cb27-214" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>The target population: who or what does the question apply to? </span>
+<span id="cb27-215"><a href="#cb27-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-216"><a href="#cb27-216" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Which patients are we trialling the drug on? Are we evaluating logging in all forests or in boreal forests? </span></span>
+<span id="cb27-217"><a href="#cb27-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-218"><a href="#cb27-218" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>What is the treatment that we're interested in? </span>
+<span id="cb27-219"><a href="#cb27-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-220"><a href="#cb27-220" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; What drug and at what dosage? How is "selective" logging defined relative to "clearcutting"?</span></span>
+<span id="cb27-221"><a href="#cb27-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-222"><a href="#cb27-222" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>What endpoint are we interested in? </span>
+<span id="cb27-223"><a href="#cb27-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-224"><a href="#cb27-224" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Survivorship, species richness, biomass, soil carbon, and so on</span></span>
+<span id="cb27-225"><a href="#cb27-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-226"><a href="#cb27-226" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>How does our estimand deal with unexpected events?</span>
+<span id="cb27-227"><a href="#cb27-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-228"><a href="#cb27-228" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; How does the estimand handle death from other causes in our patients or wildfire or flooding in our logging experiment?</span></span>
+<span id="cb27-229"><a href="#cb27-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-230"><a href="#cb27-230" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>How do we summarize the effect of the treatment?</span>
+<span id="cb27-231"><a href="#cb27-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Is the outcome of interest odds of survival of individuals between the placebo and control group? The ratio of species richness between logging treatments? Or the difference in richness between logging treatments?</span></span>
+<span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-234"><a href="#cb27-234" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a>You might note that these attributes mirror the PECOS framework (Population, Exposure, Comparator, Outcome), which is widely used for designing meta-analysis <span class="co">[</span><span class="ot">@Morgan2018-za</span><span class="co">]</span>. </span>
+<span id="cb27-236"><a href="#cb27-236" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-237"><a href="#cb27-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a>These questions are essential to consider when designing a meta-analysis and choosing the effect size to use. </span>
+<span id="cb27-239"><a href="#cb27-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-240"><a href="#cb27-240" aria-hidden="true" tabindex="-1"></a>:::callout-note</span>
+<span id="cb27-241"><a href="#cb27-241" aria-hidden="true" tabindex="-1"></a>One issue with meta-analysis is that we are often forced to include studies that had different primary study-level **estimands**. In these cases, the meta-analytic model may be making an overall effect for studies that are concerned with fundamentally different things. </span>
+<span id="cb27-242"><a href="#cb27-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-243"><a href="#cb27-243" aria-hidden="true" tabindex="-1"></a>This is especially true if you're including both experimental and observational (or quasi-experimental) data. Experimental data generally concerns the same target population as the control population. However, observational or quasi-experimental data are forced to compare separate populations. **CITE BECKS ONCE PREPRINTED**</span>
+<span id="cb27-244"><a href="#cb27-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-245"><a href="#cb27-245" aria-hidden="true" tabindex="-1"></a>This is not to say that conducting a meta-analysis is not a worthy use of time---it is still the best way to synthesize knowledge---but that attention to study level estimands can help you be humble and honest about your meta-analytic results.</span>
+<span id="cb27-246"><a href="#cb27-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-247"><a href="#cb27-247" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-248"><a href="#cb27-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-249"><a href="#cb27-249" aria-hidden="true" tabindex="-1"></a>Estimands also have a mathematical dimension: the *true* mathematical relationship of interest. For instance, Standardized Mean Difference (SMD) describes the *difference* in a continuous outcome between two treatment groups. It is defined as:</span>
+<span id="cb27-250"><a href="#cb27-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-251"><a href="#cb27-251" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb27-252"><a href="#cb27-252" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb27-253"><a href="#cb27-253" aria-hidden="true" tabindex="-1"></a>d = \frac{m_1 - m_2}{sd_{pooled}}</span>
+<span id="cb27-254"><a href="#cb27-254" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb27-255"><a href="#cb27-255" aria-hidden="true" tabindex="-1"></a>$${#eq-cohens-d}</span>
+<span id="cb27-256"><a href="#cb27-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-257"><a href="#cb27-257" aria-hidden="true" tabindex="-1"></a>With $m_1$ and $m_2$ as the means of two groups (e.g., a control and an experiment) and $SD_{pooled}$ as the pooled standard deviation of those two groups. This estimand defines the target mathematical relationship of SMD (and is coincidentally known as Cohen's d).</span>
+<span id="cb27-258"><a href="#cb27-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-259"><a href="#cb27-259" aria-hidden="true" tabindex="-1"></a>However, this definition formula can produce {{&lt; glossary bias display=biased &gt;}} results when sample size is low. This is because low sample sizes lead to poor study-level estimates of $m_1$ and $m_2$. </span>
+<span id="cb27-260"><a href="#cb27-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-261"><a href="#cb27-261" aria-hidden="true" tabindex="-1"></a>For that reason, we don't generally use the estimand or definition formula to calculate SMD. Instead we use a modified **estimator** known as Hedges' g. </span>
+<span id="cb27-262"><a href="#cb27-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-263"><a href="#cb27-263" aria-hidden="true" tabindex="-1"></a>Hedges' g multiples Cohen's d by a correction factor ($J$) to the math above to account for small sample sizes. $J$ approaches 1 as sample size increases. Thus at high sample sizes, Hedges' g $\approx$ Cohen's d.</span>
+<span id="cb27-264"><a href="#cb27-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-265"><a href="#cb27-265" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb27-266"><a href="#cb27-266" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb27-267"><a href="#cb27-267" aria-hidden="true" tabindex="-1"></a>df &amp;= n_1+n_2-2,<span class="sc">\\</span></span>
+<span id="cb27-268"><a href="#cb27-268" aria-hidden="true" tabindex="-1"></a>J &amp;\approx 1-\frac{3}{4df-1},<span class="sc">\\</span></span>
+<span id="cb27-269"><a href="#cb27-269" aria-hidden="true" tabindex="-1"></a>g &amp;= J*d.</span>
+<span id="cb27-270"><a href="#cb27-270" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb27-271"><a href="#cb27-271" aria-hidden="true" tabindex="-1"></a>$${#eq-hedges-g}</span>
+<span id="cb27-272"><a href="#cb27-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-273"><a href="#cb27-273" aria-hidden="true" tabindex="-1"></a>Both Cohen's d and Hedges' g are different estimators of the **estimand** of SMD---a mathematical description of the difference between two groups, standardized by shared standard deviation. </span>
+<span id="cb27-274"><a href="#cb27-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-275"><a href="#cb27-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-276"><a href="#cb27-276" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true"}</span>
+<span id="cb27-277"><a href="#cb27-277" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Click for explanation of bias </span></span>
+<span id="cb27-278"><a href="#cb27-278" aria-hidden="true" tabindex="-1"></a>If it's been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand---the *population mean* height and its dispersion (i.e., standard deviation). </span>
+<span id="cb27-279"><a href="#cb27-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-280"><a href="#cb27-280" aria-hidden="true" tabindex="-1"></a>However, you're unlikely to measure everyone's height. You therefore sample the population and calculate a *sample mean*. This sample mean is an estimate of your *estimand*---the *population mean*. If your sample size is low or if your measurements are non-random your sample mean is likely a **biased** estimate of the true population mean height. Bias is the difference between your estimate and the truth. </span>
+<span id="cb27-281"><a href="#cb27-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-282"><a href="#cb27-282" aria-hidden="true" tabindex="-1"></a>The bias of a meta-analytic effect size estimator can be calculated in 5 steps:</span>
+<span id="cb27-283"><a href="#cb27-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-284"><a href="#cb27-284" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Calculate the "true" effect size with the estimand formula based on your "true" values (i.e., group means, standard deviations, and sample size). The estimand (definition) formula in <span class="in">`escalc`</span> for SMD can be accessed with <span class="in">`correct=FALSE`</span>. This is your **estimand:**</span>
+<span id="cb27-285"><a href="#cb27-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-288"><a href="#cb27-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-289"><a href="#cb27-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-290"><a href="#cb27-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-291"><a href="#cb27-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-292"><a href="#cb27-292" aria-hidden="true" tabindex="-1"></a>true_m1 <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb27-293"><a href="#cb27-293" aria-hidden="true" tabindex="-1"></a>true_sd1 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb27-294"><a href="#cb27-294" aria-hidden="true" tabindex="-1"></a>true_m2 <span class="ot">&lt;-</span> <span class="dv">14</span></span>
+<span id="cb27-295"><a href="#cb27-295" aria-hidden="true" tabindex="-1"></a>true_sd2 <span class="ot">&lt;-</span> <span class="fl">2.5</span></span>
+<span id="cb27-296"><a href="#cb27-296" aria-hidden="true" tabindex="-1"></a>true_n1 <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb27-297"><a href="#cb27-297" aria-hidden="true" tabindex="-1"></a>true_n2 <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb27-298"><a href="#cb27-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-299"><a href="#cb27-299" aria-hidden="true" tabindex="-1"></a>estimand <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb27-300"><a href="#cb27-300" aria-hidden="true" tabindex="-1"></a>                   <span class="at">correct =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-301"><a href="#cb27-301" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> true_m1, <span class="at">m2i =</span> true_m2,</span>
+<span id="cb27-302"><a href="#cb27-302" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> true_sd1, <span class="at">sd2i =</span> true_sd2,</span>
+<span id="cb27-303"><a href="#cb27-303" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1 =</span> true_n1, <span class="at">n2 =</span> true_n2)</span>
+<span id="cb27-304"><a href="#cb27-304" aria-hidden="true" tabindex="-1"></a>estimand</span>
+<span id="cb27-305"><a href="#cb27-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-306"><a href="#cb27-306" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-307"><a href="#cb27-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-308"><a href="#cb27-308" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Draw data from the appropriate data generating process (e.g., <span class="in">`rnorm`</span> for normally distributed data) with these same "true" values. Do this 1,000 times. These are your populations:</span>
+<span id="cb27-309"><a href="#cb27-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-312"><a href="#cb27-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-313"><a href="#cb27-313" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-314"><a href="#cb27-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-315"><a href="#cb27-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-316"><a href="#cb27-316" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb27-317"><a href="#cb27-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-318"><a href="#cb27-318" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>){</span>
+<span id="cb27-319"><a href="#cb27-319" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-320"><a href="#cb27-320" aria-hidden="true" tabindex="-1"></a>  res[[i]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">group_1 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> true_n1, <span class="co"># group 1 simulated data</span></span>
+<span id="cb27-321"><a href="#cb27-321" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">mean =</span> true_m1,</span>
+<span id="cb27-322"><a href="#cb27-322" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">sd =</span> true_sd1),</span>
+<span id="cb27-323"><a href="#cb27-323" aria-hidden="true" tabindex="-1"></a>                         <span class="at">group_2 =</span> <span class="fu">rnorm</span>(<span class="at">n =</span> true_n2, <span class="co"># group 2 simulated data</span></span>
+<span id="cb27-324"><a href="#cb27-324" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">mean =</span> true_m2,</span>
+<span id="cb27-325"><a href="#cb27-325" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">sd =</span> true_sd2),</span>
+<span id="cb27-326"><a href="#cb27-326" aria-hidden="true" tabindex="-1"></a>                         <span class="at">iter =</span> i)</span>
+<span id="cb27-327"><a href="#cb27-327" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-328"><a href="#cb27-328" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(res)</span>
+<span id="cb27-329"><a href="#cb27-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-330"><a href="#cb27-330" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(res)</span>
+<span id="cb27-331"><a href="#cb27-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-332"><a href="#cb27-332" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-333"><a href="#cb27-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-334"><a href="#cb27-334" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Summarize these randomly drawn populations into means and standard deviations per iteration and calculate your effect size. We'll calculate both Cohen's d (the definition formula) and Hedges' g (the small sample size bias corrected estimator). These effect sizes are your **estimates**. </span>
+<span id="cb27-335"><a href="#cb27-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-338"><a href="#cb27-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-339"><a href="#cb27-339" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-340"><a href="#cb27-340" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-341"><a href="#cb27-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-342"><a href="#cb27-342" aria-hidden="true" tabindex="-1"></a>res_summarized <span class="ot">&lt;-</span> res <span class="sc">%&gt;%</span></span>
+<span id="cb27-343"><a href="#cb27-343" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iter) <span class="sc">%&gt;%</span></span>
+<span id="cb27-344"><a href="#cb27-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">m1 =</span> <span class="fu">mean</span>(group_1), <span class="at">sd1 =</span> <span class="fu">sd</span>(group_1), <span class="at">n1 =</span> <span class="fu">length</span>(group_1),</span>
+<span id="cb27-345"><a href="#cb27-345" aria-hidden="true" tabindex="-1"></a>            <span class="at">m2 =</span> <span class="fu">mean</span>(group_2), <span class="at">sd2 =</span> <span class="fu">sd</span>(group_2), <span class="at">n2 =</span> <span class="fu">length</span>(group_2))</span>
+<span id="cb27-346"><a href="#cb27-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-347"><a href="#cb27-347" aria-hidden="true" tabindex="-1"></a>estimate_d <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb27-348"><a href="#cb27-348" aria-hidden="true" tabindex="-1"></a>                   <span class="at">correct =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-349"><a href="#cb27-349" aria-hidden="true" tabindex="-1"></a>                   <span class="at">append =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-350"><a href="#cb27-350" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> res_summarized, </span>
+<span id="cb27-351"><a href="#cb27-351" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
+<span id="cb27-352"><a href="#cb27-352" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
+<span id="cb27-353"><a href="#cb27-353" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1 =</span> n1, <span class="at">n2 =</span> n2) <span class="sc">%&gt;%</span></span>
+<span id="cb27-354"><a href="#cb27-354" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">estimator =</span> <span class="st">"Cohen's d"</span>)</span>
+<span id="cb27-355"><a href="#cb27-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-356"><a href="#cb27-356" aria-hidden="true" tabindex="-1"></a>estimate_g <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb27-357"><a href="#cb27-357" aria-hidden="true" tabindex="-1"></a>                   <span class="at">correct =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-358"><a href="#cb27-358" aria-hidden="true" tabindex="-1"></a>                   <span class="at">append =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-359"><a href="#cb27-359" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data =</span> res_summarized, </span>
+<span id="cb27-360"><a href="#cb27-360" aria-hidden="true" tabindex="-1"></a>                   <span class="at">m1i =</span> m1, <span class="at">m2i =</span> m2,</span>
+<span id="cb27-361"><a href="#cb27-361" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sd1i =</span> sd1, <span class="at">sd2i =</span> sd2,</span>
+<span id="cb27-362"><a href="#cb27-362" aria-hidden="true" tabindex="-1"></a>                   <span class="at">n1 =</span> n1, <span class="at">n2 =</span> n2) <span class="sc">%&gt;%</span></span>
+<span id="cb27-363"><a href="#cb27-363" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">estimator =</span> <span class="st">"Hedges' g"</span>)</span>
+<span id="cb27-364"><a href="#cb27-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-365"><a href="#cb27-365" aria-hidden="true" tabindex="-1"></a>estimates <span class="ot">&lt;-</span> <span class="fu">rbind</span>(estimate_d, estimate_g)</span>
+<span id="cb27-366"><a href="#cb27-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-367"><a href="#cb27-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-368"><a href="#cb27-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-369"><a href="#cb27-369" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-370"><a href="#cb27-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-371"><a href="#cb27-371" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Now take the average of your estimates. Note that calculating bias for sampling variance is a bit more complex, so we'll just focus on the point estimate here. Subtract the estimand from the *mean* of the estimates. This your **bias:**</span>
+<span id="cb27-372"><a href="#cb27-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-375"><a href="#cb27-375" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-376"><a href="#cb27-376" aria-hidden="true" tabindex="-1"></a>mean_point_estimate <span class="ot">&lt;-</span> estimates <span class="sc">%&gt;%</span></span>
+<span id="cb27-377"><a href="#cb27-377" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(estimator) <span class="sc">%&gt;%</span></span>
+<span id="cb27-378"><a href="#cb27-378" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">yi_mean_estimate =</span> <span class="fu">mean</span>(yi))</span>
+<span id="cb27-379"><a href="#cb27-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-380"><a href="#cb27-380" aria-hidden="true" tabindex="-1"></a>mean_point_estimate</span>
+<span id="cb27-381"><a href="#cb27-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-382"><a href="#cb27-382" aria-hidden="true" tabindex="-1"></a>bias <span class="ot">&lt;-</span> mean_point_estimate <span class="sc">%&gt;%</span></span>
+<span id="cb27-383"><a href="#cb27-383" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_cols</span>(<span class="at">estimand =</span> estimand<span class="sc">$</span>yi) <span class="sc">%&gt;%</span></span>
+<span id="cb27-384"><a href="#cb27-384" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bias =</span> estimand <span class="sc">-</span> yi_mean_estimate)</span>
+<span id="cb27-385"><a href="#cb27-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-386"><a href="#cb27-386" aria-hidden="true" tabindex="-1"></a>bias</span>
+<span id="cb27-387"><a href="#cb27-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-388"><a href="#cb27-388" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-389"><a href="#cb27-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-390"><a href="#cb27-390" aria-hidden="true" tabindex="-1"></a>As you can see, bias is considerably lower for Hedges' g (~0.009) than for Cohen's d (~0.06).</span>
+<span id="cb27-391"><a href="#cb27-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-392"><a href="#cb27-392" aria-hidden="true" tabindex="-1"></a>Kinda crazy that that works right?</span>
+<span id="cb27-393"><a href="#cb27-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-394"><a href="#cb27-394" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-395"><a href="#cb27-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-396"><a href="#cb27-396" aria-hidden="true" tabindex="-1"></a>All of this is to say that **estimands** are the mathematical target of interest, which can be estimated with a variety of **estimators** to produce your effect size **estimates**. There are sometimes multiple alternative estimators for the same estimand, which perform better or worse under different conditions. </span>
+<span id="cb27-397"><a href="#cb27-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-398"><a href="#cb27-398" aria-hidden="true" tabindex="-1"></a>There are also slightly different estimands within the same effect size category that are designed for different data types---but are not comparable to other estimands. </span>
+<span id="cb27-399"><a href="#cb27-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-400"><a href="#cb27-400" aria-hidden="true" tabindex="-1"></a>In general, <span class="in">`escalc`</span> uses the best known estimator for each effect size type, which is often the second-order derived estimator. In the case of SMD, <span class="in">`escalc`</span> uses Hedges' g. You can choose to use the first-order definition formula estimates by setting the parameter <span class="in">`corrected`</span> to <span class="in">`FALSE`</span>:</span>
+<span id="cb27-401"><a href="#cb27-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-402"><a href="#cb27-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-405"><a href="#cb27-405" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-406"><a href="#cb27-406" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-407"><a href="#cb27-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-408"><a href="#cb27-408" aria-hidden="true" tabindex="-1"></a><span class="co"># The default, corrected estimate (Hedges g):</span></span>
+<span id="cb27-409"><a href="#cb27-409" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">6</span>,</span>
+<span id="cb27-410"><a href="#cb27-410" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.5</span>,</span>
+<span id="cb27-411"><a href="#cb27-411" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>,</span>
+<span id="cb27-412"><a href="#cb27-412" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"SMD"</span>)</span>
+<span id="cb27-413"><a href="#cb27-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-414"><a href="#cb27-414" aria-hidden="true" tabindex="-1"></a><span class="co"># The uncorrected estimate (Cohen's d):</span></span>
+<span id="cb27-415"><a href="#cb27-415" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">6</span>,</span>
+<span id="cb27-416"><a href="#cb27-416" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="fl">1.5</span>,</span>
+<span id="cb27-417"><a href="#cb27-417" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>,</span>
+<span id="cb27-418"><a href="#cb27-418" aria-hidden="true" tabindex="-1"></a>       <span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb27-419"><a href="#cb27-419" aria-hidden="true" tabindex="-1"></a>       <span class="at">correct =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-420"><a href="#cb27-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-421"><a href="#cb27-421" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-422"><a href="#cb27-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-423"><a href="#cb27-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-424"><a href="#cb27-424" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb27-425"><a href="#cb27-425" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Click here to see our custom function `metatools::eff_size`</span></span>
+<span id="cb27-426"><a href="#cb27-426" aria-hidden="true" tabindex="-1"></a>Our function, <span class="in">`eff_this`</span>, is similar to <span class="in">`escalc`</span> but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set <span class="in">`default_formulas=FALSE`</span>---and it returns the exact formulas used. Run the function to see the potential supported formulas and their inputs.</span>
+<span id="cb27-427"><a href="#cb27-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-430"><a href="#cb27-430" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-431"><a href="#cb27-431" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb27-432"><a href="#cb27-432" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-433"><a href="#cb27-433" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-434"><a href="#cb27-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-435"><a href="#cb27-435" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>()</span>
+<span id="cb27-436"><a href="#cb27-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-437"><a href="#cb27-437" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-438"><a href="#cb27-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-439"><a href="#cb27-439" aria-hidden="true" tabindex="-1"></a>You can also look at the documentation:</span>
+<span id="cb27-442"><a href="#cb27-442" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-443"><a href="#cb27-443" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb27-444"><a href="#cb27-444" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb27-445"><a href="#cb27-445" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-446"><a href="#cb27-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-447"><a href="#cb27-447" aria-hidden="true" tabindex="-1"></a>?eff_size</span>
+<span id="cb27-448"><a href="#cb27-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-449"><a href="#cb27-449" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-450"><a href="#cb27-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-451"><a href="#cb27-451" aria-hidden="true" tabindex="-1"></a>Now let's calculate SMD:</span>
+<span id="cb27-452"><a href="#cb27-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-455"><a href="#cb27-455" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-456"><a href="#cb27-456" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb27-457"><a href="#cb27-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-458"><a href="#cb27-458" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(<span class="at">x1 =</span> <span class="dv">10</span>, <span class="at">x2 =</span> <span class="dv">6</span>,</span>
+<span id="cb27-459"><a href="#cb27-459" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1 =</span> <span class="fl">1.5</span>, <span class="at">sd2 =</span> <span class="fl">1.5</span>,</span>
+<span id="cb27-460"><a href="#cb27-460" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1 =</span> <span class="dv">15</span>, <span class="at">n2 =</span> <span class="dv">15</span>,</span>
+<span id="cb27-461"><a href="#cb27-461" aria-hidden="true" tabindex="-1"></a>       <span class="at">default_formulas =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-462"><a href="#cb27-462" aria-hidden="true" tabindex="-1"></a>       <span class="at">effect_type =</span> <span class="st">"SMD"</span>)</span>
+<span id="cb27-463"><a href="#cb27-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-464"><a href="#cb27-464" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-465"><a href="#cb27-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-466"><a href="#cb27-466" aria-hidden="true" tabindex="-1"></a><span class="in">`yi_first`</span> and <span class="in">`vi_first`</span> are the definition formulas (@eq-cohens-d and @eq-hedges-g) and the <span class="in">`_second`</span> variables are the bias-corrected estimates (in this case Hedges' g). If you select <span class="in">`default_formulas = TRUE`</span>, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that <span class="in">`escalc`</span> returns).</span>
+<span id="cb27-467"><a href="#cb27-467" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-468"><a href="#cb27-468" aria-hidden="true" tabindex="-1"></a>You'll see in future sections that certain data types may require alternative estimators, which are provided within <span class="in">`eff_size`</span>. For example, <span class="in">`escalc`</span> returns the bias-corrected lnRoM point estimate by default <span class="co">[</span><span class="ot">@Lajeunesse2015-gw</span><span class="co">]</span>. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as <span class="in">`yi_second`</span> and <span class="in">`yi_first`</span>, respectively, by <span class="in">`eff_size`</span>. See <span class="co">[</span><span class="ot">here</span><span class="co">](2.1-SMD-assumptions.qmd)</span> for a fuller discussion.</span>
+<span id="cb27-469"><a href="#cb27-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-470"><a href="#cb27-470" aria-hidden="true" tabindex="-1"></a>The most important reason to use <span class="in">`eff_size`</span> is to calculate **lnM**---which requires SAFE bootstrapping. This is discussed in the <span class="co">[</span><span class="ot">lnM page</span><span class="co">](5.2-differences-in-magnitude.qmd)</span></span>
+<span id="cb27-471"><a href="#cb27-471" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb27-472"><a href="#cb27-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-473"><a href="#cb27-473" aria-hidden="true" tabindex="-1"></a><span class="fu">## Alternative estimators {#sec-alternative-estimators}</span></span>
+<span id="cb27-474"><a href="#cb27-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-475"><a href="#cb27-475" aria-hidden="true" tabindex="-1"></a>You'll also notice, for example if looking at the documentation of <span class="in">`escalc`</span>, that there are many many effect size estimators that are similar to the primary effect size flavors covered here yet have small differences that can be difficult to disentangle. These are often rarely used despite their potential utility to meta-analyses.</span>
+<span id="cb27-476"><a href="#cb27-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-477"><a href="#cb27-477" aria-hidden="true" tabindex="-1"></a>Some of these estimates can be lumped with the typical effect size flavors in the same model. Others cannot.</span>
+<span id="cb27-478"><a href="#cb27-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-479"><a href="#cb27-479" aria-hidden="true" tabindex="-1"></a>One of the most statistically important alternative flavors account for paired designs---i.e., non-independence between control and experimental groups. For example, before-after data or paired plot comparisons. These are common experimental designs in ecology and evolution but most meta-analyses do not take into account for this non-independence.</span>
+<span id="cb27-480"><a href="#cb27-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-481"><a href="#cb27-481" aria-hidden="true" tabindex="-1"></a>Some paired-design formulas produce effect sizes and sampling variance estimates that are comparable to those produced from unpaired formulas. In these cases, the effect size point estimate will be the same, or nearly the same, regardless of the paired/unpaired formulation. However, the sampling variance for the paired design will be lower---which will give paired design data more weight in downstream meta-analytic models.</span>
+<span id="cb27-482"><a href="#cb27-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-483"><a href="#cb27-483" aria-hidden="true" tabindex="-1"></a>We try to clear up this confusion in the <span class="co">[</span><span class="ot">appendix</span><span class="co">](6-escalc-cheatsheet.qmd)</span> with some charts of compatibility between the different estimators in <span class="in">`escalc`</span>.</span>
+<span id="cb27-484"><a href="#cb27-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-485"><a href="#cb27-485" aria-hidden="true" tabindex="-1"></a><span class="fu"># Custom effect sizes {#sec-custom-effect-sizes}</span></span>
+<span id="cb27-486"><a href="#cb27-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-487"><a href="#cb27-487" aria-hidden="true" tabindex="-1"></a>You may be working on a question that requires a custom effect size. For example, @Wooster2026-ca created a custom effect size to describe changes in temporal overlap between predators and prey with and without human disturbance. Creating new effect sizes like this requires careful thought. First, to formulate a point estimate formula, and second to derive a sampling variance formula (using the delta method, see **REF**) or with the SAFE method <span class="co">[</span><span class="ot">see the tutorial [here](https://ejlundgren.github.io/SAFE/) and @Nakagawa2025-do</span><span class="co">]</span>.</span>
+<span id="cb27-488"><a href="#cb27-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-489"><a href="#cb27-489" aria-hidden="true" tabindex="-1"></a>Custom effect sizes (or at least rare effect sizes) can also be useful even with data that may seem readily synthesizable with already available effect sizes.</span>
+<span id="cb27-490"><a href="#cb27-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-491"><a href="#cb27-491" aria-hidden="true" tabindex="-1"></a>For example, imagine you're synthesizing the results of experimental studies that compare the physiological response of organisms to different temperatures, potentially to forecast the effect of climate change on these organisms. This data is generally presented as means±SD for two or more treatment groups, which are then compared to an ambient control. It makes intuitive sense to calculate SMD or lnRoM for each comparison between control and treatment, and to treat the difference in temperature between the control and treatment as a moderator (while accounting for the shared control in your random effects).</span>
+<span id="cb27-492"><a href="#cb27-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-493"><a href="#cb27-493" aria-hidden="true" tabindex="-1"></a>However, if you're planning on already conducting metaregressions with other moderators, you become locked into increasingly complex models with each moderator requiring an interaction with the difference in temperature.</span>
+<span id="cb27-494"><a href="#cb27-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-495"><a href="#cb27-495" aria-hidden="true" tabindex="-1"></a>Another way of solving this problem is to use an effect size that explicitly includes the temperature difference <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span>. And, indeed, there is a formula that does this: Q~10~. This is a formula that has existed long before its meta-analytic application. It describes the ratio of two group means ($m_{1,2}$), while accounting for differences in the two temperature treatments ($T_{1,2}$): </span>
+<span id="cb27-496"><a href="#cb27-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-497"><a href="#cb27-497" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb27-498"><a href="#cb27-498" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb27-499"><a href="#cb27-499" aria-hidden="true" tabindex="-1"></a>&amp;Q_{10} = (\frac{m_{2}}{m_{1}})^{10/(T_{2}-T_{1})}<span class="sc">\\</span></span>
+<span id="cb27-500"><a href="#cb27-500" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb27-501"><a href="#cb27-501" aria-hidden="true" tabindex="-1"></a>$${#eq-3}</span>
+<span id="cb27-502"><a href="#cb27-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-503"><a href="#cb27-503" aria-hidden="true" tabindex="-1"></a>Sampling variance for Q~10~ can be estimated with a plugin formula (which was derived by @havird2020 using the Delta method) or with the <span class="co">[</span><span class="ot">SAFE method</span><span class="co">](https://ejlundgren.github.io/SAFE/)</span> <span class="co">[</span><span class="ot">@Nakagawa2025-do</span><span class="co">]</span>. These sampling variance estimators take into account the standard deviation ($sd_1$, $sd_2$) associated with each mean value ($m_1$, $m_2$). </span>
+<span id="cb27-504"><a href="#cb27-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-505"><a href="#cb27-505" aria-hidden="true" tabindex="-1"></a>We won't extensively discuss how to design custom effect sizes but we want to acknowledge that at times this may be the best way to conduct a meta-analysis, especially if there is lots of nuisance heterogeneity that could be controlled explicitly within your custom effect size. See <span class="co">[</span><span class="ot">@Noble2022-pl</span><span class="co">]</span> for a thorough discussion of these matters. </span>
+<span id="cb27-506"><a href="#cb27-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-507"><a href="#cb27-507" aria-hidden="true" tabindex="-1"></a>In the next section we will give more detail about each main effect size type, their most common estimators, numeric assumptions, and interpretation.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

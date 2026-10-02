@@ -267,11 +267,13 @@ Both Cohen's d and Hedges' g are different estimators of the **estimand** of SMD
 
 ::: {.callout-note collapse="true"}
 ##### Click for explanation of bias 
-If it's been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand---the population mean height and its dispersion (i.e., standard deviation). However, you're unlikely to measure everyone's height. You therefore measure the height of as many individuals as you can and calculate a *sample mean* which estimates your *estimand*---the population mean. If your sample size is low or non-random your sample mean is likely a **biased** estimate of the true population mean height. Bias is thus the difference between your estimate and the truth. 
+If it's been awhile since you thought about these things, imagine that your town has a true mean height. You want to know it. This is your estimand---the *population mean* height and its dispersion (i.e., standard deviation). 
 
-The bias of a meta-analytic effect size estimator can be calculated in 4 steps:
+However, you're unlikely to measure everyone's height. You therefore sample the population and calculate a *sample mean*. This sample mean is an estimate of your *estimand*---the *population mean*. If your sample size is low or if your measurements are non-random your sample mean is likely a **biased** estimate of the true population mean height. Bias is the difference between your estimate and the truth. 
 
-1. Calculate the "true" effect size with the estimand formula based on your "true" values (i.e., group means, standard deviations, and sample size). The estimand formula in `escalc` for SMD can be accessed with `correct=FALSE`. This is your **estimand:**
+The bias of a meta-analytic effect size estimator can be calculated in 5 steps:
+
+1. Calculate the "true" effect size with the estimand formula based on your "true" values (i.e., group means, standard deviations, and sample size). The estimand (definition) formula in `escalc` for SMD can be accessed with `correct=FALSE`. This is your **estimand:**
 
 ```{r}
 #| echo: true
@@ -293,7 +295,7 @@ estimand
 
 ```
 
-2. Draw data from the appropriate data generating distribution (e.g., `rnorm` for normally distributed data) with these same "true" values. Do this 1000 times.
+2. Draw data from the appropriate data generating process (e.g., `rnorm` for normally distributed data) with these same "true" values. Do this 1,000 times. These are your populations:
 
 ```{r}
 #| echo: true
@@ -302,7 +304,7 @@ estimand
 res <- list()
 
 for(i in 1:1000){
-  # group 1 simulated data:
+  
   res[[i]] <- data.frame(group_1 = rnorm(n = true_n1, # group 1 simulated data
                                      mean = true_m1,
                                      sd = true_sd1),
@@ -317,7 +319,7 @@ head(res)
 
 ```
 
-3. Summarize this randomly drawn distribution into means and standard deviations per iteration and calculate your effect size. These are your **estimates**. We'll calculate both Cohen's d (the definition formula) and Hedges' g (the small sample size bias corrected estimator). After calculating them for each simulated dataset, you then take the mean estimate. Since calculating bias for sampling variance is a bit more complex, we'll just focus on the point estimate here:
+3. Summarize these randomly drawn populations into means and standard deviations per iteration and calculate your effect size. We'll calculate both Cohen's d (the definition formula) and Hedges' g (the small sample size bias corrected estimator). These effect sizes are your **estimates**. 
 
 ```{r}
 #| echo: true
@@ -348,17 +350,18 @@ estimate_g <- escalc(measure = "SMD",
 
 estimates <- rbind(estimate_d, estimate_g)
 
+
+
+```
+
+4. Now take the average of your estimates. Note that calculating bias for sampling variance is a bit more complex, so we'll just focus on the point estimate here. Subtract the estimand from the *mean* of the estimates. This your **bias:**
+
+```{r}
 mean_point_estimate <- estimates %>%
   group_by(estimator) %>%
   summarize(yi_mean_estimate = mean(yi))
 
 mean_point_estimate
-
-```
-
-4. Subtract the estimand from the *mean* of the estimates. This your **bias.**
-
-```{r}
 
 bias <- mean_point_estimate %>%
   bind_cols(estimand = estimand$yi) %>%
