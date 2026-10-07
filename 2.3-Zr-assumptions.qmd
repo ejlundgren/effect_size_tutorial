@@ -78,9 +78,9 @@ In this section, we discuss effect sizes for describing the relationship strengt
 
 ### Why can't we just pool raw correlations?
 
-When primary studies report their results, they often present Pearson's correlation coefficient ($r$). It is an appealing effect size: it carries no units, so a correlation between body mass and clutch size can be compared directly against one between soil nitrogen and plant diversity (if that makes sense to be compared, which is another question). It runs from $-1$ (a perfect negative linear association) through $0$ (no *linear* association) to $+1$ (a perfect positive linear association).
+When primary studies report their results, they often present Pearson's correlation coefficient ($r$). It is an appealing effect size: it carries no units, so a correlation between body mass and clutch size can be compared directly against one between soil nitrogen and plant diversity (if that makes sense to be compared, which is another question). It runs from $-1$ (a perfect negative *linear* association) through $0$ (no linear association) to $+1$ (a perfect positive linear association).
 
-In practice, many studies never report $r$ at all. Instead, they show a scatterplot, often with a fitted line from a linear model, and report a slope, a $t$ or $F$ statistic, or an $R^2$. In those cases you will have to obtain $r$ yourself, either by extracting the points from the figure (see [Chapter 3.4](3.4-Zr-challenges.qmd#sec-simple-figures)) or by converting the reported test statistics (see [Chapter 4](4-converting-effect-sizes.qmd)).
+In practice, many studies never report $r$ at all. Instead, they show a scatterplot, often with a fitted line from a linear model, and report a slope, a $t$ or $F$ statistic, or an $R^2$. In those cases you will have to obtain $r$ yourself, either by extracting the points from the figure (see [Chapter 3.4](3.4-Zr-challenges.qmd#sec-simple-figures)) or by converting the reported test statistics (see [Chapter 4](4-converting-effect-sizes.qmd)). **I think this needs to be in the extraction page**
 
 ::: callout-tip
 ##### What $r$ actually measures
@@ -96,6 +96,7 @@ where $b$ is the slope of the regression of $y$ on $x$, and $s_x$ and $s_y$ are 
 ```{r}
 #| label: fig-r-slope-scatter
 #| fig-cap: "Three simulated datasets with the same 50 values of $x$. Panels A and B share the same slope but differ in scatter, so their correlations differ. Panels A and C have very different slopes but the same scatter relative to the slope, so their correlations are identical."
+#| code-fold: true
 #| fig-width: 9
 #| fig-height: 3.5
 #| eval: true
@@ -135,13 +136,13 @@ Convenient as it is, the raw correlation coefficient has three mathematical prop
 
 1. **The estimate gets squeezed against the ceiling.** When the true correlation in the population is near zero, repeated studies scatter symmetrically around it. When the true correlation is strong, say $+0.8$, there is simply less room to overshoot than to undershoot, because no estimate can exceed $+1$. The spread of plausible estimates becomes lopsided, with a long tail on the low side. The practical cost is that confidence intervals calculated the usual way assume a symmetric spread, so they end up miscalibrated and can even extend beyond $1$, which does not make sense. Separately, and through a different route, $r$ is a slightly *shrunken* estimate of the true correlation. It is pulled toward zero, whatever its sign. That shrinkage is small (for a true correlation of $0.5$ measured on $20$ individuals, roughly $0.01$), but it is the reason unbiased alternatives to $r$ exist [@Olkin1958-op].
 
-2. **Precision is tangled up with the result.** Meta-analysis weights each study by its precision, and this only works if precision is governed by something independent of the answer, such as sample size. For correlations it is not. The sampling variance of $r$ is
+2. **Precision is tangled up with the result.** Meta-analysis weights each study by its precision, and this only works if precision is governed by something independent of the answer, such as sample size. For correlations it is not. The sampling variance of $r$ is:
 
 $$
 v_i = \frac{(1 - r_i^2)^2}{n_i - 1}
 $${#eq-r-variance}
 
-which contains the correlation itself. The larger the magnitude of the correlation a study happens to report (or the closer $|r_i|$ is to $1$), the smaller its variance and the heavier its weight. A study that overestimated the magnitude of the correlation by chance is therefore rewarded with extra influence, and the pooled estimate is dragged away from zero. Notice that this pushes in the *opposite* direction to the shrinkage in point 1, above. The same entanglement distorts funnel plots and inflates the false-positive rate of Egger's test for funnel asymmetry. The scatter narrows toward correlations with large magnitudes for reasons that have nothing to do with genuine precision.
+<p style="margin-left: 40px;">As such, variance contains the correlation itself. The larger the magnitude of the correlation a study happens to report (or the closer $|r_i|$ is to $1$), the smaller its variance and the heavier its weight. A study that overestimated the magnitude of the correlation by chance is therefore rewarded with extra influence, and the pooled estimate is dragged away from zero. Notice that this pushes in the *opposite* direction to the shrinkage in point 1, above. The same entanglement distorts funnel plots and inflates the false-positive rate of Egger's test for funnel asymmetry. The scatter narrows toward correlations with large magnitudes for reasons that have nothing to do with genuine precision.</p>
 
 3. **Small samples make matters worse.** Meta-analytic models assume each study's estimate is drawn from a bell-shaped distribution around the true value. For correlations, that approximation holds up well with large samples and modest effects, and it breaks down when the sample is small *and* the correlation is strong—the combination most familiar to anyone working with a dozen populations or a handful of species.
 
@@ -183,7 +184,7 @@ What about a discrete variable, such as a binary treatment, a sex, or a presence
 
 #### 3. Back-transformation to $r$
 
-We conduct all statistical modeling, random-effects estimation, and moderator tests in the $Z_r$ metric, but $Z_r$ values are difficult to interpret conceptually. An effect size of $Z_r = 1.1$ means very little to our brain until we convert it back to $r = 0.8$. We therefore back-transform final pooled estimates from our meta-analytic models, and the confidence intervals, to the intuitive correlation scale using the hyperbolic tangent ($\tanh$):
+We conduct all statistical modeling, random-effects estimation, and moderator tests in the $Z_r$ metric, but $Z_r$ values are difficult to interpret conceptually. An effect size of $Z_r = 1.1$ means very little to our brain until we convert it back to $r = 0.8$. We therefore back-transform final pooled estimates from our meta-analytic models, and the confidence intervals, to the more intuitive correlation scale using the hyperbolic tangent ($\tanh$):
 
 $$r = \tanh(Z_r) = \frac{e^{2 Z_r} - 1}{e^{2 Z_r} + 1}$${#eq-zr-back}
 
@@ -214,7 +215,6 @@ Some authors (notably the Hunter–Schmidt tradition; @Hunter2014-hs; @Field2001
 ### Code and formula pairing: implementation in R
 
 Let's look at how to implement these calculations in R using `metafor::escalc` and basic math. 
-
 Note that in many cases, the $Z_r$ effect sizes that you calculate in a meta-analysis will involve multiple steps. Few studies report $r$ directly. Instead many of those studies will present scatterplot visualizations, which they analyze with linear models. To calculate $r$ (the precursor to $Z_r$), you'll have to extract the points from the scatterplot (or find their raw data) and calculate $r$ across the points. 
 
 As such, your raw dataset will be long, with a row per measurement point and an ID to specify the summarization group to calculate $r$. The sample size ($n_i$) for each study will be the number of data points extracted for that specific study.
@@ -283,7 +283,7 @@ ggplot(plot_data
 
 Follow the curve above to its ends: as $r$ approaches $\pm 1$, $Z_r$ heads off to $\pm\infty$. At exactly $r = \pm 1$, Fisher's transformation is undefined, since $\text{atanh}(1) = \infty$. The variance, however, looks perfectly well behaved, because $1/(n_i - 3)$ ignores $r$ entirely. Nothing in the variance formula warns you that something has gone wrong.
 
-`escalc` deals with this by recoding the infinite values to `NA` (with a warning), and `rma` then drops those rows before fitting (with another warning). The consequence is easy to miss: the studies reporting the *strongest* associations quietly disappear from your analysis, pulling the pooled estimate toward zero.
+`escalc` deals with this by recoding the infinite values to `NA` (with a warning). `metafor`s modeling function, `rma.mv` will drop those rows before model fitting (with another warning). The consequence is easy to miss: the studies reporting the *strongest* associations quietly disappear from your analysis, pulling the pooled estimate toward zero.
 
 ```{r}
 #| eval: true
@@ -342,6 +342,25 @@ Run your models with and without these studies, and under more than one ceiling.
 
 ---
 
+### Interpretation and benchmarks: what does $r$ mean?
+
+When interpreting your pooled $Z_r$ effect size, you may encounter the traditional benchmarks proposed by Jacob Cohen [-@Cohen1988-pw]:
+
+| Effect size class | Correlation coefficient ($r$) | Variance explained ($r^2$) | Interpretation |
+| :--- | :--- | :--- | :--- |
+| **Small** | $0.1$ | $1\%$ | Subtle effect, barely visible to the naked eye. |
+| **Medium** | $0.3$ | $9\%$ | Visible to a careful observer; typical of many social and ecological processes. |
+| **Large** | $0.5$ | $25\%$ | Prominent relationship; easily detectable. |
+
+These labels were offered by Cohen as a fallback for researchers with no domain knowledge to draw on, and he said so explicitly. The interpretation of effect sizes is highly context-dependent:
+
+* In **evolutionary ecology**, natural selection operates on tiny margins. A correlation of $r = 0.05$---explaining a quarter of one percent of the variance---can be strongly adaptive and shape survival over generations [@Kingsolver2001-am; @Nakagawa2012-ee].
+* In **biomedical research**, regular aspirin consumption has an effect on heart attack risk equivalent to $r = 0.034$. This explains about one tenth of one percent of the variance, yet translates to thousands of lives saved annually [@Rosenthal1990-ap].
+
+Never apply Cohen's benchmarks blindly. Always interpret your pooled correlations in the context of the biology, the decision costs, and the practical implications of the phenomenon.
+
+---
+
 ### Not all correlations are comparable
 
 Before converting anything, check that the correlations you have extracted are estimating the same quantity. Several common mismatches will quietly corrupt an otherwise careful meta-analysis.
@@ -355,13 +374,20 @@ Before converting anything, check that the correlations you have extracted are e
 ::: callout-tip
 ##### Ecological (aggregate) correlations vs. individual correlations
 
-**Ecological correlations are not individual correlations.** When primary studies report correlations among group means (such as site averages) rather than individual measurements, they are estimating an *ecological correlation* [@Robinson1950-ec]. Because group averaging washes away individual-level residual variance, aggregate correlations are almost always substantially stronger (larger $|r|$) than individual-level correlations (aggregation bias / Robinson's paradox). Mixing ecological correlations with individual correlations in the same meta-analysis introduces severe methodological heterogeneity. When the individual is the intended unit of replication across the synthesis, researchers sometimes reconstruct individual-level distributions from group means and standard deviations (see [Chapter 3.4, Section 3.4.3](3.4-Zr-challenges.qmd#sec-error-bars)). However, this is an experimental simulation technique: all reconstructed individuals share identical group-level predictor values, creating cluster-level pseudoreplication that requires multilevel models or robust variance adjustments to avoid artificially deflating standard errors.
+**Ecological correlations are not individual correlations.** When primary studies report correlations among group means (such as site averages) rather than individual measurements, they are estimating an *ecological correlation* [@Robinson1950-ec]. Because group averaging washes away individual-level residual variance, aggregate correlations are almost always substantially stronger (larger $|r|$) than individual-level correlations (aggregation bias / Robinson's paradox). 
+
+Mixing ecological correlations with individual correlations in the same meta-analysis introduces severe methodological heterogeneity. When the individual is the intended unit of replication across the synthesis, researchers sometimes reconstruct individual-level distributions from group means and standard deviations (see [Chapter 3.4, Section 3.4.3](3.4-Zr-challenges.qmd#sec-error-bars)). 
+
+However, this is an experimental simulation technique: all reconstructed individuals share identical group-level predictor values, creating cluster-level pseudoreplication that requires multilevel models or robust variance adjustments to avoid artificially deflating standard errors.
 :::
 
 ::: callout-tip
 ##### Continuous predictors with binary outcomes (Point-biserial & Biserial)
 
-**Point-biserial and Biserial correlations.** When a continuous predictor is paired with a truly discrete binary outcome (*e.g.,* predator density vs. nest fledged/failed), calculating Pearson's formula yields the *point-biserial correlation* ($r_{pb}$). A key mathematical constraint of $r_{pb}$ is that when paired with a continuous normal variable, $|r_{pb}|$ can never mathematically reach 1.0: its theoretical maximum is capped at $\sqrt{2/\pi} \approx 0.798$ even under a perfectly balanced 50/50 split ($p = q = 0.5$), and shrinks further when base rates are uneven [@Jacobs2017-cv]. In contrast, the *biserial correlation* ($r_b$) assumes the binary outcome reflects an underlying continuous trait with a threshold, correcting for this attenuation. Fortunately, point-biserial correlations can also be converted to Standardized Mean Differences ($d$) or log Odds Ratios ($\ln\text{OR}$) to unify continuous and discrete studies within the same synthesis (see [Chapter 3.4, Section 3.4.5](3.4-Zr-challenges.qmd#sec-discrete-responses) and [Chapter 4](4-converting-effect-sizes.qmd)).
+**Point-biserial and Biserial correlations.** When a continuous predictor is paired with a truly discrete binary outcome (*e.g.,* predator density vs. nest fledged/failed), calculating Pearson's formula yields the *point-biserial correlation* ($r_{pb}$). A key mathematical constraint of $r_{pb}$ is that when paired with a continuous normal variable, $|r_{pb}|$ can never mathematically reach 1.0: its theoretical maximum is capped at $\sqrt{2/\pi} \approx 0.798$ even under a perfectly balanced 50/50 split ($p = q = 0.5$), and shrinks further when base rates are uneven [@Jacobs2017-cv]. 
+
+In contrast, the *biserial correlation* ($r_b$) assumes the binary outcome reflects an underlying continuous trait with a threshold, correcting for this attenuation. Fortunately, point-biserial correlations can also be converted to Standardized Mean Differences ($d$) or log Odds Ratios ($\ln\text{OR}$) to unify continuous and discrete studies within the same synthesis (see [Chapter 3.4, Section 3.4.5](3.4-Zr-challenges.qmd#sec-discrete-responses) and [Chapter 4](4-converting-effect-sizes.qmd)).
+
 :::
 
 ---
@@ -371,6 +397,7 @@ Before converting anything, check that the correlations you have extracted are e
 When voyaging through the literature, you will inevitably encounter studies that present raw data, scatterplots, or matrices, that need to be analyzed as $Z_r$ but are based on ranks rather than raw values. Or you will encounter studies that do not report Pearson's $r$. Instead, because their data were non-normal or ranked, they reported **Spearman's rank correlation** ($\rho$ or $r_s$) or **Kendall's tau** ($\tau$). 
 
 * **Spearman's $\rho$** is Pearson's $r$ computed on the ranks of each variable rather than on their raw values. It measures how well the relationship is described by *any* monotonic curve, not just a straight line.
+
 * **Kendall's $\tau$** looks at every pair of observations and asks whether they are ordered the same way on both variables (a concordant pair) or in opposite ways (a discordant pair): $\tau = (C - D) / \binom{n}{2}$, where $C$ and $D$ are the numbers of concordant and discordant pairs. It is less sensitive to outliers and ties than $\rho$, and usually smaller in magnitude for the same data.
 
 In `R`, both are available through `cor(x, y, method = "spearman")` and `cor(x, y, method = "kendall")`.
@@ -483,7 +510,7 @@ Correlation coefficients frequently violate the assumption of independence. Seve
 
 #### 1. Pairwise correlation matrices (the melting trap)
 
-Primary studies often present a correlation matrix comparing multiple traits or environmental factors. Meta-analysts sometimes "melt" these matrices and include all pairwise correlations as separate effect sizes.
+Primary studies somtimes present a correlation matrix comparing multiple traits or environmental factors. Meta-analysts sometimes "melt" these matrices and include all pairwise correlations as separate effect sizes.
 
 For example, imagine a single study measures body mass, wing length, and tarsus length on the same sample of 40 birds and reports a $3 \times 3$ correlation matrix. Melting this matrix yields three pairwise correlations (`mass–wing`, `mass–tarsus`, `wing–tarsus`) from the exact same individuals. Treating these three estimates as independent data points inflates your sample size and produces artificially narrow standard errors.
 
@@ -556,25 +583,6 @@ Continuous predictors in ecology and evolution often vary across spatial and tem
 * **Spatial grain:** *e.g.,* local plot size, regional $\text{km}^2$.
 * **Temporal grain:** *e.g.,* seasonal correlation, decadal trend.
 * **Flag groupings:** flag studies sharing common study sites, common control subjects, or common experimental treatments.
-
----
-
-### Interpretation and benchmarks: what does $r$ mean?
-
-When interpreting your pooled effect size, you may encounter the traditional benchmarks proposed by Jacob Cohen [-@Cohen1988-pw]:
-
-| Effect size class | Correlation coefficient ($r$) | Variance explained ($r^2$) | Interpretation |
-| :--- | :--- | :--- | :--- |
-| **Small** | $0.1$ | $1\%$ | Subtle effect, barely visible to the naked eye. |
-| **Medium** | $0.3$ | $9\%$ | Visible to a careful observer; typical of many social and ecological processes. |
-| **Large** | $0.5$ | $25\%$ | Prominent relationship; easily detectable. |
-
-These labels were offered by Cohen as a fallback for researchers with no domain knowledge to draw on, and he said so explicitly. The interpretation of effect sizes is highly context-dependent:
-
-* In **evolutionary ecology**, natural selection operates on tiny margins. A correlation of $r = 0.05$---explaining a quarter of one percent of the variance---can be strongly adaptive and shape survival over generations [@Kingsolver2001-am; @Nakagawa2012-ee].
-* In **biomedical research**, regular aspirin consumption has an effect on heart attack risk equivalent to $r = 0.034$. This explains about one tenth of one percent of the variance, yet translates to thousands of lives saved annually [@Rosenthal1990-ap].
-
-Never apply Cohen's benchmarks blindly. Always interpret your pooled correlations in the context of the biology, the decision costs, and the practical implications of the phenomenon.
 
 ---
 

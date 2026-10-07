@@ -1,6 +1,6 @@
 ---
-title: "Continuous predictor"
-subtitle: "Zr: the correlation coefficient"
+title: "Extracting $Z_r$: the correlation coefficient"
+subtitle: "Everything's a spectrum, man"
 date: today
 format: 
   html:
@@ -10,7 +10,7 @@ format:
     toc-float: true
     toc-expand: true
     toc-title: "**On this Page**"
-    output-file: "3.4-Zr-challenges.html"
+    output-file: "3.4-$Z_r$-challenges.html"
     # embed-resources: true
     # code-fold: true
     code-link: true
@@ -70,22 +70,20 @@ library("crayon")
 
 ```
 
-# Everything's a spectrum, man {#sec-introduction}
+$Z_r$ describes correlations or relationships with a continuous predictor variable (and generally a continuous response variable). $Z_r$ is thus an important effect size in the meta-analyst tool kit, especially with observational data. 
 
-Zr describes correlations or relationships with a continuous predictor variable (and generally a continuous response variable). Zr is thus an important effect size in the meta-analyst tool kit, especially with observational data. 
-
-Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data. We'll start, however, by describing how to structure a database for Zr type effect sizes.
+$Z_r$ type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting $Z_r$ type data. We'll start, however, by describing how to structure a database for $Z_r$ type effect sizes.
 
 ## Database design
-In general, Zr effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis. This dataset is then summarized in `R` to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
+In general, $Z_r$ effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis. This dataset is then summarized in `R` to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
 
 Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). These can be entered into the same raw dataset or into a separate tab.
 
 :::callout-important
 ######## Types of directly reported correlations
-The Zr effect size is based on a transformation of Pearson's correlation coefficient ($r$). However, there are other correlation types. Spearman correlation is used for non-parametric correlation tests, Kendall for XXXXX, biserial for an artificially discretized predictor variable, and point-biserial for a truly discretized predictor variable.
+The $Z_r$ effect size is based on a transformation of Pearson's correlation coefficient ($r$). However, there are other correlation types. Spearman correlation is used for non-parametric correlation tests, Kendall for XXXXX, biserial for an artificially discretized predictor variable, and point-biserial for a truly discretized predictor variable.
 
-Of these, it appears that all but point-biserial can be used to calculate Zr without adjustment [@Jacobs2017-cv]. However, blah blah blah.
+Of these, it appears that all but point-biserial can be used to calculate $Z_r$ without adjustment [@Jacobs2017-cv]. However, blah blah blah.
 
 DOUBLE CHECK THIS.
 :::
@@ -131,7 +129,7 @@ dat.final <- rbind(dat.summarized,
                      filter(!is.na(r)) %>%
                      select(-x, -y))
 
-# Now calculate Zr:
+# Now calculate $Z_r$:
 dat.summarized <- escalc(measure = "ZCOR",
                          ri = r, ni = n,
                          data = dat.final)
@@ -141,6 +139,25 @@ knitr::kable(dat.summarized)
 ```
 
 You may also note [below](#sec-error-bars) that there are methods to utilize mean ±error data in correlation coefficients. These would require additional columns and additional steps in `R`. 
+
+Feel free to download our database template, here: 
+
+```{r}
+#| echo: false
+
+library("downloadthis")
+
+download_file(path = "data/template_dataset.xlsx",
+                output_name = "database_template",
+                output_extension = ".xlsx",
+                button_label = "Download template dataset",
+                button_type = "primary", # Controls styling 
+                has_icon = TRUE,
+                icon = "fa fa-save")
+
+```
+
+<br>
 
 ## Simple figures {#sec-simple-figures}
 
@@ -200,7 +217,7 @@ ggplot(data = dat, aes(x = x, y = y))+
 
 ```
 
-If the total number of points is reported for the study, you can duplicate the values of the red points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall Zr estimate more conservative—e.g., less weight in the model). 
+If the total number of points is reported for the study, you can duplicate the values of the pink points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall $Z_r$ estimate more conservative—e.g., less weight in the model). 
 
 In the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
 
@@ -230,7 +247,7 @@ If the error bars are only on the y axis this is fairly straightforward but is a
 
 One of the biggest reasons to draw the underlying data from figures like this is to align the **units of replication** between these data and the rest of your dataset. For example, if the rest of your dataset uses individuals (or nests or plots) as the unit of replication but the figure above uses sites and reports the mean±sd across individuals, then you will have a serious mismatch in the units of replication between these effect sizes. This mismatch will underweight the above effect size in your models.
 
-Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a Zr-type effect size and the binomial distribution)
+Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](#sec-$Z_r$-reconstructing-proportion-data) for a worked example with a $Z_r$-type effect size and the binomial distribution)
 
 ::: callout-warning
 Note that reconstructing underlying data is an experimental method. Use carefully.
@@ -368,7 +385,7 @@ knitr::kable(head(xy_expanded))
 
 Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.
 
-Now, we calculate the correlation between all of these points and calculate our 'Zr' effect size:
+Now, we calculate the correlation between all of these points and calculate our '$Z_r$' effect size:
 
 ```{r}
 #| echo: true
@@ -384,7 +401,7 @@ escalc(measure = "ZCOR",
 ```
 
 
-If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See [here](7-simulating-non-gaussian-responses.qmd) where we discuss this and [below](#sec-zr-reconstructing-proportion-data) where we demonstrate using the binomial distribution to reconstruct discrete individual outcomes from a correlation figure.
+If the variable of interest (the response variable `y`) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., `rpois` or `rnbinom`). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See [here](7-simulating-non-gaussian-responses.qmd) where we discuss this and [below](#sec-$Z_r$-reconstructing-proportion-data) where we demonstrate using the binomial distribution to reconstruct discrete individual outcomes from a correlation figure.
 
 </details>
 
@@ -557,7 +574,7 @@ ggplot(data = dat, aes(x = density, y = living))+
 
 ```
 
-Depending on your meta-analysis question you may very well want to extract this data and calculate a Zr correlation effect size, which can then be converted to lnOR (see [here](4-converting-effect-sizes.qmd)) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point, which is an individual, and calculate Zr with the responses as a binary variable of 0 or 1. 
+Depending on your meta-analysis question you may very well want to extract this data and calculate a $Z_r$ correlation effect size, which can then be converted to lnOR (see [here](4-converting-effect-sizes.qmd)) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point, which is an individual, and calculate $Z_r$ with the responses as a binary variable of 0 or 1. 
 
 This [conversion](4-converting-effect-sizes.qmd) is safe because presence/absence is a discretized version of abundance and because the **unit of replication** is the number of nests (or individuals) in both cases.
 
@@ -616,9 +633,9 @@ ggplot(data = dt)+
 setnames(dt, c("x", "y"), c("temperature", "proportion_alive"))
 ```
 
-You can calculate Zr directly between the predictor (`temperature`, x-axis) and the proportion alive (the y axis), directly. 
+You can calculate $Z_r$ directly between the predictor (`temperature`, x-axis) and the proportion alive (the y axis), directly. 
 
-However, each location on the x-axis actually represents a *population of individuals*, all of whom were monitored to determine the proportion alive. As such, simply calculating Zr directly from the proportion ignores population size and treats the number of surveys (or sites) as the *unit of replication*  (n=10). 
+However, each location on the x-axis actually represents a *population of individuals*, all of whom were monitored to determine the proportion alive. As such, simply calculating $Z_r$ directly from the proportion ignores population size and treats the number of surveys (or sites) as the *unit of replication*  (n=10). 
 
 This can lead to a serious mismatch with the rest of your dataset---if the rest of your dataset is based the number of individuals as the unit of replication (like [above](#sec-discrete-responses-binary-predictor))
 
@@ -660,7 +677,7 @@ knitr::kable(rbind(head(dt.expanded, 3),
 
 We have now expanded this dataset from a single row per temperature treatment (n=17) to a single row per individual (n=255) and we have shifted the *unit of replication* from number of temperature treatments to number of individuals. 
 
-We can now calculate a correlation coefficient and our Zr effect size:
+We can now calculate a correlation coefficient and our $Z_r$ effect size:
 
 ```{r}
 res <- cor.test(dt.expanded$living, dt.expanded$temperature)
@@ -676,7 +693,7 @@ Continuous predictors with discrete responses can also be analyzed with a Hazard
 IS THIS TRUE? This was something Shinichi said, I think.
 :::
 
-## Mean±SD proportion data with continuous predictor {#sec-zr-reconstructing-proportion-data}
+## Mean±SD proportion data with continuous predictor {#sec-$Z_r$-reconstructing-proportion-data}
 
 Now let's look at a similar situation, except the figure is presenting mean±SD mortality across **separate trials** within each temperature treatment.
 
@@ -836,7 +853,7 @@ knitr::kable(rbind(head(final_dat, 5),
 
 ```
 
-This final dataset has 300 rows, one for each individual, and the necessary ingredients for calculating Zr, with number of individuals as the **unit of replication**. If we had simply calculated Zr from the author-reported means, our sample size would have been 5 and our unit of replication would have been number of trials, instead of number of individuals.
+This final dataset has 300 rows, one for each individual, and the necessary ingredients for calculating $Z_r$, with number of individuals as the **unit of replication**. If we had simply calculated $Z_r$ from the author-reported means, our sample size would have been 5 and our unit of replication would have been number of trials, instead of number of individuals.
 
 Reconstructing the underlying binomial distribution as we did here gives the resulting effect size considerably higher weight in your meta-analytic models, and may help align your unit of replication to lnOR type effect sizes (if those are also in your dataset and you are planning on [converting](4-converting-effect-sizes.qmd) effect sizes).
 
