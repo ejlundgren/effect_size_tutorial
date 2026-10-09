@@ -1,0 +1,1235 @@
+---
+title: "Continuous outcomes between two groups"
+subtitle: "Standardized Mean Differences, log-transformed Ratio of Means, and related questions"
+date: today
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "2.1-SMD-assumptions.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options:
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+set.seed(2025)
+
+# This page was checked with metafor 5.2-1 (October 2026).
+metatools_sha <- "186c219a450ef117055705d1dd856ddd124105c8"
+if (!requireNamespace("metatools", quietly = TRUE) ||
+    !identical(utils::packageDescription("metatools")$RemoteSha, metatools_sha)) {
+  pak::pak(paste0("ejlundgren/metatools@", metatools_sha))
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+library("ggtext")
+```
+
+:::callout-note
+##### Key points
+
+- SMD and lnRoM are different estimands. SMD expresses a difference relative to variation, while lnRoM expresses a relative difference between two means.
+- Their point estimates, assumptions, and interpretations differ, so they cannot be swapped without thinking about the question you are asking.
+- lnRoM needs positive means that are well away from zero. The Geary-type check G' flags groups where that is doubtful (values below 3).
+- Dimensionality, paired designs, and model-derived estimates each change which measure is safe to use.
+:::
+
+This class of effect sizes is among the most commonly used in ecology and evolution. These effect sizes compare a continuous response between two groups. For example:
+
+- Do animals exposed to a treatment weigh more than control animals?
+
+- Does warming change plant biomass?
+
+- Do pesticides reduce the abundance of non-target insects?
+
+- Are prey less abundant where predators are present?
+
+Studies like these often report the same basic information: a mean, standard deviation, and sample size for each group. However, the same data can answer several different biological questions.
+
+Before choosing an effect size, think carefully about the [**estimand**](1-effect-size-overview.qmd#sec-estimates-and-estimators) you are interested in:
+
+| Biological question | Effect size estimand |
+|---|---|
+| What is the ***absolute*** difference between groups, relative to variation? | Standardized Mean Difference (**SMD**) |
+| What is the ***relative*** difference between groups, regardless of variation? | Log-transformed ratio of means (**lnRoM**) |
+| Are you only interested in the magnitude of difference, regardless of direction? | log-magnitude (**lnM**) |
+| Which group is more variable than the other? | log variability ratio or coefficient of variation (**lnVR**, **lnCVR**) |
+
+
+In this chapter, we focus on **SMD** and **lnRoM** effect size estimands. These are essential effect sizes for comparing the **mean** responses of continuous variables between two groups. We dedicate this chapter to understanding the mathematical operation of these effect sizes, their assumptions, and how to interpret them.
+
+In addition to SMD and lnRoM, comparisons of continuous responses between two groups can often be complemented by analyses of different effect sizes, which capture more than just mean differences. **lnM** describes the magnitude of differences between two groups, regardless of direction, while **lnVR/lnCVR** describe differences in variability between two groups. These require the same statistical ingredients as **SMD** and **lnRoM**. We discuss lnM [here](5.2-differences-in-magnitude.qmd) and lnCVR/lnVR [here](5.1-variability-between-groups.qmd)
+
+Choosing between SMD and lnRoM is not trivial. The appropriate choice depends on the biological question you are interested in quantifying (i.e., the estimand) as well as whether the data meet the assumptions of the effect size.
+
+[]{#nomenclature-of-lnrom-and-lnrr}
+
+:::callout-important
+##### Nomenclature of **lnRoM** and **lnRR**
+
+The **log-transformed ratio of means (lnRoM)** is often referred to as the *log response ratio*. Some papers abbreviate it as **lnRR**.
+
+However, **lnRR** also refers to the **log risk ratio (lnRR)**, which compares the risks of binary events such as survival, infection, or fledging. We discuss lnRR in the chapter on [binary outcomes](2.2-lnOR-assumptions.qmd).
+
+Throughout this tutorial, we use **lnRoM** for the log ratio of means and reserve **lnRR** for the log risk ratio.
+:::
+
+# Statistical ingredients
+These effect sizes describe *continuous* responses between two groups. To calculate these effect sizes, you will need three statistical ingredients:
+
+- means of each group ($m_1$, $m_2$)
+
+- standard deviation of each group ($sd_1$, $sd_2$)
+
+- sample sizes ($n_1$, $n_2$)
+
+The subscript numbers correspond to the treatment and control groups. These are generally specified as:
+
+- group 1: treatment
+
+- group 2: control
+
+As such, for both **lnRoM** and **SMD**, a negative effect size point estimate indicates that the treatment *reduced* the mean of the response variable while a positive effect size indicates that the treatment *increased* the response variable mean.
+
+[]{#sec-callout-error-types}
+
+:::callout-warning
+##### Measurements of error/variance
+
+The effect sizes in this section require standard deviation ($sd$) for the treatment and control groups. $sd$ is fundamentally distinct from standard error ($se$). Some meta-analyses have mistaken the two, with egregious results. Be sure to convert all measurements of error to $sd$. Other commonly reported forms of error include 95% confidence intervals (or 90%), variance, and interquartile ranges (e.g., in boxplots). The extraction package `metaDigitise` automatically converts $se$, interquartile ranges, and 95% CIs to $sd$.
+
+For a group with sample size $n$, standard error ($se$) can be converted to standard deviation ($sd$) as follows:
+
+$$
+sd = se\sqrt{n}.
+$${#eq-se-to-sd}
+
+If variance was reported, standard deviation can be calculated:
+$$
+sd = \sqrt{\mathrm{Var}}.
+$${#eq-var-to-sd}
+
+Finally, if a study reported symmetric confidence intervals around a group mean, you can convert these to standard error and then to standard deviation as follows:
+
+$$
+\begin{aligned}
+se &= \frac{CI_{upper}-CI_{lower}}{2c},\\
+sd  &= se\sqrt{n},
+\end{aligned}
+$${#eq-ci-to-sd}
+
+where $c$ is the critical value used to construct the interval. For a large-sample 95% confidence interval based on the normal distribution, $c=1.96$. For small samples or intervals based on another distribution, use the critical value reported or implied by the study rather than automatically using 1.96.
+:::
+
+# What's the difference between SMD and lnRoM?
+SMD and lnRoM describe similar things: the difference in a continuous variable between two groups.
+
+Many people think of SMD and lnRoM as largely interchangeable. Yet their interpretation, and their assumptions, are very different. lnRoM and SMD are fundamentally different estimands, designed to answer different questions. Some of these differences can be summarized here:
+
+| Data property | SMD | lnRoM |
+|---|---|---|
+| Should the point estimate account for variability | Yes | No |
+| Mean must be > 0 | No | Yes |
+| Can the estimates be back-transformed to percent change? | No | Yes |
+| Does the effect size describe **absolute** change?  | Yes | No |
+
+The distinction between these properties may not be immediately obvious. For many of us authors, some of them were quite revelatory when we finally saw it. Before we wade into the math of these effect sizes, and their assumptions, we'll give you an example to bring the point home:
+
+## lnRoM and SMD can tell profoundly different stories {#sec-flip-signs}
+
+Imagine you are doing a meta-analysis of the effects of a treatment---let's say controlled burning---on soil carbon. To explain the heterogeneity in your dataset you are also interested in testing the influence of moderators on the relationship between burning and soil carbon.
+
+Let's imagine that the raw means and standard deviation for four studies look like this along a mean annual temperature gradient:
+
+```{r}
+#| label: fig-soil-raw-means
+#| fig-cap: "Mean soil carbon (points) with ± 1 SD error bars for burned (treatment, group 1, circles) and control (group 2, triangles) plots at four mean annual temperatures. Each group has n = 20 plots at each temperature. Values are illustrative."
+#| fig-alt: "Two sets of points across four temperatures. Burned plots sit above the controls at the coolest temperature, and the gap narrows as temperature rises."
+#| eval: true
+#| echo: false
+#|
+
+dat <- data.table(temperature = c(5, 10, 15, 20),
+                  m1 = c(15, 10, 5, 2),
+                  m2 = c(10, 7, 3, 1),
+                  n1 = 20,
+                  n2 = 20,
+                  sd1 = c(1),
+                  sd2 = 1)
+ggplot()+
+  geom_pointrange(data = dat,
+                  aes(x = temperature+0.1, ymin = m2-sd2,
+                      ymax = m2+sd2, y = m2,
+                      fill = "Control", shape = "Control"),
+                  size = 1.5)+
+  geom_pointrange(data = dat,
+                  aes(x = temperature, ymin = m1-sd1,
+                      ymax = m1+sd1, y = m1,
+                      fill = "Burned", shape = "Burned"),
+                  size = 1.5)+
+  scale_fill_manual("", values = c("Control" = "#0072B2", "Burned" = "#D55E00"))+
+  scale_shape_manual("", values = c("Control" = 24, "Burned" = 21))+
+  theme_bw()+
+  xlab("Mean annual temperature (°C)")+
+  ylab("Mean ± SD soil carbon (mg g⁻¹)")
+
+```
+
+We are interested in the influence of *burning* on soil carbon. As such we want an effect size **estimand** that describes the relationship between the burned treatment and the control at each temperature measurement.
+
+If you calculate and plot SMD for each pair of points along our temperature gradient, we see that the effect of the treatment is negatively related to temperature:
+
+```{r}
+#| label: fig-soil-smd
+#| fig-cap: "Standardized mean difference of burned minus control soil carbon at each mean annual temperature. Error bars are 95% confidence intervals (yi ± 1.96 × sqrt(vi)); n = 20 plots per group at each temperature."
+#| fig-alt: "Points for SMD at four temperatures. The SMD is positive at every temperature and falls steadily as temperature rises."
+#| eval: true
+#| echo: false
+
+dat <- escalc(measure = "SMD",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat)
+ggplot()+
+  geom_pointrange(data = dat, aes(x = temperature, ymin = yi-1.96*sqrt(vi), ymax = yi+1.96*sqrt(vi), y = yi),
+                  shape = 21, fill = "grey50", size = 1.5)+
+  theme_bw()+
+  xlab("Mean annual temperature (°C)")+
+  ylab("Effect of burning on soil carbon (SMD, 95% CI)")+
+  ggtitle("SMD: Absolute differences between groups, relative to variation")
+
+```
+
+This seems to match what we see in the raw data---the difference between the treatment and control groups gets smaller as temperature increases. If we were to fit a model on these 4 points, we'd find a negative temperature coefficient. This would suggest to policymakers that controlled burns are a way to enhance soil carbon in *cooler* climates and have less effect in *warmer* climates.
+
+But what happens if we use lnRoM as our estimand?
+
+```{r}
+#| label: fig-soil-lnrom
+#| fig-cap: "lnRoM of burned relative to control soil carbon at each mean annual temperature, uncorrected definition formula. Error bars are 95% confidence intervals (yi ± 1.96 × sqrt(vi)); n = 20 plots per group at each temperature."
+#| fig-alt: "Points for lnRoM at four temperatures. The lnRoM is positive at every temperature and rises overall, with a small dip between the first two temperatures, in the opposite direction to the SMD in the previous figure."
+#| eval: true
+#| echo: false
+
+dat <- escalc(measure = "ROM",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat,
+              correct = FALSE)
+ggplot()+
+  geom_pointrange(data = dat, aes(x = temperature, ymin = yi-1.96*sqrt(vi), ymax = yi+1.96*sqrt(vi), y = yi),
+                  shape = 21, fill = "grey50", size = 1.5)+
+  theme_bw()+
+  xlab("Mean annual temperature (°C)")+
+  ylab("Effect of burning on soil carbon (lnRoM, 95% CI)")+
+  ggtitle("lnRoM: Relative difference between groups, regardless of variation")
+
+```
+
+Wowza! Look at that! The relationship with the moderator has reversed! Maybe policymakers should do more controlled burns in warmer climates?
+
+But also... how did that happen?
+
+This happened because lnRoM describes the **relative** difference between groups---on a multiplicative scale. A small difference between groups near 0 produces a much stronger effect size than a bigger absolute difference for groups further from 0. We discuss this further [below.](#sec-near-zero-values).
+
+As you can imagine, the implications of overlooking these differences can lead to considerable problems. Meta-analyses commonly make policy recommendations that could be completely wrong because they used the wrong **estimand** for the job.
+
+Now we'll dive a little deeper into the mathematics of these two estimands, their interpretation, and their mathematical assumptions.
+
+---
+
+# A running biological example
+
+We'll walk you through the use and interpretation of these effect sizes with a running biological example. Imagine a warming experiment on the Arctic willow (*Salix arctica*) that measures plant biomass after one growing season. We call this the *Arctic willow warming example*, and we reuse it in later chapters:
+
+| Group | Mean biomass | Standard deviation | Sample size |
+|---|---:|---:|---:|
+| Ambient control | 10 g | 2 g | 20 plants |
+| Warming treatment | 12 g | 3 g | 20 plants |
+
+The treatment mean is 2 g higher than the control mean. SMD will express that difference relative to variation among the plants in both treatments, whereas lnRoM will express it as a proportional change in the means alone, regardless of variation. We will use this example to develop and interpret both measures side by side.
+
+```{r}
+#| label: willow-values
+#| echo: false
+
+# Arctic willow warming example: group 1 = warmed (treatment), group 2 = ambient control
+m_t <- 12; sd_t <- 3; n_t <- 20
+m_c <- 10; sd_c <- 2; n_c <- 20
+
+df_w <- n_t + n_c - 2
+sd_pooled_w <- sqrt(((n_t - 1) * sd_t^2 + (n_c - 1) * sd_c^2) / df_w)
+d_w <- (m_t - m_c) / sd_pooled_w
+J_w <- 1 - 3 / (4 * df_w - 1)
+g_w <- J_w * d_w
+lnrom_w <- log(m_t / m_c)
+pct_w <- 100 * (exp(lnrom_w) - 1)
+```
+
+# Standardized Mean Difference (SMD) {#sec-smd}
+**SMD** is an effect size designed to quantify **absolute** differences between two groups, while controlling for variation. **SMD** is akin to a test statistic: it is the ratio of *signal* (the mean difference between two groups) and *noise* (the pooled standard deviation of those groups).
+
+SMD is the estimand. Its definition formula, applied to sample data, gives an estimate known as Cohen's d (the uncorrected estimate):
+
+$$
+\begin{aligned}
+d = \frac{m_1 - m_2}{sd_{pooled}}
+\end{aligned}
+$${#eq-cohens-d}
+with $sd_{pooled}$ defined as:
+
+$$
+sd_{pooled}= \sqrt{ \frac{(n_1-1)sd_1^2+(n_2-1)sd_2^2}{n_1+n_2-2}}\\
+$${#eq-sd-pooled}
+
+The formula above, for $d$, returns values between $-\infty$ and $\infty$. This value describes the number of pooled standard deviations between groups 1 and 2.
+
+For our running biological example, we can plug our values in and produce:
+
+$$
+\begin{aligned}
+sd_{pooled}=
+\sqrt{\frac{19(3^2)+19(2^2)}{38}}
+=\sqrt{`r (19*9+19*4)/38`}
+\approx `r round(sd_pooled_w, 2)`\ \mathrm{g}.
+\end{aligned}
+$${#eq-worked-example-d}
+
+And a Cohen's d value of:
+
+$$
+d=\frac{12-10}{`r round(sd_pooled_w, 2)`}\approx `r round(d_w, 2)`.
+$${#eq-d}
+
+However, Cohen's d is *biased* at low sample sizes. For that reason, we will also apply a small sample size correction factor ($J$) [@Hedges1981-bt], to calculate a bias-corrected estimator of SMD called Hedges' g (the bias-corrected estimate of the SMD estimand). $J$ approaches 1 as sample size increases, which means that with high sample sizes, Hedges' g becomes indistinguishable from Cohen's d:
+
+$$
+\begin{aligned}
+&df = n_1+n_2-2\\
+&J \approx 1-\frac{3}{4 \times df-1}\\
+&g = J \times d
+\end{aligned}
+$${#eq-hedges-g}
+As such, our final SMD value for our running biological example is:
+
+$$
+\begin{aligned}
+&df = 20+20-2
+= `r df_w`\\
+&J \approx 1-\frac{3}{4\times df-1} \approx `r round(J_w, 4)`\\
+&g = Jd = `r round(J_w, 4)` \times `r round(d_w, 4)` = `r round(g_w, 4)`\\
+\end{aligned}
+$${#eq-worked-example-g}
+
+Calculating "SMD" can be done in `R` using `metafor`'s `escalc` function or `metatools::eff_size`:
+
+::: {.panel-tabset}
+
+## metafor
+
+```{r}
+#| eval: true
+#| echo: true
+escalc(m1i = 12, sd1i = 3, n1i = 20,
+       m2i = 10, sd2i = 2, n2i = 20,
+       measure = "SMD")
+```
+
+## metatools
+
+```{r}
+#| label: smd-metatools
+#| eval: true
+#| echo: true
+eff_size(x1 = 12, sd1 = 3, n1 = 20,
+         x2 = 10, sd2 = 2, n2 = 20,
+         effect_type = "SMD",
+         verbose = FALSE)
+```
+
+:::
+
+The table compares the point estimates and sampling variances from the two packages.
+
+```{r}
+#| label: smd-comparison
+#| echo: false
+smd_mf <- escalc(measure = "SMD", m1i = 12, sd1i = 3, n1i = 20,
+                 m2i = 10, sd2i = 2, n2i = 20)
+smd_mt <- eff_size(x1 = 12, sd1 = 3, n1 = 20,
+                   x2 = 10, sd2 = 2, n2 = 20,
+                   effect_type = "SMD", verbose = FALSE)
+data.frame(package = c("metafor", "metatools"),
+           yi = c(smd_mf$yi, smd_mt$yi),
+           vi = c(smd_mf$vi, smd_mt$vi)) |>
+  knitr::kable(digits = 4)
+```
+
+### SMD Interpretation {#sec-smd-interpretation}
+SMD is interpreted as the number of standard deviations between the control and treatment groups. These can be further interpreted using these commonly-used rules of thumb:
+
+- $SMD \approx |0.2|$ is a weak difference
+
+- $SMD \approx |0.5|$ is a moderate difference
+
+- $SMD \approx |0.8|$ is a strong difference
+
+Note these are approximations and should be treated simply as benchmarks for interpreting your results.
+
+Our final value of `r round(g_w, 2)` is close to Cohen's 0.8 benchmark for a large effect: the treatment and control groups differ by about `r round(g_w, 2)` standard deviations.
+
+# Log-transformed ratio of means (lnRoM)
+lnRoM is intended to describe the **relative** differences between two groups---not absolute differences as in SMD. This might seem to be a trivial distinction from SMD but it has profound consequences for the results of meta-analysis (and, as we showed [above](#sec-flip-signs), can even flip the direction of coefficients of a metaregression).
+
+Furthermore, the lnRoM point estimate only accounts for the group means---all signal and no noise. Instead, variability is captured by lnRoM's *sampling variance* estimates. Sampling variance influences the **relative** weight of each effect size in your models.
+
+This can lead to different meta-analytic results than SMD. Because the **lnRoM** *point estimate* ignores variability, two studies with the same ratio of means get the same lnRoM, even if one is far noisier. SMD would rank those two studies differently. Both effect sizes do use variability when it comes to weighting: in the meta-analysis, each study is weighted by its sampling variance. And for both, many individually non-significant studies can add up to a clearly non-zero pooled effect.
+
+The point estimate definition formula for lnRoM makes it clear why:
+
+$$
+\begin{aligned}
+lnRoM = \ln(\frac{m_1}{m_2})
+\end{aligned}
+$${#eq-lnrom-definition}
+
+As you can see, this formula does not account for variability. The point estimate simply describes the ratio of means, with the natural logarithm making this symmetrical around zero (a 1:1 ratio of means becomes $\ln(1)=0$).
+
+**lnRoM** group means must be positive and greater than zero, otherwise it cannot be calculated ($\ln(0) = -\infty$, and the log of a negative number is undefined).
+
+This may happen even with suitable data types, for instance when dealing with [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or data summarized as [percent change](3.2-smd-challenges.qmd#sec-percent-change) relative to starting conditions.
+
+Using our example biological data:
+$$
+\begin{aligned}
+&\ln(\frac{m_1}{m_2})\\
+&\ln(\frac{12}{10}) = `r round(lnrom_w, 2)`\\
+\end{aligned}
+$$
+
+### The small-sample size correction {#sec-lnrom-correction}
+
+With SMD, we used $J$ to correct for bias at low sample sizes. A similar second-order derived estimator exists for lnRoM to account for bias at low sample sizes [@Lajeunesse2015-gw]. This correction is important **if** your dataset has small sample sizes and your group means are **not** close to zero (which we'll discuss further [below](#sec-overdispersion)).
+
+This correction changes the lnRoM point estimate formula to:
+
+$$
+\begin{aligned}
+\ln\left(\frac{m_1}{m_2}\right)
++\frac{1}{2}
+\left(
+\frac{sd_1^2}{n_1m_1^2}
+-\frac{sd_2^2}{n_2m_2^2}
+\right).
+\end{aligned}
+$${#eq-lnrom-corrected}
+
+
+If your group means are *close* to zero relative to their standard deviations, this small sample size correction can become problematic, because the point estimate now incorporates standard deviation. In that case, you should use the uncorrected, first-order formula (@eq-lnrom-definition).
+
+In `escalc`, you can do this by setting `correct=FALSE` (the default is `TRUE`). The tabs below show `escalc` and `metatools::eff_size` for the willow example:
+
+::: {.panel-tabset}
+
+## metafor
+
+```{r}
+
+# Bias-corrected version, the default:
+escalc(m1i = 12, sd1i = 3, n1i = 20,
+       m2i = 10, sd2i = 2, n2i = 20,
+       measure = "ROM")
+
+# Uncorrected version, definition formula:
+escalc(m1i = 12, sd1i = 3, n1i = 20,
+       m2i = 10, sd2i = 2, n2i = 20,
+       measure = "ROM",
+       correct = FALSE)
+```
+
+## metatools
+
+```{r}
+library("metatools")
+
+eff_size(x1 = 12, sd1 = 3, n1 = 20,
+         x2 = 10, sd2 = 2, n2 = 20,
+         effect_type = "lnRoM",
+         default_formulas = FALSE)
+```
+
+:::
+
+The `_first` and `_second` columns refer to uncorrected definition formula (@eq-lnrom-definition) and second-order (@eq-lnrom-corrected) estimators respectively. The table compares the default outputs of the two packages.
+
+```{r}
+#| label: lnrom-comparison
+#| echo: false
+lnrom_mf <- escalc(measure = "ROM", m1i = 12, sd1i = 3, n1i = 20,
+                   m2i = 10, sd2i = 2, n2i = 20)
+lnrom_mt <- eff_size(x1 = 12, sd1 = 3, n1 = 20,
+                     x2 = 10, sd2 = 2, n2 = 20,
+                     effect_type = "lnRoM", verbose = FALSE)
+data.frame(package = c("metafor", "metatools"),
+           yi = c(lnrom_mf$yi, lnrom_mt$yi),
+           vi = c(lnrom_mf$vi, lnrom_mt$vi)) |>
+  knitr::kable(digits = 4)
+```
+
+### lnRoM Interpretation {#sec-lnrom-interpretation}
+
+The lnRoM point estimate of `r round(lnrom_w, 2)` can be interpreted by converting it to % change. This means that if you're fitting meta-analytic models on an lnRoM dataset, you can convert your overall model estimates and confidence intervals to % change, which can dramatically improve your ability to communicate in plain language. This is one of the great advantages of lnRoM.
+
+To convert to percent change, you merely undo the natural logarithm, subtract 1 and multiply by 100. For our lnRoM point estimate:
+
+$$
+100(e^{\ln(12/10)} - 1) \approx `r round(pct_w, 1)`\%.
+$$
+
+This means that the treatment led to a ~`r round(pct_w)`% *relative* increase in plant biomass in our warming treatment.
+
+In `R`, we can convert to % change as follows:
+
+```{r}
+#| eval: true
+#| echo: true
+
+yi <- log(12 / 10)
+100 * (exp(yi) - 1)
+```
+
+---
+
+# Assumptions {#sec-assumptions-and-properties}
+
+As we described above, while SMD and lnRoM are often used interchangeably, they have different biological interpretations that can profoundly influence your results---and even [flip](#sec-flip-signs) the direction of coefficients in a meta-regression.
+
+They also have different assumptions which may ultimately shape your decision about which effect size to use (and thus how to interpret your results).
+
+The following properties help determine whether SMD or lnRoM are mathematically appropriate:
+
+| Assumption | SMD | lnRoM |
+|------------|-----|-------|
+| Sensitive to values near 0 | No | Yes |
+| Accepts values ≤ 0 | Yes | No |
+| OK with mixed dimensionality | Yes | No |
+| OK when group means are not close to zero | Sensitive | Point estimate OK (uncorrected); variance sensitive |
+| OK with heteroscedasticity | Use SMDH | Yes |
+| Can impute missing error bars | No | Yes |
+| Can calculate from model test statistics | Yes | No |
+| Can calculate from other effect size types | Yes | No |
+
+The remaining sections examine these considerations.
+
+## Values near 0 {#sec-near-zero-values}
+
+Is the relationship between 0.1 and 0.3 the same as the relationship between 10.1 and 10.3?
+
+This is a core question when considering the use of lnRoM and SMD.
+
+SMD describes the **absolute difference** between $m_1$ and $m_2$. As such, an SMD calculated on means of 0.1 and 0.3 is identical to an SMD calculated on means of 10.1 and 10.3 (as long as the standard deviations are the same).
+
+lnRoM estimates will be **radically** different. Since metafor 5.0-1, `escalc` bias-corrects ROM by default, so we switch the correction off here to show the definition formula:
+
+```{r}
+#| label: fig-near-zero
+#| fig-cap: "Point estimates of lnRoM (top) and SMD (bottom) for three pairs of group means, 0.1 vs 0.3, 10.1 vs 10.3, and 100.1 vs 100.3. The standard deviation is 0.1 in every group and n = 30 per group. The SMD is the same for all three pairs, while lnRoM shrinks towards zero as the means grow."
+#| fig-alt: "Two dot plots stacked vertically across three comparisons. The lnRoM point estimates are far from zero for 0.1 vs 0.3 and close to zero for the larger means. The SMD points are identical across all three comparisons."
+#| eval: true
+#| echo: true
+#| code-fold: true
+
+dat <- data.table(m1 = c(0.1, 10.1, 100.1),
+                  m2 = c(0.3, 10.3, 100.3),
+                  sd1 = c(0.1, 0.1, 0.1),
+                  sd2 = c(0.1, 0.1, 0.1),
+                  n1 = 30,
+                  n2 = 30)
+
+dat <- escalc(measure = "ROM",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat,
+              var.names = c("yi_rom", "vi_rom"),
+              correct = FALSE)
+
+
+dat <- escalc(measure = "SMD",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat,
+              var.names = c("yi_smd", "vi_smd")) |>
+  setDT()
+
+dat <- melt(dat,
+            id.vars = c("m1", "m2"),
+            measure.vars = c("yi_rom", "yi_smd"))
+
+dat[, comparison := paste0("$m_1$=", m1, ", $m_2$=", m2)]
+
+ggplot(data = dat,
+       aes(x = comparison, y = value, fill = variable))+
+  geom_point(size = 4, shape = 21)+
+  facet_wrap(~variable, labeller = as_labeller(c("yi_smd" = "SMD",
+                                               "yi_rom" = "lnRoM")),
+             scales = "free_y",
+             ncol = 1)+
+  ylab("Point estimate")+
+  xlab(NULL)+
+  theme_bw()+
+  theme(axis.text.x = ggtext::element_markdown(size = 12),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 14),
+        legend.position = "none")
+
+
+```
+
+This is because lnRoM describes **relative** change: multiplicative differences, not additive ones. $0.1/0.3 = `r round(0.1/0.3, 2)`$ while $10.1/10.3 = `r round(10.1/10.3, 2)`$. The SMD is identical for all three pairs because the absolute difference (0.2) and the standard deviation (0.1) are the same in each.
+
+Think carefully about whether zeroes are real in your data and whether the relationship you're interested in is absolute (how much soil carbon is stored or biomass produced) or relative (percent increase in a threatened population due to some treatment). If you are interested in relative change alone, then lnRoM is the effect size for you.
+
+You may be interested in both relative and absolute change. If so, use both SMD and lnRoM and interpret both accordingly, which allows you to tell a rich and nuanced story with your data.
+
+## Values ≤ 0 {#sec-zero-values}
+Does your dataset have means ≤ 0? These may occur for a variety of reasons, including because of [before-after-control-impact](3.2-smd-challenges.qmd#sec-BACI) experimental designs or other data presentation formats.
+
+lnRoM is incalculable with means ≤ 0: $\ln(0) = -\infty$. If you add a small constant to 0s to make lnRoM calculable, you'll end up with very strong effect sizes as we [showed above](#sec-near-zero-values)---which will vary dramatically depending on what constant you use.
+
+If means ≤ 0 are common in your dataset then you may have to use SMD simply in order to make use of all of your data. Again, conducting analyses with both SMD and lnRoM is one way to make the most of your data and to fully understand your meta-analytic results.
+
+:::callout-important
+##### Data bounded between 0 and 1 {#sec-zero-one-bounded}
+
+Means±SD bounded between 0 and 1 are challenged by their numeric properties: variance tends to retreat to zero when the mean approaches 0 or 1 [@Macartney2022-ik].
+
+To resolve this for SMD and lnRoM effect sizes, you need to transform both the means and the standard deviations, using an arcsin-square root transformation on the mean and an equation derived using the delta method to standardize the standard deviation (see @Macartney2022-ik).
+
+We cover this transformation in our SMD extraction challenges page [here](3.2-smd-challenges.qmd#sec-proportion-data-with-error)
+:::
+
+## Dimensionality {#sec-dimensionality}
+
+Both SMD and lnRoM are standardized, which allow us to compare results across studies even if the measurement units were different. However, what if one study measured a response in linear meters ($m$) but another study measured it in area ($m^2$) and a third study measured the same response in volume ($m^3$)?
+
+Imagine vegetation studies or morphological measurements of an organism or the size of a tumor. Depending on the effect size you choose, the results can be strongly affected by these added dimensions---which is an overlooked problem in meta-analysis.
+
+For lnRoM, this is a serious problem. When the coefficient of variation ($CV = sd/m$) is small, the effect at two dimensions is roughly double, and at three dimensions roughly triple. (For the mathematically curious: $\ln E[X^k] \approx k\ln\mu$.)
+
+Let us demonstrate. Rather than simulating data, we'll take two groups measured in one dimension and calculate exactly what their mean and SD would be if the same measurement were squared (two dimensions) or cubed (three dimensions). A known property of the normal distribution, its *moments*, lets us do this without any simulation error. Then we calculate our effect sizes. Let's look first at lnRoM. Feel free to unfold the code to see how we did this:
+
+```{r}
+#| label: fig-dimensionality-lnrom
+#| fig-cap: "lnRoM point estimate (top) and its percent change relative to one dimension (bottom) for the same two groups measured in one, two, and three dimensions. Values are exact moments of normal distributions (n = 50 per group), so there is no simulation error and no error bars."
+#| fig-alt: "Two line plots against the number of measurement dimensions. The lnRoM estimate roughly doubles at two dimensions and roughly triples at three."
+#| eval: true
+#| code-fold: true
+
+# Exact moments of X^j for X ~ Normal(mu, sigma^2), using the recursion
+# E[X^j] = mu * E[X^(j-1)] + (j-1) * sigma^2 * E[X^(j-2)]
+normal_moment <- function(j, mu, sigma) {
+  m <- numeric(j + 1)
+  m[1] <- 1
+  m[2] <- mu
+  if (j >= 2) for (i in 3:(j + 1)) m[i] <- mu * m[i - 1] + (i - 2) * sigma^2 * m[i - 2]
+  m[j + 1]
+}
+
+# Mean and standard deviation of the measurement X^k (k dimensions)
+dim_summary <- function(k, mu, sigma) {
+  m_k <- normal_moment(k, mu, sigma)
+  list(m = m_k, sd = sqrt(normal_moment(2 * k, mu, sigma) - m_k^2))
+}
+
+# Group 1: mean 15, sd 0.6; group 2: mean 13, sd 0.7 (at one dimension)
+dat <- data.frame(dimensions = 1:3,
+                  m1 = sapply(1:3, function(k) dim_summary(k, 15, 0.6)$m),
+                  sd1 = sapply(1:3, function(k) dim_summary(k, 15, 0.6)$sd),
+                  m2 = sapply(1:3, function(k) dim_summary(k, 13, 0.7)$m),
+                  sd2 = sapply(1:3, function(k) dim_summary(k, 13, 0.7)$sd),
+                  n1 = 50,
+                  n2 = 50)
+
+dat <- escalc(measure = "ROM",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat,
+              var.names = c("yi_rom", "vi_rom"),
+              correct = FALSE)
+
+dat <- escalc(measure = "SMD",
+              m1i = m1, m2i = m2,
+              sd1i = sd1, sd2i = sd2,
+              n1i = n1, n2i = n2,
+              data = dat,
+              var.names = c("yi_smd", "vi_smd")) |>
+  setDT()
+# dat
+
+# Convert ROM to % change:
+first_dimension <- dat %>% filter(dimensions == 1) %>% pull(yi_rom)
+dat <- dat %>%
+  mutate(yi_rom_diff = abs((first_dimension - yi_rom) / first_dimension * 100) )
+#
+p1 <- ggplot(data = dat,
+       aes(x = dimensions, y = yi_rom))+
+  geom_path()+
+  geom_point(size = 4)+
+  ylab("lnRoM point estimate")+
+  xlab(NULL)+
+  ggtitle("lnRoM dimensionality")+
+  scale_x_continuous(breaks = c(1, 2, 3))+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+p2 <- ggplot(data = dat,
+       aes(x = dimensions, y = yi_rom_diff))+
+  geom_path()+
+  geom_point(size = 4)+
+  ylab("% change in lnRoM measurement relative first dimension")+
+  xlab("Number of measurement dimensions")+
+  scale_x_continuous(breaks = c(1, 2, 3))+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+p1 / p2
+
+```
+
+As you can see, the lnRoM point estimate at two and three dimensions is `r round(dat$yi_rom[2] / dat$yi_rom[1], 2)` and `r round(dat$yi_rom[3] / dat$yi_rom[1], 2)` times its one-dimensional value: an increase of up to `r round(max(dat$yi_rom_diff))`% relative to the first dimension.
+
+In ecology and evolutionary biology, measurements made at different dimensions are commonly pooled. This is obviously a massive problem!
+
+Now let's look at SMD:
+
+```{r}
+#| label: fig-dimensionality-smd
+#| fig-cap: "SMD (Hedges' g) for the same two groups measured in one, two, and three dimensions (top) and its percent change relative to one dimension (bottom). Values are exact moments of normal distributions (n = 50 per group), so there is no simulation error."
+#| fig-alt: "Two line plots against the number of measurement dimensions. The SMD barely changes across dimensions at these small coefficients of variation."
+#| eval: true
+#| code-fold: true
+#| out-width: "70%"
+
+first_dimension <- dat %>% filter(dimensions == 1) %>% pull(yi_smd)
+dat <- dat %>%
+  mutate(smd_diff = (first_dimension - yi_smd) / first_dimension * 100 )
+
+p1 <- ggplot(data = dat, aes(x = dimensions, y = yi_smd))+
+  geom_path()+
+  geom_point(size = 4)+
+  ylab("SMD (Hedges' g)")+
+  xlab(NULL)+
+  ggtitle("SMD dimensionality")+
+  scale_x_continuous(breaks = c(1, 2, 3))+
+  coord_cartesian(ylim = c(2.8, 3.3))+
+  theme_bw()+
+    theme(panel.grid = element_blank())
+
+p2 <- ggplot(data = dat, aes(x = dimensions, y = smd_diff))+
+  geom_path()+
+  geom_point(size = 4)+
+  ylab("% change in SMD estimate")+
+  xlab("Number of measurement dimensions")+
+  coord_cartesian(ylim = c(-1, 1))+
+  scale_x_continuous(breaks = c(1, 2, 3))+
+  theme_bw()+
+    theme(panel.grid = element_blank())
+p1 / p2
+
+```
+
+```{r}
+#| label: smd-field-cv
+#| echo: false
+
+# The same moment calculation at a field-typical coefficient of variation (CV = 0.35)
+field <- data.frame(dimensions = 1:3,
+                    m1 = sapply(1:3, function(k) dim_summary(k, 15, 0.35 * 15)$m),
+                    sd1 = sapply(1:3, function(k) dim_summary(k, 15, 0.35 * 15)$sd),
+                    m2 = sapply(1:3, function(k) dim_summary(k, 13, 0.35 * 13)$m),
+                    sd2 = sapply(1:3, function(k) dim_summary(k, 13, 0.35 * 13)$sd),
+                    n1 = 50,
+                    n2 = 50)
+field <- escalc(measure = "SMD",
+                m1i = m1, m2i = m2,
+                sd1i = sd1, sd2i = sd2,
+                n1i = n1, n2i = n2,
+                data = field)
+field_smd_change <- (field$yi - field$yi[1]) / field$yi[1] * 100
+```
+
+SMD is still affected by the change in dimensions, though to a far lesser extent at these small coefficients of variation: it varies by at most `r round(max(abs(dat$smd_diff)), 1)`% relative to the first dimension. SMD is not immune, however. At a field-typical CV of 0.35, the SMD changes by about `r round(abs(field_smd_change[2]))`% at two dimensions and `r round(abs(field_smd_change[3]))`% at three.
+
+For this reason, we suggest that if you are committed to using lnRoM as your effect size, you should record the number of dimensions of each measurement. You can use these to divide the lnRoM point estimate by the number of dimensions $k$ **and** its sampling variance by $k^2$ (i.e., $y_i/k$ and $v_i/k^2$). E.g., if the measurement was in $meter^2$, which is 2 dimensions, divide the point estimate by 2 and the variance by 4. If the measurement was in $meter^3$, divide the point estimate by 3 and the variance by 9. This assumes the response scaled equally in every dimension (isotropic growth) and is only approximate when CV is large, so treat it as a sensitivity analysis and record $k$ as a moderator.
+
+However, there may be many cases where the number of dimensions of the measurement may be unclear, in which case you should use SMD.
+
+:::callout-important
+If measurements of different dimensionality are pooled, lnRoM estimates can be distorted roughly in proportion to dimensionality. We recommend recording dimensionality and testing it as a moderator.
+:::
+
+## Mean too close to zero {#sec-overdispersion}
+
+The usual sampling variances for SMD and lnRoM are shortcuts that assume the group means are roughly normally distributed. The lnRoM shortcut (called the delta method) also needs each mean to sit well away from zero, relative to its standard error. Highly skewed data, and data whose mean is too close to zero relative to its SD (e.g., counts with low means), are remarkably common in ecology and evolution, especially abundance or count data, and can break this assumption. Geary's test (G' of 3 or more passes) is the check we use below. This can lead to biased point and sampling variance estimates.
+
+The problem affects these effect sizes differently. For SMD, it directly affects the point estimate because the point estimate is a ratio of signal to noise (@eq-cohens-d). When the mean is too close to zero relative to its SD, SMDs tend to be pulled closer to 0. For lnRoM, the point estimate is robust to this problem (as long as you use the [uncorrected definition formula](#sec-lnrom-correction)). However, the sampling variance estimate remains sensitive to it.
+
+If many of your group means are close to zero, you should:
+
+- Exclude flagged effect sizes (the Geary check below) as a sensitivity analysis in comparison to your full dataset
+
+- Weight effect sizes by effective sample size, $\tilde{n}$ (@eq-effective-n), instead of sampling variance, as an additional sensitivity analysis. Following @Nakagawa2023-tn, treat $1/\tilde{n}$ as proportional to the sampling variance, not equal to it. In other words, $1/\tilde{n}$ tells the model which studies are relatively more or less precise, but it is not an actual sampling variance.
+
+As you'll see throughout this tutorial, sensitivity tests are the annoying reality of meta-analysis.
+
+:::callout-note
+##### Effective sample size is defined as:
+
+$$
+\begin{aligned}
+\tilde{n} = \frac{n_1 n_2}{n_1 + n_2}\\
+\end{aligned}
+$${#eq-effective-n}
+:::
+
+Checking whether group means are too close to zero should be part of your analytic [workflow](3.0-starting-extraction.qmd) with lnRoM. The check we recommend is the Geary-type statistic $G'$ [@Lajeunesse2015-gw]. It asks whether each group mean is far enough from zero, relative to its standard error, for the lnRoM approximation to hold. A coefficient of variation above 2 ($CV = sd/m$) was an older rough rule, but it ignores sample size and disagrees with the Geary check, so we mention it only for comparison.
+
+@Lajeunesse2015-gw suggested a small sample-size corrected threshold based on the standardized mean, derived from the Geary test [@Geary1930-yf; @Hedges1999-al]. Let $m$ be the group mean, $sd$ be the standard deviation and $n$ be your group sample size:
+
+$$
+\begin{aligned}
+G' = \frac{m}{sd}*\frac{4*n^{3/2}}{1+4*n}
+\end{aligned}
+$${#eq-G}
+
+There are several suggested thresholds for this value that can be used to flag potentially problematic data. @Lajeunesse2015-gw suggested flagging effect sizes for which either group has $G' < 3$ (i.e., values of 3 or greater pass the test).
+
+If many of your means are close to zero, one option is to compare the bias-corrected and uncorrected lnRoM estimators as a sensitivity analysis.
+
+Since metafor 5.0-1, `escalc` bias-corrects ROM by default. You can calculate the uncorrected estimator with `correct = FALSE`. This page was checked against metafor 5.2-1. We also recommend conducting sensitivity analyses that exclude data identified as potentially problematic using clearly specified criteria, and comparing sampling-variance weights with effective-sample-size weights when justified [@Nakagawa2023-tn].
+
+::: {.callout-note collapse="true"}
+##### Click to see a demonstration of a workflow to check whether means are too close to zero
+
+Let's do this in `R` with a $CV>2$ threshold and the Geary-Lajeunesse threshold of 3, using the `dat.curtis1998` dataset provided by the `metafor` package:
+
+```{r}
+#| eval: true
+#| echo: true
+
+data("dat.curtis1998")
+dat <- dat.curtis1998
+
+# Drop NA values for the SMD type effect sizes
+dat <- dat %>% filter(!is.na(m1i))
+
+# Calculate coefficient of variation:
+dat <- dat %>%
+  mutate(cv1 = sd1i / m1i,
+         cv2 = sd2i / m2i)
+
+n_overdispersed <- dat %>%
+  filter(cv1 > 2 | cv2 > 2) %>%
+  nrow()
+n_overdispersed/nrow(dat) * 100
+
+```
+
+In this dataset, `r round(n_overdispersed/nrow(dat)*100, 1)`% of rows have a $CV>2$.
+
+```{r}
+#| eval: true
+#| echo: true
+
+# With the Geary-Lajeunesse threshold:
+geary <- function(sd, m, n){
+  (m/sd) * (4*n^(3/2))/(1 + 4*n)
+}
+
+dat <- dat %>%
+  mutate(gl1 = geary(sd = sd1i, m = m1i, n = n1i),
+         gl2 = geary(sd = sd2i, m = m2i, n = n2i))
+
+
+n_failed_geary <- dat %>%
+  filter(gl1 < 3 | gl2 < 3) %>%
+  nrow()
+n_failed_geary/nrow(dat) * 100
+
+```
+
+Values of 3 or greater pass the Geary check. The code above reports the percentage of effect sizes for which either group has a value below 3 and therefore fails the test: `r round(n_failed_geary/nrow(dat)*100, 1)`%. If many effect sizes fail, compare the full analysis with an analysis that excludes the flagged values.
+
+An alternative approach is to weight by effective sample size, $\tilde{n}$ (@eq-effective-n), instead of sampling variance. Following @Nakagawa2023-tn, treat $1/\tilde{n}$ as proportional to the sampling variance rather than equal to it. In other words, $1/\tilde{n}$ tells the model which studies are relatively more or less precise, but it is not an actual sampling variance. This may be essential when many of your means are close to zero. This is a method that produces reasonable meta-analytic estimates, despite ignoring standard deviation [@Nakagawa2023-tn].
+
+Let's go through a full example, with lnRoM as our effect size.
+
+First we'll calculate lnRoM point estimates and sampling variance:
+
+```{r}
+#| eval: true
+#| echo: true
+
+dat <- escalc(measure = "ROM",
+              m1i = m1i, m2i = m2i,
+              sd1i = sd1i, sd2i = sd2i,
+              n1i = n1i, n2i = n2i,
+              data = dat, append = TRUE, correct = FALSE) |>
+  setDT()
+head(dat)
+
+```
+
+Now let's run an intercept only model with `vi` as our meta-analytic weight (taken by the argument `V`). Each row is one effect size. Rows are nested within papers (`paper`), and each row has its own ID (`id`), which is reflected in our random effect formula:
+
+```{r}
+#| eval: true
+#| echo: true
+
+m1 <- rma.mv(yi,
+             V = vi,
+             random = ~ 1 | paper/id,
+             data = dat)
+```
+
+Now, let's run a model excluding the flagged data:
+
+```{r}
+# Now let's run a sensitivity analysis by excluding flagged data (Geary G' < 3)
+sub.dat <- dat %>%
+  filter(gl1 >= 3 & gl2 >= 3)
+m2 <- rma.mv(yi,
+             V = vi,
+             random = ~ 1 | paper/id,
+             data = sub.dat)
+```
+
+Finally, let's run a model that weights by effective sample size, treating $1/\tilde{n}$ as proportional to the sampling variance.
+
+```{r}
+dat <- dat %>%
+  mutate(effective_n = (n1i*n2i)/(n1i+n2i))
+
+m3 <- rma.mv(yi,
+             V = 1/effective_n,
+             random = ~ 1 | paper/id,
+             data = dat)
+```
+
+Let's compare these:
+
+```{r}
+#| label: fig-overdispersion-sensitivity
+#| fig-cap: "Estimates with 95% confidence intervals from three models of the dat.curtis1998 data: all rows (sampling-variance weights), rows with Geary G' of at least 3 in both groups, and effective-sample-size weights (1/n-tilde treated as proportional to the variance). Each point is one model."
+#| fig-alt: "Three point-and-interval estimates of the log ratio of means, one for each model, plotted against a zero reference line."
+#| eval: true
+#| echo: false
+
+compare_estimates <- rbind(m1 %>%
+                             tidy() %>%
+                             mutate(model = "all data",
+                                    ci.lb = m1$ci.lb,
+                                    ci.ub = m1$ci.ub),
+                           m2 %>%
+                             tidy() %>%
+                             mutate(model = "Geary G' >= 3",
+                                    ci.lb = m2$ci.lb,
+                                    ci.ub = m2$ci.ub),
+                           m3 %>%
+                             tidy() %>%
+                             mutate(model = "effective n weights",
+                                    ci.lb = m3$ci.lb,
+                                    ci.ub = m3$ci.ub))
+compare_estimates$model <- factor(compare_estimates$model,
+                                  levels = c("all data", "Geary G' >= 3", "effective n weights"))
+
+ggplot(data = compare_estimates,
+       aes(x = model, y = estimate, ymin = ci.lb, ymax = ci.ub))+
+  ylab("Estimate ± 95% CIs")+
+  geom_hline(yintercept = 0)+
+  geom_pointrange()+
+  theme_bw()
+
+```
+
+Excluding the Geary-flagged rows left `r m2$k` of `r m1$k` effect sizes. The sensitivity estimates are `r round(coef(m2), 3)` (flagged rows excluded) and `r round(coef(m3), 3)` (effective-sample-size weights), compared with `r round(coef(m1), 3)` for all data. Their intervals differ from the full-data interval, so check which rows drive your result before drawing conclusions.
+
+:::
+
+## Heteroscedasticity {#sec-heteroscedasticity}
+
+Heteroscedasticity (i.e., differences in variance between the experimental groups) can bias effect sizes considerably. SMD has a special formulation that accounts for heteroscedasticity [@Bonett2009-sf]. This is available as the measure 'SMDH' in `metafor::escalc`. As far as we know, if some of your data is heteroscedastic, you should calculate SMDH for all the effect sizes in your dataset---instead of comparing SMD estimates to SMDH estimates.
+
+For the uncorrected lnRoM, the point estimate depends only on the two means, so unequal group variances do not change that point estimate. However, the group variances do affect the sampling variance and the second-order small-sample bias-corrected point estimate. Heteroscedasticity therefore still matters for uncertainty and for the choice of estimator. This is a topic that has been little explored and is a subject for future research.
+
+For lnRoM, the default sampling variance (`vtype = "LS"`) uses each group's own standard deviation, so it tolerates unequal variances. `vtype = "HO"` assumes equal variances.
+
+## Model estimates and effect size conversions
+A key consideration in choosing to use SMD or lnRoM is whether you plan to extract data from model estimates.
+
+SMD itself is a ratio of signal to noise and is thus very similar to a test statistic. As such, you can readily convert $t$ statistics to SMD for a Student's (pooled-variance) independent two-sample t-test:
+
+$$
+\begin{aligned}
+&d=t \times \sqrt{\frac{1}{n_1} + \frac{1}{n_2}} \\
+&g = J \times d\\
+&\mathrm{Var}(g) \approx \frac{1}{n_1} + \frac{1}{n_2} + \frac{g^2}{2(n_1+n_2)}
+\end{aligned}
+$$
+
+Do not apply these formulas to paired, Welch, or covariate-adjusted t statistics.
+
+However, lnRoM cannot be derived from model test statistics, and SMD cannot be converted to lnRoM. One-way conversion from lnRoM to SMD is possible only under an assumption of equal standard deviations [@Lajeunesse2026-ms].
+
+Similarly, the other main effect size types for the relationships between two variables (lnOR and Zr) can be [converted](4-converting-effect-sizes.qmd) to SMD. These constraints, especially with smaller meta-analyses where every bit of data counts, may force your hand into choosing to use SMD.
+
+
+:::callout-important
+##### Missing error bars
+
+Note that some extraction challenges may also influence your choice of effect size. For example, it is possible to calculate lnRoM for data that did not report error (e.g., standard deviation, standard error, etc) by imputing error with cross-study coefficient of variation [@Nakagawa2023-tn].
+
+This is a good reason to use lnRoM but has to be weighed against the other numeric assumptions described above. We discuss this further [here](3.2-smd-challenges.qmd#sec-callout-missing-error-bars).
+
+:::
+
+<!-- # Conclusion---which effect size should you use? -->
+
+<!-- If you're reading this, wow, you're a good reader. We apologize for the extent of the preceding content. We did our best to keep it simple and short. And  -->
+
+<!-- Return first to the biological question: use SMD when the difference between groups should be expressed relative to variation among observations. Use lnRoM when the proportional difference between positive means is the quantity of interest and the response is bounded by zero. The flow chart below summarizes the additional assumptions and decisions to make: -->
+
+<!-- When both SMD and lnRoM are biologically relevant, analyzing SMD and lnRoM separately can reveal whether the conclusion depends on how the effect was expressed. This is not merely a statistical robustness check: the two analyses answer different questions and should be interpreted accordingly. -->
+
+<!-- :::callout-note -->
+<!-- @Yang2024-fw suggested that including both SMD and lnRoM in a bivariate model can improve model estimates. This method is experimental and should be used with caution but suggests an interesting way to "have your cake and eat it too". See their tutorial [here](https://yefeng0920.github.io/BRMA_tutorial_git/). -->
+<!-- ::: -->
+
+## Decision aid: SMD or lnRoM {#sec-decision-aid}
+
+```{mermaid}
+%%| label: fig-decision-aid
+%%| fig-cap: "Decision aid for choosing between SMD and lnRoM. Start with the biological question, then check dimensionality, means near zero, bounded data, heteroscedasticity, and the Geary G' screen for lnRoM."
+%%| fig-alt: "Flowchart. The first question is whether the difference is absolute or relative. Absolute differences, means near zero, unclear dimensionality, and bounded data lead to SMD. Relative differences that pass the checks lead to lnRoM, with a sensitivity analysis when the Geary screen flags groups."
+flowchart TD
+  A["Biological question"] --> B{"Do you care about the absolute difference, scaled by variation?"}
+  B -- "Yes" --> S1["Use SMD (Hedges' g)"]
+  B -- "No, I need relative change (%)" --> C{"Are any group means <= 0 or close to 0?"}
+  C -- "Yes" --> S1
+  C -- "No" --> D{"Is dimensionality mixed or unclear?"}
+  D -- "Yes" --> S1
+  D -- "No" --> E{"Is the response bounded between 0 and 1?"}
+  E -- "Yes" --> S2["Use SMD on transformed means and SDs"]
+  E -- "No" --> F{"Is the variance heteroscedastic?"}
+  F -- "Yes" --> S3["Consider SMDH and compare with lnRoM"]
+  F -- "No" --> G{"Is Geary G' < 3 for either group?"}
+  G -- "Yes" --> S4["lnRoM with correct = FALSE and a sensitivity analysis"]
+  G -- "No" --> S5["lnRoM with the default bias-corrected estimator"]
+```
+
+# Conclusion: SMD or lnRoM
+We suspect that many researchers choose between SMD and lnRoM simply because of negative values---we know some of us certainly have! However, we hope we've made clear that these effect sizes are hardly interchangeable. It's far more nuanced.
+
+We recommend that this makes you think hard about your research question:
+
+- Are you interested in relative or absolute differences between treatment groups?
+
+- Is your data combining measurements across different dimensions?
+
+- How much data is lost by using lnRoM due to negative values?
+
+It may very well be that the best course of action is to use both effect sizes and to report their results accordingly: lnRoM to describe multiplicative relative relationships and SMD to describe linear absolute differences
+
+This, alongside complementary analyses of the variability between groups ([lnVR/lnCVR](5.1-variability-between-groups.qmd)) can provide a rich and nuanced understanding of your research question.
+
+As always, couple these considerations with care and sensitivity analyses, especially if many of your means are close to zero.
+
+:::callout-note
+##### Thorough reporting and sensitivity analyses {#sec-reporting}
+As you can see, choosing between lnRoM and SMD hinges upon a number of factors: the quantity of interest (the estimand), the data available, and the distributional qualities of that data.
+
+In addition to reporting and justifying your decisions to use SMD or lnRoM, we also recommend conducting analyses across the range of choices: fitting models with both SMD and lnRoM, including and excluding data whose means are close to zero, and potentially using the effective sample size instead of sampling variance as a model weight [@Nakagawa2023-tn].
+
+The number of sensitivity analyses can become daunting! No doubt. But they are worth the effort. We provide some suggestions on how to organize these [here.](3.0-starting-extraction.qmd#sec-organizing-sensitivity-analyses)
+:::
+
+# Paired designs {#sec-paired-designs}
+
+There are alternative estimators for SMD and lnRoM that can account for *paired* designs, that is for correlated variance between groups 1 and 2.
+
+For the most part, these paired estimators *reduce* the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the covariance between your treatment groups.
+
+:::callout-note
+By paired designs, we mean ***within*** an effect size: e.g., pairing between $m_1$ and $m_2$. Covariance ***between*** multiple effect sizes within a study or across studies needs to be handled with your model's random effects. We discuss this briefly [here.](3.1-universal-challenges.qmd#sec-non-independence)
+:::
+
+In paired design estimators, the variance estimation formulas accept an additional argument $\rho$---the correlation between plots or individuals. This parameter is pronounced "rho" and symbolized as `ri` in most `R` code.
+
+Since $\rho$ is usually unknown and unreported, it's general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn't unduly influencing your model estimates.
+
+### SMD paired designs
+For SMD, the `escalc` measure "SMCRP" [@Cousineau2020-jf] is likely safe to use in a dataset alongside unpaired "SMD" estimates, even though this formulation changes the point estimate slightly. If your data is heteroscedastic, you can use the measure "SMCRPH" [@Bonett2008-ni] which is comparable to "SMDH".
+
+In `R` we'll compare the results of SMD and SMCRP. Note that you only supply a single value for sample size (`ni`) instead of `n1i` and `n2i` because a paired design must by definition have equal sample sizes in each treatment.
+
+```{r}
+#| eval: true
+#| echo: true
+
+unpaired <- escalc(m1i = 12, sd1i = 3,
+                   m2i = 10, sd2i = 2,
+                   n1i = 20, n2i = 20,
+                   measure = "SMD")
+
+paired <- escalc(m1i = 12, sd1i = 3,
+                 m2i = 10, sd2i = 2,
+                 ni = 20, ri = 0.5,
+                 measure = "SMCRP")
+
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
+```
+
+As you can see, the point estimates differ slightly, but the sampling variance was reduced by nearly half---which means the paired estimates will have considerably more influence in your models.
+
+Our `eff_size` function provides a different paired formulation for SMD and SMDH [@Nakagawa2025-do] that produce nearly identical point estimates:
+
+```{r}
+#| eval: true
+#| echo: true
+
+unpaired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2,
+                     n1 = 20, n2 = 20,
+                     effect_type = "SMD",
+                     verbose = FALSE,
+                     paired = FALSE) # paired = FALSE is default
+
+paired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2,
+                     n = 20, r = 0.5,
+                     effect_type = "SMD",
+                     verbose = FALSE,
+                     paired = TRUE)
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
+```
+
+We note that there are several other paired estimators for SMD-style effect sizes in the function `escalc` that account for alternative correlated treatment designs (see our `escalc` [cheatsheet](6-escalc-cheatsheet.qmd)).
+
+These options may be preferable if your meta-analysis focuses only on these types of experiments but these, to the best of our knowledge are not comparable to normal, unpaired SMD estimates.
+
+### lnRoM paired designs
+For lnRoM, you can specify a paired version with measure "ROMC":
+
+```{r}
+#| echo: true
+#| eval: true
+
+# First, unpaired:
+unpaired <- escalc(m1i = 12, sd1i = 3,
+                   m2i = 10, sd2i = 2,
+                   n1i = 20, n2i = 20,
+                   measure = "ROM")
+
+
+# Now, the paired version:
+paired <- escalc(m1i = 12, sd1i = 3,
+                 m2i = 10, sd2i = 2,
+                 ni = 20, ri = 0.5,
+                 measure = "ROMC")
+
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
+```
+
+As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to stronger influence in the meta-analytic models.
+
+And in `eff_size`:
+```{r}
+#| echo: true
+#| eval: true
+
+unpaired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2,
+                     n1 = 20, n2 = 20,
+                     effect_type = "lnRoM",
+                     verbose = FALSE,
+                     paired = FALSE) # paired = FALSE is default
+
+paired <- eff_size(x1 = 12, sd1 = 3,
+                     x2 = 10, sd2 = 2,
+                     n = 20, r = 0.5,
+                     effect_type = "lnRoM",
+                     verbose = FALSE,
+                     paired = TRUE)
+rbind(unpaired %>% mutate(pairing = "unpaired"),
+      paired %>% mutate(pairing = "paired"))
+
+```
+
+## Session information
+
+```{r}
+#| echo: false
+
+sessionInfo()
+```
+
+**Next:** [2.2 Effect sizes for dichotomous data](2.2-lnOR-assumptions.qmd).
+

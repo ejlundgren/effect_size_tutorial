@@ -1,0 +1,198 @@
+---
+title: "Getting started"
+subtitle: ""
+date: today
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "3.0-starting-extraction.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options:
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+:::callout-note
+#### Key points
+- Plan your extraction before you start: define the question and the effect size you need, and design a database that can hold non-independent data.
+- Pilot-extract about 10% of your screened studies to estimate how many effect sizes you will get and which extraction challenges are common.
+- Use a transparent workflow for figure extraction, and check the numeric assumptions of your effect size before you fit models.
+:::
+
+There are many steps to conducting a high quality meta-analysis. The rest of this tutorial is designed to help with extracting data and calculating effect size {{< glossary point-estimate display="point estimates" >}} and {{< glossary "sampling variance" >}}.
+
+Data extraction is one of the most difficult steps and will make an important difference in whether you are able to accurately extract all of the data pertaining to your question and correctly calculate your effect size. Extraction errors and calculation errors are common and can severely bias meta-analytic results [@Gotzsche2007-rb].
+
+However, the other steps to conducting a meta-analysis are also critical. Here are some of our favorite tutorials and papers, that start with the inception of a meta-analytic project (question formation, scoping, literature search and screening) and proceed through every step of the process.
+
+| Step                          | Reference                   |
+|-------------------------------|-----------------------------|
+| Formulating a question        | @Foo2021-yp                 |
+| Literature search & screening | @Lagisz2025-yq; @Foo2021-yp |
+| Extraction                    | Yours truly                 |
+| Spatial and phylogenetic non-independence | @Mizuno2026-ab  |
+| Publication bias              | @Nakagawa2022-ei            |
+| Reporting guidelines          | @Page2021-qn; @O-Dea2021-pl |
+
+https://daniel1noble.github.io/meta-analysis_workshop/
+
+https://lakens.github.io/statistical_inferences/
+
+https://royalsocietypublishing.org/rsta/article/384/2321/20240604/481953/A-preliminary-data-analysis-workflow-for-meta
+
+# Data extraction planning {#sec-extraction-planning}
+
+The first step to doing the data collection for a meta-analysis is to have a solid and clear question, a screened body of literature, and clear decision trees for what data to extract. We recommend doing pilot extractions (of \~10%) of your screened literature to estimate the total number of anticipated effect sizes.
+
+Moreover, we recommend recording the distribution of *extraction challenges* during this stage. By extraction challenges, we mean data that is presented in formats that are difficult to extract---the challenges that this tutorial will help you tackle.
+
+Some extraction challenges, while solvable, introduce assumptions or potential error. If these extraction challenges (such as model estimates) are a minimal portion of a very large dataset, then you can justifiably decide not to extract them.
+
+However, if these difficult cases are common, if there are relatively few papers, or if you believe these types of data are *non-randomly* distributed in your dataset (e.g., often occur in papers from certain geographic regions, time periods, etc), then you may want to decide *a priori* to extract them.
+
+This can be done after initial extraction as well, if you took record of the effect sizes that were excluded because they were unextractable (and why). For example, if only 5% of your dataset comes from African countries and 50% of that data was not extractable, we think it would be justifiable to expand your extraction criteria to other data types.
+
+Finally, following extraction, you'll want to evaluate the statistical distributions of your data to understand whether the effect size estimator you plan to use is appropriate. We discuss these assumptions in previous sections.
+
+```{mermaid}
+%%| label: fig-extraction-steps
+%%| fig-cap: "The extraction workflow. Step 0 defines the question and estimand before any database is designed. Steps 1 and 2 build and revise the database and extraction criteria. Step 3 checks the numeric assumptions of the data (values at or below zero, the Geary check, heteroscedasticity, dimensionality, and bounds of 0 to 1) before the effect size estimator is chosen. Step 4 runs the models and sensitivity tests. Arrows show the order of work and the loop for revising inclusion criteria."
+%%| fig-alt: "Flowchart with five numbered stages. Stage 0: define question and estimand, leading to stage 1. Stage 1: design database and pilot extraction, linked in both directions. Stage 2: determine inclusion criteria, extract data, record unextractable data, and revise inclusion criteria in a loop. Stage 3: check numeric assumptions, then design sensitivity tests and choose the effect size estimator. Stage 4: run models and conduct sensitivity tests."
+flowchart TD
+  s0["0. Define question & estimand"] --> s1
+  subgraph s1g["1. Database"]
+    s1["Design database"] <--> s1b["Pilot extraction"]
+  end
+  s1b --> s2
+  subgraph s2g["2. Extraction criteria"]
+    s2["Determine inclusion criteria for extraction challenges"] --> s2b["Extract data"]
+    s2b --> s2c["Record unextractable data"]
+    s2c --> s2d["Revise inclusion criteria based on distribution of extraction challenges"]
+    s2d --> s2
+  end
+  s2b --> s3
+  subgraph s3g["3. Check numeric assumptions"]
+    s3["Check numeric assumptions: values at or below zero, Geary check, heteroscedasticity, dimensionality, 0-1 bounds"] --> s3b["Design sensitivity tests"]
+    s3 --> s3c["Choose appropriate effect size estimator"]
+    s3b --> s3c
+  end
+  s3c --> s4["4. Run models and conduct sensitivity tests"]
+```
+
+[]{#sec-organizing-sensitivity-analyses}
+
+:::callout-note
+#### Organizing sensitivity analyses
+You'll see a common refrain throughout this tutorial---sensitivity analyses!
+
+These can be extremely cumbersome---requiring you to run many many models. Typing each model out by hand or copy-and-pasting is prone to error and challenges in interpretation.
+
+We recommend creating a "model guide" and evaluating text strings in your model objects in a `for` or `foreach` loop to facilitate thorough sensitivity analyses.
+
+The `R` call `eval(parse(text = string))` can evaluate the text string `string` as R code, and allows you to tidily organize your model formulas (or even the entire model call), as well your as your conditional strings to filter your dataset inside a data frame in `R`. For example:
+
+```{r}
+#| eval: true
+#| echo: true
+eval(parse(text = "1 + 1"))
+```
+
+For an example of the `R` code for such a workflow, see a recent example [here](https://ejlundgren.github.io/cat_evidence_review/3.2-run-models.html)
+:::
+
+## Types of extraction
+There are three main types of extraction you'll face in doing a meta-analysis. First, the extraction of **summary statistics**, like means, standard deviations and sample sizes. These can be reported in figures, tables, or in the text.
+
+Second, you may find studies that publish their **raw data**. These can often be difficult to summarize because of unclear metadata but are still a valuable and important source of data for the meta-analyst. Note that these data can also be valuable in cases where the authors report summary statistics across a range of dependent and non-independent data. Summarizing the raw data directly can help you produce effect sizes with clear and coherent non-independence structures and similar {{< glossary "unit of replication" display="units of replication" >}} as the rest of your dataset.
+
+Third, you will find many studies that report **inferential statistics**---such as test statistics, p-values, and so on. Some of these (t, F, p-values, and adjusted contrasts) can be converted to effect sizes. Others can't be used in a meta-analysis as they are. See [Model outputs](3.2-smd-challenges.qmd#sec-model-estimates) for when model-derived estimates can be used and how to flag them.
+
+## Tools for extracting data from figures {#sec-tools-for-extraction}
+
+If you're lucky, some of the data extraction for a meta-analysis can come directly from summary statistics (mean, sample size, standard deviation, etc) reported in tables or the main text of the papers you're extracting. However, you'll find that the majority of data extraction will be directly from figures. In these cases, you'll employ a variety of tools to calibrate the figures and extract the data.
+
+We do not here discuss the mechanics of these tools but we will describe them and their advantages, briefly, here.
+
+| Extraction tool | Environment | log-axes | Auto-conversion | Free-form extraction | Built-in reproducibility |
+|------------|------------|------------|------------|------------|------------|
+| `metaDigitise()` | R | Yes | SE/IQR/CIs $\rightarrow$ SD | No | Yes |
+| `WebPlotDigitizer` | Web/Desktop | Yes | No | Yes | No |
+| `ImageJ` | Desktop | No | No | Yes | No |
+
+A heads-up on what `metaDigitise()` does behind the scenes. It converts 95% confidence intervals to standard deviations using z = 1.96, the multiplier from the normal distribution, and converts box plots using the method of Wan et al. (2014). Both conversions assume the data are roughly normal. For small samples, the right multiplier comes from the *t* distribution instead, so recompute the SD yourself (the formula is [here](2.1-SMD-assumptions.qmd#sec-callout-error-types)).
+
+An analysis [@Gotzsche2007-rb] found that data extraction errors were prolific in meta-analysis, leading to considerable bias. For that reason, we highly recommend that researchers use transparent workflows for data extraction [@Ivimey-Cook2023-vo]. This includes saving screenshots of figures, preferably along with extraction points [which is automatically done by `metaDigitise()` [@Pick2018-ia]] in folders that link directly to the final dataset.
+
+AI research assistants are also starting to be used for data extraction. They can save time, but their output still needs to be checked against the original papers [@Lagisz2026-elicit]. Whatever tools you use, keep your workflow reproducible and transparent, and make sure you understand *what* data you need to extract.
+
+## Experimental methods {#sec-experimental-methods}
+
+Some of the techniques we present here, especially for [reconstructing underlying data](7-simulating-non-gaussian-responses.qmd) from author provided summaries are little known and could be regarded as experimental.
+
+We nonetheless present these approaches as they are, in our mind, better than the alternative, especially in meta-analyses with limited numbers of studies.
+
+We tag experimental approaches throughout and invite further research on the relative bias and efficacy of these techniques. And as, always, be sensitive and conduct sensitivity analyses!
+
+## Database design
+
+Many of the authors here conducted their first meta-analysis cavalierly, extracting data, thinking little about the complex non-independence structures in their source data, or collecting data in a format that made future summaries extremely difficult. We learned our lessons---going back through 400 studies multiple times to fix a 10,000 row meta-analytic dataset is no fun.
+
+We here present an Excel template that could be useful. It contains a tab for each of the effect size categories included here, along with metadata descriptions. Many of these columns may not make sense yet---hopefully by the time you've finished reading this tutorial, they will.
+
+```{r}
+#| echo: false
+
+library("downloadthis")
+
+download_file(path = "data/template_dataset.xlsx",
+                output_name = "database_template",
+                output_extension = ".xlsx",
+                button_label = "Download template dataset",
+                button_type = "primary", # Controls styling
+                has_icon = TRUE,
+                icon = "fa fa-save")
+
+
+```
+
+<br>
+Many of the columns in this template are a non-exhaustive suggestion for drivers of non-independence *within* articles. Some of these are discussed in the next page on [universal extraction challenges](3.1-universal-challenges.qmd).
+
+The other columns are effect size specific, which we also discuss in each effect size specific page.
+
+:::callout-note
+#### Next
+**Next:** [Universal challenges](3.1-universal-challenges.qmd) - sample size, units of replication and repeated measures.
+:::

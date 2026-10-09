@@ -1,0 +1,889 @@
+---
+title: "Extracting Zr: the correlation coefficient"
+subtitle: "Everything's a spectrum, man"
+date: today
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "3.4-Zr-challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options:
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+set.seed(2025)
+
+metatools_sha <- "186c219a450ef117055705d1dd856ddd124105c8"
+if (!requireNamespace("metatools", quietly = TRUE) ||
+    !identical(utils::packageDescription("metatools")$RemoteSha, metatools_sha)) {
+  pak::pak(paste0("ejlundgren/metatools@", metatools_sha))
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+library("lubridate")
+
+```
+
+The Fisher's z-transformed correlation (Zr) describes correlations or relationships with a continuous predictor variable (and generally a continuous response variable). Zr is thus an important effect size in the meta-analyst tool kit, especially with observational data.
+
+Zr type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting Zr type data. We'll start, however, by describing how to structure a database for Zr type effect sizes.
+
+::: callout-important
+##### Key points
+
+- Zr is the Fisher z transform of Pearson's r. Only Pearson's r goes into `escalc` directly; convert other correlation types first.
+- The sample size is the number of independent units. Points reconstructed from site means are not independent individuals.
+- The default for scatterplots of site means is a site-level correlation (n = number of sites). Reconstructing individuals is a labeled sensitivity analysis.
+- Time series and matrices of dyads are not independent. Record them as such and flag them.
+:::
+
+## Database design
+In general, Zr effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis. This dataset is then summarized in `R` to derive $r$ (the correlation coefficient from `cor.test`) and sample size ($n$) and a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
+
+Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). These can be entered into the same raw dataset or into a separate tab.
+
+The layout of the database template is described on the [starting extraction page](3.0-starting-extraction.qmd).
+
+::: callout-important
+##### Types of directly reported correlations
+Zr is built from Pearson's correlation coefficient ($r$). If a study reports a different kind of correlation, convert it to $r$ first:
+
+- Spearman's $\rho$: $r = 2\sin(\pi\rho/6)$
+- Kendall's $\tau$: $r = \sin(\pi\tau/2)$
+
+For both, you'll also need to inflate the sampling variance (see [2.3](2.3-Zr-assumptions.qmd)). Biserial correlations have their own `escalc` measures (`"RBIS"` or `"ZBIS"`), and their variances are not $1/(n-3)$. Point-biserial correlations are not directly comparable; see [2.3](2.3-Zr-assumptions.qmd).
+:::
+
+Your dataset may look like this, with the first correlation (`corr_1`) represented as raw data extracted from a scatterplot and the second correlation (`corr_2`) entered directly as the correlation coefficient and sample size:
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+dat <- data.table(correlation_id = c(rep("corr_1", 5), "corr_2"),
+                  x = c(rnorm(n = 5, mean = 3, sd = 1), NA),
+                  r = c(rep(NA, 5), 0.31),
+                  n = c(rep(NA, 5), 30))
+dat[!is.na(x), y := x * 1.5 + rnorm(n = 5, mean = 0, sd = 1)]
+setcolorder(dat, c("correlation_id", "x", "y", "r", "n"))
+knitr::kable(dat)
+
+```
+
+This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. We offer a helper function `get_r` that allows you to do this more succinctly:
+
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+get_r <- function(x, y){
+  out <- cor.test(x, y)
+  return(out$estimate)
+}
+
+# Summarize the raw correlation data:
+dat.summarized <- dat %>%
+  filter(!is.na(x)) %>%
+  group_by(correlation_id) %>%
+  summarize(r = get_r(x, y),
+            n = n())
+
+# Bind with the already summarized correlation data:
+dat.final <- rbind(dat.summarized,
+                   dat %>%
+                     filter(!is.na(r)) %>%
+                     select(-x, -y))
+
+# Now calculate Zr:
+dat.summarized <- escalc(measure = "ZCOR",
+                         ri = r, ni = n,
+                         data = dat.final)
+
+knitr::kable(dat.summarized)
+
+```
+
+You may also note [below](#sec-error-bars) that there are methods to utilize mean ±error data in correlation coefficients. These would require additional columns and additional steps in `R`.
+
+<br>
+
+## Simple figures {#sec-simple-figures}
+
+This is the simplest type of correlation figure. In this case, you'd calibrate the x and y axes and extract each point. Then use `cor.test` in `R` to calculate the correlation coefficient:
+
+```{r}
+#| label: fig-simple-scatter
+#| fig-cap: "Simulated scatter of 50 points (grey) with a least-squares line. Each point is one observation, so n = 50. There are no error bars."
+#| fig-alt: "A scatter of 50 grey points that rise from the lower left to the upper right, with a black straight regression line through them."
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+x <- rnorm(n = 50, mean = 7, sd = 1.2)
+y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
+
+dat <- data.table(x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
+                  n = 10)
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_smooth(method = "lm", color = "black")+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+
+## Overplotting {#sec-overplotting}
+
+What if there is a cluster of overlapping points?
+
+```{r}
+#| label: fig-overplotting
+#| fig-cap: "Simulated scatter of 50 points (grey). The pink points are 11 copies of one point (row 5) jittered to show an overplotted cluster of 12 observations at one location. There are no error bars."
+#| fig-alt: "The same scatter as before, with a tight cluster of pink points near the middle of the line where many points overlap, drawn over grey points along a rising line."
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+x <- rnorm(n = 50, mean = 7, sd = 1.2)
+y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
+
+dat <- data.table(x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
+                  n = 10)
+dat.sub <- dat[rep(5, 11), ]
+dat.sub$x <- jitter(dat.sub$x, amount = .05)
+dat.sub$y <- jitter(dat.sub$y, amount = .05)
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_smooth(method = "lm", color = "black")+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_point(data = dat.sub, aes(x = x, y = y), fill = "#D55E00",
+             shape = 21, size = 3)+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+If the total number of points is reported for the study, you can duplicate the values of the overplotted points as many times as it takes to match the total sample size. Only do this if the figure or legend makes clear that the hidden observations lie in that cluster. Otherwise, digitize the points you can see and use the number of distinct points as the sample size (which makes the overall Zr estimate more conservative, i.e., less weight in the model), or use the reported test statistic if it is available.
+
+In the figure above, we could safely eyeball 5 separate points (though in reality there are 12 observations at that location).
+
+# Error bars {#sec-error-bars}
+## Single axis error bars {#sec-single-axis-error-bars}
+
+But what do you do if each point is actually a mean±SD?
+
+```{r}
+#| label: fig-site-mean-sd
+#| fig-cap: "Mean y ± SD for each site (grey points, error bars show ±1 SD), with a least-squares line through the site means. Each point is one site; the internal sample size per site is 10 measurements."
+#| fig-alt: "A scatter of grey points, each with a vertical error bar, that rise from the lower left to the upper right. A black regression line runs through the points."
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_errorbar(width = .25, aes(ymin = y-sd, ymax = y+sd))+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("mean y±SD per site")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+If the error bars are only on the y axis, the default is to analyze the site means directly. Compute $r$ across the site means, with $n$ equal to the number of sites, and flag the result as a site-level correlation. This is the default because it does not invent individuals.
+
+Each point also has an **internal sample size**, which will need to be gleaned from the methods of the paper. Reconstructing the underlying data for each site is a sensitivity analysis. For this, you extract the means and SDs for each point and draw a random sample of the data underlying each point from the appropriate statistical distribution (with the length of this sample equal to the internal sample size).
+
+Reconstructing individuals is useful to see how the units of replication matter. For example, if the rest of your dataset uses individuals (or nests or plots) as the unit of replication but the figure above uses sites and reports the mean±sd across individuals, then you will have a mismatch in the units of replication between these effect sizes. The sensitivity analysis shows how much this mismatch changes the result, but it must be corrected for non-independence as described below.
+
+Here we'll demonstrate using `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data) for a worked example with a Zr-type effect size and the binomial distribution).
+
+::: callout-warning
+Note that reconstructing underlying data is an experimental method. Use carefully.
+:::
+
+```{r}
+#| echo: true
+#| eval: true
+
+head(dat)
+
+y_expanded <- list()
+
+for(i in 1:nrow(dat)){
+  y_expanded[[i]] <- data.table(y = rnorm(mean = dat$y[i],
+                                          sd = dat$sd[i],
+                                          n = dat$n[i]),
+                                x = dat$x[i])
+}
+y_expanded <- rbindlist(y_expanded)
+
+head(y_expanded)
+
+```
+
+
+::: callout-warning
+If the author-provided data presents standard error (or confidence intervals, etc) instead of standard deviation, remember that you absolutely *must* convert these to standard deviation before attempting to reconstruct the underlying distribution. See [here](2.1-SMD-assumptions.qmd#sec-callout-error-types) on how to convert from other measures of error to standard deviation.
+:::
+
+In this example data, each point had an internal sample size of 10 measurements. The reconstructed dataset therefore has 500 rows (50 sites times 10), but these rows are not 500 independent replicates. All individuals at a site share the site's x value and its deviation from the trend.
+
+If you were to plot this reconstructed data, it would look like this:
+
+```{r}
+#| label: fig-reconstructed-individuals
+#| fig-cap: "Reconstructed individual points (grey, jittered) drawn from the site means and SDs in the previous figure, with a least-squares line. The 500 points come from 50 sites with 10 measurements each."
+#| fig-alt: "A dense cloud of jittered grey points that rise from the lower left to the upper right, with a black regression line through them."
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+ggplot(data = y_expanded, aes(x = x, y = y))+
+  geom_jitter(size = 3, shape = 21, fill = "grey50",
+              alpha = 0.5)+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+The default result is the site-level correlation across the 50 site means, with n = 50:
+
+```{r}
+#| echo: true
+#| eval: true
+
+out_site <- cor.test(dat$x, dat$y)
+escalc(measure = "ZCOR",
+       ri = out_site$estimate,
+       ni = nrow(dat))
+```
+
+For the sensitivity analysis, we calculate the correlation across the reconstructed individuals. But 500 individuals from 50 sites are not 500 independent replicates, so we shrink the sample size with a *design effect* (see [3.3](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data)). To do that, we need to know how much of the variation lies *between* sites rather than *within* them. This is the intraclass correlation (ICC). We estimate it from the scatter of the site means around the regression line and from the within-site SDs:
+
+```{r}
+#| echo: true
+#| eval: true
+
+out <- cor.test(y_expanded$x, y_expanded$y)
+
+fit <- lm(y ~ x, data = dat)
+s2_w <- mean(dat$sd^2)                                    # within-site variance
+s2_b <- max(var(resid(fit)) - s2_w / mean(dat$n), 0)      # between-site variance
+icc <- s2_b / (s2_b + s2_w)
+n_eff <- nrow(y_expanded) / (1 + (mean(dat$n) - 1) * icc) # effective n
+
+escalc(measure = "ZCOR",
+       ri = out$estimate,
+       ni = n_eff)
+```
+
+The reconstructed value and the site-level value differ because the reconstruction adds simulated within-site scatter. The design-effect correction keeps the sensitivity analysis from overstating precision.
+
+::: callout-important
+##### Summarizing across non-independent and independent data {#sec-callout-data-reconstruction}
+Simulating underlying data can help align the *units of replication* of your dataset, but the resulting effect size may be based on a mixture of more and less independent data. For that reason, tag data extracted like this and record whether it was summarized across time, across spatially independent samples (or different individuals), or across both.
+
+Reconstructed data share non-independence within each site. See the [callout on internal non-independence](3.1-universal-challenges.qmd#sec-callout-internal-non-independence) on 3.1 for how to tag and summarize these data.
+:::
+
+## Error bars on both axes {#sec-x-and-y-axis-error-bars}
+
+What do you do if there are also error bars on the x axis? For example, if each point is a mean±SD of two different measurements. This is common in field studies, where researchers may sample vegetation at a site and some other factor (e.g., animal activity or soil nutrients) and then present the means±SD of each site in a correlation.
+
+We do **not** reconstruct x and y separately for these points. Drawing x and y independently assumes that their within-site correlation is zero, which is not known for most field data. Instead, we work with the site means:
+
+```{r}
+#| label: fig-site-means-both-axes
+#| fig-cap: "Mean y (vertical error bars, ±SD) against mean x (horizontal error bars, ±SD) for all 50 sites. Each point is one site, so the correlation below is an ecological (aggregate) correlation with n = 50 sites."
+#| fig-alt: "A scatter of 50 grey points, each with vertical and horizontal error bars. The points rise from the lower left to the upper right, and a black regression line runs through them."
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+dat[, x_sd := abs(rnorm(50, mean = 0, sd = .25))]
+setnames(dat, "n", "y_n")
+setnames(dat, "sd", "y_sd")
+
+dat[, x_n := 20]
+
+ggplot(data = dat, aes(x = x, y = y))+
+  geom_point(size = 3, shape = 21, fill = "grey50")+
+  geom_errorbar(width = .25, aes(ymin = y-y_sd, ymax = y+y_sd))+
+  geom_errorbarh(aes(xmin = x-x_sd, xmax = x+x_sd), height = .25)+
+  geom_smooth(method = "lm", color = "black")+
+  xlab("x")+
+  ylab("y")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+Compute the correlation across the site means, with $n$ equal to the number of sites, and label it as an **ecological (aggregate) correlation**. It describes how sites differ, not how individuals within sites differ:
+
+```{r}
+#| echo: true
+#| eval: true
+
+out_eco <- cor.test(dat$x, dat$y)
+n_sites <- nrow(dat)
+
+escalc(measure = "ZCOR",
+       ri = out_eco$estimate,
+       ni = n_sites)
+```
+
+Ecological correlations cannot be used to infer individual-level relationships, so flag them in your database and keep them separate from individual-level Zr values (see [2.3](2.3-Zr-assumptions.qmd)).
+
+# Time series {#sec-time-series}
+Some observational studies, especially in ecology, present multiple time series, which may include the two continuous variables you wish to correlate. Our running example is the great tit (*Parus major*): laying date (day of year) against mean April temperature over 30 years. We simulated these data for illustration, with the correlation fixed at r = -0.55 so the example can be reproduced:
+
+```{r}
+#| eval: true
+#| echo: true
+
+n_years <- 30
+years <- 1996:2025
+
+# Simulated: April temperature and laying date with a fixed correlation of -0.55
+r_target <- -0.55
+z1 <- as.numeric(scale(rnorm(n_years)))
+z2 <- as.numeric(scale(resid(lm(rnorm(n_years) ~ z1))))
+z_laying <- r_target * z1 + sqrt(1 - r_target^2) * z2
+
+tit <- data.table(year = years,
+                  april_temp = 9 + 1.2 * z1,           # mean April temperature (degrees C)
+                  laying_date = 120 + 4 * z_laying)    # laying date (day of year)
+```
+
+```{r}
+#| label: fig-great-tit-series
+#| fig-cap: "Laying date (top, day of year) and mean April temperature (bottom, degrees C) of great tits over 30 simulated years. Each point is one year; n = 30 years."
+#| fig-alt: "Two line-and-point time series, one above the other, over the years 1996 to 2025. Laying date fluctuates around day 120 and April temperature fluctuates around 9 degrees C, and they tend to move in opposite directions."
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+p1 <- ggplot(data = tit, aes(x = year, y = laying_date))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Laying date")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+p2 <- ggplot(data = tit, aes(x = year, y = april_temp))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("April temperature (degrees C)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+p1 / p2
+```
+
+If the interval between measurements is identical (on the x axis), these figures are straightforward to extract. You simply extract each point from each figure and then copy and paste the resulting columns next to each other so that they look like this:
+
+```{r}
+#| eval: true
+#| echo: false
+
+knitr::kable(head(tit, 5))
+
+```
+
+You can then calculate the correlation between laying date and April temperature, with $n$ equal to the number of measurements (years):
+
+```{r}
+#| echo: true
+#| eval: true
+
+res <- cor.test(tit$april_temp, tit$laying_date)
+es_tit <- escalc(measure = "ZCOR", ri = res$estimate, ni = nrow(tit))
+es_tit
+
+# Back-transform the 95% confidence interval to r
+tanh(es_tit$yi + c(-1, 1) * 1.96 * sqrt(es_tit$vi))
+```
+
+The great tit example gives r = `r round(res$estimate, 2)`, Zr = `r round(es_tit$yi, 2)`, and sampling variance = 1/(n - 3) = `r round(es_tit$vi, 3)`.
+
+:::callout-important
+Note that in time series data, the correlation coefficient is calculated across temporal measurements and thus has a different internal non-independence structure than correlations calculated across independent sites, plots or individuals.
+
+Consecutive years tend to resemble each other (autocorrelation), so n = `r nrow(tit)` years carries less information than `r nrow(tit)` independent sites would. Record this effect size as a time series, and consider using an effective sample size instead, as described by Pyper and Peterman [@Pyper1998-ts] and in [2.3](2.3-Zr-assumptions.qmd). One optional extra step: if both series simply trend in the same direction over time, and that trend isn't your question, remove it first. Detrend or first-difference both series, then correlate them and use the effective n. This example uses the raw n to show the basic calculation.
+
+As previously [mentioned](3.1-universal-challenges.qmd#sec-callout-internal-non-independence), we recommend recording whether your effect sizes are summarized across *time*, *space/individuals*, or *both* throughout your meta-analysis.
+:::
+
+## Mismatched time series {#sec-mismatched-time-series}
+
+However, what do you do if the time series are mismatched?
+
+Below, we'll plot two time series, one for Variable 1 and one for Variable 2:
+
+```{r}
+#| label: fig-mismatched-series
+#| fig-cap: "Two mismatched time series. Variable 1 is sampled yearly (left panel) and Variable 2 is sampled every quarter year (right panel). These are simulated values to show the alignment problem."
+#| fig-alt: "Two panels side by side. The left panel shows Variable 1 as a line with points at yearly steps, and the right panel shows Variable 2 as a finer line with points at quarterly steps."
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+library("lubridate")
+
+x1 <- seq(from = 1995, to = 2005, by = 1)
+x2 <- seq(from = 1995, to = 2005, by = .25)
+
+y1 <- seq(from = 5, to = 15, by = 1)
+y1 <- y1[1:11]
+y1 <- y1 + rnorm(n = 11, mean = 0, sd = .5)
+
+y2 <- seq(from = 100, to = 110, by = .1)
+y2 <- y2[1:length(x2)]
+y2 <- y2 + rnorm(n=length(x2), mean = 0, sd = .5)
+
+dt1 <- data.table(x1 = x1,
+                  y1 = y1)
+dt2 <- data.table(x2 = x2,
+                  y2 = rev(y2))
+
+p1 <- ggplot(data = dt1, aes(x = x1, y = y1))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Variable 1")+
+  theme_bw()+
+  scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2),
+                     labels = as.integer(seq(from = min(dt1$x1), to=max(dt1$x1), by = 2)))+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+dt2[, date := date_decimal(x2) |> as.Date()]
+p2 <- ggplot(data = dt2, aes(x = date, y = y2))+
+  geom_path()+
+  geom_point(size = 3)+
+  xlab("Year")+
+  ylab("Variable 2")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+p1 + p2
+
+```
+
+What is the best way to line up variable 1 and variable 2 to calculate their correlation? While imputing the missing values in the second panel is one possible approach, it is the least conservative. Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occasions where there is data for both series.
+
+Aligning the data like this is tricky and will probably require manual merging based on nearest value in a spreadsheet software (e.g., Excel) after calibrating both the x and y axes.
+
+# Discrete responses {#sec-discrete-responses}
+## Discrete responses with a continuous predictor {#sec-discrete-responses-continuous-predictor}
+
+Imagine you are conducting a meta-analysis concerned with factors driving nest success or failure in a seabird. Many of the studies use a discrete predictor, e.g., presence or absence of a predator. These types of data are naturally suited for [lnOR or lnRR effect sizes](2.2-lnOR-assumptions.qmd). However, other studies report mortality in relationship to the *abundance* of that predator, which is the continuous version of presence or absence.
+
+```{r}
+#| label: fig-nest-abundance
+#| fig-cap: "Simulated nest outcome (1 = fledged, 0 = failed) against predator abundance, one point per nest. The probability of fledging declines with abundance. Points are jittered vertically; n is given in the text."
+#| fig-alt: "Points at 0 (failed) and 1 (fledged) plotted against predator abundance on the horizontal axis. Fledged points are more common at low abundance and failed points at high abundance."
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+density <- rnorm(n = 50, mean = 5, sd = 5)
+density <- density[density > 0]
+dat <- data.table(fledged = rbinom(n = length(density), size = 1,
+                                   prob = plogis(1.5 - 0.3 * density)),
+                  density = density)
+
+ggplot(data = dat, aes(x = density, y = fledged))+
+  geom_jitter(height = 0.05, size = 3, alpha = 0.9, shape = 21, fill = "grey50")+
+  scale_y_continuous(breaks = c(0, 1), labels = c("Failed", "Fledged"))+
+  xlab("Predator abundance")+
+  ylab("Nest success")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+Depending on your meta-analysis question you may want to extract this data and calculate a Zr correlation effect size, which can then be converted to lnOR (see [here](4-converting-effect-sizes.qmd)) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point, which is an individual, and calculate Zr with the responses as a binary variable of 0 or 1. The simulated data here has n = `r nrow(dat)` nests.
+
+Be careful, though. An lnOR converted from this correlation is **not** guaranteed to be comparable with your presence/absence lnORs. Its value depends on how wide a range of predator abundance the study happened to sample, and on how often nests fledged overall. A better option is to extract (or fit yourself) a logistic regression of nest fate on predator abundance. Its coefficient is the lnOR per unit of abundance. Analyze it separately, or flag it as its own moderator level. If you do convert, flag it and run a sensitivity analysis. Point-biserial correlations are discussed in [2.3](2.3-Zr-assumptions.qmd).
+
+## Proportion data with a continuous predictor {#sec-proportion-data}
+
+You can imagine similar challenges where instead of 0 or 1 responses, the authors report % of a population. Here the proportion alive declines monotonically with temperature:
+
+```{r}
+#| label: fig-proportion-temperature
+#| fig-cap: "Proportion alive (y axis, a population-level summary) against temperature (degrees C), at nine temperature treatments. The proportion declines monotonically; there are no error bars."
+#| fig-alt: "A line with points that falls steadily from about 0.8 at 10 degrees C to about 0.1 at 30 degrees C. Each point is one temperature treatment."
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+temperature <- seq(10, 30, by = 2.5)   # degrees C
+dt <- data.table(temperature = temperature,
+                 proportion_alive = plogis(4 - 0.25 * temperature))
+
+ggplot(data = dt, aes(x = temperature, y = proportion_alive))+
+  geom_path(color = "black", linewidth = 1)+
+  geom_point(fill = "grey80", shape = 21, size = 4)+
+  ylab("Survivorship (proportion alive)")+
+  xlab("Temperature (degrees C)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+You can calculate Zr directly between the predictor (`temperature`, x-axis) and the proportion alive (the y axis). This is the default: with n equal to the number of temperature treatments (`r nrow(dt)`), it is the site-level analysis.
+
+```{r}
+#| eval: true
+#| echo: true
+
+escalc(measure = "ZCOR",
+       ri = cor(dt$temperature, dt$proportion_alive),
+       ni = nrow(dt))
+```
+
+However, each location on the x-axis actually represents a *population of individuals*, all of whom were monitored to determine the proportion alive. Simply calculating Zr from the proportion ignores population size and treats the number of temperature treatments (or sites) as the *unit of replication*. This can lead to a serious mismatch with the rest of your dataset if the rest of your dataset is based on the number of individuals as the unit of replication (like [above](#sec-discrete-responses-continuous-predictor)).
+
+To deal with this, a sensitivity analysis can convert the proportion data to binary response data, based on the total number of individuals in each x-axis treatment. This is possible only if the numbers can be reconstructed from author-reported summaries.
+
+For example, if this figure reflects an experiment where each temperature treatment had 15 individuals, then you can multiply the survivorship at each temperature level by 15, and then expand this dataset to have a 0 or 1 for all 15 individuals per temperature treatment. Because each count is deterministic (rounded from the proportion), there is no added random noise.
+
+Let's give it a try. `dt` is a data.table with a column for proportion alive and for temperature. We'll calculate the number of living and dead individuals, make the dataset long so that these are in one column, and then duplicate the dataset to be one row per individual. Finally, we'll create a binary column of 0s and 1s:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+dt[, number_alive := round(proportion_alive * 15)]
+dt[, number_dead := 15 - number_alive]
+head(dt)
+
+# Now melt dataset:
+dt.mlt <- melt(dt,
+               measure.vars = c("number_alive", "number_dead"),
+               variable.name = "status",
+               value.name = "n_individuals")
+head(dt.mlt)
+
+# Now expand dataset to a binary response dataset:
+dt.expanded <- dt.mlt[rep(seq_len(.N), n_individuals), ]
+dt.expanded$n_individuals <- NULL
+
+# Add binary column:
+dt.expanded[, living := ifelse(status == "number_alive", 1, 0)]
+dt.expanded$status <- NULL
+
+nrow(dt.expanded)
+
+knitr::kable(rbind(head(dt.expanded, 3),
+                   tail(dt.expanded, 3)))
+```
+
+We have now expanded this dataset from `r nrow(dt)` rows (one per temperature treatment) to `r nrow(dt.expanded)` rows (one per individual), and we have shifted the *unit of replication* from number of temperature treatments to number of individuals.
+
+We can now calculate a correlation coefficient and a sensitivity Zr effect size. This uses the nominal number of individuals as n. Because individuals in the same treatment may be correlated, and no SD is reported in this case, this value overstates precision. Treat it as an upper bound, and see the design-effect correction in the mean±SD section below:
+
+```{r}
+res <- cor.test(dt.expanded$living, dt.expanded$temperature)
+
+escalc(measure = "ZCOR",
+       ni = nrow(dt.expanded),
+       ri = res$estimate) |> unlist() # only doing this because of the ugly table outputs....
+```
+
+## Mean±SD proportion data with continuous predictor {#sec-zr-reconstructing-proportion-data}
+
+Now let's look at a similar situation, except the figure is presenting mean±SD mortality across **separate trials** within each temperature treatment.
+
+```{r}
+#| label: fig-trial-means-sd
+#| fig-cap: "Mean proportion alive (points) ± SD (error bars) across trials within each of five temperature treatments. Each trial has 20 individuals and there are 3 trials per treatment (n = 60 individuals per treatment)."
+#| fig-alt: "Five points, each with a short vertical error bar, falling from about 0.7 at the lowest temperature to about 0.27 at the highest temperature."
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+x <- seq(10, 30, by = 5)
+dt <- data.table(temperature = x,
+                 proportion_alive = c(0.7, 0.65, 0.4, 0.38, 0.27))
+dt[, sd := abs(rnorm(n = .N, mean = .05, sd = .01))]
+
+ggplot(data = dt)+
+  geom_point(aes(x = temperature, y = proportion_alive),
+            fill = "grey80",
+            shape = 21,
+            size = 3)+
+  geom_errorbar(aes(x = temperature, ymin = proportion_alive-sd, ymax = proportion_alive+sd))+
+  ylab("Survivorship (mean proportion alive ±SD)")+
+  xlab("Temperature (degrees C)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+dt[, n_individuals := 20]
+dt[, n_trials := 3]
+
+```
+
+**Default analysis: site level.** We analyze the five temperature means directly, with n equal to the number of temperature treatments (`r nrow(dt)`), and flag the result as a site-level correlation:
+
+```{r}
+#| echo: true
+#| eval: true
+
+escalc(measure = "ZCOR",
+       ri = cor(dt$temperature, dt$proportion_alive),
+       ni = nrow(dt))
+```
+
+**Sensitivity analysis: reconstructed individuals.** If we want the unit of replication to be the number of individuals, we need to reconstruct the underlying distributions behind each of these summarized trials. This will allow us to calculate a correlation across individuals for the binary response of being alive or dead, instead of across the mean per treatment.
+
+We also need to find, in the text, the number of individuals and the number of trials (or sites, plots, etc) that the mean±sd were calculated from.
+
+::: callout-note
+A similar data structure could occur with discrete outcomes per **plot** instead of **individuals** with the number of **sites/islands** interchangeable with the number of **trials**.
+
+An example would be the number of plots occupied by a species (the discrete outcome) per study site (the trial), which are sampled across some continuous gradient of interest.
+:::
+
+To do this, we use the binomial or beta-binomial distribution instead of the normal distribution. The design effect (see [3.3](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data)) corrects the sample size for the clustering of individuals within trials.
+
+<details>
+<summary>Click here for a full demonstration</summary>
+
+To understand whether to use the binomial or beta-binomial distribution, we check whether the observed (author-reported) standard deviation is greater than the theoretical standard deviation of the [binomial distribution](7-simulating-non-gaussian-responses.qmd#sec-binomial), which is defined by the proportion and the number of individuals per trial.
+
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+theoretical_sd <- sqrt((dt$proportion_alive * (1 - dt$proportion_alive))/(dt$n_individuals))
+
+nrow(dt[sd > theoretical_sd])
+```
+
+It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution. Here we use fixed (deterministic) counts rather than random draws: the number alive in each treatment is `round(proportion_alive * N)`, where N is the total number of individuals in that treatment (`n_individuals * n_trials`). Why not random draws? They add simulation noise about as large as the sampling error itself, and they give a different answer every time you run the code. See [here](7-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
+
+::: callout-warning
+Note that reconstructing underlying data is an experimental method. Use carefully.
+:::
+
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+dt[, n_total := n_individuals * n_trials]                 # individuals per treatment
+dt[, n_alive := round(proportion_alive * n_total)]        # deterministic counts
+dt[, n_dead := n_total - n_alive]
+
+# Design effect from the reported SD (within-trial clustering), floored at 0:
+dt[, rho := pmax((n_individuals * sd^2 / (proportion_alive * (1 - proportion_alive)) - 1) /
+                   (n_individuals - 1), 0)]
+dt[, deff := 1 + (n_individuals - 1) * rho]
+dt[, .(temperature, n_total, n_alive, n_dead, rho, deff)]
+```
+
+Now we expand the counts to one row per individual with a binary outcome of living or dead:
+
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+long <- melt(dt,
+             id.vars = "temperature",
+             measure.vars = c("n_alive", "n_dead"),
+             variable.name = "status",
+             value.name = "count")
+long[, living := as.integer(status == "n_alive")]
+
+final_dat <- long[rep(seq_len(nrow(long)), long$count), .(temperature, living)]
+
+nrow(final_dat)
+
+knitr::kable(rbind(head(final_dat, 5),
+                   tail(final_dat, 5)))
+```
+
+This final dataset has `r nrow(final_dat)` rows, one for each individual, with number of individuals as the nominal unit of replication. Because individuals within a trial are correlated, we divide the sample size by the mean design effect (`r round(mean(dt$deff), 2)`) before calculating Zr:
+
+```{r}
+#| echo: true
+#| eval: true
+#| out-width: "70%"
+
+res <- cor.test(final_dat$living, final_dat$temperature)
+
+escalc(measure = "ZCOR",
+       ri = res$estimate,
+       ni = nrow(final_dat) / mean(dt$deff))
+
+```
+
+</details>
+
+# Non-independent correlations {#sec-non-independent-correlations}
+## Matrices {#sec-matrices}
+
+Some types of correlations are more complicated because they are based on pairwise matrices that describe relationships between individuals. Each value is not independent because the same individuals engage with other individuals. For instance, correlations between pair-wise behaviors. An example would be the relationship between grooming behavior and defense, which was meta-analyzed by @Schino2007-pr. Is grooming adaptive because it leads to mutual defense with grooming partners?
+
+With data like this, you might have a directed matrix of grooming between individuals, and a second matrix of defense between the same individuals. Here we simulate 10 individuals, with defense correlated with grooming:
+
+```{r}
+#| eval: true
+#| echo: true
+
+n_ind <- 10
+groom <- matrix(runif(n_ind^2, min = 1, max = 100), nrow = n_ind)
+diag(groom) <- NA
+
+defend <- groom + matrix(rnorm(n_ind^2, mean = 0, sd = 15), nrow = n_ind)
+diag(defend) <- NA
+
+knitr::kable(round(groom[1:4, 1:4], 1))
+```
+
+Each off-diagonal cell is a directed dyad. Because the grooming matrix is directed, we use both triangles, so every off-diagonal value enters the calculation. We melt the two matrices into vectors of aligned dyads:
+
+```{r}
+#| eval: true
+#| echo: true
+
+keep <- !is.na(groom)
+dyads <- data.table(grooming = groom[keep], defence = defend[keep])
+nrow(dyads)
+```
+
+Now calculate Kendall's correlation across the dyads and convert it to a Pearson-equivalent r with $r = \sin(\pi\tau/2)$ before calculating Zr. The sample size is the number of individuals, not the number of dyads:
+
+```{r}
+#| eval: true
+#| echo: true
+
+tau <- cor(dyads$grooming, dyads$defence, method = "kendall")
+r_matrix <- sin(pi * tau / 2)
+
+escalc(measure = "ZCOR",
+       ri = r_matrix,
+       ni = n_ind)
+```
+
+The dyads share individuals, so they are not independent, and the standard error above is only a first approximation. If the paper reports a Mantel or QAP test (permutation tests built for matrix correlations), you can use its p-value to back-calculate a standard error. You may also see `rcalc` suggested for non-independent correlations. It's meant for a different problem: several correlations measured on the same individuals (see [2.3](2.3-Zr-assumptions.qmd)). It doesn't fix the non-independence of dyads within a single matrix.
+
+# Model estimates {#sec-model-estimates}
+
+Correlations are often reported as test statistics rather than as r. You can convert these to r, and then to Zr, with the following relations (see [Chapter 4](4-converting-effect-sizes.qmd) for the full set of conversions):
+
+| Reported statistic | Conversion to r | Notes |
+|---|---|---|
+| t (simple regression or two-group t, df = n - 2) | $r = \frac{t}{\sqrt{t^2 + df}}$ | Sign follows the t statistic. |
+| F(1, df_error) | $r = \sqrt{\frac{F}{F + df_{error}}}$ | Only for a single numerator degree of freedom; take the sign from the slope. |
+| R-squared | $|r| = \sqrt{R^2}$ | Only for a single-predictor model; take the sign from the slope. |
+| Standardized slope or unstandardized slope | $r = b\, s_x / s_y$ | Needs the standard deviations of both variables. |
+| Chi-square (2 x 2 table, phi) | $\phi = \sqrt{\chi^2_1 / N}$ | A different estimand from Pearson r; flag it. |
+| t for one predictor in a multiple regression | $r_p = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - k - 1$ | This is a **partial** correlation, so use `ZPCOR` (below). |
+
+For a simple regression or two-group t, the conversion gives r directly:
+
+```{r}
+#| eval: true
+#| echo: true
+
+t_val <- 2.5
+df_t <- 28
+r_t <- t_val / sqrt(t_val^2 + df_t)
+
+# F(1, df) gives the same r, with the sign taken from the slope
+F_val <- t_val^2
+r_F <- sqrt(F_val / (F_val + df_t))
+
+escalc(measure = "ZCOR", ri = r_t, ni = df_t + 2)
+```
+
+For a predictor in a multiple regression, the t statistic gives a partial correlation. Use `ZPCOR` with the number of predictors (`mi`):
+
+```{r}
+#| eval: true
+#| echo: true
+
+escalc(measure = "ZPCOR", ti = 2.5, ni = 32, mi = 2)
+```
+
+Next: [Chapter 4, converting effect sizes](4-converting-effect-sizes.qmd)

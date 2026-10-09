@@ -1,0 +1,155 @@
+---
+title: "`escalc` cheatsheet"
+subtitle: "so many effects, so little time"
+date: today
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "6-escalc-cheatsheet.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options:
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+
+metatools_sha <- "186c219a450ef117055705d1dd856ddd124105c8"
+if (!requireNamespace("metatools", quietly = TRUE) ||
+    !identical(utils::packageDescription("metatools")$RemoteSha, metatools_sha)) {
+  pak::pak(paste0("ejlundgren/metatools@", metatools_sha))
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+```
+
+:::callout-note
+#### Key points
+- Use this page to look up which `escalc` measure to use for each effect size, and check the input names carefully: `xi` is a count of events, not a proportion.
+- Rows marked "not yet checked" have not been verified. Do not rely on them until they are checked.
+- For paired designs, only the raw-score SMDs (`"SMCR"`, `"SMCRH"`, `"SMCRP"`) are on the same scale as an ordinary two-group SMD. The change-score SMD (`"SMCC"`) is not, so don't mix it in or convert it.
+:::
+
+`escalc` contains an overwhelming wealth of effect size estimators. We here provide some information on alternative estimators for the main effect size types so far covered in this tutorial. We finish with the `escalc` options for other designs, including single group effect sizes (e.g., proportions). We haven't checked all of these yet, so don't rely on rows marked 'Not yet checked'. Note we do not discuss effect size estimators that are not recommended for use in ecology and evolution, such as raw correlation coefficients or unstandardized mean difference.
+
+# SMD and lnRoM options {#sec-smd-lnrom-options}
+
+The standard estimators for SMD are "SMD" and "SMDH", the latter of which is for heteroscedastic data. The standard estimator for lnRoM is `"ROM"`. lnRoM's uncorrected point estimate doesn't use the SDs at all, but its sampling variance does. By default (`vtype = "LS"`), the variance uses each group's own SD, so it copes with unequal variances. `vtype = "HO"` assumes the two groups have equal variances. This table includes alternative estimators provided by escalc and whether they are comparable to the standard estimator (either SMD, SMDH, or ROM). Note that paired design estimators require an additional input `ri`, an estimate of correlation between groups and take a single sample size (`ni`) instead of a sample size for two groups (`n1i`, `n2i`).
+
+| class | `escalc` | Heteroscedasticity | Paired designs | Comparable to standard? | Details |
+|------------|------------|------------|------------|---------------|------------|
+| SMD | "SMCC" | No | Yes | No | Paired change-score formulation, standardized by the SD of the change scores (from `sd1i`, `sd2i`, `ri`). Not comparable: do not feed it into independent-groups conversions. |
+|  | "SMCR" | No | Yes | Yes | Raw-score formulation standardized by the SD of group 1 (e.g., pre-test SD). Same metric as independent-groups SMD. |
+|  | "SMCRH" | Yes | Yes | Yes | Same point estimate as SMCR; the variance allows unequal SDs. |
+|  | "SMCRP" | No | Yes | Yes | An alternative formulation that uses the standard deviations of both group 1 and 2. |
+| lnRoM | "ROMC" | No | Yes | Not yet checked | Paired formula for lnRoM. |
+
+# lnOR / lnRR options {#sec-lnor-options}
+
+The standard estimator options in `escalc` are "OR" for lnOR and "RR". The alternative estimators below are for *matched-pairs* 2 x 2 tables, where each individual (or plot) in one group is paired with a specific individual in the other, for example the same animals before and after a treatment.
+
+| class | `escalc` | Paired designs | Comparable to standard? | Details |
+|-------------|-------------|-------------|----------------|------------------|
+| lnOR | "MPOR" | Not yet checked | Not yet checked | "marginal log odds ratio" |
+|  | "MPORC" | Not yet checked | Not yet checked | "conditional log odds ratio" |
+|  | "MPPETO" | Not yet checked | Not yet checked | "conditional log odds ratio estimated with Peto's method" |
+| lnRR | "MPRR" | Not yet checked | Not yet checked | "marginal log-risk ratio" |
+| RD | "MPRD" | Not yet checked | Not yet checked | "marginal risk difference" (a risk difference, not an lnRR-class measure) |
+
+# Zr options {#sec-zr-options}
+
+You can also calculate point biserial correlation coefficient "RPB" and biserial correlation coefficient "RBIS" but these return an estimate of 'r' and should not be analyzed directly in a meta-analytic model.
+
+| class | `escalc` | Comparable to standard? | Details |
+|--------------|--------------|---------------------|------------------------|
+| Zr | "ZPB" | Partly (point estimate on z scale; different variance) | "point biserial correlation coefficient directly to Zr". Use only for natural dichotomies; the variance is not 1/(n-3). |
+|  | "ZBIS" | Partly (point estimate on z scale; different variance) | "biserial correlation coefficient directly to Zr". Use the `vi` returned by `escalc`; the variance is not 1/(n-3). |
+
+# Other effect sizes {#sec-other-effect-sizes}
+
+## Individual groups in respect to a dichotomous dependent variable {#sec-single-group-responses}
+
+For example, the percent of a population that is infected, or the percent of a predator's diet that is livestock.
+
+Inputs: `ni` is the total number of individuals and `xi` is the number with the event. Note that `xi` is a count, not a proportion. If you only have the proportion, supply it as `pi` together with `ni`.
+
+| `escalc` | Name | Recommended |
+|---------------|---------------|---------------|
+| "PLN"  | "log-transformed proportion". | Not yet checked |
+| "PLO" |  "logit-transformed proportion". | Not yet checked |
+| "PRZ" | "probit-transformed proportion". | Not yet checked |
+
+## Individual groups with an event count {#sec-single-group-event-counts}
+
+For example, the number of times a bird breeds, or the number of times a plot burns, over a known amount of person-time (see [5.3](5.3-single-group-effect-sizes.qmd#sec-event-counts)).
+
+| `escalc` | Input | Name | Recommended |
+|---------------|-----------------------------|---------------|---------------|
+| "IRLN" | ti=total person-times at risk; xi=n events | "log-transformed incidence rate". | Not yet checked |
+| "IRS" | ti=total person-times at risk; xi=n events | "square root transformed incidence rate". | Not yet checked |
+| "IRFT" | ti=total person-times at risk; xi=n events | "Freeman-Tukey transformed incidence rate". | Not yet checked |
+
+## Time to event effect sizes
+
+This section is under development.
+
+## Partial and semi-partial correlations {#sec-partial-correlation-options}
+
+This section is under development.
+
+## Coefficients of determination ($R^2$) {#sec-r2}
+
+This section is under development.
+
+:::callout-note
+#### Next
+**Next:** [Simulating non-Gaussian responses](7-simulating-non-gaussian-responses.qmd) for worked examples of reconstructing data from summaries.
+:::
