@@ -74,16 +74,27 @@ As you have seen so far in this guide, effect sizes are not trivial things. Toge
 
 In this section, we discuss effect sizes for describing the relationship strength between two continuous variables. These are known as measures of association. While the Pearson product-moment correlation coefficient ($r$) is the most intuitive and widely reported metric in primary studies, its mathematical properties make it problematic for direct meta-analytic pooling. Instead, we will dive into the elegant statistical world of **Fisher's Z-transformed correlation coefficient** ($Z_r$), our variance-stabilizing alternative.
 
+:::callout-note
+#### Effect sizes for *slope* of a relationship, not association
+
+As we discuss further [below](#sec-what-is-r), $Z_r$ describes the strength of an association between two variables in terms of both direction and consistency of relationship (e.g., scatter).  
+
+However, sometimes you're not interested in the strength of an association between two variables but just the slope---for instance when looking at rate of change of a response through time. 
+
+For these types of questions, you can use linear model coefficients. We discuss this in the appendix, [here](5.3b-rate-of-change.qmd)
+
+:::
+
 ---
 
 ### Why can't we just pool raw correlations?
 
 When primary studies report their results, they often present Pearson's correlation coefficient ($r$). It is an appealing effect size: it carries no units, so a correlation between body mass and clutch size can be compared directly against one between soil nitrogen and plant diversity (if that makes sense to be compared, which is another question). It runs from $-1$ (a perfect negative *linear* association) through $0$ (no linear association) to $+1$ (a perfect positive linear association).
 
-In practice, many studies never report $r$ at all. Instead, they show a scatterplot, often with a fitted line from a linear model, and report a slope, a $t$ or $F$ statistic, or an $R^2$. In those cases you will have to obtain $r$ yourself, either by extracting the points from the figure (see [Chapter 3.4](3.4-Zr-challenges.qmd#sec-simple-figures)) or by converting the reported test statistics (see [Chapter 4](4-converting-effect-sizes.qmd)). **I think this needs to be in the extraction page**
+In practice, many studies never report $r$ at all. Instead, they show a scatterplot, often with a fitted line from a linear model, and report a slope, a $t$ or $F$ statistic, or an $R^2$. In those cases you will have to obtain $r$ yourself, either by extracting the points from the figure (see [Chapter 3.4](3.4-Zr-challenges.qmd#sec-simple-figures)) or by converting the reported test statistics (see [Chapter 4](4-converting-effect-sizes.qmd)).
 
 ::: callout-tip
-##### What $r$ actually measures
+##### What $r$ actually measures {#sec-what-is-r}
 
 It is easy to forget, if your last stats class was a while ago, that $r$ packs two things into a single number: the *direction* of the relationship and how *tightly* the points cluster around a straight line. It is not the slope. The two are linked by
 
@@ -120,7 +131,7 @@ labs_df <- do.call(rbind, lapply(split(sim, sim$panel), function(d) {
 }))
 p <- ggplot(sim, aes(x = x, y = y)) +
   geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE, color = "blue", linewidth = 1) +
+  geom_smooth(method = "lm", se = FALSE, color = "dodgerblue3", linewidth = 1) +
   geom_text(data = labs_df, aes(x = -Inf, y = Inf, label = label),
             hjust = -0.1, vjust = 1.2, size = 3.5) +
   facet_wrap(~ panel) +

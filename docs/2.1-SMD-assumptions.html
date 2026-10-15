@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-10-01">
+<meta name="dcterms.date" content="2026-10-14">
 <title>Continuous outcomes between two groups – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -252,18 +252,18 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./3.2-smd-challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Continuous outcome between two groups</span></a>
+ <span class="menu-text">Continuous outcomes between two groups</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./3.3-lnOR-challenges.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Discrete outcome between two groups</span></a>
+ <span class="menu-text">Discrete outcomes between two groups</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./3.4-Zr-challenges.html" class="sidebar-item-text sidebar-link">
+  <a href="./3.4-$Z_r$-challenges.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Continuous predictors</span></a>
   </div>
 </li>
@@ -300,6 +300,12 @@ window.Quarto = {
   <div class="sidebar-item-container"> 
   <a href="./5.3-single-group-effect-sizes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Single-group effect sizes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5.3b-rate-of-change.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate of change</span></a>
   </div>
 </li>
       </ul>
@@ -384,15 +390,10 @@ window.Quarto = {
 </li>
   <li><a href="#conclusion-smd-or-lnrom" id="toc-conclusion-smd-or-lnrom" class="nav-link" data-scroll-target="#conclusion-smd-or-lnrom">Conclusion: SMD or lnRoM</a></li>
   <li>
-<a href="#sec-alternative-estimators" id="toc-sec-alternative-estimators" class="nav-link" data-scroll-target="#sec-alternative-estimators">Alternative estimators</a>
-  <ul>
-<li>
 <a href="#sec-paired-designs" id="toc-sec-paired-designs" class="nav-link" data-scroll-target="#sec-paired-designs">Paired designs</a>
   <ul>
 <li><a href="#smd-paired-designs" id="toc-smd-paired-designs" class="nav-link" data-scroll-target="#smd-paired-designs">SMD paired designs</a></li>
   <li><a href="#lnrom-paired-designs" id="toc-lnrom-paired-designs" class="nav-link" data-scroll-target="#lnrom-paired-designs">lnRoM paired designs</a></li>
-  </ul>
-</li>
   </ul>
 </li>
   </ul></nav>
@@ -411,7 +412,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 1, 2026</p>
+      <p class="date">October 14, 2026</p>
     </div>
   </div>
   
@@ -501,7 +502,7 @@ window.Quarto = {
 <p>The effect sizes in this section require standard deviation (<span class="math inline">\(sd\)</span>) for the treatment and control groups. <span class="math inline">\(sd\)</span> is fundamentally distinct from standard error (<span class="math inline">\(se\)</span>). Some meta-analyses have mistaken the two, with egregious results. Be sure to convert all measurements of error to <span class="math inline">\(sd\)</span>. Other commonly reported forms of error include 95% confidence intervals (or 90%), variance, and interquartile ranges (e.g., in boxplots). The extraction package <code>metaDigitise()</code> automatically converts <span class="math inline">\(se\)</span>, interquartile ranges, and 95% CIs to <span class="math inline">\(sd\)</span>.</p>
 <p>For a group with sample size <span class="math inline">\(n\)</span>, standard error (<span class="math inline">\(SE\)</span>) can be converted to standard deviation (<span class="math inline">\(sd\)</span>) as follows:</p>
 <p><span id="eq-se-to-sd"><span class="math display">\[
-sd = SE\sqrt{n}.
+sd = SE \times \sqrt{n}.
 \tag{1}\]</span></span></p>
 <p>If variance was reported, standard deviation can be calculated: <span id="eq-var-to-sd"><span class="math display">\[
 sd = \sqrt{\mathrm{Var}}.
@@ -510,7 +511,7 @@ sd = \sqrt{\mathrm{Var}}.
 <p><span id="eq-ci-to-sd"><span class="math display">\[
 \begin{aligned}
 SE &amp;= \frac{CI_{upper}-CI_{lower}}{2c},\\
-sd  &amp;= SE\sqrt{n},
+sd  &amp;= SE \times \sqrt{n},
 \end{aligned}
 \tag{3}\]</span></span></p>
 <p>where <span class="math inline">\(c\)</span> is the critical value used to construct the interval. For a large-sample 95% confidence interval based on the normal distribution, <span class="math inline">\(c=1.96\)</span>. For small samples or intervals based on another distribution, use the critical value reported or implied by the study rather than automatically using 1.96.</p>
@@ -1259,8 +1260,7 @@ G' = \frac{m}{sd}*\frac{4*n^{3/2}}{1+4*n}
 <p>The number of sensitivity analyses can become daunting! No doubt. It sucks. We provide some suggestions on how to organize these <a href="./3.0-starting-extraction.html#sec-organizing-sensitivity-analyses">here.</a></p>
 </div>
 </div>
-</section><section id="sec-alternative-estimators" class="level1"><h1>Alternative estimators</h1>
-<section id="sec-paired-designs" class="level2"><h2 class="anchored" data-anchor-id="sec-paired-designs">Paired designs</h2>
+</section><section id="sec-paired-designs" class="level1"><h1>Paired designs</h1>
 <p>There are alternative estimators for SMD and lnRoM can account for <em>paired</em> designs, that is for correlated variance between groups 1 and 2.</p>
 <p>For the most part, these paired estimators <em>reduce</em> the sampling variance and have minimal effects on the point estimates. In this way, they increase the influence of paired data in your dataset by controlling for the covariance between your treatment groups.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1273,10 +1273,10 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>By paired designs, we mean <strong><em>within</em></strong> an effect size: e.g., pairing between <span class="math inline">\(m1\)</span> and <span class="math inline">\(m2\)</span>. Covariance <strong><em>between</em></strong> multiple effect sizes within a study or across studies needs to be handled with your model’s random effects. We discuss this briefly <a href="./3.1-universal-challenges.html#sec-non-independence">here.</a></p>
+<p>By paired designs, we mean <strong><em>within</em></strong> an effect size: e.g., pairing between <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span>. Covariance <strong><em>between</em></strong> multiple effect sizes within a study or across studies needs to be handled with your model’s random effects. We discuss this briefly <a href="./3.1-universal-challenges.html#sec-non-independence">here.</a></p>
 </div>
 </div>
-<p>In paired design estimators, the variance estimation formulas accept an additional argument <span class="math inline">\(\rho\)</span>—the correlation between plots or individuals, which is pronounced “rho” and symbolized as <code>r</code> in most <code>R</code> code.</p>
+<p>In paired design estimators, the variance estimation formulas accept an additional argument <span class="math inline">\(\rho\)</span>—the correlation between plots or individuals. This parameter is pronounced “rho” and symbolized as <code>ri</code> in most <code>R</code> code.</p>
 <p>Since <span class="math inline">\(\rho\)</span> is usually unknown and unreported, it’s general practice to set it to 0.5 or 0.8 and to run sensitivity analyses to ensure that that choice isn’t unduly influencing your model estimates.</p>
 <section id="smd-paired-designs" class="level3"><h3 class="anchored" data-anchor-id="smd-paired-designs">SMD paired designs</h3>
 <p>For SMD, the <code>escalc</code> measure “SMCRP” <span class="citation" data-cites="Cousineau2020-jf">(<a href="#ref-Cousineau2020-jf" role="doc-biblioref">Cousineau 2020</a>)</span> is likely safe to use in a dataset alongside unpaired “SMD” estimates, even though this formulation changes the point estimate slightly. If your data is heteroscedastic, you can use the measure “SMCRPH” <span class="citation" data-cites="Bonett2008-ni">(<a href="#ref-Bonett2008-ni" role="doc-biblioref">Bonett 2008</a>)</span> which is comparable to “SMDH”.</p>
@@ -1371,7 +1371,7 @@ Note
 <!-- -->
 
 
-</section></section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+</section></section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-Bonett2008-ni" class="csl-entry" role="listitem">
 Bonett, D. G. 2008. Confidence intervals for standardized linear contrasts of means. Psychol. Methods 13:99–109.
 </div>
@@ -1988,7 +1988,7 @@ Nakagawa, S., D. W. A. Noble, M. Lagisz, R. Spake, W. Viechtbauer, and A. M. Sen
 <span id="cb30-135"><a href="#cb30-135" aria-hidden="true" tabindex="-1"></a>For a group with sample size $n$, standard error ($SE$) can be converted to standard deviation ($sd$) as follows:</span>
 <span id="cb30-136"><a href="#cb30-136" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-137"><a href="#cb30-137" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb30-138"><a href="#cb30-138" aria-hidden="true" tabindex="-1"></a>sd = SE\sqrt{n}.</span>
+<span id="cb30-138"><a href="#cb30-138" aria-hidden="true" tabindex="-1"></a>sd = SE \times \sqrt{n}.</span>
 <span id="cb30-139"><a href="#cb30-139" aria-hidden="true" tabindex="-1"></a>$${#eq-se-to-sd}</span>
 <span id="cb30-140"><a href="#cb30-140" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-141"><a href="#cb30-141" aria-hidden="true" tabindex="-1"></a>If variance was reported, standard deviation can be calculated:</span>
@@ -2001,7 +2001,7 @@ Nakagawa, S., D. W. A. Noble, M. Lagisz, R. Spake, W. Viechtbauer, and A. M. Sen
 <span id="cb30-148"><a href="#cb30-148" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb30-149"><a href="#cb30-149" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
 <span id="cb30-150"><a href="#cb30-150" aria-hidden="true" tabindex="-1"></a>SE &amp;= \frac{CI_{upper}-CI_{lower}}{2c},<span class="sc">\\</span></span>
-<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a>sd  &amp;= SE\sqrt{n},</span>
+<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a>sd  &amp;= SE \times \sqrt{n},</span>
 <span id="cb30-152"><a href="#cb30-152" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
 <span id="cb30-153"><a href="#cb30-153" aria-hidden="true" tabindex="-1"></a>$${#eq-ci-to-sd}</span>
 <span id="cb30-154"><a href="#cb30-154" aria-hidden="true" tabindex="-1"></a></span>

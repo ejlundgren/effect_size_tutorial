@@ -1,0 +1,120 @@
+---
+title: "Rates of change"
+subtitle: "Interested in the slope, not the strength"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "5.3b-rate-of-change.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: 
+  - references.bib
+  # - assumptions.bib
+csl: ecology.csl
+---
+
+$Z_r$ effect sizes describe both the direction and strength (i.e., tightness) of a relationship between two continuous variables. As we demonstrated in the $Z_r$ [section](2.3-Zr-assumptions.qmd#sec-what-is-r), this means that relationships with **identical slopes** can **vary dramatically** in their $Z_r$ coefficients (as long as the direction is still negative or positive):
+
+
+```{r}
+#| label: fig-r-slope-scatter
+#| fig-cap: "Three simulated datasets with the same 50 values of $x$. Panels A and B share the same slope but differ in scatter, so their correlations differ. Panels A and C have very different slopes but the same scatter relative to the slope, so their correlations are identical."
+#| code-fold: true
+#| fig-width: 9
+#| fig-height: 3.5
+#| eval: true
+#| echo: true
+library("ggplot2")
+
+set.seed(42)
+n <- 50
+x <- rnorm(n)
+e <- as.numeric(scale(resid(lm(rnorm(n) ~ x))))  # noise uncorrelated with x, so the fitted slope equals b exactly
+scenarios <- data.frame(
+  panel = c("A. Steep slope, little scatter", "B. Steep slope, lots of scatter", "C. Shallow slope, little scatter"),
+  b     = c(1, 1, 0.2),
+  sigma = c(0.4, 2, 0.08)
+)
+
+sim <- do.call(rbind, lapply(seq_len(nrow(scenarios)), function(i) {
+  data.frame(panel = scenarios$panel[i], x = x,
+             y = scenarios$b[i] * x + scenarios$sigma[i] * e)
+}))
+
+labs_df <- do.call(rbind, lapply(split(sim, sim$panel), function(d) {
+  data.frame(panel = d$panel[1],
+             label = sprintf("slope = %.2f\nr = %.2f", coef(lm(y ~ x, data = d))[2], cor(d$x, d$y)))
+}))
+
+p <- ggplot(sim, aes(x = x, y = y)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE, color = "dodgerblue3", linewidth = 1) +
+  geom_text(data = labs_df, aes(x = -Inf, y = Inf, label = label),
+            hjust = -0.1, vjust = 1.2, size = 3.5) +
+  facet_wrap(~ panel) +
+  theme_minimal() +
+  labs(x = "Predictor (x)", y = "Response (y)")
+p
+```
+
+However, sometimes you're not interested in the noise but in the **slope** of a relationship and you want the sampling variance term to absorb the noise as a weight in your models.
+
+Imagine you want to calculate individual species abundance trajectories through *time* to ask which species are declining and which are increasing.
+
+You're **not** interested in the strength of the relationship of each species with time but the slope itself. This is because you know full well that the relationship with *time* will be noisy: each year is wetter or drier, etc. Instead, you're interested in which species are *winning* and which are *losing* and why. 
+
+As @fig-r-slope-scatter, illustrates, identical correlation coefficients (panels A and C) can have radically different slopes while identical slopes can have radically different correlations (panels A and B).
+
+In these cases, you can meta-analyze **regression coefficients**, along with their model estimated standard error (after transforming to sampling variance). We suggest that if you do conduct a meta-analysis on regression coefficients, that you pair this with a meta-analysis on $Z_r$, to capture the noisiness of the relationships between your response and predictor variables.
+
+# Assumptions
+To meta-analyze this type of data, you should calculate regression slopes and standard errors from raw data, either extracted from scatter plots or from large datasets (e.g.,  BioTime @Dornelas2025-dv). 
+
+Then convert the model-derived standard errors to sampling variance and fit your meta-analytic model. It is **critical** that the regression coefficients are fitted on linear models where both the response and predictor variables are in the **same units** across all of the models.
+
+Unfortunately, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
+
+If you **must** use author provided model estimates, with models that varied in the response and predictor units, then you are back in the world of correlations, which describe both slope and strength of a relationship. The effect sizes for these model-derived estimates is *Fisher's r-to-z transformed correlation coefficient* (see `measure = "ZPCOR"` in `escalc`'s documentation and [here](3.4-Zr-challenges.qmd#sec-model-estimates)).
+
+:::callout-important
+### Maybe just fit a GLMM on raw data
+
+Analyzing regression coefficients requires raw data, since, as we describe below, regression coefficients are sensitive to the units of the variables and will change based on the model construction and should **not** be extracted from author-reported model summaries (unless the models are identical across studies).
+
+If you have the raw data, you might want to consider just fitting generalized linear mixed effect models, using random effect structures to control for non-independence between the different data sources.
+
+The only reason you might not want to use a GLMM is that the estimates for each individual observation (e.g., a species through time) will be drawn towards the global mean, which may conceal the patterns you're interested in uncovering.
+:::

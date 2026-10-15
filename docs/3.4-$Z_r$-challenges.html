@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-10-07">
+<meta name="dcterms.date" content="2026-10-14">
 <title>Extracting Z_r: the correlation coefficient – A user's guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -302,6 +302,12 @@ window.Quarto = {
  <span class="menu-text">Single-group effect sizes</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5.3b-rate-of-change.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rates of change</span></a>
+  </div>
+</li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
@@ -398,7 +404,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 7, 2026</p>
+      <p class="date">October 14, 2026</p>
     </div>
   </div>
   
@@ -441,36 +447,36 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">corr_1</td>
-<td style="text-align: right;">3.195598</td>
-<td style="text-align: right;">4.818272</td>
+<td style="text-align: right;">2.317817</td>
+<td style="text-align: right;">2.230947</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">corr_1</td>
-<td style="text-align: right;">2.085695</td>
-<td style="text-align: right;">3.457361</td>
+<td style="text-align: right;">3.369025</td>
+<td style="text-align: right;">6.119526</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">corr_1</td>
-<td style="text-align: right;">2.891120</td>
-<td style="text-align: right;">3.147340</td>
+<td style="text-align: right;">1.245985</td>
+<td style="text-align: right;">3.210116</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">corr_1</td>
-<td style="text-align: right;">3.146744</td>
-<td style="text-align: right;">4.438140</td>
+<td style="text-align: right;">1.126589</td>
+<td style="text-align: right;">3.485086</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">corr_1</td>
-<td style="text-align: right;">3.589898</td>
-<td style="text-align: right;">5.871678</td>
+<td style="text-align: right;">3.640044</td>
+<td style="text-align: right;">4.947912</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 </tr>
@@ -523,9 +529,9 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">corr_1</td>
-<td style="text-align: right;">0.7955917</td>
+<td style="text-align: right;">0.6920406</td>
 <td style="text-align: right;">5</td>
-<td style="text-align: right;">1.0864853</td>
+<td style="text-align: right;">0.8518613</td>
 <td style="text-align: right;">0.500000</td>
 </tr>
 <tr class="even">
@@ -624,14 +630,14 @@ Warning
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          x         y        sd     n
-      &lt;num&gt;     &lt;num&gt;     &lt;num&gt; &lt;num&gt;
-1: 5.053573  5.619805 0.2678671    10
-2: 7.206398  8.232051 0.5428449    10
-3: 5.768340  9.790128 0.2229687    10
-4: 7.354705  9.197870 0.0472276    10
-5: 6.367234  7.776985 0.2771066    10
-6: 7.635921 11.554246 0.2402627    10</code></pre>
+<pre><code>          x        y        sd     n
+      &lt;num&gt;    &lt;num&gt;     &lt;num&gt; &lt;num&gt;
+1: 6.541506 9.349693 0.4600914    10
+2: 6.579564 8.320339 0.5349959    10
+3: 6.760513 9.143240 0.7420844    10
+4: 5.629024 7.163649 0.2882619    10
+5: 5.755396 6.857418 0.4851213    10
+6: 5.652205 7.755195 0.6102204    10</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">y_expanded</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -645,14 +651,14 @@ Warning
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">y_expanded</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          y        x
-      &lt;num&gt;    &lt;num&gt;
-1: 5.569082 5.053573
-2: 5.804469 5.053573
-3: 5.594232 5.053573
-4: 5.588856 5.053573
-5: 5.695486 5.053573
-6: 6.001551 5.053573</code></pre>
+<pre><code>           y        x
+       &lt;num&gt;    &lt;num&gt;
+1:  8.971376 6.541506
+2:  9.457500 6.541506
+3:  9.617507 6.541506
+4: 10.081829 6.541506
+5: 10.439523 6.541506
+6:  9.423008 6.541506</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -690,7 +696,7 @@ Warning
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.1907 0.0020 </code></pre>
+1 1.2711 0.0020 </code></pre>
 </div>
 </div>
 <p>Pretty neat, right?</p>
@@ -728,14 +734,14 @@ Click here to see a full demonstration
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>          x         y      y_sd   y_n       x_sd   x_n
-      &lt;num&gt;     &lt;num&gt;     &lt;num&gt; &lt;num&gt;      &lt;num&gt; &lt;num&gt;
-1: 5.053573  5.619805 0.2678671    10 0.19100599    20
-2: 7.206398  8.232051 0.5428449    10 0.29991557    20
-3: 5.768340  9.790128 0.2229687    10 0.16762203    20
-4: 7.354705  9.197870 0.0472276    10 0.18178403    20
-5: 6.367234  7.776985 0.2771066    10 0.05080501    20
-6: 7.635921 11.554246 0.2402627    10 0.48118674    20</code></pre>
+<pre><code>          x        y      y_sd   y_n        x_sd   x_n
+      &lt;num&gt;    &lt;num&gt;     &lt;num&gt; &lt;num&gt;       &lt;num&gt; &lt;num&gt;
+1: 6.541506 9.349693 0.4600914    10 0.007509954    20
+2: 6.579564 8.320339 0.5349959    10 0.088207309    20
+3: 6.760513 9.143240 0.7420844    10 0.049123787    20
+4: 5.629024 7.163649 0.2882619    10 0.008496228    20
+5: 5.755396 6.857418 0.4851213    10 0.264003472    20
+6: 5.652205 7.755195 0.6102204    10 0.309144353    20</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Choose the n with the lowest sample size:</span></span>
 <span><span class="va">dat</span><span class="op">[</span>, <span class="va">n</span> <span class="op">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x_n</span>, <span class="va">y_n</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
@@ -761,28 +767,28 @@ Click here to see a full demonstration
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">5.480989</td>
-<td style="text-align: right;">4.924100</td>
+<td style="text-align: right;">9.699665</td>
+<td style="text-align: right;">6.544865</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">5.824870</td>
-<td style="text-align: right;">4.916409</td>
+<td style="text-align: right;">9.655149</td>
+<td style="text-align: right;">6.529281</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5.213096</td>
-<td style="text-align: right;">4.974307</td>
+<td style="text-align: right;">9.677728</td>
+<td style="text-align: right;">6.532734</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">5.268205</td>
-<td style="text-align: right;">5.260354</td>
+<td style="text-align: right;">10.157738</td>
+<td style="text-align: right;">6.529898</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">5.458044</td>
-<td style="text-align: right;">5.022864</td>
+<td style="text-align: right;">9.835903</td>
+<td style="text-align: right;">6.545705</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">6.049113</td>
-<td style="text-align: right;">5.090771</td>
+<td style="text-align: right;">9.138300</td>
+<td style="text-align: right;">6.551902</td>
 </tr>
 </tbody>
 </table>
@@ -801,7 +807,7 @@ Click here to see a full demonstration
 <div class="cell-output cell-output-stdout">
 <pre><code>
       yi     vi 
-1 1.1124 0.0020 </code></pre>
+1 1.1861 0.0020 </code></pre>
 </div>
 </div>
 <p>If the variable of interest (the response variable <code>y</code>) is not Guassian (e.g., is not normally distributed) but is count (Poisson) or overdispersed count data (negative binomial), etc, then you need to draw the underlying data with the appropriate distribution (e.g., <code>rpois</code> or <code>rnbinom</code>). Doing so requires converting author-provided summary statistics (e.g., the mean and standard deviation in the figure above) to the distribution-specific parameters. See <a href="./7-simulating-non_gaussian_responses.html">here</a> where we discuss this and <a href="#sec-$Z_r$-reconstructing-proportion-data">below</a> where we demonstrate using the binomial distribution to reconstruct discrete individual outcomes from a correlation figure.</p>
@@ -827,58 +833,58 @@ Click here to see a full demonstration
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">1995</td>
-<td style="text-align: right;">4.232165</td>
-<td style="text-align: right;">14.2345330</td>
+<td style="text-align: right;">4.024269</td>
+<td style="text-align: right;">10.4601139</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1996</td>
-<td style="text-align: right;">5.796907</td>
-<td style="text-align: right;">0.5827212</td>
+<td style="text-align: right;">5.676165</td>
+<td style="text-align: right;">4.0977467</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1997</td>
-<td style="text-align: right;">7.286932</td>
-<td style="text-align: right;">-1.5406812</td>
+<td style="text-align: right;">6.737114</td>
+<td style="text-align: right;">-0.2810740</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1998</td>
-<td style="text-align: right;">7.434518</td>
-<td style="text-align: right;">1.3330048</td>
+<td style="text-align: right;">8.936275</td>
+<td style="text-align: right;">-0.6491303</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1999</td>
-<td style="text-align: right;">8.702262</td>
-<td style="text-align: right;">-6.1801051</td>
+<td style="text-align: right;">8.158890</td>
+<td style="text-align: right;">-0.4321716</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2000</td>
-<td style="text-align: right;">9.956046</td>
-<td style="text-align: right;">0.4830683</td>
+<td style="text-align: right;">10.503569</td>
+<td style="text-align: right;">5.0899503</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2001</td>
-<td style="text-align: right;">11.597036</td>
-<td style="text-align: right;">-7.2831290</td>
+<td style="text-align: right;">11.031296</td>
+<td style="text-align: right;">-3.1623806</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2002</td>
-<td style="text-align: right;">11.807975</td>
-<td style="text-align: right;">-5.8235887</td>
+<td style="text-align: right;">11.811156</td>
+<td style="text-align: right;">-3.9115475</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2003</td>
-<td style="text-align: right;">12.617806</td>
-<td style="text-align: right;">-6.9476737</td>
+<td style="text-align: right;">12.739020</td>
+<td style="text-align: right;">-1.6736142</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2004</td>
-<td style="text-align: right;">15.012752</td>
-<td style="text-align: right;">-2.3824791</td>
+<td style="text-align: right;">12.911762</td>
+<td style="text-align: right;">-4.9324021</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">2005</td>
-<td style="text-align: right;">14.832397</td>
-<td style="text-align: right;">-11.0166809</td>
+<td style="text-align: right;">15.378700</td>
+<td style="text-align: right;">-11.1160081</td>
 </tr>
 </tbody>
 </table>
@@ -948,12 +954,12 @@ Important
 <div class="cell-output cell-output-stdout">
 <pre><code>   temperature proportion_alive number_alive number_dead
          &lt;num&gt;            &lt;num&gt;        &lt;num&gt;       &lt;num&gt;
-1:    10.00000        0.2663569            3          12
-2:    11.66667        0.6101667            9           6
-3:    13.33333        0.5309470            7           8
+1:    10.00000        0.3044142            4          11
+2:    11.66667        0.5089409            7           8
+3:    13.33333        0.6354750            9           6
 4:    15.00000        0.8000000           12           3
-5:    16.66667        0.6519771            9           6
-6:    18.33333        0.7258959           10           5</code></pre>
+5:    16.66667        0.7091897           10           5
+6:    18.33333        0.7301571           10           5</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Now melt dataset:</span></span>
 <span><span class="va">dt.mlt</span> <span class="op">&lt;-</span> <span class="fu">melt</span><span class="op">(</span><span class="va">dt</span>, </span>
@@ -964,12 +970,12 @@ Important
 <div class="cell-output cell-output-stdout">
 <pre><code>   temperature proportion_alive       status n_individuals
          &lt;num&gt;            &lt;num&gt;       &lt;fctr&gt;         &lt;num&gt;
-1:    10.00000        0.2663569 number_alive             3
-2:    11.66667        0.6101667 number_alive             9
-3:    13.33333        0.5309470 number_alive             7
+1:    10.00000        0.3044142 number_alive             4
+2:    11.66667        0.5089409 number_alive             7
+3:    13.33333        0.6354750 number_alive             9
 4:    15.00000        0.8000000 number_alive            12
-5:    16.66667        0.6519771 number_alive             9
-6:    18.33333        0.7258959 number_alive            10</code></pre>
+5:    16.66667        0.7091897 number_alive            10
+6:    18.33333        0.7301571 number_alive            10</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Now expand dataset to a binary response dataset:</span></span>
 <span><span class="va">dt.expanded</span> <span class="op">&lt;-</span> <span class="va">dt.mlt</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span><span class="op">(</span><span class="va">.N</span><span class="op">)</span>, <span class="va">n_individuals</span><span class="op">)</span>, <span class="op">]</span></span>
@@ -995,32 +1001,32 @@ Important
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2663569</td>
+<td style="text-align: right;">0.3044142</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2663569</td>
+<td style="text-align: right;">0.3044142</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">10</td>
-<td style="text-align: right;">0.2663569</td>
+<td style="text-align: right;">0.3044142</td>
 <td style="text-align: right;">1</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">0.3715949</td>
+<td style="text-align: right;">0.3084058</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">0.3715949</td>
+<td style="text-align: right;">0.3084058</td>
 <td style="text-align: right;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">25</td>
-<td style="text-align: right;">0.3715949</td>
+<td style="text-align: right;">0.3084058</td>
 <td style="text-align: right;">0</td>
 </tr>
 </tbody>
@@ -1037,7 +1043,7 @@ Important
 <span>       ri <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># only doing this because of the ugly table outputs....</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          yi           vi 
--0.013938269  0.006802721 </code></pre>
+-0.018651853  0.006802721 </code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -1113,7 +1119,7 @@ Warning
 <span>       size <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">n_individuals</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
 <span>       n <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">n_trials</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 13 12 14</code></pre>
+<pre><code>[1] 14 13 16</code></pre>
 </div>
 </div>
 <p>Each element of the vector reports the estimated number of individuals that survived of the 20 individuals in that trial.</p>
@@ -1133,7 +1139,7 @@ Note
 <span>       size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>       n <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">n_trials</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1]  5 12  5</code></pre>
+<pre><code>[1] 6 9 3</code></pre>
 </div>
 </div>
 <p>However, in this case, we question whether the article’s authors should have summarized this data by mean±sd in the first place.</p>
@@ -1160,15 +1166,15 @@ Note
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: right;">43</td>
+<td style="text-align: right;">41</td>
 <td style="text-align: right;">10</td>
 </tr>
 <tr class="even">
-<td style="text-align: right;">40</td>
+<td style="text-align: right;">42</td>
 <td style="text-align: right;">15</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">20</td>
+<td style="text-align: right;">24</td>
 <td style="text-align: right;">20</td>
 </tr>
 <tr class="even">
@@ -1176,7 +1182,7 @@ Note
 <td style="text-align: right;">25</td>
 </tr>
 <tr class="odd">
-<td style="text-align: right;">17</td>
+<td style="text-align: right;">16</td>
 <td style="text-align: right;">30</td>
 </tr>
 </tbody>
@@ -1271,7 +1277,7 @@ Note
 <div class="cell-output cell-output-stdout">
 <pre><code>
        yi     vi 
-1 -0.3654 0.0034 </code></pre>
+1 -0.3648 0.0034 </code></pre>
 </div>
 </div>
 </details></section></section><section id="sec-non-independent-correlations" class="level1"><h1>Non-independent correlations</h1>
@@ -1292,23 +1298,23 @@ Note
 <tr class="odd">
 <td style="text-align: left;">Sally</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">88.08444</td>
-<td style="text-align: right;">23.75042</td>
-<td style="text-align: right;">46.35754</td>
+<td style="text-align: right;">20.14196</td>
+<td style="text-align: right;">12.076973</td>
+<td style="text-align: right;">6.320403</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">James</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">90.22618</td>
-<td style="text-align: right;">69.29646</td>
+<td style="text-align: right;">9.570925</td>
+<td style="text-align: right;">15.054194</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bart</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">73.53792</td>
+<td style="text-align: right;">73.010572</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Sergeant Brown</td>
@@ -1336,23 +1342,23 @@ Note
 <tr class="odd">
 <td style="text-align: left;">Sally</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">81.40937</td>
-<td style="text-align: right;">72.14179</td>
-<td style="text-align: right;">55.19853</td>
+<td style="text-align: right;">98.6084</td>
+<td style="text-align: right;">3.097138</td>
+<td style="text-align: right;">58.47828</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">James</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">30.35190</td>
-<td style="text-align: right;">9.21489</td>
+<td style="text-align: right;">59.373960</td>
+<td style="text-align: right;">99.74551</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bart</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: right;">NA</td>
-<td style="text-align: right;">36.51218</td>
+<td style="text-align: right;">44.75798</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Sergeant Brown</td>
@@ -1379,11 +1385,11 @@ Note
     Kendall's rank correlation tau
 
 data:  mat1$value and mat2$value
-T = 6, p-value = 0.7194
+T = 8, p-value = 1
 alternative hypothesis: true tau is not equal to 0
 sample estimates:
- tau 
--0.2 </code></pre>
+       tau 
+0.06666667 </code></pre>
 </div>
 </div>
 <p>And now you’re free to calculate ZCOR:</p>
@@ -1393,13 +1399,14 @@ sample estimates:
 <span>       ni <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-       yi     vi 
-1 -0.2027 0.3333 </code></pre>
+      yi     vi 
+1 0.0668 0.3333 </code></pre>
 </div>
 </div>
 <p><strong>IS THIS CORRECT???</strong></p>
 <p><strong>WHAT ABOUT <code>rcalc</code>???</strong></p>
 </section></section><section id="sec-model-estimates" class="level1"><h1>Model estimates</h1>
+<p>I think we can compare <span class="math inline">\(Z_r\)</span> directly with Fisher’s r-to-z transformed correlation coefficient (<code>measure = "ZPCOR"</code>). These are calculated from model coefficients and take t-test statistics (<code>ti</code>), sample size (<code>ni</code>), and the number of predictors (not counting intercept, <code>mi</code>). These must be simple linear models: not mixed effect models.</p>
 <p>….</p>
 </section><section id="notesquestions" class="level1"><h1>NOTES/Questions:</h1>
 <p>“For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function.” &lt;- from <code>escalc</code> documentation</p>
@@ -2808,13 +2815,15 @@ Jacobs, P., and W. Viechtbauer. 2017. <a href="https://doi.org/10.1002/jrsm.1218
 <span id="cb40-1008"><a href="#cb40-1008" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb40-1009"><a href="#cb40-1009" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
 <span id="cb40-1010"><a href="#cb40-1010" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-1011"><a href="#cb40-1011" aria-hidden="true" tabindex="-1"></a>....</span>
+<span id="cb40-1011"><a href="#cb40-1011" aria-hidden="true" tabindex="-1"></a>I think we can compare $Z_r$ directly with Fisher's r-to-z transformed correlation coefficient (<span class="in">`measure = "ZPCOR"`</span>). These are calculated from model coefficients and take t-test statistics (<span class="in">`ti`</span>), sample size (<span class="in">`ni`</span>), and the number of predictors (not counting intercept, <span class="in">`mi`</span>). These must be simple linear models: not mixed effect models.</span>
 <span id="cb40-1012"><a href="#cb40-1012" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-1013"><a href="#cb40-1013" aria-hidden="true" tabindex="-1"></a><span class="fu"># NOTES/Questions:</span></span>
+<span id="cb40-1013"><a href="#cb40-1013" aria-hidden="true" tabindex="-1"></a>....</span>
 <span id="cb40-1014"><a href="#cb40-1014" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-1015"><a href="#cb40-1015" aria-hidden="true" tabindex="-1"></a>"For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function." <span class="sc">\&lt;</span>- from <span class="in">`escalc`</span> documentation</span>
+<span id="cb40-1015"><a href="#cb40-1015" aria-hidden="true" tabindex="-1"></a><span class="fu"># NOTES/Questions:</span></span>
 <span id="cb40-1016"><a href="#cb40-1016" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-1017"><a href="#cb40-1017" aria-hidden="true" tabindex="-1"></a><span class="in">`rcalc`</span>: "Function to calculate the variance-covariance matrix of correlation coefficients computed based on the same sample of subjects." Ooof. This is another dimension of complexity....Is this what should be used for the Matrices??</span>
+<span id="cb40-1017"><a href="#cb40-1017" aria-hidden="true" tabindex="-1"></a>"For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function." <span class="sc">\&lt;</span>- from <span class="in">`escalc`</span> documentation</span>
+<span id="cb40-1018"><a href="#cb40-1018" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-1019"><a href="#cb40-1019" aria-hidden="true" tabindex="-1"></a><span class="in">`rcalc`</span>: "Function to calculate the variance-covariance matrix of correlation coefficients computed based on the same sample of subjects." Ooof. This is another dimension of complexity....Is this what should be used for the Matrices??</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
