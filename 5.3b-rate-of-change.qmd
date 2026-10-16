@@ -90,31 +90,36 @@ p <- ggplot(sim, aes(x = x, y = y)) +
 p
 ```
 
-However, sometimes you're not interested in the noise but in the **slope** of a relationship and you want the sampling variance term to absorb the noise as a weight in your models.
+However, sometimes you're only interested in the **slope** of a relationship and you want the sampling variance term to absorb the noise as a weight in your models.
 
-Imagine you want to calculate individual species abundance trajectories through *time* to ask which species are declining and which are increasing.
+For example, imagine you want to calculate individual species abundance trajectories through *time* to ask which species are declining and which are increasing.
 
-You're **not** interested in the strength of the relationship of each species with time but the slope itself. This is because you know full well that the relationship with *time* will be noisy: each year is wetter or drier, etc. Instead, you're interested in which species are *winning* and which are *losing* and why. 
+You're **not** interested in the strength of the relationship of each species with time but in the slope itself. This is because you know full well that the relationship with *time* will be noisy: each year is wetter or drier, etc. Instead, you're interested in which species are *winning* and which are *losing* (and, using metaregression, why). 
 
 As @fig-r-slope-scatter, illustrates, identical correlation coefficients (panels A and C) can have radically different slopes while identical slopes can have radically different correlations (panels A and B).
 
-In these cases, you can meta-analyze **regression coefficients**, along with their model estimated standard error (after transforming to sampling variance). We suggest that if you do conduct a meta-analysis on regression coefficients, that you pair this with a meta-analysis on $Z_r$, to capture the noisiness of the relationships between your response and predictor variables.
+In these cases, you can meta-analyze **regression coefficients** from linear models or **S-statistics** from non-parametric Mann-Kendall tests, along with their model estimated standard error (after transforming to sampling variance). See @Daufresne2009-cy and @Pilotto2020-yx for example meta-analyses using **S-statistics**. Note that because of temporal autocorrelation, you may want to see @Hamed1998-mh for adjusted calculation of sampling variance. 
+
+We suggest that if you do conduct a meta-analysis on these regression coefficients, that you might want to pair this with a meta-analysis on $Z_r$, to capture the noisiness of the relationships between your response and predictor variables.
 
 # Assumptions
 To meta-analyze this type of data, you should calculate regression slopes and standard errors from raw data, either extracted from scatter plots or from large datasets (e.g.,  BioTime @Dornelas2025-dv). 
 
-Then convert the model-derived standard errors to sampling variance and fit your meta-analytic model. It is **critical** that the regression coefficients are fitted on linear models where both the response and predictor variables are in the **same units** across all of the models.
+Then convert the model-derived standard errors to sampling variance and fit your meta-analytic model. It is **critical** that the regression coefficients are derived from identical response and predictor variables, which are in the **same units** across all of the effect sizes.
 
-Unfortunately, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
+As such, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
 
-If you **must** use author provided model estimates, with models that varied in the response and predictor units, then you are back in the world of correlations, which describe both slope and strength of a relationship. The effect sizes for these model-derived estimates is *Fisher's r-to-z transformed correlation coefficient* (see `measure = "ZPCOR"` in `escalc`'s documentation and [here](3.4-Zr-challenges.qmd#sec-model-estimates)).
+If you **must** use author provided model estimates, with models that varied in the response and predictor units, then you are back in the world of correlations, which describe both slope and strength of a relationship. The effect sizes for these model-derived estimates are *Fisher's r-to-z transformed correlation coefficient* (see `measure = "ZPCOR"` in `escalc`'s documentation and [here](3.4-Zr-challenges.qmd#sec-model-estimates)).
 
 :::callout-important
 ### Maybe just fit a GLMM on raw data
 
-Analyzing regression coefficients requires raw data, since, as we describe below, regression coefficients are sensitive to the units of the variables and will change based on the model construction and should **not** be extracted from author-reported model summaries (unless the models are identical across studies).
+Analyzing regression coefficients requires raw data, since, as we describe below, regression coefficients are sensitive to the units of the variables and will change based on the model construction. As such, these should **not** be extracted from author-reported model summaries (unless the models are identical across studies).
 
 If you have the raw data, you might want to consider just fitting generalized linear mixed effect models, using random effect structures to control for non-independence between the different data sources.
 
 The only reason you might not want to use a GLMM is that the estimates for each individual observation (e.g., a species through time) will be drawn towards the global mean, which may conceal the patterns you're interested in uncovering.
+
 :::
+
+
