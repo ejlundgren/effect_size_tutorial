@@ -1,6 +1,6 @@
 ---
 title: "Rates of change"
-subtitle: "Interested in the slope, not the strength"
+subtitle: "Slope, not strength"
 date: today
 format: 
   html:
@@ -46,7 +46,7 @@ bibliography:
 csl: ecology.csl
 ---
 
-$Z_r$ effect sizes describe both the direction and strength (i.e., tightness) of a relationship between two continuous variables. As we demonstrated in the $Z_r$ [section](2.3-Zr-assumptions.qmd#sec-what-is-r), this means that relationships with **identical slopes** can **vary dramatically** in their $Z_r$ coefficients (as long as the direction is still negative or positive):
+$Z_r$ effect sizes describe both the direction and strength (i.e., tightness) of a relationship between two continuous variables. As we demonstrated in the $Z_r$ [section](2.3-Zr-assumptions.qmd#sec-what-is-r), this means that relationships with **identical slopes** can **vary dramatically** in their $Z_r$ coefficients:
 
 
 ```{r}
@@ -90,7 +90,7 @@ p <- ggplot(sim, aes(x = x, y = y)) +
 p
 ```
 
-However, sometimes you're only interested in the **slope** of a relationship and you want the sampling variance term to absorb the noise as a weight in your models.
+However, sometimes you might only be interested in the **slope** of a relationship and you want the sampling variance estimate to absorb the noise as a weight in your models.
 
 For example, imagine you want to calculate individual species abundance trajectories through *time* to ask which species are declining and which are increasing.
 
@@ -98,16 +98,16 @@ You're **not** interested in the strength of the relationship of each species wi
 
 As @fig-r-slope-scatter, illustrates, identical correlation coefficients (panels A and C) can have radically different slopes while identical slopes can have radically different correlations (panels A and B).
 
-In these cases, you can meta-analyze **regression coefficients** from linear models or **S-statistics** from non-parametric Mann-Kendall tests, along with their model estimated standard error (after transforming to sampling variance). See @Daufresne2009-cy and @Pilotto2020-yx for example meta-analyses using **S-statistics**. Note that because of temporal autocorrelation, you may want to see @Hamed1998-mh for adjusted calculation of sampling variance. 
+In these cases, you can meta-analyze **regression coefficients** from linear models or **S-statistics** from non-parametric Mann-Kendall tests, along with their model estimated standard errors (after transforming to sampling variance with $Var = SE^2$). 
+
+See @Daufresne2009-cy and @Pilotto2020-yx for meta-analyses using **S-statistics** to analyze time series data. Note that because of temporal autocorrelation, you may want to see @Hamed1998-mh for adjusted calculation of sampling variance. 
 
 We suggest that if you do conduct a meta-analysis on these regression coefficients, that you might want to pair this with a meta-analysis on $Z_r$, to capture the noisiness of the relationships between your response and predictor variables.
 
 # Assumptions
-To meta-analyze this type of data, you should calculate regression slopes and standard errors from raw data, either extracted from scatter plots or from large datasets (e.g.,  BioTime @Dornelas2025-dv). 
+Using regression slopes or S-statistics is more dangerous than the other effect sizes we have covered in this tutorial. Ideally you would calculate these slopes from raw data, either extracted from scatter plots or from large synthesized databases (e.g., BioTime @Dornelas2025-dv). This is because slopes are sensitive to the units of both the predictor and the response variables. As such, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
 
-Then convert the model-derived standard errors to sampling variance and fit your meta-analytic model. It is **critical** that the regression coefficients are derived from identical response and predictor variables, which are in the **same units** across all of the effect sizes.
-
-As such, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
+After calculating model-derived slopes (or **S-statistics**), convert the model-derived standard errors to sampling variance and fit your meta-analytic model. It is **critical** that the regression coefficients are derived from identical response and predictor variables, which are in the **same units** across all of the effect sizes.
 
 If you **must** use author provided model estimates, with models that varied in the response and predictor units, then you are back in the world of correlations, which describe both slope and strength of a relationship. The effect sizes for these model-derived estimates are *Fisher's r-to-z transformed correlation coefficient* (see `measure = "ZPCOR"` in `escalc`'s documentation and [here](3.4-Zr-challenges.qmd#sec-model-estimates)).
 
