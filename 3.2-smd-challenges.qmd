@@ -1161,13 +1161,30 @@ This is a pragmatic, outcome-resolution-based imputation rather than a recovery 
 
 ## Missing error bars {#sec-callout-missing-error-bars}
 
-Many studies report means but do not report error, which can lead to a tragic loss of data.
+Many studies report means but do not report standard deviations (SDs), standard errors, or confidence intervals. Without them, we cannot calculate the sampling variance of an effect size, and the study is usually dropped. Dropping studies wastes data and can bias the overall result.
 
-However, it is possible to use cross-study average coefficient of variation ($CV$) to calculate lnRoM point estimates and sampling variance for studies that did not report error [@Nakagawa2023-tn]. Remember that $CV = sd/m$. Unfortunately, given that standard deviation is baked in, this is not possible for SMD effect sizes.
+@Nakagawa2023-tn showed that for lnRoM, we can replace each study’s coefficient of variation ($CV = SD/m$) with a weighted average $CV$ from the studies that did report SDs. This retains studies that would otherwise be excluded, provided the means are positive and lnRoM answers the biological question. It does not recover the missing SDs; it borrows information from the other studies in the dataset.
 
-This can potentially retain studies that would otherwise be excluded, provided the means are positive and lnRoM answers the biological question. It does not make the missing SDs known: it replaces them with information estimated across other studies.
+The sampling variance of lnRoM can be written in terms of each group’s $CV$ and sample size:
 
-Start by checking the article, supplement, repository, and other reported statistics, and contact the authors when practical. Then decide in advance how missing SDs will be handled. @Nakagawa2023-tn describes two average-CV approaches:
+$$
+v_{\text{lnRoM}} = \frac{CV_1^2}{n_1} + \frac{CV_2^2}{n_2}
+$$
+
+SDs cannot be borrowed from other studies, because they depend on each study’s units and scale. CVs can be, because they are unitless. So when a study is missing its SDs, we can use an average $CV$ from the studies that reported them.
+
+Unfortunately, this only works for lnRoM. For the standardized mean difference (SMD), the SD is part of the effect size itself, not only its sampling variance, so an average $CV$ cannot stand in for it. 
+
+### Before you impute
+
+1. Check the article, supplementary material, and any data repository.
+2. Back-calculate SDs from other reported statistics: standard errors ($SD = SE \times \sqrt{n}$), confidence intervals, test statistics, or figures.
+3. Contact the authors.
+4. Decide how you will handle any remaining missing SDs before you look at the results, and write it in your protocol.
+
+### Two approaches
+
+@Nakagawa2023-tn describe two ways to use the average $CV$:
 
 - **Missing-cases approach:** use observed study-specific SDs where available and an average CV to estimate sampling variances only for cases with missing SDs.
 
@@ -1175,33 +1192,146 @@ Start by checking the article, supplement, repository, and other reported statis
 
 Neither approach should be selected because it gives a preferred result. Compare them with a complete-case analysis and report the proportion of effects with missing SDs, the CV estimator, and how the conclusion changes. 
 
-Current versions of `metafor::escalc()` support average-CV sampling-variance options for lnRoM through `vtype = "AV"` and `vtype = "AVHO"`; check the package documentation and validate the intended group-specific or homoscedastic-CV formulation before using it.
+### In `metafor`
 
-**^This was an AI hallucination as far as I can tell... :(**
+`escalc()` has two average-$CV$ options for `measure = "ROM"`:
 
-Let's demonstrate. We'll load a dataset included in `metafor` and set some standard deviations to NA and then use both the **missing-cases** and **all-cases approach**.
+- `vtype = "AV"`: one average $CV$ for group 1 and another for group 2, each weighted by sample size.
+- `vtype = "AVHO"`: a single average $CV$ pooled across both groups. Use this if you expect the two groups to have similar CVs.
+
+On its own, `vtype = "AV"` applies the all-cases approach. To get the missing-cases approach, give `vtype` a vector: `"LS"` (the default, study-specific) for rows with SDs, and `"AV"` for rows without.
+
+::: {.callout-warning}
+## Set `correct = FALSE`
+
+Since `metafor` 4.8-0, `escalc()` applies a small-sample bias correction to lnRoM by default [@Lajeunesse2015]. That correction uses the SDs, so `yi` is returned as `NA` for any row with a missing SD, even though `vi` is calculated. Set `correct = FALSE` when using `vtype = "AV"` or `"AVHO"` with missing SDs, or use the manual calculation below, which applies the bias correction with the average $CV$ instead.
+:::
+
+### Worked example
+
+We'll use `dat.curtis1998`, a classic ecological lnRoM dataset on how elevated CO~2~ affects woody plant mass. It has complete SDs, so we'll delete SDs from about 30% of the papers and compare each approach against the answer from the full data.
 
 ```{r}
-data(dat.gibson2002)
+library(metafor)
 
-# First filter out means that are NA
-dat.gibson2002 <- dat.gibson2002 %>%
-  filter(!is.na(m1i) & !is.na(m2i))
+dat <- dat.curtis1998
 
-# Set the sd of 2 rows to NA
-dat.gibson2002[sample(nrow(dat.gibson2002), 2), ]$sd1i <- NA
+# Effect sizes from the full data, for reference
+dat_full <- escalc(measure = "ROM",
+                   m1i = m1i, sd1i = sd1i, n1i = n1i,
+                   m2i = m2i, sd2i = sd2i, n2i = n2i,
+                   data = dat, correct = FALSE)
 
-# Use "AV" to use missing cases to calculate effect size:
-res <- escalc(data = dat.gibson2002,
-              measure = "ROM",
-              vtype = "AVHO",
-              m1i = m1i, m2i = m2i, 
-              sd1i = sd1i, sd2i = sd2i,
-              n1i = n1i, n2i = n2i)
-# I don't know why `yi` is NA but `vi` isn't....So maybe it did work but there's a bug???
+# Delete both SDs for ~30% of papers. Missingness usually happens at
+# the paper level, so we delete by paper rather than by row.
+set.seed(2026)
+papers <- unique(dat$paper)
+miss_papers <- sample(papers, round(0.3 * length(papers)))
+
+dat_miss <- dat
+dat_miss$sd1i[dat_miss$paper %in% miss_papers] <- NA
+dat_miss$sd2i[dat_miss$paper %in% miss_papers] <- NA
+
+no_sd <- is.na(dat_miss$sd1i) | is.na(dat_miss$sd2i)
+mean(no_sd)  # proportion of effect sizes with missing SDs
 ```
 
-**This didn't work, so suspect an AI hallucination...**
+Now calculate the effect sizes three ways.
+
+```{r}
+# 1. Complete-case: rows with missing SDs get vi = NA and are
+#    dropped when the model is fitted
+dat_cc <- escalc(measure = "ROM",
+                 m1i = m1i, sd1i = sd1i, n1i = n1i,
+                 m2i = m2i, sd2i = sd2i, n2i = n2i,
+                 data = dat_miss, correct = FALSE)
+
+# 2. Missing-cases: study-specific variance where SDs exist,
+#    average-CV variance where they don't
+dat_mc <- escalc(measure = "ROM",
+                 m1i = m1i, sd1i = sd1i, n1i = n1i,
+                 m2i = m2i, sd2i = sd2i, n2i = n2i,
+                 data = dat_miss, correct = FALSE,
+                 vtype = ifelse(no_sd, "AV", "LS"))
+
+# 3. All-cases: average-CV variance for every row
+dat_ac <- escalc(measure = "ROM",
+                 m1i = m1i, sd1i = sd1i, n1i = n1i,
+                 m2i = m2i, sd2i = sd2i, n2i = n2i,
+                 data = dat_miss, correct = FALSE,
+                 vtype = "AV")
+```
+
+Fit the same multilevel model to each, with effect sizes nested within papers.
+
+```{r}
+fit <- function(d) rma.mv(yi, vi, random = ~ 1 | paper/id, data = d)
+
+models <- list(
+  "Full data (reference)" = fit(dat_full),
+  "Complete-case"         = fit(dat_cc),
+  "Missing-cases"         = fit(dat_mc),
+  "All-cases"             = fit(dat_ac)
+)
+
+data.frame(
+  k        = sapply(models, function(m) m$k),
+  estimate = sapply(models, function(m) round(coef(m), 3)),
+  ci.lb    = sapply(models, function(m) round(m$ci.lb, 3)),
+  ci.ub    = sapply(models, function(m) round(m$ci.ub, 3))
+)
+```
+
+The complete-case analysis loses about a fifth of the effect sizes. Both average-$CV$ approaches keep all of them.
+
+Interestingly, the all-cases estimate differs from the full-data reference more than the others do. This is not caused by the missing data. In fact, running the all-cases approach on the complete dataset gives the same estimate as when we analyzed 'dat_miss'. 
+
+```{r}
+# All-cases approach on the COMPLETE data (no SDs deleted)
+dat_ac_full <- escalc(measure = "ROM",
+                      m1i = m1i, sd1i = sd1i, n1i = n1i,
+                      m2i = m2i, sd2i = sd2i, n2i = n2i,
+                      data = dat, vtype = "AV", correct = FALSE)
+coef(fit(dat_ac_full))
+```
+
+The difference comes from the weighting. CVs in this dataset range from about 0.01 to 1.25, and sample sizes are small (median n = 5). @Nakagawa2023-tn note that the all-cases approach can be biased in exactly this situation, when CVs differ strongly among studies and samples are small, and that the missing-cases approach may then be more reliable. Here, the missing-cases estimate is closer to the full-data reference. To check how much CVs vary in your own data, run a meta-analysis of lnCV and look at the between-study variance. When the two approaches disagree, report both.
+
+### Matching @Nakagawa2023-tn exactly
+
+`vtype = "AV"` differs from the paper's all-cases method in three ways:
+
+1. It uses the first-order variance formula shown above. The paper uses a second-order formula [@Lajeunesse2015].
+2. With `correct = FALSE`, the point estimate is not bias-corrected. The paper bias-corrects it using the average CVs.
+3. It averages CVs across all effect sizes at once, weighted by sample size. The paper first averages CVs within each study, then averages those across studies, weighted by each study's mean sample size. This stops studies that contribute many effect sizes from dominating the average CV.
+
+To follow the paper exactly, calculate the effect sizes by hand:
+
+```{r}
+# Step 1: within each study, average the CVs (weighted by sample size)
+#         and the sample sizes. Studies with missing SDs are left out.
+obs <- subset(dat_miss, !is.na(sd1i) & !is.na(sd2i))
+by_study <- do.call(rbind, lapply(split(obs, obs$paper), function(s) data.frame(
+  cv1 = weighted.mean(s$sd1i / s$m1i, s$n1i),
+  cv2 = weighted.mean(s$sd2i / s$m2i, s$n2i),
+  n1  = mean(s$n1i),
+  n2  = mean(s$n2i))))
+
+# Step 2: average across studies, weighted by each study's mean sample size
+cv1 <- weighted.mean(by_study$cv1, by_study$n1)
+cv2 <- weighted.mean(by_study$cv2, by_study$n2)
+
+# Step 3: bias-corrected point estimate and second-order sampling variance
+dat_ac2 <- dat_miss
+dat_ac2$yi <- with(dat_ac2, log(m1i / m2i) + 0.5 * (cv1^2 / n1i - cv2^2 / n2i))
+dat_ac2$vi <- with(dat_ac2, cv1^2 / n1i + cv2^2 / n2i +
+                            cv1^4 / (2 * n1i^2) + cv2^4 / (2 * n2i^2))
+
+fit(dat_ac2)
+```
+
+In this example the result (0.289) is almost identical to `vtype = "AV"` (0.290), even though papers contribute between 1 and 18 effect sizes each. For most datasets, `vtype = "AV"` with `correct = FALSE` is a reasonable shortcut.
+
 
 :::callout-note
 Note that for sensitivity analyses, you should consider (at least) three analysis sets:
