@@ -446,20 +446,227 @@ knitr::kable(dt)
 Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).
 
 
-## LC50? {#sec-lc50}
+## LC50 and related metrics {#sec-lc50}
 
-Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).
+Many laboratory toxicity studies report an **LC50** (median lethal concentration): the concentration of a substance estimated to kill 50% of exposed individuals over a fixed exposure period (e.g., 96-h LC50). The LC50 is estimated by fitting a dose-response model, often log-logistic or probit, to the proportion of individuals surviving at each test concentration, and reading off the concentration where the fitted curve crosses 50%.
 
-These figures look like this:
+These figures typically look like this:
 
 ```{r}
-#' @Kyle?
+library(drc)
+library(ggplot2)
+set.seed(1)
+
+# Simulate data
+conc <- rep(c(0, 1, 2, 4, 8, 16, 32), each = 3)
+n <- 20
+p_dead <- 1 / (1 + exp(-2 * (log(conc) - log(6))))   # true LC50 = 6
+dat <- data.frame(conc, n, surv = (n - rbinom(length(conc), n, p_dead)) / n)
+
+# Fit model and get LC50
+fit <- drm(surv ~ conc, weights = n, data = dat, fct = LL.2(), type = "binomial")
+lc50 <- ED(fit, 50, interval = "delta")[1]
+
+# Predicted curve with 95% CI
+newdat <- data.frame(conc = exp(seq(log(0.5), log(32), length.out = 100)))
+pred <- predict(fit, newdata = newdat, interval = "confidence")
+newdat <- cbind(newdat, fit = pred[, 1], lwr = pred[, 2], upr = pred[, 3])
+
+# Controls can't sit at 0 on a log axis, so plot them at 0.5
+dat$conc_plot <- ifelse(dat$conc == 0, 0.5, dat$conc)
+
+ggplot() +
+  geom_ribbon(data = newdat, aes(conc, ymin = lwr, ymax = upr), fill = "grey80") +
+  geom_line(data = newdat, aes(conc, fit), linewidth = 1) +
+  geom_point(data = dat, aes(conc_plot, surv), size = 2, alpha = 0.7) +
+  geom_vline(xintercept = lc50, linetype = "dashed") +
+  scale_x_log10(breaks = c(0.5, 1, 2, 4, 8, 16, 32),
+                labels = c("Control", 1, 2, 4, 8, 16, 32)) +
+  labs(x = "Concentration (mg/L)", y = "Proportion surviving",
+       subtitle = paste0("LC50 = ", round(lc50, 2), " mg/L")) +
+  theme_classic()
 ```
 
-LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.
+The points are individual replicates, the solid line is the fitted dose-response curve with its 95% confidence interval (grey band), and the dashed line marks the estimated LC50.
 
-**It is possible that you can calculate [single-group proportion effect sizes (especially probit transformed proportions)](5.3-single-group-effect-sizes.qmd) to describe data like this, but your results may be difficult to compare to other effect sizes in your dataset**
+You will also encounter several closely related metrics, which are estimated and interpreted in the same way:
+
+- **EC50** (median effective concentration): the concentration producing a specified non-lethal effect (e.g., immobilisation, reduced growth or reproduction) in 50% of individuals, or a 50% reduction in a continuous response.
+- **LD50** (median lethal dose): as LC50, but expressed as an administered dose (e.g., mg/kg body weight) rather than an environmental concentration.
+- **LT50** (median lethal temperature): the temperature at which 50% of individuals die, commonly used in thermal tolerance studies and estimated by fitting the same type of curve with temperature on the x-axis. In toxicology, LT50 is also used for median lethal *time* (the exposure duration at which 50% of individuals have died), so check how each study defines it.
+- **ET50** (median effective time): the exposure time at which 50% of individuals show the specified effect, i.e., the time-based equivalent of EC50.
+
+Other percentiles (e.g., LC10, EC20) are also common, particularly when the interest is in low-effect thresholds.
+
+These metrics are already summary statistics of a dose-, temperature- or time-response curve, not contrasts between a treatment and a control group, and there is no established way to convert them to lnOR or lnRR. If your dataset contains many of them, you could consider meta-analysing them directly (e.g., on the log scale), converting survivorship curves or other raw data to a common metric such as LC50, and either deriving a sampling variance formula or using SAFE to simulate the sampling variance.
+
+**It is possible that you can calculate [single-group proportion effect sizes (especially probit-transformed proportions)](5.3-single-group-effect-sizes.qmd) to describe data like this, but your results may be difficult to compare with other effect sizes in your dataset.**
 
 # Model estimates {#sec-model-estimates}
 
 According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.
+
+
+===
+## Handling zero cells
+
+When a study has a zero in any cell of the 2×2 table, the odds ratio and its variance cannot be calculated. By convention, we added 0.5 to every cell of those studies only (Sweeting et al. 2004). Continuity corrections can bias the odds ratio towards 1, particularly when events are rare or group sizes are unbalanced. We therefore ran a sensitivity analysis that excluded all studies needing a correction. Studies with zero events in both groups were excluded from the main analysis.
+
+```{r}
+#| label: zero-cells
+
+# Flag studies with at least one zero cell
+dat$zero_cell <- with(dat, ai == 0 | bi == 0 | ci == 0 | di == 0)
+
+# Main analysis: add 0.5 to all cells of studies with a zero
+es_main <- escalc(measure = "OR",
+                  ai = ai, bi = bi, ci = ci, di = di,
+                  data = dat,
+                  add = 1/2, to = "only0",
+                  drop00 = TRUE)
+
+res_main <- rma(yi, vi, data = es_main, method = "REML")
+
+# Sensitivity analysis: exclude studies that needed a correction
+es_sens <- escalc(measure = "OR",
+                  ai = ai, bi = bi, ci = ci, di = di,
+                  data = dat,
+                  subset = !zero_cell)
+
+res_sens <- rma(yi, vi, data = es_sens, method = "REML")
+
+# Number of studies that needed a correction
+sum(dat$zero_cell, na.rm = TRUE)
+
+# Compare pooled odds ratios
+comparison <- data.frame(
+  analysis = c("Main (0.5 added to zero-cell studies)",
+               "Sensitivity (zero-cell studies excluded)"),
+  k     = c(res_main$k, res_sens$k),
+  OR    = exp(c(res_main$beta,  res_sens$beta)),
+  ci.lb = exp(c(res_main$ci.lb, res_sens$ci.lb)),
+  ci.ub = exp(c(res_main$ci.ub, res_sens$ci.ub))
+)
+
+knitr::kable(comparison, digits = 2)
+```
+
+`r sum(dat$zero_cell, na.rm = TRUE)` studies had at least one zero cell and received the 0.5 correction. Excluding these studies changed the pooled odds ratio from `r round(exp(res_main$beta), 2)` to `r round(exp(res_sens$beta), 2)`.
+
+
+## Handling zero cells
+
+We simulated 15 studies comparing an exposed group with a control group. The outcome was rare, with a 3% risk in the control group and a true odds ratio of 2. Group sizes ranged from 30 to 200 participants per arm. One study was set to have zero events in the exposed group, and one was set to have zero events in both groups.
+
+```{r}
+#| label: simulate-data
+set.seed(2026)
+
+k <- 15                                        # number of studies
+
+dat <- data.frame(
+  study = paste("Study", 1:k),
+  n1i   = sample(30:200, k, replace = TRUE),   # exposed group size
+  n2i   = sample(30:200, k, replace = TRUE)    # control group size
+)
+
+# Rare outcome: ~3% risk in controls, true OR of 2
+p_control <- 0.03
+true_or   <- 2
+p_exposed <- (true_or * p_control) / (1 - p_control + true_or * p_control)
+
+dat$ai <- rbinom(k, dat$n1i, p_exposed)        # events, exposed
+dat$ci <- rbinom(k, dat$n2i, p_control)        # events, control
+
+# Guarantee one single-zero study and one double-zero study
+dat$ai[2] <- 0
+dat$ai[5] <- 0
+dat$ci[5] <- 0
+
+# Non-events
+dat$bi <- dat$n1i - dat$ai
+dat$di <- dat$n2i - dat$ci
+
+knitr::kable(dat[, c("study", "ai", "bi", "n1i", "ci", "di", "n2i")])
+```
+
+
+When a study has a zero in any cell of the 2×2 table, the odds ratio and its variance cannot be calculated. By convention, we added 0.5 to every cell of those studies only (Sweeting et al. 2004). Studies with zero events in both groups provide no information about the odds ratio, so we excluded them from the analysis.
+
+Continuity corrections can bias the odds ratio towards 1, particularly when events are rare or group sizes are unbalanced. We therefore ran a sensitivity analysis that excluded all studies needing a correction.
+
+```{r}
+#| label: flag-zeros
+
+# Studies with at least one zero cell
+dat$zero_cell   <- with(dat, ai == 0 | bi == 0 | ci == 0 | di == 0)
+
+# Studies with zero events in both groups
+dat$double_zero <- with(dat, ai == 0 & ci == 0)
+
+# Studies that receive the 0.5 correction (zero cell, but not double-zero)
+dat$corrected   <- dat$zero_cell & !dat$double_zero
+
+n_corrected   <- sum(dat$corrected)
+n_double_zero <- sum(dat$double_zero)
+```
+
+## Main analysis
+
+```{r}
+#| label: main-analysis
+es_main <- escalc(measure = "OR",
+                  ai = ai, bi = bi, ci = ci, di = di,
+                  data = dat,
+                  add = 1/2, to = "only0",
+                  drop00 = TRUE)
+
+res_main <- rma(yi, vi, data = es_main, method = "REML")
+res_main
+```
+
+```{r}
+#| label: forest-main
+#| fig-height: 6
+forest(res_main, slab = dat$study, atransf = exp,
+       xlab = "Odds ratio (log scale)",
+       header = c("Study", "OR [95% CI]"))
+```
+
+## Sensitivity analysis
+
+```{r}
+#| label: sensitivity-analysis
+es_sens <- escalc(measure = "OR",
+                  ai = ai, bi = bi, ci = ci, di = di,
+                  data = dat,
+                  subset = !zero_cell)
+
+res_sens <- rma(yi, vi, data = es_sens, method = "REML")
+res_sens
+```
+
+## Comparison
+
+```{r}
+#| label: comparison
+comparison <- data.frame(
+  analysis = c("Main (0.5 added to zero-cell studies)",
+               "Sensitivity (zero-cell studies excluded)"),
+  k     = c(res_main$k, res_sens$k),
+  OR    = exp(c(res_main$beta,  res_sens$beta)),
+  ci.lb = exp(c(res_main$ci.lb, res_sens$ci.lb)),
+  ci.ub = exp(c(res_main$ci.ub, res_sens$ci.ub)),
+  I2    = c(res_main$I2, res_sens$I2)
+)
+
+knitr::kable(comparison, digits = 2,
+             col.names = c("Analysis", "k", "OR", "Lower 95% CI",
+                           "Upper 95% CI", "I² (%)"))
+```
+
+In total, `r n_corrected` studies had a zero cell and received the 0.5 correction, and `r n_double_zero` studies had zero events in both groups and were excluded. In the main analysis, the pooled odds ratio was `r round(exp(res_main$beta), 2)` (95% CI `r round(exp(res_main$ci.lb), 2)` to `r round(exp(res_main$ci.ub), 2)`). Excluding studies that needed a correction gave a pooled odds ratio of `r round(exp(res_sens$beta), 2)` (95% CI `r round(exp(res_sens$ci.lb), 2)` to `r round(exp(res_sens$ci.ub), 2)`).
+
+## Reference
+
+Sweeting MJ, Sutton AJ, Lambert PC (2004). What to add to nothing? Use and avoidance of continuity corrections in meta-analysis of sparse data. *Statistics in Medicine* 23:1351–1375.

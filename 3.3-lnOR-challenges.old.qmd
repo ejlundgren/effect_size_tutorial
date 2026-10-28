@@ -1,0 +1,465 @@
+---
+title: "Discrete outcomes between two groups: lnOR and lnRR"
+subtitle: "Some things are just black and white"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "3.3-lnOR-challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+```
+
+
+Discrete outcomes are everywhere. Animals are either alive or dead, plants are eaten or not, some things are just black and white.
+
+When comparing discrete outcomes between discrete treatments, we analyze this data with lnOR or lnRR effect sizes. These effect sizes require either discrete numbers per treatment group and outcome group or proportions and group size per treatment group. If the predictor is continuous we can analyze discrete outcomes with [Zr effect sizes](2.3-Zr-assumptions.qmd).
+
+# Database design 
+
+We recommend structuring lnOR/lnRR extraction databases *wide*, with four columns, one for each of these groups.
+
+For example, imagine you are meta-analyzing the influence of introduced predators on the breeding success of birds. You are extracting data from articles that report the proportion of monitored nests that successfully fledged on islands with and without predators. These values correspond to a contigency table that looks like this:
+
+|                  | Fledged | Failed |     |
+|------------------|---------|--------|-----|
+| Predator present | $a$     | $b$    |     |
+| Predator absent  | $c$     | $d$    |     |
+
+Your empty database structure for these values might look like this (ignoring all the other important columns, like article id, effect size id, etc). The`fledged_predators_present`, `failed_predators_present`, `fledged_predators_absent`, and `failed_predators_absent` correspond to `a`, `b`, `c`, `d` cells of your contingency table and to the arguments required by `metafor::escalc`.
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+dat <- data.table(fledged_predators_absent = 15,
+                  fledged_predators_present = 9,
+                  failed_predators_absent = 15,
+                  failed_predators_present = 21)
+knitr::kable(dat)
+
+```
+
+Feel free to download our database template, here: 
+
+```{r}
+#| echo: false
+
+library("downloadthis")
+
+download_file(path = "data/template_dataset.xlsx",
+                output_name = "database_template",
+                output_extension = ".xlsx",
+                button_label = "Download template dataset",
+                button_type = "primary", # Controls styling 
+                has_icon = TRUE,
+                icon = "fa fa-save")
+
+```
+
+<br>
+Now let's discuss the formats this data is often presented in:
+
+# The easy cases {#sec-simple-cases}
+
+Let's start with some ideal, dreamy lnOR type data.
+
+## Proportion or % data with total population {#sec-proportions}
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+# Simple:
+dt <- data.table(mean = c(15, 31), 
+                 group = c("Control", "Treatment"))
+# dt <- 
+ggplot(data = dt,
+       aes(x = group, y = mean, fill = group))+
+  geom_col()+
+  scale_fill_manual(NULL,
+                    values = c("Control" = "dodgerblue2",
+                               "Treatment" = "indianred"),
+                    labels = c("Control" = "Control (n = 100 individuals)",
+                               "Treatment" = "Treatment (n = 200 individuals)"))+  
+  xlab(NULL)+
+  ylab("Mortality rate (% of population)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+These are also straightforward. Extract the percent and reconstruct the number of individuals in each outcome category based on total n, which the authors hopefully reported in the text.
+
+# Missing data {#sec-missing-data}
+## No control group {#sec-no-control}
+
+Some experiments only report the experimental treatment, assuming that the control has a probability of 50%. In these cases, you'll have to assume the same to calculate lnOR, e.g., by populating one of the columns with 50 / 50 values (generally with the same total N as the first row). For example, if a study only reports:
+
+|           | Outcome A | Outcome B |
+|-----------|-----------|-----------|
+| Treatment | 35        | 15        |
+
+Take the row sum ($35 + 15 = 50$) and populate the missing values ($0.5 * 50$) for the control:
+
+|           | Outcome A | Outcome B |
+|-----------|-----------|-----------|
+| Treatment | 35        | 15        |
+| Control   | 25        | 25        |
+
+
+Effect sizes like this should be flagged for sensitivity analyses (or excluded as part of your *a priori* exclusion criteria).
+
+## No sample size {#sec-no-sample-size}
+Looks like you're out of luck buddy :(
+
+# Other cases {#sec-misc}
+## Aggregating multiple measurements {#sec-aggregating-multiple-measurements}
+
+Some studies may report a response like survivorship over multiple years before and after some intervention (e.g., eradication of a predator, change in management policy, etc). The best approach is to summarize across years per treatment.
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dat <- data.table(year = 1990:1999,
+                  treatment = c(rep("Pre", 4), 
+                                rep("Post", 6)))
+# dat
+
+dat[, total_individuals := c(150, 131, 160, 171, 153, 158, 111, 95, 98, 101)]
+dat[, number_deceased := c(5, 8, 4, 7, 11, 13, 12, 18, 15, 17)]
+dat[, mortality_rate := round(number_deceased / total_individuals, 2)]
+dat$treatment <- factor(dat$treatment, levels = c("Pre", "Post"))
+
+ggplot(data = dat, aes(x = year, y = mortality_rate, fill = treatment))+
+  geom_col()+
+  scale_fill_manual(NULL,
+                    values = c("Pre" = "dodgerblue2",
+                               "Post" = "indianred"),
+                    labels = c("Pre" = "Pre-treatment",
+                               "Post" = "Post-treatment"))+ 
+  xlab(NULL)+
+  ylab("Mortality rate")+
+  scale_x_continuous(breaks = 1990:1999)+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "bottom")
+
+
+```
+
+To extract data like this, you would need to determine the total population size for each year (which is hopefully reported) and multiply this by the proportion of that year to derive the number of individuals that lived and died per year. The resulting table would look like this:
+
+```{r}
+#| eval: true
+#| echo: false
+
+knitr::kable(dat)
+
+```
+
+Then, take the sum of `total_individuals` and `number_deceased` and calculate the number living (`number_living`):
+
+```{r}
+#| eval: true
+#| echo: true
+
+dat.sum <- dat %>% 
+  group_by(treatment) %>%
+  summarize(total_individuals = sum(total_individuals),
+            number_deceased = sum(number_deceased)) %>%
+  mutate(number_living = total_individuals - number_deceased)
+
+knitr::kable(dat.sum)
+
+```
+
+The columns `number_deceased` and `number_living` provide you the contingency table necessary to calculate lnOR, after casting this wide by `treatment`:
+
+```{r}
+#| eval: true
+#| echo: true
+library("tidyr")
+
+dat.sum |>
+  pivot_wider(names_from = "treatment",
+              values_from = c("total_individuals", 
+                              "number_deceased", 
+                              "number_living") )  |>
+  knitr::kable()
+
+```
+
+However, what do you do if there is no sample size provided (e.g., total number of individuals)? In this case, your best bet is to summarize the proportion survived into the mean ± SD across years per treatment group and use this to calculate SMD. Since these values are proportions, be sure to transform these values (see [here](3.2-smd-challenges.qmd#sec-proportion-data-with-error).
+
+Unfortunately, the resulting effect size will have *year* as the unit of replication instead of number of individuals and should not be directly compared to other lnOR type data where individuals are the unit of repliation.
+
+## Survivorship curves {#sec-survivorship-curves}
+
+*The simulated data below is stupid and sucks. Please fix*
+
+```{r}
+#| eval: true
+#| echo: false
+
+# >>> Survivorship --------------------------------------------------------
+
+x <- seq(1:15)
+a <- rweibull(n = 15, shape = 2, scale = 4)
+# plot(x, rev(sort(a)))
+
+c <- rweibull(n = 15, shape = 2, scale = 4)
+# plot(x, rev(sort(b)))
+a <- rev(sort(a))
+c <- rev(sort(c))
+
+a <- a - min(a)
+a <- a/max(a)
+# a
+c <- c - min(c)
+c <- c/max(c)
+# b
+
+ggplot()+
+  geom_path(aes(x = x, y = a),
+            color = "indianred",
+            linewidth = 2)+
+  geom_path(aes(x = x, y = c),
+            color = "dodgerblue",
+            linewidth = 2)+
+  geom_point(aes(x = x, y = a),
+            fill = "indianred",
+            shape = 21,
+            size = 3)+
+  geom_point(aes(x = x, y = c),
+            fill = "dodgerblue",
+            shape = 21,
+            size = 3)+
+  scale_x_continuous(breaks = seq(1, 15, by = 2))+
+  ylab("Survivorship (proportion alive)")+
+  xlab("Time")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+In this case, the y axis is the proportion ($p1$ and $p2$) for each group (group 1 and 2). The meta-analyst needs to extract the total number of individuals in groups 1 (blue) and 2 (red) at time point 1, which can then be multipled by the total number of individuals at the beginning of the experiment. This will yield $a$ and $c$ for the two groups. $b$ and $d$ can then be found by subtracting from the total $n$:
+
+|                | time | $p$       | N        | Alive   | Dead   |
+|----------------|------|-----------|----------|---------|--------|
+| Group 1 (blue) | 3    | $p1$=0.71 | $n1$=150 | $a$=107 | $b$=43 |
+| Group 2 (red)  | 3    | $p2$=0.46 | $n2$=150 | $c$=69  | $d$=81 |
+
+As one can see, this type of data also poses a classic time-series challenge, which can face all effect sizes. We recommend extracting the data for each time point and then using random effects to control for temporal autocorrelation in your meta-analytic model (see [here](3.1-universal-challenges.qmd#sec-proportion-data-with-error)). An alternative is to extract the time point with the greatest difference between control and treatment and analyze that.
+
+## Mean±error discrete outcomes {#sec-lnOR-reconstructing-data}
+
+Sometimes discrete outcomes are summarized into mean±error across trials/sites/islands/etc. For example, a paper that monitored fledgling rates across nests on separate islands, calculated the mortality rate, and then summarized by mean±error across islands.
+
+This data format lends itself naturally to SMD/lnRoM/Zmu type [effect sizes](2.1-SMD-assumptions.qmd). However, the sample size for the mean±error in these summaries are the number of trials/sites/islands/etc instead of the number of individuals (or nests). If the unit of replication of the rest of your dataset is the number of individuals (or nests) then this effect size would have vastly less weight in your models (and should be analyzed separately).
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+# Simple:
+dt <- data.table(mean = c(0.15, 0.31), 
+                 group = c("Control", "Treatment"),
+                 se = c(0.05, 0.09))
+# dt <- 
+ggplot(data = dt,
+       aes(x = group, y = mean, fill = group, ymin = mean-se,
+           ymax = mean+se))+
+  geom_col()+
+  geom_errorbar(width = 0.5)+
+  scale_fill_manual(NULL,
+                    values = c("Control" = "dodgerblue2",
+                               "Treatment" = "indianred"))+  
+  xlab(NULL)+
+  ylab("Mean fledgling rate rate across islands (±standard error)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+dt[, n_sites := 10]
+dt[, n_individuals := 30]
+
+```
+
+Moreover, as you can see, this figure presents standard error, not standard deviation. Converting standard error to standard deviation requires the sample size used by the study authors to calculate standard error in the first place, which is the number of trials/sites/islands/etc.
+
+To reconstruct the number of individuals and calculate an lnOR type effect size with individuals as the unit of replication, you can simulate the underlying binomial or beta-binomial distribution *behind* these mean±sd summaries. This requires the following information:
+
+1)  the number of sites used in calculating the standard error.
+
+2)  the number of individuals across all sites.
+
+3)  The author-reported mean proportion
+
+4)  The author-reported standard deviation
+
+Let's work through this example and imagine that the figure above was from a paper that reported nest fledging rates for 10 islands in an experimental treatment (rats poisoned) and for 10 sites in a control treatment (rats left alone). The total number of nests monitored *per treatment* was 300—or 30 per site. We start by converting the extracted standard error ($se$) to standard deviation ($sd$) in our `data.table` we extracted from the figure above:
+
+::: callout-warning
+Note that reconstructing underlying data is an experimental method. Use carefully.
+:::
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+dt[, sd := se * sqrt(n_sites)]
+
+knitr::kable(dt)
+
+```
+
+Now we check whether the author-reported standard deviation is overdispersed relative to the theoretical standard deviation ($sd_{theoretical}$) of the binomial distribution. If it is greater than $sd_{theoretical}$, we'll use the beta-binomial distribution. If it isn't, we'll use the binomial distribution:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+sd_theoretical <- sqrt((dt$mean * (1 - dt$mean))/(dt$n_individuals))
+
+any(dt$sd > sd_theoretical)
+
+```
+
+It looks like our data is not truly binomial but beta-binomial. See [here](7-simulating-non-gaussian-responses.qmd#sec-binomial) and [here](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data) for how to draw from the binomial distribution.
+
+For each our row of our extracted data (which is only 2), we will draw from the beta-binomial distribution with the `R` package `extraDistr` [@extradistr]. This requires the variance ($Var = sd^2$) and two shape parameters that describe the beta distribution: $\alpha$ ("alpha") and $\beta$ ("beta"). See [here](7-simulating-non-gaussian-responses.qmd#sec-beta-binomial) for the formulas for calculating $\alpha$ and $\beta$. We'll add these to each row of the dataset `dt` after calculating an intermediate variable `r`:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+library("extraDistr")
+dt
+
+dt[, var := sd^2]
+dt[, r := (mean * (1 - mean) / var) - 1]
+dt[, alpha := mean * r]
+dt[, beta := (1 - mean) * r]
+
+```
+
+Now, we'll draw from the beta-binomial distribution. Each draw returns a vector equal in length to the number of sites, with each element giving the number of fledged nests:
+
+```{r}
+
+rbbinom(n = dt$n_sites[1],
+        size = dt$n_individuals[1],
+        alpha = dt$alpha[1], 
+        beta = dt$beta[1])
+
+```
+
+The sum of this is the total number of nests that fledged across all sites. The full workflow:
+
+```{r}
+n <- c()
+
+for(i in 1:nrow(dt)){
+  n <- rbbinom(n = dt$n_sites[i],
+                     size = dt$n_individuals[i],
+                     alpha = dt$alpha[i], 
+                     beta = dt$beta[i])
+  dt[i, n_fledged := sum(n)]
+}
+
+# Now calculate total number individuals:
+dt[, total_individuals := 30 * n_sites]
+dt[, n_dead := total_individuals - n_fledged]
+
+knitr::kable(dt)
+
+```
+
+Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).
+
+
+## LC50? {#sec-lc50}
+
+Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).
+
+These figures look like this:
+
+```{r}
+#' @Kyle?
+```
+
+LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.
+
+**It is possible that you can calculate [single-group proportion effect sizes (especially probit transformed proportions)](5.3-single-group-effect-sizes.qmd) to describe data like this, but your results may be difficult to compare to other effect sizes in your dataset**
+
+# Model estimates {#sec-model-estimates}
+
+According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.
