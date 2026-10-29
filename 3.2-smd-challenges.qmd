@@ -66,8 +66,19 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
+library("tidyr")
 
 ```
+
+:::callout-tip
+##### Key points
+
+- Use SMD (estimated by Hedges' g) or lnRoM for continuous outcomes compared between two groups. 
+- Paired designs need an assumed pre-post correlation to convert the SD of the differences.
+- For before-after-control-impact designs, standardize the difference-in-differences by the pooled pre-test SD (Morris 2008).
+- Model estimates can be used when they estimate the target quantity on a compatible scale and come with an SE. Flag them for sensitivity analysis
+:::
+
 
 # The experimental workhorse
 
@@ -130,6 +141,7 @@ download_file(path = "data/template_dataset.xlsx",
 We'll start with the simplest figure types, mostly in order to contrast with more complex types. If you're using `metaDigitise()` to extract data [@Pick2018-ia], the function will guide you through calibrating the axes and selecting the top of the error bars and the top of the bars themselves (the mean). If the figure reports standard error ($se$), `metaDigitise()` will convert it automatically to standard deviation ($sd$). Always be aware of what the error type the figures (or text) are reporting.
 
 ```{r}
+#| label: fig-simple-bars
 #| echo: false
 #| eval: true
 #| out-width: "70%"
@@ -147,8 +159,8 @@ ggplot(data = dt,
   geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd),
                 width = .5)+
   scale_fill_manual(NULL,
-                    values = c("Control" = "dodgerblue2",
-                               "Treatment" = "indianred"))+  
+                    values = c("Control" = "#0072B2",
+                               "Treatment" = "#D55E00"))+  
   xlab(NULL)+
   ylab("Outcome")+
   theme_bw()+
@@ -157,9 +169,34 @@ ggplot(data = dt,
 
 ```
 
+::: callout-note
+##### Watch out for misreporting of $SE$ as $SD$
+
+One very challenging problem is when the authors of primary articles misreport the error they plot. This is unfortunately not uncommon and can have a huge influence on your results. 
+
+After extracting all of your studies and converting the various forms of error (i.e., $SE$, confidence intervals) to $SD$, we recommend screening the $CVs$ ($CV = sd/m$) of your dataset. Look for anomalously small values and double check the original articles from which those estimates were extracted. If in doubt, contact the authors and/or exclude extremely low CV effect sizes from your analysis in sensitivity analyses.
+
+Also, consider doing simulations of data on the primary study scale to see how likely it would be, given the sample size, to arrive at those $SD$ values.
+:::
+
+
 Box plots are also straightforward and involve extracting the minimum, lower quartile, median, upper quartile, and maximum values. `metaDigitise()` will walk you through that extraction and will automatically convert the interquartile range and median to mean±SD.
 
+::: {.callout-note collapse="true"}
+##### Convert median ± interquartile range to mean ± sd
+For a median $m$, quartiles $q_1$ and $q_3$, and sample size $n$, the conversion is:
+
+$$\begin{aligned}
+&\bar{x} \approx \frac{q_1+m+q_3}{3} \\
+&sd \approx \frac{q_3-q_1}{2\Phi^{-1}\left(\frac{0.75n-0.125}{n+0.25}\right)} \\
+\end{aligned}$$
+
+where $\Phi^{-1}$ is the inverse of the standard normal distribution function (`qnorm()` in `R`).
+:::
+
+
 ```{r}
+#| label: fig-boxplots
 #| echo: false
 #| eval: true
 #| out-width: "70%"
@@ -172,8 +209,8 @@ ggplot(data = dt,
        aes(x = group, y = Outcome, fill = group))+
   geom_boxplot()+
   scale_fill_manual(NULL,
-                    values = c("Control" = "dodgerblue2",
-                               "Treatment" = "indianred"))+  
+                    values = c("Control" = "#0072B2",
+                               "Treatment" = "#D55E00"))+  
   xlab(NULL)+
   ylab("Outcome")+
   theme_bw()+
@@ -185,6 +222,7 @@ ggplot(data = dt,
 It's also common to see figures like this with more complex non-independence structures. These can be dealt with by digitizing only the final time point or by controlling for non-independence with random effects (see [here](3.1-universal-challenges.qmd##sec-non-independence) for a brief discussion of these issues).
 
 ```{r}
+#| label: fig-paired-time-bars
 #| echo: false
 #| eval: true
 #| out-width: "70%"
@@ -207,8 +245,8 @@ ggplot(data = dt,
                 position = position_dodge(width = 1),
                 width = .5)+
   scale_fill_manual(NULL,
-                    values = c("Control" = "dodgerblue2",
-                               "Treatment" = "indianred"))+  
+                    values = c("Control" = "#0072B2",
+                               "Treatment" = "#D55E00"))+  
   xlab("Time point")+
   ylab("Outcome")+
   theme_bw()+
@@ -234,13 +272,14 @@ We won't discuss these much here, we just want to acknowledge your pain if you c
 It's also common to see the outcome variable of the two discrete predictor groups plotted as separate histograms:
 
 ```{r}
+#| label: fig-histograms
 #| echo: false
 #| eval: true
 #| out-width: "70%"
 
 hist1 <- ggplot()+
   geom_histogram(aes(x = m1), bins = 20,
-                 fill = "dodgerblue2", alpha = .75)+
+                 fill = "#0072B2", alpha = .75)+
   theme_bw()+
   xlab("Outcome")+
   ylab("Count")+
@@ -248,7 +287,7 @@ hist1 <- ggplot()+
 
 hist2 <- ggplot()+
   geom_histogram(aes(x = m2), bins = 20,
-                 fill = "indianred", alpha = .75)+
+                 fill = "#D55E00", alpha = .75)+
   theme_bw()+
   xlab("Outcome")+
   ylab("Count")+
@@ -265,6 +304,7 @@ hist1 + hist2
 The beauty of modern plotting techniques has led to a proliferation of new ways to visualize data. Like violin plots.
 
 ```{r}
+#| label: fig-violin
 #| echo: false
 #| eval: true
 #| out-width: "70%"
@@ -278,8 +318,8 @@ violin <- ggplot()+
               aes(x = type, y = response, fill = type))+
   theme_bw()+
   scale_fill_manual(NULL,
-                    values = c("group 1" = "dodgerblue2",
-                               "group 2" = "indianred"),
+                    values = c("group 1" = "#0072B2",
+                               "group 2" = "#D55E00"),
                     labels = c("group 1" = "Control",
                                "group 2" = "Treatment"))+  
   xlab(NULL)+
@@ -295,6 +335,7 @@ violin
 Violin plots are basically a vertical version of a density plot:
 
 ```{r}
+#| label: fig-density
 #| echo: false
 #| eval: true
 #| out-width: "70%"
@@ -305,8 +346,8 @@ dens <- ggplot()+
               color = "transparent")+
   theme_bw()+
   scale_fill_manual(NULL,
-                    values = c("group 1" = "dodgerblue2",
-                               "group 2" = "indianred"),
+                    values = c("group 1" = "#0072B2",
+                               "group 2" = "#D55E00"),
                     labels = c("group 1" = "Control",
                                "group 2" = "Treatment"))+  
   xlab("Outcome")+
@@ -324,10 +365,12 @@ A violin or density plot shows a **smoothed estimate** of the distribution, rath
 The example below draws the same observations three times. Only the smoothing changes. The sample mean and SD are therefore identical in every panel, even though the distributions appear to have different shapes.
 
 ```{r}
+#| label: fig-smoothing
 #| echo: false
 #| eval: true
 #| out-width: "85%"
 #| fig-cap: "The same observations displayed using three different amounts of smoothing. Changing the plotting settings changes the apparent shape, but it does not change the observations, their mean, or their SD."
+#| fig-alt: "Three density panels of the same control observations, drawn with less, default, and more smoothing. The shapes differ across the panels, but the observations are the same."
 
 bandwidth.dt <- rbindlist(list(
   data.table(response = m1, smoothing = "Less smoothing"),
@@ -358,9 +401,9 @@ ggplot(bandwidth.dt, aes(x = response, fill = smoothing)) +
   ) +
   facet_wrap(~smoothing, nrow = 1) +
   scale_fill_manual(values = c(
-    "Less smoothing" = "dodgerblue2",
-    "Default smoothing" = "dodgerblue2",
-    "More smoothing" = "dodgerblue2"
+    "Less smoothing" = "#0072B2",
+    "Default smoothing" = "#0072B2",
+    "More smoothing" = "#0072B2"
   )) +
   labs(x = "Outcome", y = "Density") +
   theme_bw() +
@@ -378,7 +421,7 @@ For an SMD or lnRoM, we recommend the following extraction order:
 4. **If only the violin or density outline is available, contact the authors.** If the required statistics cannot be obtained, record the outcome as unavailable for calculating an SMD or lnRoM.
 
 ::: {.callout-warning}
-## Do not estimate the SD from the width of the violin
+##### Do not estimate the SD from the width of the violin
 
 The outline is influenced by the smoothing method and bandwidth. Violin plots may also be scaled to have the same area or maximum width even when their sample sizes differ. The width therefore does not provide an SD or, unless the plotting method explicitly says otherwise, a sample size.
 :::
@@ -406,9 +449,13 @@ Note that these conversions constrain you to using SMD: it is not possible to co
 
 ## Mean±sd proportion data (0-1) {#sec-proportion-data-with-error}
 
-Suppose a study measures a proportion for each independent site and then reports the mean and SD across sites. These observations cannot be less than 0 or greater than 1. The boundaries therefore constrain how much the observations can vary, and that constraint depends on the mean.
+Suppose a study reports a proportion, i.e., a binary response, for each independent site and then reports the mean and SD across sites. These observations cannot be less than 0 or greater than 1. The boundaries therefore constrain how much the observations can vary, and that constraint depends on the mean.
 
-This mean--variance relationship can make comparisons on the original scale strongly heteroscedastic. To calculate SMD or lnRoM from 0-1 bounded data, you should transform your means and standard deviation to stretch values into an approximation of normality.
+This mean--variance relationship can make comparisons on the original scale strongly heteroscedastic. To use 0-1 bounded data, you should transform your means and standard deviation to stretch values into an approximation of normality.
+
+::: {.callout-note}
+Note that some data types in ecology may not be true proportions but have similar properties. For example, plant cover data is often 0-1 bounded depending on how it's calculated (though often reported on 0-100 scale). Flag these for correction following the code below.
+:::
 
 The arcsine-square-root transformation does this [@Macartney2022-ik]:
 
@@ -444,7 +491,7 @@ This is only a local approximation. In general, transforming a reported mean doe
 
 When the approximation is appropriate, an SMD can be calculated from the transformed means and SDs and interpreted as a standardized contrast on the transformed scale. The sample size remains the number of independent sites, plots, or trials represented by the reported SD.
 
-Do not use the transformed means to calculate an lnRoM and interpret it as a proportional change on the original scale. The arcsine transformation changes the ratio between values. If an lnRoM answers the biological question, calculate it from the original positive means and address its assumptions directly. 
+Do not use the transformed means to calculate an lnRoM and interpret it as a proportional change on the original scale. The arcsine transformation changes the ratio between values. 
 
 Unfold the section below if you want to see a full demonstration of the relationship between means and standard deviation in proportion data:
 
@@ -459,10 +506,12 @@ $$
 The largest possible population SD is therefore $\sqrt{\mu(1-\mu)}$. It is largest when the mean is 0.5 and approaches zero as the mean approaches either boundary. For example, the maximum population SD is 0.50 when the mean is 0.50, but only about 0.22 when the mean is 0.05 or 0.95. A group with a mean near a boundary simply has less room to vary on the original scale.
 
 ```{r}
+#| label: fig-proportion-bounds
 #| echo: false
 #| eval: true
 #| out-width: "75%"
 #| fig-cap: "The possible population SD of an outcome bounded between 0 and 1 depends on its mean. The blue region contains possible combinations; the dark curve is the maximum SD, not the expected SD."
+#| fig-alt: "A shaded region under a dome-shaped curve. The curve rises from zero at a mean of 0, peaks at an SD of 0.5 when the mean is 0.5, and falls back to zero at a mean of 1."
 
 proportion.bound <- data.table(
   mean = seq(0, 1, length.out = 501)
@@ -472,7 +521,7 @@ proportion.bound[, maximum_sd := sqrt(mean * (1 - mean))]
 ggplot(proportion.bound, aes(x = mean)) +
   geom_ribbon(
     aes(ymin = 0, ymax = maximum_sd),
-    fill = "dodgerblue2",
+    fill = "#0072B2",
     alpha = 0.25
   ) +
   geom_line(aes(y = maximum_sd),
@@ -518,21 +567,32 @@ Here we'll go through the most common of these challenges, starting with differe
 Some studies used paired designs where, instead of reporting each pair separately, they subtract the paired samples from each other and report mean±error of the **difference**.
 
 ```{r}
+#| label: fig-paired-differences
 #| echo: false
 #| eval: true
 #| out-width: "70%"
+#| fig-cap: "Boxplot of paired differences (treatment minus control) for 15 simulated pairs. The box shows the interquartile range and the line shows the median."
+#| fig-alt: "A single box plot of paired differences, centred above zero."
 
-diff <- m1 - m2
+# Simulate 15 pairs with a pre-post correlation of 0.5
+n_pairs <- 15
+sd_obs <- 1.2
+rho_sim <- 0.5
+z1 <- rnorm(n = n_pairs)
+z2 <- rnorm(n = n_pairs)
+control_pairs <- 7 + sd_obs * z1
+treatment_pairs <- 12 + sd_obs * (rho_sim * z1 + sqrt(1 - rho_sim^2) * z2)
+
+diff <- treatment_pairs - control_pairs  # treatment minus control
 
 ggplot()+
   geom_boxplot(aes(y = diff, x = "Difference"),
-               fill = "#9BC53D")+
-  ylab("Control - Treatment")+
+               fill = "#05A8AA")+
+  ylab("Treatment - control")+
   xlab(NULL)+
   theme_bw()+
   theme(panel.grid = element_blank(),
         axis.text.x = element_blank())
-
 ```
 
 To calculate our target estimand of SMD or lnRoM with this data, we can extract the difference from the boxplot, and convert the medians and interquartile ranges to means±sd. This dataset would look like this:
@@ -543,7 +603,7 @@ To calculate our target estimand of SMD or lnRoM with this data, we can extract 
 
 To calculate SMD (which is necessary because we are no longer dealing with ratio-scale data and negative values are likely), we have to be creative.
 
-1. Set the mean difference to either the control or experimental group, depending on the direction of the rest of your dataset (e.g., positive or negative).
+1. Set the mean difference to either the control or experimental group, depending on the direction of the rest of your dataset (e.g., positive or negative). Set the other mean to 0.
 
 2. Use $sd_{difference}$ for both the control and the experimental group.
 
@@ -551,7 +611,7 @@ As such your data will look like this:
 
 | $mean_{control}$ | $sd_{control}$ | $mean_{experiment}$ | $sd_{experiment}$ | 
 |------------------|----------------|---------------------|-------------------|
-| `r mean(diff)`   | `r sd(diff)`   |   0                 | `r sd(diff)`      |
+| `r round(mean(diff), 2)`   | `r round(sd(diff), 2)`   |   0                 | `r round(sd(diff), 2)`      |
 
 ```{r}
 #| echo: false
@@ -563,11 +623,14 @@ diff_dt <- data.table(mean_control = mean(diff),
                       sd_experiment = sd(diff))
 ```
 
-Since the data is paired, you should use a paired (but comparable) version of SMD to calculate your effect sizes.
+Since the data is paired, you should use a paired version of SMD to calculate your effect sizes.
 
-In `metafor::escalc`, this would be `measure = "SMCRP"`:
+In `metafor::escalc`, this would be `measure = "SMCRP"`.
 
 ```{r}
+#| echo: true
+#| eval: true
+
 escalc(measure = "SMCRP",
        data = diff_dt,
        m1i = mean_control, 
@@ -578,12 +641,12 @@ escalc(measure = "SMCRP",
        ni = 15)
 ```
 
-Cases like this should be flagged for sensitivity analysis.
+"SMCRP" is comparable to unpaired SMD estimators and so can be included in your main analysis. However, cases like this should be flagged for sensitivity analysis.
 
-::: {.callout-note collapse = "true"}
+::: {.callout-note}
 
 ##### Alternative estimand: Standardized Mean Change
-The example above is ideally suited for a different estimand: standardized mean change. Unfortunately, this estimand is not comparable to SMD.
+The example above is ideally suited for a different estimand: standardized mean change. Unfortunately, this estimand is not comparable to SMD. Thus only use this estimand if all of your data consists of differences between groups.
 
 In `metafor::escalc`, this estimand can be calculated with `measure = "SMCC"`: 
 
@@ -604,23 +667,21 @@ escalc(measure = "SMCC",
 
 Some studies report a response ratio directly. Before extracting it, determine how it was calculated. Two similar-looking summaries estimate different quantities.
 
-If the ratio is of two group means:
+If the ratio is of two group means ($\bar{x}$:
 
 $$
 RR_{means}=\frac{\bar{x}_{treatment}}{\bar{x}_{control}}.
 $$
-
 Its natural logarithm is the usual lnRoM point estimate. To calculate its usual sampling variance, we still need information about the uncertainty of both group means and whether the groups were independent or paired. A single reported ratio without an SE, confidence interval, group SDs, or other usable uncertainty is not usable, unfortunately.
 
-However, a study may instead calculate ratios at the observational-scale between paired measurements:
+However, a study may instead calculate ratios at the observational-scale ($x$) between paired measurements.
 $$
 RR_i=\frac{x_{treatment,i}}{x_{control,i}}.
 $$
 
-The mean of the individual ratios is generally not equal to the ratio of the group means. Likewise, the logarithm of the mean ratio is generally not equal to the mean of the logged ratios. To the best of our knowledge, this data is lost and can't be recovered. Contact the authors or scour their supplement.
+The mean of the individual ratios won't be equal to the ratio of the group means. Likewise, the logarithm of the mean ratio is generally not equal to the mean of the logged ratios. To the best of our knowledge, this data is lost to the abyss.
 
-**I don't follow this, Santi:**
-If the study reports the mean of the paired **log ratios** and its SE, use that reported estimate and sampling variance directly when it matches the intended estimand. If it reports an SD across paired log ratios, the SE is $SD/\sqrt{n}$ and the sampling variance is $SD^2/n$, where $n$ is the number of independent pairs. Do not convert a reported ratio to SMD unless the assumptions and required information for that conversion are satisfied.
+<!-- If the study reports the mean of the paired **log ratios** and its SE, use that reported estimate and sampling variance directly when it matches the intended estimand. If it reports an SD across paired log ratios, the SE is $SD/\sqrt{n}$ and the sampling variance is $SD^2/n$, where $n$ is the number of independent pairs. Do not convert a reported ratio to SMD unless the assumptions and required information for that conversion are satisfied. -->
 
 ## Results reported as an effect size itself {#sec-effect-sizes-directly-reported}
 
@@ -630,7 +691,7 @@ If a measure of error *is* reported then you can use these effect sizes directly
 
 If a measurement of error is provided, then you can extract the data as is, and convert that error to sampling variance. For example, if SMD ± standard error was plotted, the sampling variance is $$vi = SE^2$$.
 
-If a study reports standardized mean differences (e.g., Cohen's d), which is uncorrected estimator of SMD, you can use `escalc` to convert it to `Hedges' g`, the dominant estimator of SMD by specifying Cohen's d as the `di` argument:
+If a study reports standardized mean differences (e.g., Cohen's d), which is uncorrected estimator of SMD, you can use `escalc` to convert it to `Hedges' g`, the dominant estimator of SMD by specifying Cohen's d with the `di` argument:
 
 ```{r}
 escalc(measure = "SMD",
@@ -645,9 +706,13 @@ In many other cases, there's nothing you can do but email the authors and hope t
 Before-after control-impact (BACI) designs are considered gold standard experimental designs. Yet most meta-analyses ignore the before treatment and only extract and analyze the 'after' treatments. Here is a BACI figure:
 
 ```{r}
+#| label: fig-baci
 #| echo: false
 #| eval: true
 #| out-width: "70%"
+#| fig-cap: "Mean and SD (error bars, ±1 SD) of simulated control and impact (treatment) sites before and after the treatment (n = 50 per group). Striped columns show values after the treatment."
+#| fig-alt: "Four columns: control and treatment before the treatment (plain) and after it (striped). The treatment columns rise after the treatment, while the control columns change little."
+
 
 bc <- rnorm(n = 50, mean = 7, sd = 1.2)
 bi <- rnorm(n = 50, mean = 8.2, sd = .9)
@@ -662,10 +727,11 @@ baci <- data.table(m_bc = mean(bc),
                    m_ac = mean(ac),
                    sd_ac = sd(ac),
                    m_ai = mean(ai),
-                   sd_ai = sd(ai))
-baci$id <- "blah"
-baci <- melt(baci,
-             id.vars = "id")
+                   sd_ai = sd(ai),
+                   id = "study_id")
+baci$id <- "study_1"
+baci <- melt(baci, id.vars = "id")
+
 baci[, c("type", "trt") := tstrsplit(variable, "_")]
 baci <- dcast(baci,
               trt + id ~ type, value.var = "value")
@@ -696,8 +762,8 @@ ggplot()+
   ggtitle("Non-problematic BACI")+
   scale_pattern_manual("Before/after treatment", values = c("before" = "none",
                                                              "after" = "stripe"))+
-  scale_fill_manual(values = c("control" = "dodgerblue2",
-                               "impact" = "indianred"),
+  scale_fill_manual(values = c("control" = "#0072B2",
+                               "impact" = "#D55E00"),
                     labels = c("control" = "Control",
                                "impact" = "Treatment"))+
   scale_x_discrete(labels = c("control" = "Control",
@@ -713,9 +779,13 @@ In this case, only extracting and analyzing the 'after' data isn't a big deal, b
 However, what about a more problematic result, where there's a big difference in before conditions between the control and treatment?
 
 ```{r}
+#| label: fig-baci-problematic
 #| echo: false
 #| eval: true
 #| out-width: "70%"
+#| fig-cap: "The same design with a large difference between control and treatment before the treatment. Error bars show ±1 SD (n = 50 per group, simulated). The difference before the treatment persists after it."
+#| fig-alt: "Four columns: before the treatment the control column is much lower than the treatment column, and the gap between them persists after the treatment."
+
 
 baci2 <- copy(baci)
 # baci2
@@ -743,8 +813,8 @@ ggplot()+
   ggtitle("Problematic BACI")+
   scale_pattern_manual("Before/after treatment", values = c("before" = "none",
                                                             "after" = "stripe"))+
-  scale_fill_manual(values = c("control" = "dodgerblue2",
-                               "impact" = "indianred"),
+  scale_fill_manual(values = c("control" = "#0072B2",
+                               "impact" = "#D55E00"),
                     labels = c("control" = "Control",
                                "impact" = "Treatment"))+
   scale_x_discrete(labels = c("control" = "Control",
@@ -760,10 +830,10 @@ dt <- baci2[, .(m, sd, before_after, control_impact)]
 You may also see time series, where the first measurement in the time series is **before** the treatment. This presents similar conundrums. In that case, it may seem like the easiest bet is just to ignore the **before** data but, if there were differences between treatments in the before step, this leads to similar problems.
 
 :::callout-note
-There are alternative estimands for this type of study design [CITE BECKER]. If your meta-analysis only includes these study designs, then you should use them. See the `escalc` [cheatsheet](6-escalc-cheatsheet.qmed) for the `measure` options. However, we expect that you are encountering this study design in a meta-analysis otherwise using standard SMD or lnRoM effect sizes.
+There are alternative estimands for this type of study design (Becker 1988; [Morris 2008](https://www.metafor-project.org/doku.php/analyses:morris2008)). If your meta-analysis only includes these study designs, then you should use them. See the `escalc` [cheatsheet](6-escalc-cheatsheet.qmed) for the `measure` options. However, we expect that you are encountering this study design in a meta-analysis otherwise using standard SMD or lnRoM effect sizes.
 :::
 
-If you decide to include studies like this, we believe that the best solution is to calculate the difference between the before and after group means and use the **after** treatment standard deviation in your calculations.
+If you decide to include studies like this, we believe that the best solution is to calculate the difference between the before and after group means and use the **before** treatment standard deviation in your calculations.
 
 The extracted dataset would look like this:
 ```{r}
@@ -780,7 +850,7 @@ dt_wide$. <- NULL
 dt_wide[, mean_diff_control := mean_after_control - mean_before_control]
 dt_wide[, mean_diff_impact := mean_after_impact - mean_before_impact]
 
-knitr::kable(dt_wide[, .(mean_diff_control, sd_after_control, mean_diff_impact, sd_after_impact)])
+knitr::kable(dt_wide[, .(mean_diff_control, sd_before_control, mean_diff_impact, sd_before_impact)])
 
 ```
 
@@ -788,7 +858,7 @@ knitr::kable(dt_wide[, .(mean_diff_control, sd_after_control, mean_diff_impact, 
 BACI designs often lead to negative values from subtracting the *before* treatment from the *after* treatments---which requires you to use SMD instead of lnRoM as your estimand. 
 :::
 
-You can also imagine that this data bears certain assumptions---especially from ignoring the **before** standard deviation. It might be acceptable to average the before and after standard deviations---we don't know. Regardless, we recommend sensitivity analyses including and excluding this data and potentially using either averaged or before standard deviation to see if that changes results.
+You can also imagine that this data bears certain assumptions---especially from ignoring the **after** standard deviation. It might be acceptable to average the before and after standard deviations---we don't know. Regardless, we recommend sensitivity analyses including and excluding this data and potentially using either averaged or before standard deviation to see if that changes results.
 
 The final effect size can be calculated as normal:
 
@@ -809,47 +879,63 @@ Note that you may wish to use a paired estimator for this if the control and imp
 These 4 group designs may appear in other contexts than pre and post treatment and can be fairly in common in ecological field experiments. For example, to understand if reintroduced wild dogs indirectly affect vegetation by reducing dik-dik browsing and abundance, @Ford2015-el placed controls and exclosures in areas with and without wild dogs, predicting that the **difference** between controls and exclosures would be greatest where there are *no* wild dogs.
 
 ```{r}
+#| label: fig-ford-design
 #| echo: false
 #| eval: true
 #| out-width: "70%"
-ggplot()+
-  geom_col_pattern(data = baci, aes(x = before_after, y = m, 
-                                    fill = before_after,
-                                    pattern = control_impact,
-                                    group = control_impact),
-           position = position_dodge())+
-  geom_errorbar(data = baci, aes(ymin = m-sd, ymax = m+sd, 
-                                 x = before_after,
-                                 group = control_impact),
-                position = position_dodge(1),
-                width = .5)+
-  xlab(NULL)+
-  ylab("Outcome")+
-  scale_pattern_manual(name = "Experimental\ntreatment", values = c("control" = "none",
-                                                                    "impact" = "stripe"),
-                       labels = c("control" = "Sub-control",
-                                  "impact" = "Sub-treatment"))+
-  scale_fill_manual("Group", values = c("before" = "dodgerblue2",
-                               "after" = "indianred"),
-                    labels = c("before" = "Control",
-                               "after" = "Treatment"))+
-  scale_x_discrete(labels = c("before" = "Control",
-                              "after" = "Treatment"))+
+#| fig-cap: "Simulated vegetation response (n = 15 plots per cell; error bars show ±1 SD) in controls and exclosures, with and without wild dogs. The values show the predicted pattern and are not data from Ford et al. (2015)."
+#| fig-alt: "Four columns: the exclosure column is much taller than the control column where wild dogs are absent, and only slightly taller where wild dogs are present."
+
+
+ford_grid <- data.table(wild_dogs = c("Absent", "Absent", "Present", "Present"),
+                        exclosure = c("Control", "Exclosure", "Control", "Exclosure"),
+                        mu = c(4, 9, 6, 7))
+ford_obs <- ford_grid[rep(seq_len(nrow(ford_grid)), each = 15)]
+ford_obs[, response := rnorm(n = .N, mean = mu, sd = 1.5)]
+ford_sum <- ford_obs[, .(mean = mean(response),
+                         sd = sd(response),
+                         n = .N),
+                     by = .(wild_dogs, exclosure)]
+
+ggplot(ford_sum, aes(x = wild_dogs, y = mean, fill = exclosure, group = exclosure)) +
+  geom_col(position = position_dodge(width = 0.9), width = 0.8) +
+  geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd),
+                position = position_dodge(width = 0.9), width = 0.5) +
+  scale_fill_manual("Plot type",
+                    values = c("Control" = "#0072B2",
+                               "Exclosure" = "#D55E00")) +
+  xlab("Wild dogs")+
+  ylab("Vegetation response")+
   theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "right")
+  theme(panel.grid = element_blank())
+
+
 
 ```
 
-The same difference-in-differences logic above applies to this crossed design. 
+The same difference-in-differences logic above applies to this crossed design. The exclosure effect (exclosure minus control) is calculated within each wild dog level, and the difference between those effects is the interaction:
+
+```{r}
+ford_wide <- dcast(ford_sum, wild_dogs ~ exclosure, value.var = "mean")
+ford_wide[, exclosure_effect := Exclosure - Control]
+ford_did <- ford_wide[wild_dogs == "Absent", exclosure_effect] -
+  ford_wide[wild_dogs == "Present", exclosure_effect]
+ford_wide
+```
+
+The exclosure effect is `r round(ford_wide[wild_dogs == "Absent", exclosure_effect], 2)` where wild dogs are absent and `r round(ford_wide[wild_dogs == "Present", exclosure_effect], 2)` where they are present, so the difference-in-differences is `r round(ford_did, 2)`. A positive value matches the prediction that wild dogs influence the effects of dik diks on vegetation.
 
 ## % Change {#sec-percent-change}
 
 Sometimes BACI type data is presented directly as percent change, which saves us some of the steps above.
 
 ```{r}
+#| label: fig-percent-change
 #| eval: true
 #| echo: false
+#| out-width: "70%"
+#| fig-cap: "Percent change from before to after the treatment for control and treatment groups. Values are illustrative, and error bars show ±5 percentage points."
+#| fig-alt: "Two columns: the control column shows a decrease of about 15 percent and the treatment column an increase of about 35 percent, each with a short error bar."
 
 baci.wide <- dcast(baci,
                    control_impact ~ before_after,
@@ -873,8 +959,8 @@ ggplot(data = baci.wide, aes(x = control_impact,
   xlab(NULL)+
   scale_x_discrete(labels = c("control" = "Control",
                               "impact" = "Treatment"))+
-  scale_fill_manual("Group", values = c("control" = "dodgerblue2",
-                                        "impact" = "indianred"),
+  scale_fill_manual("Group", values = c("control" = "#0072B2",
+                                        "impact" = "#D55E00"),
                     labels = c("control" = "Control",
                                "impact" = "Treatment"))+
   theme_bw()+
@@ -884,7 +970,7 @@ ggplot(data = baci.wide, aes(x = control_impact,
 
 In this case, use the percent change values directly to calculate SMD. You will not be able to use lnRoM in these cases because of negative values.
 
-Because this data has been transformed into a percent, if this percent is bounded between 0 and 100, you may have to convert it to a proportion and arcsin transform it to reduce boundary issues. See [here](#sec-proportion-data-with-error) for further discussion of this transformation. 
+Because this data has been transformed into a percent, if this percent is bounded between 0 and 100, you may have to convert it to a proportion (divide by 100) and arcsin transform it to reduce boundary issues. See [above](#sec-proportion-data-with-error) for further discussion of this transformation. 
 
 # Crossed designs (meta-analysis of interaction) {#sec-cross-design}
 
@@ -892,9 +978,13 @@ Because this data has been transformed into a percent, if this percent is bounde
 Sometimes you are interested explicitly in interactions between two treatments. In most studies one of the treatments you are interested in would otherwise be a moderator (e.g., not crossed with the main experimental comparison), however in others you find a fully crossed design.
 
 ```{r}
+#| label: fig-crossed-design
 #| echo: false
 #| eval: true
 #| out-width: "70%"
+#| fig-cap: "Crossed design: the outcome before and after the treatment (x-axis) for two levels of factor 2 (plain or striped columns). Error bars show ±1 SD; n = 50 per group (simulated)."
+#| fig-alt: "Columns for the before and after periods, split by factor 2 (plain or striped). The after-period columns differ from the before-period columns, and the striped columns differ from the plain columns."
+
 
 # Just use the same data as baci:
 baci3 <- copy(baci)
@@ -921,8 +1011,8 @@ ggplot()+
   ggtitle("Crossed design")+
   scale_pattern_manual(name = "Experimental\ntreatment", values = c("Factor 2\ncontrol" = "none",
                                                                     "Factor 2\ntreatment" = "stripe"))+
-  scale_fill_manual("Group", values = c("before" = "dodgerblue2",
-                                        "after" = "indianred"),
+  scale_fill_manual("Group", values = c("before" = "#0072B2",
+                                        "after" = "#D55E00"),
                     labels = c("before" = "Factor 1 control",
                                "after" = "Factor 1 treatment"))+
   scale_x_discrete(labels = c("before" = "Factor 1 control",
@@ -941,9 +1031,13 @@ In these cases, you'll need to record these crossed moderators in separate colum
 However, sometimes interactions will be between continuous and discrete variables:
 
 ```{r}
+#| label: fig-continuous-discrete
 #| echo: false
 #| eval: true
 #| out-width: "70%"
+#| fig-cap: "Simulated outcome against a continuous variable for the control group (left) and the treatment group (right). Each point is one observation (10 per group); no error bars are shown."
+#| fig-alt: "Two panels: the control points rise with the continuous variable, while the treatment points stay roughly flat at a higher value."
+
 
 x1 <- seq(1:10)
 x2 <- seq(1:10)
@@ -957,8 +1051,8 @@ y2 <- 3 * 2 + rnorm(n = 10, mean = 1, sd = .5)
 dt <- data.table(x1 = x1, x2 = x2, y1 = y1, y2 = y2)
 
 p1 <- ggplot(data = dt, aes(x = x1, y = y1))+
-  geom_path(color = "indianred")+
-  geom_point(size = 3, fill = "indianred", shape = 21)+
+  geom_path(color = "#D55E00")+
+  geom_point(size = 3, fill = "#D55E00", shape = 21)+
   ggtitle("Control group")+
   ylab("Outcome")+
   xlab("Continuous variable of interest")+
@@ -968,8 +1062,8 @@ p1 <- ggplot(data = dt, aes(x = x1, y = y1))+
 # p1
 
 p2 <- ggplot(data = dt, aes(x = x2, y = y2))+
-  geom_path(color = "dodgerblue2")+
-  geom_point(size = 3, fill = "dodgerblue2", shape = 21)+
+  geom_path(color = "#0072B2")+
+  geom_point(size = 3, fill = "#0072B2", shape = 21)+
   ggtitle("Treatment group")+
   ylab("Outcome")+
   xlab("Continuous variable of interest")+
@@ -996,11 +1090,13 @@ As you can see, there might be no perfect solution. Care and thought are necessa
 Sometimes the data is presented as a time series with a discrete intervention at one point in the time series, such as the introduction or eradication of a species. For example:
 
 ```{r}
+#| label: fig-time-series
 #| eval: true
 #| echo: false
 #| out-width: "70%"
+#| fig-cap: "Simulated response over ten years (1995-2004). Blue points are before the intervention (1995-1999) and orange points are after it (2000-2004). The dashed line marks the intervention. No error bars are shown."
+#| fig-alt: "A connected series of points from 1995 to 2004, with a dashed intervention line between 1999 and 2000. The color changes at the intervention line."
 
-# length(x1)
 status <- c(rep("Present", 5),
             rep("Eradicated", 5))
 dt <- data.table(x1, y1, status)
@@ -1011,7 +1107,7 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
   geom_point(size = 3, shape = 21)+
   scale_fill_manual("Group of interest",
                     values = c("Present" = "dodgerblue",
-                               "Eradicated"= "indianred"))+
+                               "Eradicated"= "#D55E00"))+
   scale_x_continuous(breaks = 1995:2005)+
   xlab("Year")+
   ylab("Response of interest")+
@@ -1021,9 +1117,6 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-The measurements before and after the intervention form one interrupted time series. Consecutive years are usually serially correlated, and the five years before the intervention are not naturally paired one-to-one with the five years after it. Treating the points as independent group replicates, or automatically using a paired SMD estimator, would give the wrong sampling structure.
-
-The preferred result to extract is usually an estimated intervention effect from a time-series. If the paper reports only the plotted values, record the time sequence and consider whether a prespecified summary or a time-series analysis is possible. The number of plotted years should not automatically be entered as an independent sample size.
 
 You'll also encounter cases with only a few measurements on one side of the intervention:
 
@@ -1043,7 +1136,7 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
   geom_point(size = 3, shape = 21)+
   scale_fill_manual("Group of interest",
                     values = c("Present" = "dodgerblue",
-                               "Eradicated"= "indianred"))+
+                               "Eradicated"= "#D55E00"))+
   scale_x_continuous(breaks = 1995:2005)+
   xlab("Year")+
   ylab("Response of interest")+
@@ -1052,6 +1145,8 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 
 ```
+
+The measurements before and after the intervention form one interrupted time series. Consecutive years are usually serially correlated, and the five years before the intervention are not naturally paired one-to-one with the five years after it. Treating the points as independent group replicates, or automatically using a paired SMD estimator ignores this non-independence.
 
 In most cases, we expect you'll exclude this data. However, if data is extremely limited you may want to take the mean±sd of the two groups (in this case "Present" and "Eradicated") and calculate SMD or lnRoM. You could also calculate a correlation coefficient (Zr), treating the two groups as $0$ or $1$.
 
@@ -1079,7 +1174,7 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
   geom_errorbar(aes(ymin = y1 - error, ymax = y1 + error))+
   scale_fill_manual("Treatment group",
                     values = c("Present" = "dodgerblue",
-                               "Eradicated"= "indianred"))+
+                               "Eradicated"= "#D55E00"))+
   scale_x_continuous(breaks = 1995:2005)+
   xlab("Year")+
   ylab("Response of interest (mean±SD)")+
@@ -1089,7 +1184,9 @@ ggplot(data = dt, aes(x = x1, y = y1, fill = status, group = group))+
 
 ```
 
-In this case, we recommend choosing the time point before and after the intervention and extracting the means and sd for an SMD or lnRoM effect size. This ignores what may seem like an obvious and important pattern from the earlier and later measurements. However, sadly, the observational study design lack spatial controls, meaning that the pattern is lost to the sea of unusable data.
+In this case, we recommend choosing the time point before and after the intervention and extracting the means and sd for an SMD or lnRoM effect size. Because the samples are paired, use a paired estimator of of your estimand. 
+
+Unfortunately, this ignores what may seem like an obvious and important pattern from the earlier and later measurements. However, sadly, the observational study design lack spatial controls, meaning that the pattern is lost to the sea of unusable data.
 
 # Other reporting formats
 
@@ -1126,7 +1223,7 @@ Do not apply this conversion when the reported error is an arithmetic SD, SE, or
 ## Means or standard deviations equal to 0
 A zero mean and a zero standard deviation create different problems. However this situation is possible with extreme results: every single island with an introduced predator (your predictor) has 0 prey (your response variable). In this case, the mean for the islands with introduced predators would be 0 with a standard deviation of 0. 
 
-SMD can include zero or negative **means** as long as at least groups' standard deviation is $>0$. In this case, your data is almost certainly heteroscedastic and you should use the SMDH formulation of SMD (`measure = "SMDH"` in `escalc`). This has to be applied to all the data in your dataset. In ecological meta-analysis, we expect that SMDH is likely the preferred formulation because heteroscedasticity is common (and a subject interesting in its own right, see our discussion of [variability effect sizes](5.1-variability-between-groups.qmd))
+SMD can include zero or negative **means** as long as at least **one** groups' standard deviation is $>0$. In this case, your data is almost certainly heteroscedastic and you should use the SMDH formulation of SMD (`measure = "SMDH"` in `escalc`), which has to be applied to all the data in your dataset. In ecological meta-analysis, we expect that SMDH is likely the preferred formulation because heteroscedasticity is common (and a subject interesting in its own right, see our discussion of [variability effect sizes](5.1-variability-between-groups.qmd))
 
 :::callout-warning
 If both groups have an SD of 0, the usual SMD is undefined because there is no within-group variation with which to standardize the mean difference.
@@ -1134,36 +1231,36 @@ If both groups have an SD of 0, the usual SMD is undefined because there is no w
 
 The lnRoM point estimate requires two positive means on a meaningful ratio scale. It is undefined when either mean is 0. Rather than adding the same arbitrary constant, such as 0.01, to every kind of response, you can define the **smallest positive resolution** for each outcome before calculating effect sizes. This is the smallest positive change that the biology, measurement method, and study design could have reported. It might represent one crossing, one animal, one colony, or the detection limit of an assay.
 
-For example, imagine an elevated-plus-maze trial in which open-side crossings are recorded as integer counts for each animal. One crossing is the smallest positive individual value. If a group contains $n$ animals, the smallest positive group mean is:
+However, as we demonstrated [here](2.1-SMD-assumptions.qmd), lnRoM values can be gigantic if one of the means is near 0. Think carefully about whether lnRoM is the appropriate estimand for your question.
 
-$$
-\delta_{mean}=\frac{1}{n}.
-$$
+<!-- For example, imagine an elevated-plus-maze trial in which open-side crossings are recorded as integer counts for each animal. One crossing is the smallest positive individual value. If a group contains $n$ animals, the smallest positive group mean is: -->
 
-If the reported group mean is 0, it can be replaced with $\delta_{mean}$ for the zero-corrected analysis. More generally, if the smallest positive individual increment is $q$, then:
+<!-- $$ -->
+<!-- \delta_{mean}=\frac{1}{n}. -->
+<!-- $$ -->
 
-$\delta_{mean}=q/n$.
+<!-- If the reported group mean is 0, it can be replaced with $\delta_{mean}$ for the zero-corrected analysis. More generally, if the smallest positive individual increment is $q$, then: -->
 
-A zero SD is an observed statement that every recorded value in that group was identical, so first retain it whenever the chosen estimator permits it. If a positive SD is required to retain an otherwise unusable comparison, treat its replacement as an explicit imputation. For integer counts, the smallest nonzero sample SD occurs when one observation differs from the others by one count:
+<!-- $\delta_{mean}=q/n$. -->
 
-$$
-\delta_{SD}=\frac{1}{\sqrt{n}},
-$$
+<!-- A zero SD is an observed statement that every recorded value in that group was identical, so first retain it whenever the chosen estimator permits it. If a positive SD is required to retain an otherwise unusable comparison, treat its replacement as an explicit imputation. For integer counts, the smallest nonzero sample SD occurs when one observation differs from the others by one count: -->
 
-or $q/\sqrt{n}$ when the smallest positive increment is $q$. This value depends on the measurement resolution and sample size; it is not a universal constant. Because it corresponds to an observable change in that particular outcome, it is more biologically interpretable and less arbitrary than adding the same constant to unrelated outcomes.
+<!-- $$ -->
+<!-- \delta_{SD}=\frac{1}{\sqrt{n}}, -->
+<!-- $$ -->
 
-**DEMONSTRATE IN R**
+<!-- or $q/\sqrt{n}$ when the smallest positive increment is $q$. This value depends on the measurement resolution and sample size; it is not a universal constant. Because it corresponds to an observable change in that particular outcome, it is more biologically interpretable and less arbitrary than adding the same constant to unrelated outcomes. -->
 
 
-:::callout-caution
-This is a pragmatic, outcome-resolution-based imputation rather than a recovery of the observed data. Its biological basis makes it less arbitrary than applying one constant to every outcome, but it remains an assumption: a reported zero does not show that the smallest positive event actually occurred. It also changes the reported data and can strongly affect an lnRoM when a mean is 0. Define the rule before examining results. For every corrected value, record the original value, the replacement, the outcome-specific resolution, and the reason for the correction. Always repeat the meta-analysis after excluding all effect sizes that required a minimum-value correction and report whether the conclusion changes.
-:::
+<!-- :::callout-caution -->
+<!-- This is a pragmatic, outcome-resolution-based imputation rather than a recovery of the observed data. Its biological basis makes it less arbitrary than applying one constant to every outcome, but it remains an assumption: a reported zero does not show that the smallest positive event actually occurred. It also changes the reported data and can strongly affect an lnRoM when a mean is 0. Define the rule before examining results. For every corrected value, record the original value, the replacement, the outcome-specific resolution, and the reason for the correction. Always repeat the meta-analysis after excluding all effect sizes that required a minimum-value correction and report whether the conclusion changes. -->
+<!-- ::: -->
 
 ## Missing error bars {#sec-callout-missing-error-bars}
 
-Many studies report means but do not report standard deviations (SDs), standard errors, or confidence intervals. Without them, we cannot calculate the sampling variance of an effect size, and the study is usually dropped. Dropping studies wastes data and can bias the overall result.
+Many studies report means but do not report standard deviations ($SDs$), standard errors, or confidence intervals. Without them, we cannot calculate the sampling variance of an effect size, and the study is usually dropped. Dropping studies wastes data and can bias the overall result.
 
-@Nakagawa2023-tn showed that for lnRoM, we can replace each study’s coefficient of variation ($CV = SD/m$) with a weighted average $CV$ from the studies that did report SDs. This retains studies that would otherwise be excluded, provided the means are positive and lnRoM answers the biological question. It does not recover the missing SDs; it borrows information from the other studies in the dataset.
+@Nakagawa2023-tn showed that for lnRoM, we can replace missing standard deviations with the weighted average $CV$ ($CV = SD/m$) from the studies that did report $SDs$. This retains studies that would otherwise be excluded, provided the means are positive and lnRoM answers the biological question. 
 
 The sampling variance of lnRoM can be written in terms of each group’s $CV$ and sample size:
 
@@ -1171,24 +1268,24 @@ $$
 v_{\text{lnRoM}} = \frac{CV_1^2}{n_1} + \frac{CV_2^2}{n_2}
 $$
 
-SDs cannot be borrowed from other studies, because they depend on each study’s units and scale. CVs can be, because they are unitless. So when a study is missing its SDs, we can use an average $CV$ from the studies that reported them.
+$SDs$ cannot be borrowed from other studies, because they depend on each study’s units and scale. $CVs$ can be, because they have been standardized by the mean unitless. So when a study is missing its SDs, we can use an average $CV$ from the studies that reported them.
 
-Unfortunately, this only works for lnRoM. For the standardized mean difference (SMD), the SD is part of the effect size itself, not only its sampling variance, so an average $CV$ cannot stand in for it. 
+Unfortunately, this only works for lnRoM. For standardized mean difference (SMD), the $SD$ is part of the effect size itself, not only its sampling variance, so an average $CV$ cannot stand in for it. 
 
 ### Before you impute
 
-1. Check the article, supplementary material, and any data repository.
-2. Back-calculate SDs from other reported statistics: standard errors ($SD = SE \times \sqrt{n}$), confidence intervals, test statistics, or figures.
+1. Check the article, supplementary material, and any data repository for the missing $SD$.
+2. Back-calculate $SDs$ from other reported statistics: standard errors ($SD = SE \times \sqrt{n}$), confidence intervals, test statistics, or figures.
 3. Contact the authors.
-4. Decide how you will handle any remaining missing SDs before you look at the results, and write it in your protocol.
+4. Decide how you will handle any remaining missing $SDs$ before you look at the results, and write it in your protocol.
 
 ### Two approaches
 
 @Nakagawa2023-tn describe two ways to use the average $CV$:
 
-- **Missing-cases approach:** use observed study-specific SDs where available and an average CV to estimate sampling variances only for cases with missing SDs.
+- **Missing-cases approach:** use observed study-specific SDs where available and an average CV to estimate sampling variances only for cases with missing SDs. 
 
-- **All-cases approach:** use average-CV sampling variances for every effect size, creating a consistent weighting scheme across studies with and without reported SDs.
+- **All-cases approach:** use average-CV sampling variances for every effect size, creating a consistent weighting scheme across studies with and without reported SDs. 
 
 Neither approach should be selected because it gives a preferred result. Compare them with a complete-case analysis and report the proportion of effects with missing SDs, the CV estimator, and how the conclusion changes. 
 
@@ -1202,16 +1299,21 @@ Neither approach should be selected because it gives a preferred result. Compare
 On its own, `vtype = "AV"` applies the all-cases approach. To get the missing-cases approach, give `vtype` a vector: `"LS"` (the default, study-specific) for rows with SDs, and `"AV"` for rows without.
 
 ::: {.callout-warning}
-## Set `correct = FALSE`
+### Set `correct = FALSE`
 
-Since `metafor` 4.8-0, `escalc()` applies a small-sample bias correction to lnRoM by default [@Lajeunesse2015]. That correction uses the SDs, so `yi` is returned as `NA` for any row with a missing SD, even though `vi` is calculated. Set `correct = FALSE` when using `vtype = "AV"` or `"AVHO"` with missing SDs, or use the manual calculation below, which applies the bias correction with the average $CV$ instead.
+Since `metafor` 4.8-0, `escalc()` applies a small-sample bias correction to lnRoM by default [@Lajeunesse2015] (see [here](2.1-SMD-assumptions.qmd)). That correction uses the SDs, so `yi` is returned as `NA` for any row with a missing SD, even though `vi` is calculated. Set `correct = FALSE` when using `vtype = "AV"` or `"AVHO"` with missing SDs, or use the manual calculation below, which applies the bias correction with the average $CV$ instead.
 :::
 
 ### Worked example
 
 We'll use `dat.curtis1998`, a classic ecological lnRoM dataset on how elevated CO~2~ affects woody plant mass. It has complete SDs, so we'll delete SDs from about 30% of the papers and compare each approach against the answer from the full data.
 
+Let's demonstrate. We'll load a dataset included in `metafor` and set some standard deviations to NA and then use both the **missing-cases** and **all-cases approach**.
+
 ```{r}
+#| eval: true
+#| echo: true
+
 library(metafor)
 
 dat <- dat.curtis1998
@@ -1236,7 +1338,7 @@ no_sd <- is.na(dat_miss$sd1i) | is.na(dat_miss$sd2i)
 mean(no_sd)  # proportion of effect sizes with missing SDs
 ```
 
-Now calculate the effect sizes three ways.
+Now calculate the effect sizes three ways:
 
 ```{r}
 # 1. Complete-case: rows with missing SDs get vi = NA and are
@@ -1244,21 +1346,24 @@ Now calculate the effect sizes three ways.
 dat_cc <- escalc(measure = "ROM",
                  m1i = m1i, sd1i = sd1i, n1i = n1i,
                  m2i = m2i, sd2i = sd2i, n2i = n2i,
-                 data = dat_miss, correct = FALSE)
+                 data = dat_miss, 
+                 correct = FALSE) # Must specify uncorrected estimator
 
 # 2. Missing-cases: study-specific variance where SDs exist,
 #    average-CV variance where they don't
 dat_mc <- escalc(measure = "ROM",
                  m1i = m1i, sd1i = sd1i, n1i = n1i,
                  m2i = m2i, sd2i = sd2i, n2i = n2i,
-                 data = dat_miss, correct = FALSE,
-                 vtype = ifelse(no_sd, "AV", "LS"))
+                 data = dat_miss, 
+                 correct = FALSE,
+                 vtype = ifelse(no_sd, "AV", "LS")) # Vector of `vtypes`
 
 # 3. All-cases: average-CV variance for every row
 dat_ac <- escalc(measure = "ROM",
                  m1i = m1i, sd1i = sd1i, n1i = n1i,
                  m2i = m2i, sd2i = sd2i, n2i = n2i,
-                 data = dat_miss, correct = FALSE,
+                 data = dat_miss, 
+                 correct = FALSE,
                  vtype = "AV")
 ```
 
@@ -1295,14 +1400,18 @@ dat_ac_full <- escalc(measure = "ROM",
 coef(fit(dat_ac_full))
 ```
 
-The difference comes from the weighting. CVs in this dataset range from about 0.01 to 1.25, and sample sizes are small (median n = 5). @Nakagawa2023-tn note that the all-cases approach can be biased in exactly this situation, when CVs differ strongly among studies and samples are small, and that the missing-cases approach may then be more reliable. Here, the missing-cases estimate is closer to the full-data reference. To check how much CVs vary in your own data, run a meta-analysis of lnCV and look at the between-study variance. When the two approaches disagree, report both.
+The difference comes from the weighting. CVs in this dataset range from about 0.01 to 1.25, and sample sizes are small (median n = 5). @Nakagawa2023-tn note that the all-cases approach can be biased in exactly this situation, when CVs differ strongly among studies and samples are small, and that the missing-cases approach may then be more reliable. 
+
+Here, the missing-cases estimate is closer to the full-data reference. To check how much CVs vary in your own data, run a meta-analysis of [**lnCVR**](5.1-variability-between-groups.qmd) and look at the between-study variance. When the two approaches disagree, report both.
 
 ### Matching @Nakagawa2023-tn exactly
 
 `vtype = "AV"` differs from the paper's all-cases method in three ways:
 
-1. It uses the first-order variance formula shown above. The paper uses a second-order formula [@Lajeunesse2015].
+1. It uses the first-order variance formula shown above. @Nakagawa2023-tn uses a second-order formula [@Lajeunesse2015].
+
 2. With `correct = FALSE`, the point estimate is not bias-corrected. The paper bias-corrects it using the average CVs.
+
 3. It averages CVs across all effect sizes at once, weighted by sample size. The paper first averages CVs within each study, then averages those across studies, weighted by each study's mean sample size. This stops studies that contribute many effect sizes from dominating the average CV.
 
 To follow the paper exactly, calculate the effect sizes by hand:
@@ -1332,15 +1441,14 @@ fit(dat_ac2)
 
 In this example the result (0.289) is almost identical to `vtype = "AV"` (0.290), even though papers contribute between 1 and 18 effect sizes each. For most datasets, `vtype = "AV"` with `correct = FALSE` is a reasonable shortcut.
 
-
 :::callout-note
 Note that for sensitivity analyses, you should consider (at least) three analysis sets:
 
 - Using only the studies that reported standard deviation (and using the `yi` and `vi` returned by `escalc`)
 
-- Using the `yi` and `vi` returned by `escalc` alongside the "missing cases" calculations of `yi` and `vi`
+- Using the `yi` and `vi` returned by `escalc` alongside the "missing cases" calculations of `yi` and `vi` (`type = "AV"`)
 
-- Using the `yi` and `vi` from the "all-cases" method.
+- Using the `yi` and `vi` from the "all-cases" method (calculated manually, as above)
 :::
 
 :::callout-important
@@ -1355,21 +1463,17 @@ $$
 :::
 
 # Model outputs {#sec-model-estimates}
-Many studies report adjusted contrasts from linear models, generalized models, or mixed-effects models instead of raw group means. These estimates are not automatically unusable. An adjusted contrast can be meta-analyzed directly when it estimates the intended quantity on a compatible scale and is accompanied by an SE, confidence interval, or sampling variance.
-
-Do not treat a model-derived SE as though it were the SD of observations within a group. The SE describes uncertainty in the model estimate. When the model contrast itself is the effect of interest, enter the contrast and its sampling variance directly using a generic inverse-variance approach.
+Many studies fail to report means and standard deviations and instead report model test statistics and p-values. If these are derived from simple models (i.e., t tests), they can be used to calculate SMD (not lnRoM). However, especially with modern computation and tools, many studies report statistics derived from mixed effect models or non-linear models. These estimates are rarely usable. There is a subtle irony in that increasing sophistication in the primary literature is increasingly burying otherwise usable data from the greedy, groping hands of the meta-analyst. 
 
 | Reported result | Potential route | Information to check |
 |-----------------|-----------------|----------------------|
 | Independent two-group $t$ test | Convert to SMD | Signed $t$, both group sizes, and test design |
 | Paired $t$ test | Convert to a standardized mean change | Signed $t$, number of pairs, and choice of standardizer |
-| Adjusted linear or mixed-model contrast | Analyze the contrast directly | Estimate, SE or CI, scale, covariates, and direction |
-| Estimated marginal means | Prefer their reported pairwise contrast | Contrast SE or covariance between the two means |
-| $F$, $\chi^2$, or unsigned $p$ value | Sometimes recoverable | Degrees of freedom plus effect direction from another source |
-| GLM or GLMM coefficient | Possibly usable on its model scale | Link function, coding, adjustment set, estimate, and SE |
-**I don't think this is true...As far as I know, we can't use estimated marginal means or contrasts or GLM or GLMM coefficients**
-
-The model type alone does not determine usability. The key questions are what was estimated, on which scale, with which adjustments, and whether its uncertainty and direction are available. If those details cannot be recovered, record the result as unavailable rather than forcing it into an SMD.
+<!-- | Adjusted linear or mixed-model contrast | Analyze the contrast directly | Estimate, SE or CI, scale, covariates, and direction | -->
+<!-- | Estimated marginal means | Prefer their reported pairwise contrast | Contrast SE or covariance between the two means | -->
+<!-- | $F$, $\chi^2$, or unsigned $p$ value | Sometimes recoverable | Degrees of freedom plus effect direction from another source | -->
+<!-- | GLM or GLMM coefficient | Possibly usable on its model scale | Link function, coding, adjustment set, estimate, and SE | -->
+<!-- **I don't think this is true...As far as I know, we can't use estimated marginal means or contrasts or GLM or GLMM coefficients** -->
 
 ## From the t statistic {#sec-t-statistic}
 
@@ -1396,36 +1500,48 @@ escalc(measure = "SMD",
 
 ```
 
-For a paired design, a paired $t$ statistic can be converted to a standardized mean change based on the SD of the change scores:
-
-**THIS IS A DIFFERENT ESTIMAND. IS THERE A WAY TO CALCULATE PAIRED SMD ("SMCRP") FROM PAIRED T TEST?**
+For a paired design, the paired $t$ statistic gives you a *standardized mean change*: the mean difference divided by the SD of the differences, $d_z = t/\sqrt{n}$. That isn't on the same scale as an ordinary SMD. To put it on the SMD (raw-score) scale, multiply by $\sqrt{2(1-\rho)}$. This assumes equal pre and post SDs and needs a pre-post correlation $\rho$ (use 0.5, with 0.8 as a sensitivity analysis):
 
 $$\begin{aligned}
-&d=\frac{t}{\sqrt{n}} \\
-&J= 1 - \frac{3}{4(n - 1) - 1} \\
-&g=J*d\\
-&Var(g) = \frac{1}{n} + \frac{g^2}{2(n - 1)} \\
+&d_z=\frac{t}{\sqrt{n}} \\
+&d=d_z\sqrt{2(1-\rho)} \\
 \end{aligned}$$
 
-In `metafor`, use `SMCC` and supply the number of pairs:
+`escalc` applies the small-sample correction and returns the variance for the paired estimate, so you do not need to compute $J$ or $Var(g)$ by hand.
+
+Then hand that $d$ to `escalc` with `measure = "SMCRP"`. The trick is to enter $d$ as the treatment mean, 0 as the control mean, and 1 for both SDs, so the standardized difference `escalc` calculates is just $d$. Supply the assumed correlation and the number of pairs. We show the change-score version, `SMCC`, for comparison:
 
 ```{r}
 
 t = -1.5
 n_pairs = 15
+rho = 0.5
 
-# escalc(measure = "SMCRP",
-#        ti = t, ri = 0.5,
-#        ni = n_pairs)
+d_z <- t / sqrt(n_pairs)
+d_raw <- d_z * sqrt(2 * (1 - rho))
+
+escalc(measure = "SMCRP",
+       m1i = d_raw, m2i = 0,
+       sd1i = 1, sd2i = 1,
+       ri = rho,
+       ni = n_pairs)
+
+```
+
+The raw-score version (`SMCRP`) is on the same metric as an independent-groups SMD, so it can be pooled with other SMDs. 
+
+:::callout-note
+An alternative estimand, the change-score version (`SMCC`) divides by the SD of the change scores. It estimates a different quantity and should not be pooled with independent-groups SMDs. This can be calculated in a similar fashion:
+
+```{r}
 
 escalc(measure = "SMCC",
        ti = t,
        ni = n_pairs)
 
 ```
-**But is this comparable to other SMD values?**
+:::
 
-This effect uses the SD of the change scores as its denominator. It should not be assumed to estimate exactly the same standardized quantity as an independent-groups SMD that uses a pooled raw-score SD.
 
 ## From p values: {#sec-p-values}
 
@@ -1442,27 +1558,28 @@ escalc(measure = "SMD",
        n2i = n2)
 ```
 
-## From F statistic {#sec-f-statistic}
+<!-- ## From F statistic {#sec-f-statistic} -->
 
-For a test with one numerator degree of freedom, $|t|=\sqrt{F}$. The $F$ statistic does not contain the direction of the contrast, so the sign must come from reported means, a coefficient, a figure, or clear text. An omnibus $F$ test with more than two groups or more than one numerator degree of freedom does not identify one two-group SMD by itself.
+<!-- For a test with one numerator degree of freedom, $|t|=\sqrt{F}$. The $F$ statistic does not contain the direction of the contrast, so the sign must come from reported means, a coefficient, a figure, or clear text. An omnibus $F$ test with more than two groups or more than one numerator degree of freedom does not identify one two-group SMD by itself. -->
 
-**Needs clarification. How to calculate.**
+<!-- **Needs clarification. How to calculate.** -->
 
 ## Least Square Means (LS Means) or Estimated Marginal Means {#sec-least-square-means}
 
 Estimated marginal means are adjusted model predictions. They are not interchangeable with raw arithmetic means, and their SEs are not within-group SDs.
 
-Prefer a directly reported pairwise contrast **??** between the estimated marginal means together with its SE or confidence interval. That adjusted contrast can be synthesized using its own sampling variance if it matches the intended estimand and its adjustment set is sufficiently comparable with the other included effects.
+Sadly, this data is lost to the seas of unusable data.
 
-If only two estimated marginal means and their separate SEs are reported, the SE of their difference also depends on their covariance:
+<!-- Prefer a directly reported pairwise contrast between the estimated marginal means together with its SE or confidence interval. That adjusted contrast can be synthesized using its own sampling variance if it matches the intended estimand and its adjustment set is sufficiently comparable with the other included effects. -->
 
-$$
-Var(\hat\mu_1-\hat\mu_2)=SE_1^2+SE_2^2-2Cov(\hat\mu_1,\hat\mu_2).
-$$
+<!-- If only two estimated marginal means and their separate SEs are reported, the SE of their difference also depends on their covariance: -->
 
-Without that covariance, the uncertainty of the contrast generally cannot be reconstructed exactly. Do not insert the two model SEs into the `sd1i` and `sd2i` arguments of an ordinary SMD calculation.
+<!-- $$ -->
+<!-- Var(\hat\mu_1-\hat\mu_2)=SE_1^2+SE_2^2-2Cov(\hat\mu_1,\hat\mu_2). -->
+<!-- $$ -->
 
-**Hmmmm I also don't follow this**
+<!-- Without that covariance, the uncertainty of the contrast generally cannot be reconstructed exactly. Do not insert the two model SEs into the `sd1i` and `sd2i` arguments of an ordinary SMD calculation. -->
+
 
 ## PCAs — risky business {#sec-ordination}
 
@@ -1471,8 +1588,13 @@ Imagine you are conducting a meta-analysis of risk-taking in animals. You are in
 Then you come upon a real stumper of a study. They used a principal components analysis (PCA) to synthesize the exact same variables you are interested in into a single ordination space. The first axis of this ordination space (PC1) has synthesized all the variables you are interested in into a single variable. This might look like this: 
 
 ```{r}
+#| label: fig-pca
 #| echo: false
 #| eval: true
+#| out-width: "70%"
+#| fig-cap: "Simulated PC1 and PC2 scores for five treatment and five control sites (n = 5 per group), with arrows showing the loadings of three behaviors. PC1 is the axis of interest. No error bars are shown."
+#| fig-alt: "Scatter of treatment and control points along PC1 and PC2 with three arrows. Treatment points sit at negative PC1 values and control points at positive PC1 values."
+
 
 dat <- data.table(pc1 = c(rnorm(n = 5, mean = -3, sd = 1), rnorm(n = 5, mean = 2, sd = 1) ),
                   pc2 = c(rnorm(n = 5, mean = 0, sd = 0.5), rnorm(n = 5, mean = 0, sd = 0.5)),
@@ -1495,7 +1617,7 @@ ggplot()+
                 label = var))+
   scale_fill_manual("Group of interest",
                     values = c("Treatment" = "dodgerblue",
-                               "Control"= "indianred"))+
+                               "Control"= "#D55E00"))+
   scale_x_continuous(breaks = 1995:2005)+
   xlab("PC1 (Risk-taking)")+
   ylab("PC2 (Something else, who knows)")+
@@ -1516,7 +1638,7 @@ ggplot(data = dat[, .(mean = mean(pc1), sd = sd(pc2)),
                 width = 0.3)+
   scale_fill_manual("Group of interest",
                     values = c("Treatment" = "dodgerblue",
-                               "Control"= "indianred"))+
+                               "Control"= "#D55E00"))+
   ylab("Risk-taking (PC1)")+
   theme_bw()+
   theme(panel.grid = element_blank())
@@ -1529,4 +1651,5 @@ Before extracting these means±sd, we recommend looking for raw data or contacti
 
 And be careful: you should conduct sensitivity analyses excluding this data to ensure that your results are robust. 
 
-<!-- Erick's reading note: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12927 -->
+**Next:** [Discrete outcomes between two groups: lnOR and lnRR](3.3-lnOR-challenges.qmd)
+

@@ -57,6 +57,7 @@ $Z_r$ effect sizes describe both the direction and strength (i.e., tightness) of
 #| fig-height: 3.5
 #| eval: true
 #| echo: true
+
 library("ggplot2")
 
 set.seed(42)
@@ -76,16 +77,22 @@ sim <- do.call(rbind, lapply(seq_len(nrow(scenarios)), function(i) {
 
 labs_df <- do.call(rbind, lapply(split(sim, sim$panel), function(d) {
   data.frame(panel = d$panel[1],
-             label = sprintf("slope = %.2f\nr = %.2f", coef(lm(y ~ x, data = d))[2], cor(d$x, d$y)))
+             label = sprintf("slope = %.2f\nr = %.2f\nZr = %.2f", 
+                             coef(lm(y ~ x, data = d))[2], 
+                             cor(d$x, d$y),
+                             atanh(cor(d$x, d$y))))
 }))
 
 p <- ggplot(sim, aes(x = x, y = y)) +
   geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE, color = "dodgerblue3", linewidth = 1) +
-  geom_text(data = labs_df, aes(x = -Inf, y = Inf, label = label),
-            hjust = -0.1, vjust = 1.2, size = 3.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "hotpink", linewidth = 1) +
+  geom_text(data = labs_df, aes(x = -1.5, y = 4, label = label),
+            # hjust = -0.1, 
+            vjust = 1.2, size = 3.5) +
   facet_wrap(~ panel) +
   theme_minimal() +
+  theme(panel.grid = element_blank(),
+        strip.text = element_text(size = 12))+
   labs(x = "Predictor (x)", y = "Response (y)")
 p
 ```
@@ -98,28 +105,29 @@ You're **not** interested in the strength of the relationship of each species wi
 
 As @fig-r-slope-scatter, illustrates, identical correlation coefficients (panels A and C) can have radically different slopes while identical slopes can have radically different correlations (panels A and B).
 
-In these cases, you can meta-analyze **regression coefficients** from linear models or **S-statistics** from non-parametric Mann-Kendall tests, along with their model estimated standard errors (after transforming to sampling variance with $Var = SE^2$). 
+In these cases, you can meta-analyze **regression coefficients** from linear models or **S-statistics** from non-parametric Mann-Kendall tests, along with their model estimated standard errors (after transforming to sampling variance with $Var = SE^2$). Using these effect sizes is not common and we do not discuss these effect sizes in depth. 
 
-See @Daufresne2009-cy and @Pilotto2020-yx for meta-analyses using **S-statistics** to analyze time series data. Note that because of temporal autocorrelation, you may want to see @Hamed1998-mh for adjusted calculation of sampling variance. 
+However, see @Daufresne2009-cy and @Pilotto2020-yx for meta-analyses using **S-statistics** to analyze time series data. Note that because of temporal autocorrelation, you may want to see @Hamed1998-mh for adjusted calculation of sampling variance. 
 
-We suggest that if you do conduct a meta-analysis on these regression coefficients, that you might want to pair this with a meta-analysis on $Z_r$, to capture the noisiness of the relationships between your response and predictor variables.
+We do suggest that if you do conduct a meta-analysis on these regression coefficients, that you might want to pair this with a meta-analysis on $Z_r$, to capture the noisiness of the relationships between your response and predictor variables.
 
 # Assumptions
-Using regression slopes or S-statistics is more dangerous than the other effect sizes we have covered in this tutorial. Ideally you would calculate these slopes from raw data, either extracted from scatter plots or from large synthesized databases (e.g., BioTime @Dornelas2025-dv). This is because slopes are sensitive to the units of both the predictor and the response variables. As such, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
+Using regression slopes or S-statistics is more dangerous than the other effect sizes we have covered in this tutorial. Ideally you would calculate these slopes from raw data, either extracted from scatter plots or from the article's supplementary material or large synthesized databases (e.g., BioTime @Dornelas2025-dv). 
 
-After calculating model-derived slopes (or **S-statistics**), convert the model-derived standard errors to sampling variance and fit your meta-analytic model. It is **critical** that the regression coefficients are derived from identical response and predictor variables, which are in the **same units** across all of the effect sizes.
+This is because slopes are sensitive to the units of both the predictor and the response variables. As such, using author-reported model estimates is not advised unless the units were identical between studies and all models contained the same predictors (also in the same units). This is unlikely. 
 
-If you **must** use author provided model estimates, with models that varied in the response and predictor units, then you are back in the world of correlations, which describe both slope and strength of a relationship. The effect sizes for these model-derived estimates are *Fisher's r-to-z transformed correlation coefficient* (see `measure = "ZPCOR"` in `escalc`'s documentation and [here](3.4-Zr-challenges.qmd#sec-model-estimates)).
+After calculating model-derived slopes (or **S-statistics**), convert the model-derived standard errors ($se$) to sampling variance ($Var = se^2$) and fit your meta-analytic model. It is **critical** that the regression coefficients are derived from identical response and predictor variables, which are in the **same units** across all of the effect sizes.
+
+If you **must** use author provided model estimates, with models that varied in the response and predictor units, then you are back in the world of correlations, which describe both slope and strength of a relationship. The effect sizes for these model-derived estimates are *Fisher's r-to-z transformed correlation coefficient* (see `measure = "ZPCOR"` in `escalc`'s documentation and [here](3.4-Zr-challenges.qmd#sec-model-estimates)). Note that these must be estimates from linear models, without random effects.
 
 :::callout-important
 ### Maybe just fit a GLMM on raw data
 
-Analyzing regression coefficients requires raw data, since, as we describe below, regression coefficients are sensitive to the units of the variables and will change based on the model construction. As such, these should **not** be extracted from author-reported model summaries (unless the models are identical across studies).
+Analyzing regression coefficients requires raw data, because regression coefficients will change based on the units of the variables. Likewise, regression coefficients will change based on the number of moderators in a model (and random effects). As such, these should **not** be extracted from author-reported model summaries (unless the models are identical across studies).
 
 If you have the raw data, you might want to consider just fitting generalized linear mixed effect models, using random effect structures to control for non-independence between the different data sources.
 
-The only reason you might not want to use a GLMM is that the estimates for each individual observation (e.g., a species through time) will be drawn towards the global mean, which may conceal the patterns you're interested in uncovering.
-
+The only reason you might not want to use a GLMM is that the estimates for each individual observation (e.g., a species through time) will shrink towards the global mean, which may conceal the patterns you're interested in uncovering.
 :::
 
 
