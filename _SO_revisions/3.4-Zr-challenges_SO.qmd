@@ -44,6 +44,7 @@ bibliography: references.bib
 csl: ecology.csl
 ---
 
+EJL: DONE
 
 ```{r}
 #| eval: true
@@ -120,7 +121,7 @@ knitr::kable(dat)
 
 ```
 
-This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. We offer a helper function `get_r` that allows you to do this more succinctly:
+This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. Using a helper function `get_r`:
 
 ```{r}
 #| echo: true
@@ -738,7 +739,9 @@ theoretical_sd <- sqrt((dt$proportion_alive * (1 - dt$proportion_alive))/(dt$n_i
 nrow(dt[sd > theoretical_sd])
 ```
 
-It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution. Here we use fixed (deterministic) counts rather than random draws: the number alive in each treatment is `round(proportion_alive * N)`, where N is the total number of individuals in that treatment (`n_individuals * n_trials`). Why not random draws? They add simulation noise about as large as the sampling error itself, and they give a different answer every time you run the code. See [here](7-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
+It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution. Here we use fixed (deterministic) counts rather than random draws: the number alive in each treatment is `round(proportion_alive * N)`, where N is the total number of individuals in that treatment (`n_individuals * n_trials`). W
+
+hy not random draws? They add simulation noise about as large as the sampling error itself, and they give a different answer every time you run the code. See [here](7-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
 
 ::: callout-warning
 Note that reconstructing underlying data is an experimental method. Use carefully.

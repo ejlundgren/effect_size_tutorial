@@ -59,13 +59,13 @@ library("ggplot2")
 
 :::callout-tip
 #### Key points
-- lnOR (log odds ratio) and lnRR (log risk ratios) describe discrete binary outcomes between two groups (i.e., experiment vs control)
+- lnOR (log odds ratio) and lnRR (log risk ratio) describe discrete binary outcomes between two groups (i.e., experiment vs control)
 - Odds ratios (OR) compare odds of a binary outcome occurring between two groups
 - Risk ratios (RR) compare risks of the outcome. The two are close only when the event is rare.
 - Odds are not risk. The same OR can mean a small or a large change in risk, depending on how common the event is in the control group.
 - Zero cells need a continuity correction, which is applied automatically by `escalc`. For studies with no events in either group, we recommend `drop00 = TRUE` in `escalc`.
 - If the event in question is very rare, consider directly modeling outcomes with `rma.glmm()`, which does not require continuity correction.
-- Do not use lnOR or lnRR for binary events that occur **multiple** times per individual (or plot or site). Instead use incident rate ratio effect sizes.
+- Do not use lnOR or lnRR for binary outcomes that can occur **multiple** times per individual (or plot or site). Use incident rate ratio estimands for this type of 'event count' data.
 :::
 
 Sometimes the world is just black and white. Individuals live or die. Organisms are present or absent. Vegetation plots burn or don't burn.

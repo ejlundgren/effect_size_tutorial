@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2026-10-28">
+<meta name="dcterms.date" content="2026-10-30">
 <title>Discrete outcomes between two groups: lnOR and lnRR – A user’s guide to effect sizes</title>
 <style>
 /* Default styles provided by pandoc.
@@ -396,7 +396,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 28, 2026</p>
+      <p class="date">October 30, 2026</p>
     </div>
   </div>
   
@@ -859,7 +859,7 @@ Warning
 <span>        alpha <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">alpha</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, </span>
 <span>        beta <span class="op">=</span> <span class="va">dt</span><span class="op">$</span><span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1]  0  0  4  0  1  3 10 12  1  0</code></pre>
+<pre><code> [1]  0  2  0  0  0  1  5  2 10 17</code></pre>
 </div>
 </div>
 <p>The sum of this is the total number of nests that fledged across all sites. The full workflow:</p>
@@ -923,9 +923,9 @@ Warning
 <td style="text-align: right;">4.100000</td>
 <td style="text-align: right;">0.6150000</td>
 <td style="text-align: right;">3.485000</td>
-<td style="text-align: right;">29</td>
+<td style="text-align: right;">32</td>
 <td style="text-align: right;">300</td>
-<td style="text-align: right;">271</td>
+<td style="text-align: right;">268</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0.31</td>
@@ -938,9 +938,9 @@ Warning
 <td style="text-align: right;">1.640741</td>
 <td style="text-align: right;">0.5086296</td>
 <td style="text-align: right;">1.132111</td>
-<td style="text-align: right;">102</td>
+<td style="text-align: right;">77</td>
 <td style="text-align: right;">300</td>
-<td style="text-align: right;">198</td>
+<td style="text-align: right;">223</td>
 </tr>
 </tbody>
 </table>
@@ -1864,23 +1864,230 @@ Wolodzko, T. 2023. <a href="https://doi.org/10.32614/CRAN.package.extraDistr">ex
 <span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a>Now you have the ingredients to calculate lnOR or lnRR. The total sample size went from 10 per treatment (number of sites) to the number of individuals (300 per treatment!), making the unit of replication comparable with the other effect sizes in your dataset (if you're conducting an lnOR meta-analysis with individual as the unit of replication).</span>
 <span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a><span class="fu">## LC50? {#sec-lc50}</span></span>
+<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a><span class="fu">## LC50 and related metrics {#sec-lc50}</span></span>
 <span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>Many laboratory studies, for example on the effects of a pollution agent on mortality, report LC50, which is the dosage at which 50% of the exposed individuals experience an outcome (e.g., die).</span>
+<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>Many laboratory toxicity studies report an **LC50** (median lethal concentration): the concentration of a substance estimated to kill 50% of exposed individuals over a fixed exposure period (e.g., 96-h LC50). The LC50 is estimated by fitting a dose-response model, often log-logistic or probit, to the proportion of individuals surviving at each test concentration, and reading off the concentration where the fitted curve crosses 50%.</span>
 <span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>These figures look like this:</span>
+<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>These figures typically look like this:</span>
 <span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a><span class="co">#' @Kyle?</span></span>
-<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a>LC50 is already its own formula. We do not know how to convert this to lnOR or lnRR. If you're faced with lots of this data, you could consider converting survivorship curves, or other data sources, to LC50—and deriving a sampling variance formula or using SAFE to simulate sampling variance.</span>
-<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>**It is possible that you can calculate [single-group proportion effect sizes (especially probit transformed proportions)](5.3-single-group-effect-sizes.qmd) to describe data like this, but your results may be difficult to compare to other effect sizes in your dataset**</span>
-<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
-<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.</span>
+<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(drc)</span>
+<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data</span></span>
+<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>conc <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>), <span class="at">each =</span> <span class="dv">3</span>)</span>
+<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a>p_dead <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">2</span> <span class="sc">*</span> (<span class="fu">log</span>(conc) <span class="sc">-</span> <span class="fu">log</span>(<span class="dv">6</span>))))   <span class="co"># true LC50 = 6</span></span>
+<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(conc, n, <span class="at">surv =</span> (n <span class="sc">-</span> <span class="fu">rbinom</span>(<span class="fu">length</span>(conc), n, p_dead)) <span class="sc">/</span> n)</span>
+<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit model and get LC50</span></span>
+<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">drm</span>(surv <span class="sc">~</span> conc, <span class="at">weights =</span> n, <span class="at">data =</span> dat, <span class="at">fct =</span> <span class="fu">LL.2</span>(), <span class="at">type =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>lc50 <span class="ot">&lt;-</span> <span class="fu">ED</span>(fit, <span class="dv">50</span>, <span class="at">interval =</span> <span class="st">"delta"</span>)[<span class="dv">1</span>]</span>
+<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a><span class="co"># Predicted curve with 95% CI</span></span>
+<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a>newdat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">conc =</span> <span class="fu">exp</span>(<span class="fu">seq</span>(<span class="fu">log</span>(<span class="fl">0.5</span>), <span class="fu">log</span>(<span class="dv">32</span>), <span class="at">length.out =</span> <span class="dv">100</span>)))</span>
+<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> newdat, <span class="at">interval =</span> <span class="st">"confidence"</span>)</span>
+<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a>newdat <span class="ot">&lt;-</span> <span class="fu">cbind</span>(newdat, <span class="at">fit =</span> pred[, <span class="dv">1</span>], <span class="at">lwr =</span> pred[, <span class="dv">2</span>], <span class="at">upr =</span> pred[, <span class="dv">3</span>])</span>
+<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a><span class="co"># Controls can't sit at 0 on a log axis, so plot them at 0.5</span></span>
+<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>conc_plot <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(dat<span class="sc">$</span>conc <span class="sc">==</span> <span class="dv">0</span>, <span class="fl">0.5</span>, dat<span class="sc">$</span>conc)</span>
+<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb13-510"><a href="#cb13-510" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> newdat, <span class="fu">aes</span>(conc, <span class="at">ymin =</span> lwr, <span class="at">ymax =</span> upr), <span class="at">fill =</span> <span class="st">"grey80"</span>) <span class="sc">+</span></span>
+<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> newdat, <span class="fu">aes</span>(conc, fit), <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> dat, <span class="fu">aes</span>(conc_plot, surv), <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> lc50, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>),</span>
+<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a>                <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Control"</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">32</span>)) <span class="sc">+</span></span>
+<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Concentration (mg/L)"</span>, <span class="at">y =</span> <span class="st">"Proportion surviving"</span>,</span>
+<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"LC50 = "</span>, <span class="fu">round</span>(lc50, <span class="dv">2</span>), <span class="st">" mg/L"</span>)) <span class="sc">+</span></span>
+<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb13-519"><a href="#cb13-519" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-520"><a href="#cb13-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a>The points are individual replicates, the solid line is the fitted dose-response curve with its 95% confidence interval (grey band), and the dashed line marks the estimated LC50.</span>
+<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a>You will also encounter several closely related metrics, which are estimated and interpreted in the same way:</span>
+<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**EC50** (median effective concentration): the concentration producing a specified non-lethal effect (e.g., immobilisation, reduced growth or reproduction) in 50% of individuals, or a 50% reduction in a continuous response.</span>
+<span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**LD50** (median lethal dose): as LC50, but expressed as an administered dose (e.g., mg/kg body weight) rather than an environmental concentration.</span>
+<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**LT50** (median lethal temperature): the temperature at which 50% of individuals die, commonly used in thermal tolerance studies and estimated by fitting the same type of curve with temperature on the x-axis. In toxicology, LT50 is also used for median lethal *time* (the exposure duration at which 50% of individuals have died), so check how each study defines it.</span>
+<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**ET50** (median effective time): the exposure time at which 50% of individuals show the specified effect, i.e., the time-based equivalent of EC50.</span>
+<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a>Other percentiles (e.g., LC10, EC20) are also common, particularly when the interest is in low-effect thresholds.</span>
+<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a>These metrics are already summary statistics of a dose-, temperature- or time-response curve, not contrasts between a treatment and a control group, and there is no established way to convert them to lnOR or lnRR. If your dataset contains many of them, you could consider meta-analysing them directly (e.g., on the log scale), converting survivorship curves or other raw data to a common metric such as LC50, and either deriving a sampling variance formula or using SAFE to simulate the sampling variance.</span>
+<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a>**It is possible that you can calculate [single-group proportion effect sizes (especially probit-transformed proportions)](5.3-single-group-effect-sizes.qmd) to describe data like this, but your results may be difficult to compare with other effect sizes in your dataset.**</span>
+<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-536"><a href="#cb13-536" aria-hidden="true" tabindex="-1"></a><span class="fu"># Model estimates {#sec-model-estimates}</span></span>
+<span id="cb13-537"><a href="#cb13-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-538"><a href="#cb13-538" aria-hidden="true" tabindex="-1"></a>According to Gemini, you can multiply an *unstandardized* logistic regression coefficient by 1.81 to convert it to lnOR. But not sure if that's true—and not sure how to calculate sampling variance.</span>
+<span id="cb13-539"><a href="#cb13-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-540"><a href="#cb13-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-541"><a href="#cb13-541" aria-hidden="true" tabindex="-1"></a><span class="fu">===</span></span>
+<span id="cb13-542"><a href="#cb13-542" aria-hidden="true" tabindex="-1"></a><span class="fu">## Handling zero cells</span></span>
+<span id="cb13-543"><a href="#cb13-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-544"><a href="#cb13-544" aria-hidden="true" tabindex="-1"></a>When a study has a zero in any cell of the 2×2 table, the odds ratio and its variance cannot be calculated. By convention, we added 0.5 to every cell of those studies only (Sweeting et al. 2004). Continuity corrections can bias the odds ratio towards 1, particularly when events are rare or group sizes are unbalanced. We therefore ran a sensitivity analysis that excluded all studies needing a correction. Studies with zero events in both groups were excluded from the main analysis.</span>
+<span id="cb13-545"><a href="#cb13-545" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-548"><a href="#cb13-548" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-549"><a href="#cb13-549" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: zero-cells</span></span>
+<span id="cb13-550"><a href="#cb13-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-551"><a href="#cb13-551" aria-hidden="true" tabindex="-1"></a><span class="co"># Flag studies with at least one zero cell</span></span>
+<span id="cb13-552"><a href="#cb13-552" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>zero_cell <span class="ot">&lt;-</span> <span class="fu">with</span>(dat, ai <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> bi <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> ci <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> di <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb13-553"><a href="#cb13-553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-554"><a href="#cb13-554" aria-hidden="true" tabindex="-1"></a><span class="co"># Main analysis: add 0.5 to all cells of studies with a zero</span></span>
+<span id="cb13-555"><a href="#cb13-555" aria-hidden="true" tabindex="-1"></a>es_main <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb13-556"><a href="#cb13-556" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, <span class="at">ci =</span> ci, <span class="at">di =</span> di,</span>
+<span id="cb13-557"><a href="#cb13-557" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat,</span>
+<span id="cb13-558"><a href="#cb13-558" aria-hidden="true" tabindex="-1"></a>                  <span class="at">add =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">to =</span> <span class="st">"only0"</span>,</span>
+<span id="cb13-559"><a href="#cb13-559" aria-hidden="true" tabindex="-1"></a>                  <span class="at">drop00 =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-560"><a href="#cb13-560" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-561"><a href="#cb13-561" aria-hidden="true" tabindex="-1"></a>res_main <span class="ot">&lt;-</span> <span class="fu">rma</span>(yi, vi, <span class="at">data =</span> es_main, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb13-562"><a href="#cb13-562" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-563"><a href="#cb13-563" aria-hidden="true" tabindex="-1"></a><span class="co"># Sensitivity analysis: exclude studies that needed a correction</span></span>
+<span id="cb13-564"><a href="#cb13-564" aria-hidden="true" tabindex="-1"></a>es_sens <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb13-565"><a href="#cb13-565" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, <span class="at">ci =</span> ci, <span class="at">di =</span> di,</span>
+<span id="cb13-566"><a href="#cb13-566" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat,</span>
+<span id="cb13-567"><a href="#cb13-567" aria-hidden="true" tabindex="-1"></a>                  <span class="at">subset =</span> <span class="sc">!</span>zero_cell)</span>
+<span id="cb13-568"><a href="#cb13-568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-569"><a href="#cb13-569" aria-hidden="true" tabindex="-1"></a>res_sens <span class="ot">&lt;-</span> <span class="fu">rma</span>(yi, vi, <span class="at">data =</span> es_sens, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb13-570"><a href="#cb13-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-571"><a href="#cb13-571" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of studies that needed a correction</span></span>
+<span id="cb13-572"><a href="#cb13-572" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(dat<span class="sc">$</span>zero_cell, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-573"><a href="#cb13-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-574"><a href="#cb13-574" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare pooled odds ratios</span></span>
+<span id="cb13-575"><a href="#cb13-575" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-576"><a href="#cb13-576" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">"Main (0.5 added to zero-cell studies)"</span>,</span>
+<span id="cb13-577"><a href="#cb13-577" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Sensitivity (zero-cell studies excluded)"</span>),</span>
+<span id="cb13-578"><a href="#cb13-578" aria-hidden="true" tabindex="-1"></a>  <span class="at">k     =</span> <span class="fu">c</span>(res_main<span class="sc">$</span>k, res_sens<span class="sc">$</span>k),</span>
+<span id="cb13-579"><a href="#cb13-579" aria-hidden="true" tabindex="-1"></a>  <span class="at">OR    =</span> <span class="fu">exp</span>(<span class="fu">c</span>(res_main<span class="sc">$</span>beta,  res_sens<span class="sc">$</span>beta)),</span>
+<span id="cb13-580"><a href="#cb13-580" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci.lb =</span> <span class="fu">exp</span>(<span class="fu">c</span>(res_main<span class="sc">$</span>ci.lb, res_sens<span class="sc">$</span>ci.lb)),</span>
+<span id="cb13-581"><a href="#cb13-581" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci.ub =</span> <span class="fu">exp</span>(<span class="fu">c</span>(res_main<span class="sc">$</span>ci.ub, res_sens<span class="sc">$</span>ci.ub))</span>
+<span id="cb13-582"><a href="#cb13-582" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-583"><a href="#cb13-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-584"><a href="#cb13-584" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(comparison, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb13-585"><a href="#cb13-585" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-586"><a href="#cb13-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-587"><a href="#cb13-587" aria-hidden="true" tabindex="-1"></a><span class="in">`r sum(dat$zero_cell, na.rm = TRUE)`</span> studies had at least one zero cell and received the 0.5 correction. Excluding these studies changed the pooled odds ratio from <span class="in">`r round(exp(res_main$beta), 2)`</span> to <span class="in">`r round(exp(res_sens$beta), 2)`</span>.</span>
+<span id="cb13-588"><a href="#cb13-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-589"><a href="#cb13-589" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-590"><a href="#cb13-590" aria-hidden="true" tabindex="-1"></a><span class="fu">## Handling zero cells</span></span>
+<span id="cb13-591"><a href="#cb13-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-592"><a href="#cb13-592" aria-hidden="true" tabindex="-1"></a>We simulated 15 studies comparing an exposed group with a control group. The outcome was rare, with a 3% risk in the control group and a true odds ratio of 2. Group sizes ranged from 30 to 200 participants per arm. One study was set to have zero events in the exposed group, and one was set to have zero events in both groups.</span>
+<span id="cb13-593"><a href="#cb13-593" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-596"><a href="#cb13-596" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-597"><a href="#cb13-597" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: simulate-data</span></span>
+<span id="cb13-598"><a href="#cb13-598" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb13-599"><a href="#cb13-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-600"><a href="#cb13-600" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">15</span>                                        <span class="co"># number of studies</span></span>
+<span id="cb13-601"><a href="#cb13-601" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-602"><a href="#cb13-602" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-603"><a href="#cb13-603" aria-hidden="true" tabindex="-1"></a>  <span class="at">study =</span> <span class="fu">paste</span>(<span class="st">"Study"</span>, <span class="dv">1</span><span class="sc">:</span>k),</span>
+<span id="cb13-604"><a href="#cb13-604" aria-hidden="true" tabindex="-1"></a>  <span class="at">n1i   =</span> <span class="fu">sample</span>(<span class="dv">30</span><span class="sc">:</span><span class="dv">200</span>, k, <span class="at">replace =</span> <span class="cn">TRUE</span>),   <span class="co"># exposed group size</span></span>
+<span id="cb13-605"><a href="#cb13-605" aria-hidden="true" tabindex="-1"></a>  <span class="at">n2i   =</span> <span class="fu">sample</span>(<span class="dv">30</span><span class="sc">:</span><span class="dv">200</span>, k, <span class="at">replace =</span> <span class="cn">TRUE</span>)    <span class="co"># control group size</span></span>
+<span id="cb13-606"><a href="#cb13-606" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-607"><a href="#cb13-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-608"><a href="#cb13-608" aria-hidden="true" tabindex="-1"></a><span class="co"># Rare outcome: ~3% risk in controls, true OR of 2</span></span>
+<span id="cb13-609"><a href="#cb13-609" aria-hidden="true" tabindex="-1"></a>p_control <span class="ot">&lt;-</span> <span class="fl">0.03</span></span>
+<span id="cb13-610"><a href="#cb13-610" aria-hidden="true" tabindex="-1"></a>true_or   <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb13-611"><a href="#cb13-611" aria-hidden="true" tabindex="-1"></a>p_exposed <span class="ot">&lt;-</span> (true_or <span class="sc">*</span> p_control) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> p_control <span class="sc">+</span> true_or <span class="sc">*</span> p_control)</span>
+<span id="cb13-612"><a href="#cb13-612" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-613"><a href="#cb13-613" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ai <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(k, dat<span class="sc">$</span>n1i, p_exposed)        <span class="co"># events, exposed</span></span>
+<span id="cb13-614"><a href="#cb13-614" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ci <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(k, dat<span class="sc">$</span>n2i, p_control)        <span class="co"># events, control</span></span>
+<span id="cb13-615"><a href="#cb13-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-616"><a href="#cb13-616" aria-hidden="true" tabindex="-1"></a><span class="co"># Guarantee one single-zero study and one double-zero study</span></span>
+<span id="cb13-617"><a href="#cb13-617" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ai[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-618"><a href="#cb13-618" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ai[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-619"><a href="#cb13-619" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>ci[<span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb13-620"><a href="#cb13-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-621"><a href="#cb13-621" aria-hidden="true" tabindex="-1"></a><span class="co"># Non-events</span></span>
+<span id="cb13-622"><a href="#cb13-622" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>bi <span class="ot">&lt;-</span> dat<span class="sc">$</span>n1i <span class="sc">-</span> dat<span class="sc">$</span>ai</span>
+<span id="cb13-623"><a href="#cb13-623" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>di <span class="ot">&lt;-</span> dat<span class="sc">$</span>n2i <span class="sc">-</span> dat<span class="sc">$</span>ci</span>
+<span id="cb13-624"><a href="#cb13-624" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-625"><a href="#cb13-625" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(dat[, <span class="fu">c</span>(<span class="st">"study"</span>, <span class="st">"ai"</span>, <span class="st">"bi"</span>, <span class="st">"n1i"</span>, <span class="st">"ci"</span>, <span class="st">"di"</span>, <span class="st">"n2i"</span>)])</span>
+<span id="cb13-626"><a href="#cb13-626" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-627"><a href="#cb13-627" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-628"><a href="#cb13-628" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-629"><a href="#cb13-629" aria-hidden="true" tabindex="-1"></a>When a study has a zero in any cell of the 2×2 table, the odds ratio and its variance cannot be calculated. By convention, we added 0.5 to every cell of those studies only (Sweeting et al. 2004). Studies with zero events in both groups provide no information about the odds ratio, so we excluded them from the analysis.</span>
+<span id="cb13-630"><a href="#cb13-630" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-631"><a href="#cb13-631" aria-hidden="true" tabindex="-1"></a>Continuity corrections can bias the odds ratio towards 1, particularly when events are rare or group sizes are unbalanced. We therefore ran a sensitivity analysis that excluded all studies needing a correction.</span>
+<span id="cb13-632"><a href="#cb13-632" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-635"><a href="#cb13-635" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-636"><a href="#cb13-636" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: flag-zeros</span></span>
+<span id="cb13-637"><a href="#cb13-637" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-638"><a href="#cb13-638" aria-hidden="true" tabindex="-1"></a><span class="co"># Studies with at least one zero cell</span></span>
+<span id="cb13-639"><a href="#cb13-639" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>zero_cell   <span class="ot">&lt;-</span> <span class="fu">with</span>(dat, ai <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> bi <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> ci <span class="sc">==</span> <span class="dv">0</span> <span class="sc">|</span> di <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb13-640"><a href="#cb13-640" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-641"><a href="#cb13-641" aria-hidden="true" tabindex="-1"></a><span class="co"># Studies with zero events in both groups</span></span>
+<span id="cb13-642"><a href="#cb13-642" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>double_zero <span class="ot">&lt;-</span> <span class="fu">with</span>(dat, ai <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> ci <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb13-643"><a href="#cb13-643" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-644"><a href="#cb13-644" aria-hidden="true" tabindex="-1"></a><span class="co"># Studies that receive the 0.5 correction (zero cell, but not double-zero)</span></span>
+<span id="cb13-645"><a href="#cb13-645" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>corrected   <span class="ot">&lt;-</span> dat<span class="sc">$</span>zero_cell <span class="sc">&amp;</span> <span class="sc">!</span>dat<span class="sc">$</span>double_zero</span>
+<span id="cb13-646"><a href="#cb13-646" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-647"><a href="#cb13-647" aria-hidden="true" tabindex="-1"></a>n_corrected   <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat<span class="sc">$</span>corrected)</span>
+<span id="cb13-648"><a href="#cb13-648" aria-hidden="true" tabindex="-1"></a>n_double_zero <span class="ot">&lt;-</span> <span class="fu">sum</span>(dat<span class="sc">$</span>double_zero)</span>
+<span id="cb13-649"><a href="#cb13-649" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-650"><a href="#cb13-650" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-651"><a href="#cb13-651" aria-hidden="true" tabindex="-1"></a><span class="fu">## Main analysis</span></span>
+<span id="cb13-652"><a href="#cb13-652" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-655"><a href="#cb13-655" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-656"><a href="#cb13-656" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: main-analysis</span></span>
+<span id="cb13-657"><a href="#cb13-657" aria-hidden="true" tabindex="-1"></a>es_main <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb13-658"><a href="#cb13-658" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, <span class="at">ci =</span> ci, <span class="at">di =</span> di,</span>
+<span id="cb13-659"><a href="#cb13-659" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat,</span>
+<span id="cb13-660"><a href="#cb13-660" aria-hidden="true" tabindex="-1"></a>                  <span class="at">add =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>, <span class="at">to =</span> <span class="st">"only0"</span>,</span>
+<span id="cb13-661"><a href="#cb13-661" aria-hidden="true" tabindex="-1"></a>                  <span class="at">drop00 =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-662"><a href="#cb13-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-663"><a href="#cb13-663" aria-hidden="true" tabindex="-1"></a>res_main <span class="ot">&lt;-</span> <span class="fu">rma</span>(yi, vi, <span class="at">data =</span> es_main, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb13-664"><a href="#cb13-664" aria-hidden="true" tabindex="-1"></a>res_main</span>
+<span id="cb13-665"><a href="#cb13-665" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-666"><a href="#cb13-666" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-669"><a href="#cb13-669" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-670"><a href="#cb13-670" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: forest-main</span></span>
+<span id="cb13-671"><a href="#cb13-671" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 6</span></span>
+<span id="cb13-672"><a href="#cb13-672" aria-hidden="true" tabindex="-1"></a><span class="fu">forest</span>(res_main, <span class="at">slab =</span> dat<span class="sc">$</span>study, <span class="at">atransf =</span> exp,</span>
+<span id="cb13-673"><a href="#cb13-673" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> <span class="st">"Odds ratio (log scale)"</span>,</span>
+<span id="cb13-674"><a href="#cb13-674" aria-hidden="true" tabindex="-1"></a>       <span class="at">header =</span> <span class="fu">c</span>(<span class="st">"Study"</span>, <span class="st">"OR [95% CI]"</span>))</span>
+<span id="cb13-675"><a href="#cb13-675" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-676"><a href="#cb13-676" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-677"><a href="#cb13-677" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sensitivity analysis</span></span>
+<span id="cb13-678"><a href="#cb13-678" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-681"><a href="#cb13-681" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-682"><a href="#cb13-682" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sensitivity-analysis</span></span>
+<span id="cb13-683"><a href="#cb13-683" aria-hidden="true" tabindex="-1"></a>es_sens <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"OR"</span>,</span>
+<span id="cb13-684"><a href="#cb13-684" aria-hidden="true" tabindex="-1"></a>                  <span class="at">ai =</span> ai, <span class="at">bi =</span> bi, <span class="at">ci =</span> ci, <span class="at">di =</span> di,</span>
+<span id="cb13-685"><a href="#cb13-685" aria-hidden="true" tabindex="-1"></a>                  <span class="at">data =</span> dat,</span>
+<span id="cb13-686"><a href="#cb13-686" aria-hidden="true" tabindex="-1"></a>                  <span class="at">subset =</span> <span class="sc">!</span>zero_cell)</span>
+<span id="cb13-687"><a href="#cb13-687" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-688"><a href="#cb13-688" aria-hidden="true" tabindex="-1"></a>res_sens <span class="ot">&lt;-</span> <span class="fu">rma</span>(yi, vi, <span class="at">data =</span> es_sens, <span class="at">method =</span> <span class="st">"REML"</span>)</span>
+<span id="cb13-689"><a href="#cb13-689" aria-hidden="true" tabindex="-1"></a>res_sens</span>
+<span id="cb13-690"><a href="#cb13-690" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-691"><a href="#cb13-691" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-692"><a href="#cb13-692" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison</span></span>
+<span id="cb13-693"><a href="#cb13-693" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-696"><a href="#cb13-696" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb13-697"><a href="#cb13-697" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: comparison</span></span>
+<span id="cb13-698"><a href="#cb13-698" aria-hidden="true" tabindex="-1"></a>comparison <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb13-699"><a href="#cb13-699" aria-hidden="true" tabindex="-1"></a>  <span class="at">analysis =</span> <span class="fu">c</span>(<span class="st">"Main (0.5 added to zero-cell studies)"</span>,</span>
+<span id="cb13-700"><a href="#cb13-700" aria-hidden="true" tabindex="-1"></a>               <span class="st">"Sensitivity (zero-cell studies excluded)"</span>),</span>
+<span id="cb13-701"><a href="#cb13-701" aria-hidden="true" tabindex="-1"></a>  <span class="at">k     =</span> <span class="fu">c</span>(res_main<span class="sc">$</span>k, res_sens<span class="sc">$</span>k),</span>
+<span id="cb13-702"><a href="#cb13-702" aria-hidden="true" tabindex="-1"></a>  <span class="at">OR    =</span> <span class="fu">exp</span>(<span class="fu">c</span>(res_main<span class="sc">$</span>beta,  res_sens<span class="sc">$</span>beta)),</span>
+<span id="cb13-703"><a href="#cb13-703" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci.lb =</span> <span class="fu">exp</span>(<span class="fu">c</span>(res_main<span class="sc">$</span>ci.lb, res_sens<span class="sc">$</span>ci.lb)),</span>
+<span id="cb13-704"><a href="#cb13-704" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci.ub =</span> <span class="fu">exp</span>(<span class="fu">c</span>(res_main<span class="sc">$</span>ci.ub, res_sens<span class="sc">$</span>ci.ub)),</span>
+<span id="cb13-705"><a href="#cb13-705" aria-hidden="true" tabindex="-1"></a>  <span class="at">I2    =</span> <span class="fu">c</span>(res_main<span class="sc">$</span>I2, res_sens<span class="sc">$</span>I2)</span>
+<span id="cb13-706"><a href="#cb13-706" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-707"><a href="#cb13-707" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-708"><a href="#cb13-708" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(comparison, <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb13-709"><a href="#cb13-709" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Analysis"</span>, <span class="st">"k"</span>, <span class="st">"OR"</span>, <span class="st">"Lower 95% CI"</span>,</span>
+<span id="cb13-710"><a href="#cb13-710" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"Upper 95% CI"</span>, <span class="st">"I² (%)"</span>))</span>
+<span id="cb13-711"><a href="#cb13-711" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb13-712"><a href="#cb13-712" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-713"><a href="#cb13-713" aria-hidden="true" tabindex="-1"></a>In total, <span class="in">`r n_corrected`</span> studies had a zero cell and received the 0.5 correction, and <span class="in">`r n_double_zero`</span> studies had zero events in both groups and were excluded. In the main analysis, the pooled odds ratio was <span class="in">`r round(exp(res_main$beta), 2)`</span> (95% CI <span class="in">`r round(exp(res_main$ci.lb), 2)`</span> to <span class="in">`r round(exp(res_main$ci.ub), 2)`</span>). Excluding studies that needed a correction gave a pooled odds ratio of <span class="in">`r round(exp(res_sens$beta), 2)`</span> (95% CI <span class="in">`r round(exp(res_sens$ci.lb), 2)`</span> to <span class="in">`r round(exp(res_sens$ci.ub), 2)`</span>).</span>
+<span id="cb13-714"><a href="#cb13-714" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-715"><a href="#cb13-715" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reference</span></span>
+<span id="cb13-716"><a href="#cb13-716" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-717"><a href="#cb13-717" aria-hidden="true" tabindex="-1"></a>Sweeting MJ, Sutton AJ, Lambert PC (2004). What to add to nothing? Use and avoidance of continuity corrections in meta-analysis of sparse data. *Statistics in Medicine* 23:1351–1375.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
