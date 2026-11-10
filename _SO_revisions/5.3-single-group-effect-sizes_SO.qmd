@@ -44,6 +44,20 @@ bibliography: references.bib
 csl: ecology.csl
 ---
 
+
+
+
+
+
+DONE
+
+
+
+
+
+
+
+
 ```{r}
 #| eval: true
 #| echo: false
@@ -170,11 +184,11 @@ These effect sizes take into account the total number of individuals and the num
 
 These different versions have different numeric assumptions:
 
-- **log-transformed proportion**: This effect size gives log proportions. Values of 0 need a small constant added. `exp(yi)` returns the proportion itself, and the log-transformed proportion is the natural choice when the target is a ratio of proportions. Specified with "PLN" in `escalc`.
+- **logit-transformed proportion (preferred)**: This is our preferred choice across the range of single-group proportion estimands. `yi` is the log odds of the event in a single group. To back-transform, `exp(yi)` gives the odds (not an odds ratio, since there is only one group) and `plogis(yi)` gives the proportion (or use `transf = transf.ilogit` in `predict`). If many of your proportions are near 0 or 1 *and* sample sizes are small, consider a binomial-normal model instead (`rma.glmm(measure = "PLO")`). It works directly with the counts, so it doesn't need a continuity correction. Specified with "PLO" in `escalc`.
 
-- **logit-transformed proportion (default)**: This is our default choice across the range of proportions. `yi` is the log odds of the event in a single group. To back-transform, `exp(yi)` gives the odds (not an odds ratio, since there is only one group) and `plogis(yi)` gives the proportion (or use `transf = transf.ilogit` in `predict`). If many of your proportions are near 0 or 1 *and* sample sizes are small, consider a binomial-normal model instead (`rma.glmm(measure = "PLO")`). It works directly with the counts, so it doesn't need a continuity correction. Specified with "PLO" in `escalc`.
+- **log-transformed proportion**: This effect size gives log proportions. Values of 0 need a small constant added. `exp(yi)` returns the proportion itself, and the log-transformed proportion is the natural choice when the target is a ratio of proportions. Specified with `measure = "PLN"` in `escalc`.
 
-- **probit-transformed proportion**: This effect size is often used for toxicological or dose-response models, like [LC50](3.3-lnOR-challenges.qmd#sec-lc50), and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with "PRZ" in `escalc`.
+- **probit-transformed proportion**: This effect size is often used for toxicological or dose-response models, like [LC50](3.3-lnOR-challenges.qmd#sec-lc50), and is based on modeling cumulative probabilities. This effect size is less intuitive to interpret: values of 0 indicate that the proportion is 50%, while positive values indicate that the proportion is greater than 50% and negative values less than 50%. Specified with `measure = "PRZ"` in `escalc`.
 
 For all of these effect sizes, `xi` is the number of individuals experiencing the event of interest and `ni` is the total number of individuals:
 

@@ -44,6 +44,12 @@ bibliography: references.bib
 csl: ecology.csl
 ---
 
+
+DONE
+
+
+
+
 ```{r}
 #| eval: true
 #| echo: false
@@ -293,7 +299,7 @@ zr_willow
 ```
 
 :::callout-important
-Instead of converting SMD to Zr, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to Zr. This can be done in `escalc` directly with the measure "ZBIS", which calculates the biserial correlation coefficient and converts it to Zr. Why bother? The formula above gives a *point-biserial* correlation. When the two groups are an artificial split of a continuous variable (the assumption in the table above), the comparable correlation is the biserial $r_b$. The point-biserial version is only for *naturally* discrete groups (e.g., male versus female). @Jacobs2017-cv advised against comparing it with correlations from two continuous variables ($r$) or from an artificially split variable ($r_b$), so don't pool them without a moderator.
+Instead of converting SMD to Zr, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to Zr. This can be done in `escalc` directly with `measure = "ZBIS"`, which calculates the biserial correlation coefficient and converts it to Zr. Why bother? The formula above gives a *point-biserial* correlation. When the two groups are an artificial split of a continuous variable (the assumption in the table above), the comparable correlation is the biserial $r_b$. The point-biserial version is only for *naturally* discrete groups (e.g., male versus female). @Jacobs2017-cv advised against comparing it with correlations from two continuous variables ($r$) or from an artificially split variable ($r_b$), so don't pool them without a moderator.
 
 Note that the sampling variance from `escalc` for ZBIS is not $1/(n-3)$. The Fisher z transformation does not stabilize the variance of biserial or point-biserial correlations, so flag these rows and run a sensitivity analysis.
 
@@ -418,6 +424,7 @@ lnrom_to_smd <- function(yi_lnrom, vi_lnrom, n_T, n_C) {
 conv_willow <- lnrom_to_smd(lnrom_willow, vi_lnrom_willow,
                             n_T = n_warm, n_C = n_ctrl)
 knitr::kable(conv_willow, digits = 3)
+
 ```
 
 Converting the willow lnRoM gives Hedges' $g$ = `r sprintf('%.2f', conv_willow$g)` (variance `r sprintf('%.3f', conv_willow$vi_g)`). The escalc value from the raw summaries is `r sprintf('%.2f', g_willow)`. The two differ because the standard deviations (`r sd_warm` and `r sd_ctrl`) are not equal, so the equal-SD assumption is not met. Treat the converted value as a sensitivity check, not as a replacement for the escalc SMD.

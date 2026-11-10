@@ -68,6 +68,15 @@ library("simplermarkdown")
 library("crayon")
 
 ```
+::: {.callout-tip}
+##### Key points
+
+- Sample size is often hard to extract, and it matters for both the effect size and its sampling variance. Record which kind of sample size was used and how it was obtained.
+- The unit of replication should be recorded for every study, because mismatches change how much weight a study gets in your meta-analytic models.
+- Repeated measures, shared controls and clustered data create non-independence that the model has to account for. Use random effects as well as a variance-covariance matrix, as produced by `metafor::vcalc`
+- Design your database to allow easy filtering for sensitivity analyses.
+
+:::
 
 There are a suite of challenges, regardless of effect size type, that challenge accurate and robust meta-analysis. We'll discuss some of them here. Note that many of our examples pertain especially to the ecology and evolution literature yet we suspect they are pervasive and widespread.
 
@@ -158,6 +167,9 @@ To illustrate, let's imagine we are assessing the influence of temperature on th
 These are moderators we are explicitly interested in. Imagine the results of this study look like this:
 
 ```{r}
+#| label: fig-repeated-measures
+#| fig-cap: "Simulated growth rates of two dreissenid mussel species at two temperatures (15 ºC control in blue, 19 ºC treatment in orange) over three weeks. Points are means of 15 simulated individuals, and error bars show ±1 reported SD."
+#| fig-alt: "Two panels, one per mussel species, with growth rate plotted against week at each temperature. Growth increases over the three weeks in both species. In the zebra mussel (D. polymorpha), growth at 19 ºC is higher than at 15 ºC at every week; in the quagga mussel (D. bugensis) the two temperatures give similar growth."
 #| eval: true
 #| echo: false
 #| out-width: "70%"
@@ -231,36 +243,43 @@ These columns control our non-independence structures within this study. We also
 Let's imagine the next study in this same meta-analysis has two different temperature treatments compared to the same control, again for two different species. In this case, they do not report repeated measures. Their figure might look like this:
 
 ```{r}
+#| label: fig-multiple-comparisons
+#| fig-cap: "Simulated growth rates (means with error bars showing ±1 reported SD) of two species at three temperatures. Each mean is from 25 simulated individuals. The 15 ºC bar is the shared control for both comparisons within each species."
+#| fig-alt: "Two panels, one per species, with bars for growth at 15 ºC (control, blue), 20 ºC and 25 ºC (treatments). The zebra mussel (D. polymorpha) peaks at 20 ºC and falls at 25 ºC, while the freshwater mussel Alasmidonta undulata changes little between 15 and 20 ºC and falls at 25 ºC."
 #| eval: true
 #| echo: false
 #| out-width: "70%"
 set.seed(33)
 
-dat <- data.frame(temperature = c(rep("15ºC", 2),
-                               rep("20ºC", 2),
-                               rep("25ºC", 2)),
-                 species = c(rep(c("Dreissena polymorpha", "Alasmidonta undulata"), 3))) %>%
-  mutate(row_id = 1:n(),
-         mean = case_when(temperature == "15ºC" ~ mean(rnorm(n = 10, mean = 4, sd = 2)),
-                          temperature == "20ºC" ~ mean(rnorm(n = 10, mean = 7, sd = 2)),
-                          temperature == "25ºC" ~ mean(rnorm(n = 10, mean = 3, sd = 2))),
-         sd = rnorm(n = n(), mean = .75, sd = .1))
+dat <- data.frame(temperature = rep(c("15ºC", "20ºC", "25ºC"), each = 2),
+                  species = rep(c("Dreissena polymorpha", "Alasmidonta undulata"), 3)) %>%
+  rowwise() %>%
+  mutate(base = case_when(species == "Dreissena polymorpha" & temperature == "15ºC" ~ 4,
+                          species == "Dreissena polymorpha" & temperature == "20ºC" ~ 7,
+                          species == "Dreissena polymorpha" & temperature == "25ºC" ~ 3,
+                          species == "Alasmidonta undulata" & temperature == "15ºC" ~ 4,
+                          species == "Alasmidonta undulata" & temperature == "20ºC" ~ 4.5,
+                          TRUE ~ 2),
+         mean = mean(rnorm(n = 25, mean = base, sd = 2)),
+         sd = rnorm(n = 1, mean = .75, sd = .1)) %>%
+  ungroup()
 
 ggplot(data = dat, aes(x = temperature, y = mean, ymin = mean-sd, ymax = mean+sd,
                      fill = temperature))+
   geom_col()+
   geom_errorbar(width = .25)+
-  ylab("Growth rate")+
+  ylab("Growth rate (mm/week)")+
   xlab("Temperature")+
   facet_wrap(~species)+
   scale_fill_manual(NULL,
-                    values = c("15ºC" = "dodgerblue2",
-                               "20ºC" = "dodgerblue4",
-                               "25ºC" = "indianred"))+  
+                    values = c("15ºC" = "#0072B2",
+                               "20ºC" = "#E69F00",
+                               "25ºC" = "#D55E00"))+
   theme_bw()+
   theme(panel.grid = element_blank(),
         legend.position = "bottom",
         strip.background = element_blank())
+
 
 ```
 
@@ -270,6 +289,7 @@ Here we have a different looking plot, with two treatment temperature (20ºC and
 #| eval: true
 #| echo: false
 #| out-width: "70%"
+
 
 dat <- dat %>%
   mutate(treatment = ifelse(temperature == "15ºC", "low", "high"),
@@ -300,7 +320,7 @@ extracted2 <- rbind(ext.1.wide, ext.2.wide) %>%
 knitr::kable(head(extracted2))
 ```
 
-This dataset has a `control_id` which specifies that these rows share the same control. This can be used in your random effect formulation. Similar conditions may exist for individuals which are part of a cohort, in which case you may also need a `cohort_id` variable.
+This dataset has a `control_id` which specifies which rows share the same control. This can be used in your random effect formulation. Similar conditions may exist for individuals which are part of a cohort, in which case you may also need a `cohort_id` variable.
 
 The combined dataset with both studies would look like this. Note that the time_sequence column for the second study is populated with '1', while the control id for the first study is given a unique value per row (i.e., 1, 2, 3).
 
@@ -326,76 +346,64 @@ Tricky business, right?
 Now, to demonstrate how we'd control for these non-independence structures, let's calculate an effect size (SMD) and run a model. Note we have complex non-independence structures here. One of the same species shows up in both studies (so becomes a crossed random effect), we have time sequences nested within an experiment id, and we have a shared control id. 
 
 :::callout-note
-Crossed and nested random effects are confusing. Nested random effects occur when the *inner* level is unique to the outer level. For example, an independent experiment *within* an article Crossed random effects happen when a random effect level occurs across other random effect levels. For example, the same species studied across multiple articles. 
+Crossed and nested random effects are confusing. Nested random effects occur when the *inner* level is unique to the outer level. For example, an independent experiment *within* an article. 
+
+Crossed random effects happen when a random effect level occurs across other random effect levels. For example, the same species studied across multiple articles. 
 :::
 
 Ultimately, we would also likely want to add a phylogenetic dissimilarity matrix to control for phylogenetic distance between the species. And perhaps (at least in a field study), we should also control for spatial non-independence between studies. But let's leave that out for now. See @Mizuno2026-ab for a tutorial on phylogenetic and spatial meta-analytic models and see @Nakagawa2023-la for further discussion on controlling for non-independence in meta-analysis.
 
-Note that the `struct` argument in `rma.mv` specifies the correlation structure to apply to the time series.
+The code below uses `vcalc` to build a variance-covariance matrix that records which effect sizes share a control. We explain `vcalc` in more detail [below](#sec-vcalc).
 
-**SHOULD THIS JUST BE A `vcalc` OPERATION????????**
 ```{r}
-#| eval: false
+#| eval: true
 #| echo: true
 #| out-width: "70%"
 
-library("metafor")
-
-# First calculate effect size:
+# First calculate the effect size (SMD). Group 1 = treatment (high temperature), group 2 = control (low temperature):
 full_dat <- escalc(measure = "SMD",
-                   m1i = mean_low, m2i = mean_high,
-                   sd1i = sd_low, sd2i = sd_high,
-                   n1i = n_low, n2i = n_high, 
-                   data = full_dat) |> setDT()
+                   m1i = mean_high, m2i = mean_low,
+                   sd1i = sd_high, sd2i = sd_low,
+                   n1i = n_high, n2i = n_low,
+                   data = full_dat)
 
-# Calculate difference in temperature to use as a moderator:
-full_dat[, temperature_diff := as.numeric(gsub("ºC", "", temperature_high)) - as.numeric(gsub("ºC", "", temperature_low))]
+# Calculate the difference in temperature (treatment minus control) to use as a moderator:
+full_dat$temperature_diff <- as.numeric(gsub("ºC", "", full_dat$temperature_high)) -
+  as.numeric(gsub("ºC", "", full_dat$temperature_low))
 
 # Add a unique ID for each effect size:
-full_dat[, effect_size_id := 1:.N]
+full_dat$effect_size_id <- 1:nrow(full_dat)
 
-# Model
+# Describe the two groups compared in each effect size. Effect sizes that share a control are correlated:
+full_dat$treatment_group <- paste(full_dat$article_id, full_dat$species,
+                                  full_dat$time_sequence, full_dat$temperature_high)
+full_dat$control_group <- full_dat$control_id
+
+# Variance-covariance matrix of the sampling errors:
+V <- vcalc(vi, cluster = article_id, grp1 = treatment_group, grp2 = control_group,
+           w1 = n_high, w2 = n_low, data = full_dat)
+
+# Model:
 m <- rma.mv(yi ~ temperature_diff,
-            V = vi,
-            random = list(~1 | article_id / control_id / effect_size_id,
-                          ~1 | species,
-                          ~time_sequence | experiment_id),
-            dfs = "contain",
-            test = "t",
-            method = "REML",
-            struct = "AR",
+            V = V,
+            random = ~ 1 | article_id / effect_size_id,
             data = full_dat)
-
+m
 ```
 
+Voila! Well, sort of. This model converges on our small example. A fuller random-effects structure, with species and time-series terms, is too complex for the number of levels here (2 studies, 3 species). With a real dataset you would add `~ 1 | species` and the time-series term.
 
-Voila! 
-
-Well, sort of. In the case above, the model actually doesn't fit because the random effects are too complex for the number of levels provided (2 studies, 3 species). If the model *does* fit, it may be **overfit**, which can lead to inaccurate model estimates. 
-
-To evaluate model overfitting, you can look for $\sigma^2$ values that approach 0. $\sigma^2$ describe the variation explained by each random effect level. In `rma.mv`, the model summary reports $\sigma^2$ as `sigma2` and it be accessed in the model object as follows:
+Variance components (the $\sigma^2$ values) at or near 0 indicate a level the data cannot support. Check them with `profile(m)` and consider simplifying. The model reports them as `sigma2`, and you can access them from the model object like this:
 
 ```{r}
 #| echo: true
-#| eval: false
-
-# Fit the model:
-m <- rma.mv(yi ~ temperature_diff,
-            V = vi,
-            random = list(~1 | article_id / control_id / effect_size_id,
-                          ~1 | species,
-                          ~time_sequence | experiment_id),
-            dfs = "contain",
-            test = "t",
-            method = "REML",
-            struct = "AR",
-            data = full_dat)
+#| eval: true
 
 m$sigma2
 
 ```
 
-We recommend constructing a series of random effect structures, from complex to simple, running all the models, screening out $\sigma^2 \approx 0$, and selecting the best model with AIC or AICc. **See XXXX for a tutorial on model selection and overfitting in meta-analysis.**
+We recommend constructing a series of random effect structures, from complex to simple, running all the models, screening out $\sigma^2 \approx 0$, and selecting the best model with AIC or AICc. 
 
 ::: callout-important
 #### Effect size choices to reduce nuisance heterogeneity {#sec-callout-custom-effect-sizes}
@@ -409,19 +417,18 @@ Finally, a third option would have been to use a totally different (and more unu
 For more discussion of how to accomodate experimental designs (so called nuisance heterogeneity) explicitly into your effect size calculations, instead of into your models see @Noble2022-pl.
 :::
 
-
 #### Creating a variance-covariance matrix with `vcalc` {#sec-vcalc}
-**I'm not sure I fully understand when to use `vcalc` versus just random effects**
-
 Complex non-independence structures can also be calculated separately with the function `metafor::vcalc`.
 
-Use `vcalc` to control for non-independence structures within studies that may be non-identifiable as a random effect. E.g., if you have 20 studies and 22 control IDs within then, you'll likely never get a good estimate at the cohort_ID level of your random effects. Factoring cohort ID, effect size ID into vcalc can take care of that non-independence without overfitting your model.
+Use `vcalc` to control for non-independence structures within studies that may be non-identifiable as a random effect. For example, if you have 20 studies with 22 shared controls between them, you'll likely never get a good estimate for a control-ID random effect. Here's the key idea. When two effect sizes share a control group, their sampling errors are correlated, because the same control mean and SD go into both. `vcalc` writes that correlation into a variance-covariance matrix (V). Keep your usual random effects too: random effects describe how the *true* effects vary between studies, while V describes how the *sampling errors* are linked. You generally need both.
 
-See XXXX for a tutorial on how to use `vcalc`.
+As you can see, non-independence structures can be very complex to handle. That can justify extracting a single, pre-specified time point (e.g., the final time point, or the one closest to a pre-registered duration), or a single experimental treatment. You can also filter these after extraction, if your data is tidy and easy to manage.
 
-As you can see, non-independence structures can be very complex to handle, which can justify simply extracting the final time point from a time series or the time point with the largest difference. This can also justify using a single experimental treatment. These can also be filtered after extraction, if your data is tidy and easy to manage. However, the extra non-independent data may provide within-study and within-subject resolution on moderators that you are explicitly interested.
+One rule: never choose the time point with the largest difference. That selects on the outcome and biases effect sizes away from zero.
 
-We recommend the following tutorial on thinking through random effects and using `vcalc` in meta-analysis: **XXXXXX**
+Keep in mind, though, that the extra non-independent data may give you within-study and within-subject resolution on moderators that you are explicitly interested in.
+
+We recommend the [metafor documentation for `vcalc`](https://wviechtb.github.io/metafor/reference/vcalc.html) for how to use it in meta-analysis.
 
 # Database design {#sec-database-design}
 
@@ -462,6 +469,10 @@ We recommend the following tutorials and articles that help disentangle universa
 
 - XXXX
 
-- XXXX
 
-- XXXX
+:::callout-note
+#### Next
+**Next:** **Next:** [SMD and lnRoM extraction challenges](3.2-smd-challenges.qmd), [lnOR extraction challenges](3.3-lnOR-challenges.qmd) and [Zr extraction challenges](3.4-Zr-challenges.qmd).
+:::
+
+

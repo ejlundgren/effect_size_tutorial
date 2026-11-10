@@ -44,7 +44,14 @@ bibliography: references.bib
 csl: ecology.csl
 ---
 
-There are many steps to conducting a high quality meta-analysis. The rest of this tutorial is designed to help with extracting data and calculating effect size {{< glossary point estimates >}} and {{< glossary "sampling variance" >}}. 
+:::callout-note
+#### Key points
+- Plan your extraction before you start: define the question and the effect size you need, and design a database that can hold non-independent data.
+- Pilot-extract about 10% of your screened studies to estimate how many effect sizes you will get and which extraction challenges are common.
+- Use a transparent workflow for figure extraction, and check the numeric assumptions of your effect size before you fit models.
+:::
+
+There are many steps to conducting a high quality meta-analysis. The rest of this tutorial is designed to help with extracting data and calculating effect size {{< glossary "point estimates" >}} and {{< glossary "sampling variance" >}}. 
 
 Data extraction is one of the most difficult steps and will make an important difference in whether you are able to accurately extract all of the data pertaining to your question and correctly calculate your effect size. Extraction errors and calculation errors are common and can severely bias meta-analytic results [@Gotzsche2007-rb].
 
@@ -82,10 +89,30 @@ This can be done after initial extraction as well, if you took record of the eff
 
 Finally, following extraction, you'll want to evaluate the statistical distributions of your data to understand whether the effect size estimator you plan to use is appropriate. We discuss these assumptions in previous sections.
 
-![](figures/flowcharts_diagrams/extraction-steps.png){width="40%"}
-
-
-**Should change "Test for overdispersion" -> "Test numeric assumptions (e.g., overdispersion)"**
+```{mermaid}
+%%| label: fig-extraction-steps
+%%| fig-cap: "The extraction workflow. Step 0 defines the question and estimand before any database is designed. Steps 1 and 2 build and revise the database and extraction criteria. Step 3 checks the numeric assumptions of the data (values at or below zero, the Geary check, heteroscedasticity, dimensionality, and bounds of 0 to 1) before the effect size estimator is chosen. Step 4 runs the models and sensitivity tests. Arrows show the order of work and the loop for revising inclusion criteria."
+%%| fig-alt: "Flowchart with five numbered stages. Stage 0: define question and estimand, leading to stage 1. Stage 1: design database and pilot extraction, linked in both directions. Stage 2: determine inclusion criteria, extract data, record unextractable data, and revise inclusion criteria in a loop. Stage 3: check numeric assumptions, then design sensitivity tests and choose the effect size estimator. Stage 4: run models and conduct sensitivity tests."
+flowchart TD
+  s0["0. Define question & estimand"] --> s1
+  subgraph s1g["1. Database"]
+    s1["Design database"] <--> s1b["Pilot extraction"]
+  end
+  s1b --> s2
+  subgraph s2g["2. Extraction criteria"]
+    s2["Determine inclusion criteria for extraction challenges"] --> s2b["Extract data"]
+    s2b --> s2c["Record unextractable data"]
+    s2c --> s2d["Revise inclusion criteria based on distribution of extraction challenges"]
+    s2d --> s2
+  end
+  s2b --> s3
+  subgraph s3g["3. Check numeric assumptions"]
+    s3["Check numeric assumptions: values at or below zero, Geary check, heteroscedasticity, dimensionality, 0-1 bounds"] --> s3b["Design sensitivity tests"]
+    s3 --> s3c["Choose appropriate effect size estimator"]
+    s3b --> s3c
+  end
+  s3c --> s4["4. Run models and conduct sensitivity tests"]
+```
 
 :::callout-note
 #### Organizing sensitivity analyses {#sec-organizing-sensitivity-analyses}
@@ -164,4 +191,9 @@ Many of the columns in this are a non-exhaustive suggestion for drivers of non-i
 
 The other columns are effect size specific, which we also discuss in each effect size specific page.
 
+
+:::callout-note
+#### Next
+**Next:** [Universal extraction challenges](3.1-universal-challenges.qmd)---sample size, units of replication and repeated measures.
+:::
 

@@ -70,35 +70,54 @@ library("crayon")
 
 ```
 
+:::callout-tip
+#### Key points
+
+- **SMD** (the standardized mean difference) is the common currency that most conversions pass through. Cohen's *d* is the uncorrected estimate of SMD and Hedges' *g* is its bias-corrected estimate.
+- Every conversion makes an assumption about the underlying data.
+- Be sure to run sensitivity analyses including and excluding converted data to ensure your results are robust.
+- Converting **lnRoM** to SMD is one-way only and assumes equal standard deviations in the two groups. We cannot convert SMD back to lnRoM.
+- Throughout this chapter we use the Arctic willow warming example from [our SMD assumptions page](2.1-SMD-assumptions.qmd): warmed plants (12 g, sd 3, n 20) against control plants (10 g, sd 2, n 20).
+:::
+
 # Converting between effect sizes {#sec-effect-size-conversion}
 
 Many effect sizes can be inter-converted [@borenstein2021; @Lajeunesse2026-ms] These conversions make assumptions and can bias the resulting effect types (see [@poom2022accuracy]) and should be carefully used—with sensitivity analyses to ensure that the conversions aren't unduly influencing results. 
 
 At the same time, especially for questions with limited data, we believe that conversions are an important tool in the meta-analyst toolkit.
 
-![Effect size types](figures/flowcharts_diagrams/conversions.png) 
+```{mermaid}
+%%| label: fig-conversion-map
+%%| fig-cap: "Which effect sizes can be converted to which. Solid arrows are conversions we describe in this chapter; the dashed arrow is a conversion we do not provide. Each arrow carries the assumption it relies on, which is listed in the table below."
+%%| fig-alt: "Flowchart with SMD in the center. lnOR and $Z_r$ connect to SMD in both directions. lnRoM has a solid one-way arrow to SMD, labeled as assuming equal standard deviations, and a dashed arrow back from SMD to lnRoM, labeled as not provided."
+flowchart LR
+  LOR["lnOR"] <--> SMD["SMD"]
+  $Z_r$["$Z_r$"] <--> SMD
+  LRM["lnRoM"] --> SMD
+  SMD -.-> LRM
+```
+
 
 
 ## Assumptions {#sec-assumptions}
 Converting effect sizes requires several assumptions. We summarize these in the table below: 
 
-
 | Conversion  | Assumption                                    |
 |-------------|-----------------------------------------------|
 | lnOR ↔ SMD  |Response variable is a discretized version of an underlying continuous variable  |
-| SMD ↔ Zr    |Predictor variable is a discretized version of an underlying continuous variable |
-| lnOR ↔ Zr   |Response and predictor have an underlying continuous reality | 
+| SMD ↔ $Z_r$    |Predictor variable is a discretized version of an underlying continuous variable |
+| lnOR ↔ $Z_r$   |Response and predictor have an underlying continuous reality | 
 | SMD ↔ lnRoM |Homogeneity of variances between groups |
 
 
 ## Unit of replication alignment
 In addition to these assumptions, be careful that the data is truly comparable, especially in terms of their units of replication---otherwise the converted effect size will have vastly higher or lower weights in the final meta-analytic model. 
 
-For example, imagine you're analyzing the effect of an introduced predator on prey abundance. Some studies present abundance correlations of the predator and prey (Zr), where the unit of replication is the **number of surveys**. Other studies report the presence and absence of prey species on islands with and without the predator (lnOR), for which the unit of replication is **number of islands** (each of which was presumably surveyed many times).
+For example, imagine you're analyzing the effect of an introduced predator on prey abundance. Some studies present abundance correlations of the predator and prey ($Z_r$), where the unit of replication is the **number of surveys**. Other studies report the presence and absence of prey species on islands with and without the predator (lnOR), for which the unit of replication is **number of islands** (each of which was presumably surveyed many times).
 
 Both of these study types are relevant to the same question--—the effect of the predator on prey abundance. Likewise, converting betwee these effect sizes does not violate the assumptions in the [table above](#sec-assumptions) because presence-absence is a discretized version of abundance. It is thus possible to convert these effect sizes via SMD to include both papers in the same model.
 
-However, **the units of replication of these study types are vastly different** (study 1 = survey; study 2 = island). This means the Zr abundance correlations will have more weight than the full-island lnOR responses.
+However, **the units of replication** of these study types are *vastly* different (study 1 = survey; study 2 = island). This means the $Z_r$ abundance correlations will have more weight than the full-island lnOR responses.
 
 However, in many other cases, conversions will allow similar data to be compared without comparing different units of replication. 
 
@@ -108,7 +127,7 @@ Given the assumptions and potential biases involved in converting effect sizes, 
 ####### Alternative to conversion: reconstruct the underlying data {#sec-callout-reconstructing-data}
 In some cases, converting between effect sizes can be prevented by reconstructing the underlying data of the author-presented summaries and summarizing these data into the desired analysis effect size, which can align the units of replication between studies. 
 
-See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [Zr effect sizes](3.4-Zr-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](7-simulating-non-gaussian-responses.qmd)
+See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [$Z_r$ effect sizes](3.4-$Z_r$-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](7-simulating-non-gaussian-responses.qmd)
 :::
 
 ## Helper function: `convert_effect_sizes` {#sec-helper-function}
@@ -123,119 +142,155 @@ convert_effect_sizes()
 
 ```
 
-To convert an effect size, specify the `from` effect type and the `to` effect type, as well as the required statistics. Note that this function also supports full, two-step conversions from Zr to lnOR and vice versa.
+To convert an effect size, specify the `from` effect type and the `to` effect type, as well as the required statistics. Note that this function also supports full, two-step conversions from $Z_r$ to lnOR and vice versa.
 
-We'll now show the math and demonstrate the conversions in `R`. SMD is the universal solvent of these conversions and it is important to remember that SMD has multiple estimators. The most commonly used is Hedges' $g$, which has a small sample size bias correction factor $J$. However, all conversion formulas convert to and from $d$, an alternative estimator of SMD that lacks this correction factor. For that reason, the math below will skip this conversion and be written for $d$ instead of $g$ based on this conversion. 
+We'll now show the math and demonstrate the conversions in `R`. All of these conversions pass through SMD. Remember that SMD can be estimated two ways: Cohen's $d$ (uncorrected) and Hedges' $g$ ($d$ multiplied by the small sample size correction factor $J$). The formulas below are written for Cohen's $d$, and we convert to $g$ where needed. If your data are already Hedges' $g$, divide by $J$ first. Luckily, `convert_effect_sizes()` does this for you.
 
 
 $$
 \begin{aligned}
-&J = 1-\frac{3}{4*(n_1 + n_2 - 2) - 1}\\
-&d = \frac{m1-m2}{sd_{pooled}}\\
-&d = \frac{g}{J}
+&J = 1-\frac{3}{4*(n_1 + n_2) - 9}\\
+&d = \frac{m_1-m_2}{sd_{pooled}}\\
+&g = J * d
 \end{aligned}
 $$
-Note that the default sampling variance estimator for Hedges' g is the same estimator used for Cohen's d (in the `R` package `escalc`. Thus no conversion from Var(d) to Var(g) is necessary.
+
+For the willow example, the escalc output gives us Hedges' $g$ and its sampling variance directly:
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Arctic willow warming example (Chapter 2.1): warmed plants (group 1) vs control (group 2)
+m_warm <- 12; sd_warm <- 3; n_warm <- 20
+m_ctrl <- 10; sd_ctrl <- 2; n_ctrl <- 20
+
+willow_smd <- escalc(measure = "SMD",
+                     m1i = m_warm, m2i = m_ctrl,
+                     sd1i = sd_warm, sd2i = sd_ctrl,
+                     n1i = n_warm, n2i = n_ctrl)
+
+willow_rom <- escalc(measure = "ROM",
+                     m1i = m_warm, m2i = m_ctrl,
+                     sd1i = sd_warm, sd2i = sd_ctrl,
+                     n1i = n_warm, n2i = n_ctrl,
+                     correct = FALSE)   # uncorrected lnRoM (definition formula)
+
+g_willow     <- as.numeric(willow_smd$yi)
+vi_g_willow  <- as.numeric(willow_smd$vi)
+lnrom_willow <- as.numeric(willow_rom$yi)
+vi_lnrom_willow <- as.numeric(willow_rom$vi)
+
+c(g = g_willow, vi_g = vi_g_willow, lnRoM = lnrom_willow, vi_lnRoM = vi_lnrom_willow)
+```
+
+The Arctic willow warming example gives Hedges' $g$ = `r sprintf('%.2f', g_willow)` (variance `r sprintf('%.3f', vi_g_willow)`) and lnRoM = `r sprintf('%.2f', lnrom_willow)` (variance `r sprintf('%.4f', vi_lnrom_willow)`). We use these values as inputs to the conversions below.
+
+A quick note on variances. For $g$, `escalc` uses an approximate (large-sample) variance formula: $1/n_1 + 1/n_2 + g^2/(2(n_1 + n_2))$. Our conversions give us Cohen's $d$ and its variance, $V_d$. To get to Hedges' $g$, we multiply the point estimate by $J$ and the variance by $J^2$: $g = J d$ and $V_g = J^2 V_d$. You'll see this correction in the code below.
 
 :::callout-important
 ####### Alternative estimators and effect size conversion {#sec-alternative-estimators}
 As described [earlier](1-effect-size-overview.qmd#sec-alternative-estimators) in this tutorial, there are multiple flavors of estimators for many effect sizes including paired estimators and, for SMD, an estimator that tolerates heteroscedastic data ("SMDH"). To the best of our knowledge, there are no conversion formulas for these alterative estimators. 
 
-This means that if you are converting Zr effect sizes to add to a meta-analysis that is otherwise composed of SMD-type effect sizes, you won't be able to use SMDH for the larger dataset. Conversely, if you have paired SMD-type data that you wish to convert to add to a meta-analysis of Zr effect sizes, you'll have to ignore the paired design.
+This means that if you are converting $Z_r$ effect sizes to add to a meta-analysis that is otherwise composed of SMD-type effect sizes, you won't be able to use SMDH for the larger dataset. 
+
+Conversely, if you have paired SMD-type data (using `SMCRP` in `escalc`, not `SMCC`) that you wish to convert to add to a meta-analysis of $Z_r$ effect sizes, you'll have to ignore the paired design.
 :::
 
-# SMD ↔ lnOR 
+# SMD ↔ lnOR
 
 ## SMD → lnOR {#sec-smd-lnOR}
-This conversion assumes that the response variable is continuous (e.g., undergirding the binary response of the lnOR effect type) and that it has a logistic distribution (similar to a normal distribution).
+This conversion assumes that the response variable is continuous (e.g., underlying the binary outcome of the lnOR effect type) and that it has a logistic distribution (similar to a normal distribution).
 
 If the lnOR data was presence/absence of a species and the SMD data was abundance, we believe this assumption is satisfied, given that presence/absence are the extreme ends of abundance.
 
-Let $yi_{lnOR}$ and $yi_{d}$ be the point estimate for the lnOR and Cohen's d effect sizes and $vi_{lnOR}$ and $vi_{d}$ be their sampling variances:
+Let $y_{i,\text{lnOR}}$ and $y_{i,d}$ be the point estimate for the lnOR and Cohen's d effect sizes and $v_{i,\text{lnOR}}$ and $v_{i,d}$ be their sampling variances:
 
 $$
 \begin{aligned}
-&yi_{lnOR} = yi_d * \frac{\pi}{\sqrt{3}} \\
-&vi_{lnOR} = vi_{d} * \frac{\pi^2}{3} \\
+&y_{i,\text{lnOR}} = y_{i,d} * \frac{\pi}{\sqrt{3}} \\
+&v_{i,\text{lnOR}} = v_{i,d} * \frac{\pi^2}{3} \\
 \end{aligned}
 $$
 
-In `R`:
+In `R`, using the willow SMD (Hedges' $g$) as input:
 
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-convert_effect_sizes(from = "SMD",
-                     to = "lnOR",
-                     yi = 0.9,
-                     vi = 0.01,
-                     n1 = 15,
-                     n2 = 15)
-
+lnor_willow <- convert_effect_sizes(from = "SMD",
+                                    to = "lnOR",
+                                    yi = g_willow,
+                                    vi = vi_g_willow,
+                                    n1 = n_warm,
+                                    n2 = n_ctrl)
+lnor_willow
 ```
 
 ## lnOR → SMD {#sec-lnOR-smd}
-To convert from lnOR to Cohen's $d$:
 
 $$
 \begin{aligned}
-&yi_d = yi_{lnOR} * \frac{\sqrt{3}}{\pi} \\
-&vi_d = vi_{lnOR} * \frac{3}{\pi^2} \\
+&y_{i,d} = y_{i,\text{lnOR}} * \frac{\sqrt{3}}{\pi} \\
+&v_{i,d} = v_{i,\text{lnOR}} * \frac{3}{\pi^2} \\
 \end{aligned}
 $$
 
-In `R`:
+In `R`, we convert the lnOR we just calculated back to SMD. The round trip returns the willow $g$ and its variance exactly:
+
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-convert_effect_sizes(from = "lnOR",
-                     to = "SMD",
-                     yi = 0.9,
-                     vi = 0.01,
-                     n1 = 15,
-                     n2 = 15)
+back_to_smd <- convert_effect_sizes(from = "lnOR",
+                                    to = "SMD",
+                                    yi = lnor_willow$yi_trans,
+                                    vi = lnor_willow$vi_trans,
+                                    n1 = n_warm,
+                                    n2 = n_ctrl)
+back_to_smd
 ```
 
-# SMD ↔ Zr
-## SMD → Zr {#sec-smd-zr}
+# SMD ↔ $Z_r$
+## SMD → $Z_r$ {#sec-smd-$Z_r$}
 This conversion assumes that a continuous variable was discretized to form the treatment and control groups of an SMD effect size. This may be the case in some situations (e.g., if treatment and control were based on the presence or absence of an independent variable treatment while the correlation was across a continuous gradient of the same variable).
 
-To convert from SMD to Zr, we first convert $d$ to the correlation coefficient $r$ and then to Zr, using a correction factor $a$ for cases where $n_1 \neq n_2$. Let $yi_{Zr}$ and $yi_d$ be the point estimate for Zr and Cohen's d:
+To convert from SMD to $Z_r$, we first convert $d$ to the correlation coefficient $r$ and then to Zr, using a correction factor $a$ for cases where $n_1 \neq n_2$. Let $y_{i,\text{Z_r}}$ and $y_{i,d}$ be the point estimate for $Z_r$ and Cohen's d:
 
 $$
 \begin{aligned}
 &a = \frac{(n_1 + n_2)^2}{n_1*n_2} \\
-&r = \frac{yi_d}{\sqrt{yi_d^2 + a}} \\
-&r \leftarrow \min(1, \max(-1, r_i))\\
-&yi_{Zr} = atanh(r)\\
+&r = \frac{y_{i,d}}{\sqrt{y_{i,d}^2 + a}} \\
+&y_{i,\text{Z_r}} = atanh(r)\\
 \end{aligned}
 $$
 
-And the sampling variance of Zr ($vi_{Zr}$):
+And the sampling variance of $Z_r$ ($v_{i,\text{Z_r}}$):
 $$
 \begin{aligned}
-&n = n1 + n2 \\
-&vi_{Zr} = \frac{1}{(n - 3)} \\
+&n = n_1 + n_2 \\
+&v_{i,\text{Z_r}} = \frac{1}{(n - 3)} \\
 \end{aligned}
 $$
-
-In `R`:
+In `R`, for the willow example:
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-convert_effect_sizes(from = "SMD",
-                     to = "Zr",
-                     yi = 0.9,
-                     vi = 0.01,
-                     n1 = 15,
-                     n2 = 15)
+zr_willow <- convert_effect_sizes(from = "SMD",
+                                  to = "Zr",
+                                  yi = g_willow,
+                                  vi = vi_g_willow,
+                                  n1 = n_warm,
+                                  n2 = n_ctrl)
+zr_willow
 ```
 
 :::callout-important
-Instead of converting SMD to Zr, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to Zr. This can be done in `escalc` directly with the measure "ZBIS", which calculates teh biserial correlation coefficient and converts it to Zr.
+Instead of converting SMD to $Z_r$, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to $Z_r$. This can be done in `escalc` directly with `measure = "ZBIS"`, which calculates the biserial correlation coefficient and converts it to $Z_r$. Why bother? The formula above gives a *point-biserial* correlation. When the two groups are an artificial split of a continuous variable (the assumption in the table above), the comparable correlation is the biserial $r_b$. The point-biserial version is only for *naturally* discrete groups (e.g., male versus female). @Jacobs2017-cv advised against comparing it with correlations from two continuous variables ($r$) or from an artificially split variable ($r_b$), so don't pool them without a moderator.
+
+Note that the sampling variance from `escalc` for ZBIS is not $1/(n-3)$. The Fisher z transformation does not stabilize the variance of biserial or point-biserial correlations, so flag these rows and run a sensitivity analysis.
 
 ```{r}
 escalc(measure = "ZBIS",
@@ -243,62 +298,86 @@ escalc(measure = "ZBIS",
        sd1i = 1.5, sd2i = 2,
        n1i = 15, n2i = 15)
 ```
-
-Note that there is also an option to calculate a *point-biserial* correlation coefficient ($r_{pb}$) from *naturally* discrete groups (e.g., male versus female). However, @Jacobs2017-cv advised against comparing this to correlation coefficients calculated from 2 continuous variables ($r$) or from one artificially discretized variable ($r_b$). 
-
-Confusing stuff...My head hurts.
 :::
 
-
-## Zr → SMD {#sec-zr-smd}
-First, convert the point estimate of Zr ($yi_{Zr}$) to the correlation coefficient $r$ and calculate the variance of $r$ ($vi_r$):
+## $Z_r$ → SMD {#sec-$Z_r$-smd}
+First, convert the point estimate of $Z_r$ ($y_{i,\text{Zr}}$) to the correlation coefficient $r$ and calculate the variance of $r$ ($v_{i,r}$):
 $$
 \begin{aligned}
-&r = tanh(yi_{Zr}) \\
-&vi_r = \frac{(1-r^2)^2}{(n-1)}
+&r = tanh(y_{i,\text{Zr}}) \\
+&v_{i,r} = \frac{(1-r^2)^2}{(n-1)}
 \end{aligned}
 $$
 
-Then calculate the point estimate ($yi_d$) and variance ($vi_d$) of Cohen's d:
+Then calculate the point estimate ($y_{i,d}$) and variance ($v_{i,d}$) of Cohen's d:
 
 $$
 \begin{aligned}
-&yi_d = \frac{2*r}{\sqrt{1-r^2}} \\
-&vi_d = \frac{4*vi_r}{(1-r^2)^3} \\
+&y_{i,d} = \frac{2*r}{\sqrt{1-r^2}} \\
+&v_{i,d} = \frac{4*v_{i,r}}{(1-r^2)^3} \\
 \end{aligned}
 $$
 
-In `R`:
+The helper returns the point estimate as Hedges' $g$ and the variance as the variance of $d$. We correct the variance to the variance of $g$ with $J^2$ (see the note above).
+
+In `R`, we convert the willow $Z_r$ back to SMD. The result is close to the original $g$; the small difference comes from the small-sample correction, which depends on the sample size passed to the function:
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-convert_effect_sizes(from = "Zr",
-                     to = "SMD",
-                     yi = 0.9,
-                     vi = 0.01,
-                     n = 50)
+back_to_smd_from_zr <- convert_effect_sizes(from = "Zr",
+                                            to = "SMD",
+                                            yi = zr_willow$yi_trans,
+                                            vi = zr_willow$vi_trans,
+                                            n = n_warm + n_ctrl)
 
+J_willow <- 1 - 3 / (4 * (n_warm + n_ctrl) - 9)
+back_to_smd_from_zr[, vi_trans_g := J_willow^2 * vi_trans]
+back_to_smd_from_zr
 ```
 
-Note you can also calculate this directly from $r$ if preferred:
+Note you can also calculate this directly from $r$ if preferred. Here we use the same willow correlation:
 
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
+r_willow <- tanh(zr_willow$yi_trans)
+
 convert_effect_sizes(from = "r",
                      to = "SMD",
-                     r = 0.5,
-                     vi = 0.1,
-                     n = 50)
+                     r = r_willow,
+                     vi = (1 - r_willow^2)^2 / (n_warm + n_ctrl - 1),
+                     n = n_warm + n_ctrl)
 
 ```
 
-# lnRoM → SMD {#sec-lnrom-smd}
-Imagine you are conducting a meta-analysis using SMD as your effect size of choice due to negative values, dimensionality, or other concerns. During this meta-analysis you may encounter data reported directly as lnRoM (log-transformed ratio of means) alongside its sampling variance or standard error. Until recently, converting lnRoM effect sizes to SMD was mathematically impossible. However, @Lajeunesse2026-ms developed the mathematics to allow such conversion. This not only facilitates the extraction of data published as effect sizes to a common currency but can also facilitate secondary meta-analyses (e.g., meta-meta-analyses) by allowing conversion to the universal solvent of SMD.
 
-The primary mathematical assumption of these conversions is homoscedasticity: that the variance of group 1 is similar to the variance of group 2. These may or may not be met in ecological data. There are additional risks as well: SMD represents linear scale effects as a difference between means whereas lnRoM represents multipicative effects, e.g., where treatment effects scale proportional to baseline levels. As with all conversions, sensitivity analyses are critical to ensure that this assumption isn't unduly influencing your results. 
+## Test statistics, $R^2$ and other summaries {#sec-other-summaries}
+Papers often report a test statistic or a model summary rather than a correlation. The table below gives the conversions to a correlation coefficient $r$ that we recommend. Each one is exact only for the model stated in the middle column.
+
+| Reported statistic | Conversion to $r$ | Notes |
+|---|---|---|
+| $t$ from a simple regression or two-group test | $r = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - 2$ | Sign taken from $t$. |
+| $F(1, df_{error})$ | $r = \sqrt{\frac{F}{F + df_{error}}}$ | Only for one numerator degree of freedom. Take the sign from the slope. |
+| $R^2$ | $r = \sqrt{R^2}$ | Only for a single-predictor model. Take the sign from the slope. |
+| Standardized slope ($b$) | $r = b \frac{s_x}{s_y}$ | Only for a single predictor. |
+| $\chi^2$ from a $2 \times 2$ table | $\phi = \sqrt{\frac{\chi^2}{N}}$ | This is phi, a different estimand. Flag it. |
+| $t$ for one predictor in a multiple regression | $r_p = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - k - 1$ | This is a partial correlation, not a simple correlation. Use `escalc("ZPCOR")` with the number of predictors $m = k$ to get the variance. |
+
+For example, a two-group $t$ of 2.5 with 18 degrees of freedom gives $r$ = `r sprintf('%.2f', 2.5 / sqrt(2.5^2 + 18))`.
+
+
+# lnRoM → SMD {#sec-lnrom-smd}
+Imagine you're running an SMD meta-analysis (maybe because of negative values, dimensionality, or other concerns). Then you find a study that only reports lnRoM (log-transformed ratio of means) and its sampling variance or standard error. Luckily, if the two groups have equal standard deviations, lnRoM can be converted to SMD [@Lajeunesse2026-ms]. This only works one way: we provide lnRoM → SMD, but not SMD → lnRoM. This allows the extraction of data published as effect sizes into a common currency and can also support secondary meta-analyses (e.g., meta-meta-analyses) by converting to the universal solvent of SMD.
+
+The conversion depends on three assumptions:
+
+1. **Equal standard deviations.** The variance of group 1 is similar to the variance of group 2 (homoscedasticity). This may or may not be met in ecological data.
+2. **Additive effect.** SMD represents linear-scale effects as a difference between means, whereas lnRoM represents multiplicative effects, e.g., where treatment effects scale proportionally to baseline levels. When the effect is multiplicative, the converted SMD is an approximation.
+3. **Hedges' correction after converting.** We convert to Cohen's $d$ first and apply the Hedges' correction $J$ afterwards, to give $g$.
+
+As with all conversions, sensitivity analyses are critical to make sure these assumptions are not unduly influencing your results.
 
 Note that converting SMD to lnRoM remains unresolved.
 
@@ -319,33 +398,20 @@ $$
 vi_{d} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}
 \end{aligned}
 $$
+The variance $v_{i,g}$ is the large-sample estimator used by `escalc` for SMD, applied to the converted $g$.
 
-In `R`:
 ```{r}
-#| eval: true
-#| echo: true
-
-convert_effect_sizes(from = "lnRoM",
-                     to = "SMD",
-                     yi = 1.48,
-                     vi = 0.1,
-                     n1 = 25,
-                     n2 = 25)
+conv_willow <- convert_effect_sizes(from = "lnRoM", to = "SMD",
+                                     yi = lnrom_willow, vi = vi_lnrom_willow,
+                                     n1 = n_warm, n2 = n_ctrl)
 
 ```
 
+Converting the willow lnRoM gives Hedges' $g$ = `r sprintf('%.2f', conv_willow$yi_trans)` (variance `r sprintf('%.3f', conv_willow$vi_trans)`). The escalc value from the raw summaries is `r sprintf('%.2f', g_willow)`. The two differ because the standard deviations (`r sd_warm` and `r sd_ctrl`) are not equal, so the equal-SD assumption is not met. 
 
+:::callout-tip
+#### Next
 
-
-<!-- **We don't have a variance conversion??? So exclude unless we can cook one up:** -->
-<!-- # lnOR ↔ lnRR -->
-
-<!-- To convert an OR to an RR, you need the control group's baseline risk ($R_0 = c / (c + d)$): -->
-
-<!-- $$ -->
-<!-- \begin{aligned} -->
-<!-- &RR=\frac{OR}{(1-R_0)+(R_0 \times OR)}\\ -->
-<!-- \end{aligned} -->
-<!-- $$ -->
-
+**Next:** [Variability between groups](5.1-variability-between-groups.qmd), which uses the willow warming example to compare means and variability.
+:::
 
