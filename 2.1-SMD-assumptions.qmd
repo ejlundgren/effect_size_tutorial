@@ -51,10 +51,10 @@ csl: ecology.csl
 
 rm(list = ls())
 
-if(!requireNamespace("metatools")) {
-  pak::pak("ejlundgren/metatools")
+if(!requireNamespace("effit")) {
+  pak::pak("ejlundgren/effit")
 }
-library("metatools")
+library("effit")
 
 library("ggplot2")
 library("data.table")
@@ -429,11 +429,11 @@ escalc(m1i = 12, sd1i = 3, n1i = 20,
        correct = FALSE)
 ```
 
-Or in `metatools::eff_size`:
+Or in `effit::eff_this`:
 ```{r}
-library("metatools")
+library("effit")
 
-eff_size(x1 = 12, sd1 = 3, n1 = 20,
+eff_this(x1 = 12, sd1 = 3, n1 = 20,
          x2 = 10, sd2 = 2, n2 = 20,
          effect_type = "lnRoM",
          default_formulas = FALSE)
@@ -1006,20 +1006,20 @@ rbind(unpaired %>% mutate(pairing = "unpaired"),
 
 As you can see, the point estimates differ slightly, but the sampling variance was reduced by nearly half---which means the paired estimates will have considerably more influence in your models.
 
-Our `eff_size` function provides a different paired formulation for SMD and SMDH [@Nakagawa2025-do] that produce more identical point estimates:
+Our `eff_this` function provides a different paired formulation for SMD and SMDH [@Nakagawa2025-do] that produce more identical point estimates:
 
 ```{r}
 #| eval: true
 #| echo: true
 
-unpaired <- eff_size(x1 = 12, sd1 = 3,
+unpaired <- eff_this(x1 = 12, sd1 = 3,
                      x2 = 10, sd2 = 2, 
                      n1 = 20, n2 = 20,
                      effect_type = "SMD",
                      verbose = FALSE,
                      paired = FALSE) # paired = FALSE is default
 
-paired <- eff_size(x1 = 12, sd1 = 3,
+paired <- eff_this(x1 = 12, sd1 = 3,
                      x2 = 10, sd2 = 2, 
                      n = 20, r = 0.5,
                      effect_type = "SMD",
@@ -1059,19 +1059,19 @@ rbind(unpaired %>% mutate(pairing = "unpaired"),
 
 As you can see, the point estimate remained the same but the variance was reduced in the paired formulation, leading to stronger influence in the meta-analytic models.
 
-And in `eff_size`:
+And in `eff_this`:
 ```{r}
 #| echo: true
 #| eval: false
 
-unpaired <- eff_size(x1 = 12, sd1 = 3,
+unpaired <- eff_this(x1 = 12, sd1 = 3,
                      x2 = 10, sd2 = 2, 
                      n1 = 20, n2 = 20,
                      effect_type = "lnRoM",
                      verbose = FALSE,
                      paired = FALSE) # paired = FALSE is default
 
-paired <- eff_size(x1 = 12, sd1 = 3,
+paired <- eff_this(x1 = 12, sd1 = 3,
                      x2 = 10, sd2 = 2, 
                      n = 20, r = 0.5,
                      effect_type = "lnRoM",

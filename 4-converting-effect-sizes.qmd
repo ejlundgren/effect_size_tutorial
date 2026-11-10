@@ -52,10 +52,10 @@ csl: ecology.csl
 
 rm(list = ls())
 
-if(!requireNamespace("metatools")) {
-  pak::pak("ejlundgren/metatools")
+if(!requireNamespace("effit")) {
+  pak::pak("ejlundgren/effit")
 }
-library("metatools")
+library("effit")
 
 library("ggplot2")
 library("data.table")
@@ -92,7 +92,7 @@ At the same time, especially for questions with limited data, we believe that co
 %%| fig-alt: "Flowchart with SMD in the center. lnOR and $Z_r$ connect to SMD in both directions. lnRoM has a solid one-way arrow to SMD, labeled as assuming equal standard deviations, and a dashed arrow back from SMD to lnRoM, labeled as not provided."
 flowchart LR
   LOR["lnOR"] <--> SMD["SMD"]
-  $Z_r$["$Z_r$"] <--> SMD
+  Zr["Zr"] <--> SMD
   LRM["lnRoM"] --> SMD
   SMD -.-> LRM
 ```
@@ -127,24 +127,24 @@ Given the assumptions and potential biases involved in converting effect sizes, 
 ####### Alternative to conversion: reconstruct the underlying data {#sec-callout-reconstructing-data}
 In some cases, converting between effect sizes can be prevented by reconstructing the underlying data of the author-presented summaries and summarizing these data into the desired analysis effect size, which can align the units of replication between studies. 
 
-See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [$Z_r$ effect sizes](3.4-$Z_r$-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](7-simulating-non-gaussian-responses.qmd)
+See examples for [SMD-type effect sizes](3.2-smd-challenges.qmd#sec-smd-reconstructing-data), [lnOR effect sizes](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data), [$Z_r$ effect sizes](3.4-Zr-challenges.qmd#sec-single-axis-error-bars), and for [non-Gaussian responses](7-simulating-non-gaussian-responses.qmd)
 :::
 
-## Helper function: `convert_effect_sizes` {#sec-helper-function}
+## Helper function: `this_to_that` {#sec-helper-function}
 
-We have digitized the primary conversion formulas and they are available in our `convert_effect_sizes()` function. Running the function on its own will return a table with the statistics required for each conversion.
+We have digitized the primary conversion formulas and they are available in our `this_to_that()` function. Running the function on its own will return a table with the statistics required for each conversion.
 
 ```{r}
 #| eval: true
 #| echo: true
 
-convert_effect_sizes()
+this_to_that()
 
 ```
 
 To convert an effect size, specify the `from` effect type and the `to` effect type, as well as the required statistics. Note that this function also supports full, two-step conversions from $Z_r$ to lnOR and vice versa.
 
-We'll now show the math and demonstrate the conversions in `R`. All of these conversions pass through SMD. Remember that SMD can be estimated two ways: Cohen's $d$ (uncorrected) and Hedges' $g$ ($d$ multiplied by the small sample size correction factor $J$). The formulas below are written for Cohen's $d$, and we convert to $g$ where needed. If your data are already Hedges' $g$, divide by $J$ first. Luckily, `convert_effect_sizes()` does this for you.
+We'll now show the math and demonstrate the conversions in `R`. All of these conversions pass through SMD. Remember that SMD can be estimated two ways: Cohen's $d$ (uncorrected) and Hedges' $g$ ($d$ multiplied by the small sample size correction factor $J$). The formulas below are written for Cohen's $d$, and we convert to $g$ where needed. If your data are already Hedges' $g$, divide by $J$ first. Luckily, `this_to_that()` does this for you.
 
 
 $$
@@ -219,7 +219,7 @@ In `R`, using the willow SMD (Hedges' $g$) as input:
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-lnor_willow <- convert_effect_sizes(from = "SMD",
+lnor_willow <- this_to_that(from = "SMD",
                                     to = "lnOR",
                                     yi = g_willow,
                                     vi = vi_g_willow,
@@ -243,7 +243,7 @@ In `R`, we convert the lnOR we just calculated back to SMD. The round trip retur
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-back_to_smd <- convert_effect_sizes(from = "lnOR",
+back_to_smd <- this_to_that(from = "lnOR",
                                     to = "SMD",
                                     yi = lnor_willow$yi_trans,
                                     vi = lnor_willow$vi_trans,
@@ -253,32 +253,33 @@ back_to_smd
 ```
 
 # SMD ↔ $Z_r$
-## SMD → $Z_r$ {#sec-smd-$Z_r$}
+## SMD → $Z_r$ {#sec-smd-Zr}
 This conversion assumes that a continuous variable was discretized to form the treatment and control groups of an SMD effect size. This may be the case in some situations (e.g., if treatment and control were based on the presence or absence of an independent variable treatment while the correlation was across a continuous gradient of the same variable).
 
-To convert from SMD to $Z_r$, we first convert $d$ to the correlation coefficient $r$ and then to Zr, using a correction factor $a$ for cases where $n_1 \neq n_2$. Let $y_{i,\text{Z_r}}$ and $y_{i,d}$ be the point estimate for $Z_r$ and Cohen's d:
+To convert from SMD to $Z_r$, we first convert $d$ to the correlation coefficient $r$ and then to Zr, using a correction factor $a$ for cases where $n_1 \neq n_2$. Let $y_{i,\text{Zr}}$ and $y_{i,d}$ be the point estimate for $Z_r$ and Cohen's d:
 
 $$
 \begin{aligned}
 &a = \frac{(n_1 + n_2)^2}{n_1*n_2} \\
 &r = \frac{y_{i,d}}{\sqrt{y_{i,d}^2 + a}} \\
-&y_{i,\text{Z_r}} = atanh(r)\\
+&y_{i,\text{Zr}} = atanh(r)\\
 \end{aligned}
 $$
 
-And the sampling variance of $Z_r$ ($v_{i,\text{Z_r}}$):
+And the sampling variance of $Z_r$ ($v_{i,\text{Zr}}$):
 $$
 \begin{aligned}
 &n = n_1 + n_2 \\
-&v_{i,\text{Z_r}} = \frac{1}{(n - 3)} \\
+&v_{i,\text{Zr}} = \frac{1}{(n - 3)} \\
 \end{aligned}
 $$
+
 In `R`, for the willow example:
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-zr_willow <- convert_effect_sizes(from = "SMD",
+zr_willow <- this_to_that(from = "SMD",
                                   to = "Zr",
                                   yi = g_willow,
                                   vi = vi_g_willow,
@@ -325,7 +326,7 @@ In `R`, we convert the willow $Z_r$ back to SMD. The result is close to the orig
 #| eval: true
 #| echo: true
 #| out-width: "70%"
-back_to_smd_from_zr <- convert_effect_sizes(from = "Zr",
+back_to_smd_from_zr <- this_to_that(from = "Zr",
                                             to = "SMD",
                                             yi = zr_willow$yi_trans,
                                             vi = zr_willow$vi_trans,
@@ -344,7 +345,7 @@ Note you can also calculate this directly from $r$ if preferred. Here we use the
 #| out-width: "70%"
 r_willow <- tanh(zr_willow$yi_trans)
 
-convert_effect_sizes(from = "r",
+this_to_that(from = "r",
                      to = "SMD",
                      r = r_willow,
                      vi = (1 - r_willow^2)^2 / (n_warm + n_ctrl - 1),
@@ -369,7 +370,9 @@ For example, a two-group $t$ of 2.5 with 18 degrees of freedom gives $r$ = `r sp
 
 
 # lnRoM → SMD {#sec-lnrom-smd}
-Imagine you're running an SMD meta-analysis (maybe because of negative values, dimensionality, or other concerns). Then you find a study that only reports lnRoM (log-transformed ratio of means) and its sampling variance or standard error. Luckily, if the two groups have equal standard deviations, lnRoM can be converted to SMD [@Lajeunesse2026-ms]. This only works one way: we provide lnRoM → SMD, but not SMD → lnRoM. This allows the extraction of data published as effect sizes into a common currency and can also support secondary meta-analyses (e.g., meta-meta-analyses) by converting to the universal solvent of SMD.
+Imagine you're running an SMD meta-analysis (maybe because of negative values, dimensionality, or other concerns). Then you find a study that only reports lnRoM (log-transformed ratio of means) and its sampling variance or standard error. Luckily, if the two groups have equal standard deviations, lnRoM can be converted to SMD [@Lajeunesse2026-ms]. 
+
+This only works one way: we provide lnRoM → SMD, but not SMD → lnRoM. This allows the extraction of data published as effect sizes into a common currency and can also support secondary meta-analyses (e.g., meta-meta-analyses) by converting to the universal solvent of SMD.
 
 The conversion depends on three assumptions:
 
@@ -381,7 +384,7 @@ As with all conversions, sensitivity analyses are critical to make sure these as
 
 Note that converting SMD to lnRoM remains unresolved.
 
-As with the other conversions, we'll relay the math to convert between Cohen's d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, `convert_effect_sizes` automatically converts Cohen's d to Hedges' g (the bias-corrected estimator of SMD).
+As with the other conversions, we'll relay the math to convert between Cohen's d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, `this_to_that` automatically converts Cohen's d to Hedges' g (the bias-corrected estimator of SMD).
 
 Let $yi_{ROM}$ and $yi_{d}$ be the point estimates of lnRoM and SMD (after converting Hedges' g to Cohen's d) and $vi_{ROM}$ and $vi_{d}$ be their sampling variance estimates. Finally, let $n_1$ and $n_2$ be the numerator and denominator of lnRoM (e.g., the treatment and control groups respectively):
 
@@ -401,10 +404,10 @@ $$
 The variance $v_{i,g}$ is the large-sample estimator used by `escalc` for SMD, applied to the converted $g$.
 
 ```{r}
-conv_willow <- convert_effect_sizes(from = "lnRoM", to = "SMD",
-                                     yi = lnrom_willow, vi = vi_lnrom_willow,
-                                     n1 = n_warm, n2 = n_ctrl)
-
+conv_willow <- this_to_that(from = "lnRoM", to = "SMD",
+                                   yi = lnrom_willow, vi = vi_lnrom_willow,
+                                   n1 = n_warm, n2 = n_ctrl)
+conv_willow
 ```
 
 Converting the willow lnRoM gives Hedges' $g$ = `r sprintf('%.2f', conv_willow$yi_trans)` (variance `r sprintf('%.3f', conv_willow$vi_trans)`). The escalc value from the raw summaries is `r sprintf('%.2f', g_willow)`. The two differ because the standard deviations (`r sd_warm` and `r sd_ctrl`) are not equal, so the equal-SD assumption is not met. 

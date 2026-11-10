@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="dcterms.date" content="2026-11-10">
+<title>Converting between effect sizes – A user’s guide to effect sizes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./icons/temp_logo.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-61b838042b633b16d416a2b6f0e5420d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script src="site_libs/quarto-diagram/mermaid.min.js"></script><script src="site_libs/quarto-diagram/mermaid-init.js"></script><link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="styles.css">
+</head>
+<body class="docked quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./4.0-converting-effect-sizes.html">Converting between effect sizes</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./icons/temp_logo.png" alt="" class="sidebar-logo light-content py-0 d-lg-inline d-none"><img src="./icons/temp_logo.png" alt="" class="sidebar-logo dark-content py-0 d-lg-inline d-none"></a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">A user’s guide to effect sizes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+ <span class="menu-text"><b>Table of Contents</b></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About this tutorial</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./to_do_list.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">TO DO LIST 😭🤠😭🤠</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview of effect sizes &amp; their flavors</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Effect size assumptions &amp; interpretation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.1-SMD-assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Continuous outcomes between two groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.2-lnOR-assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discrete outcomes between two groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./2.3-Zr-assumptions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Continuous predictors</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Extracting effect sizes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.0-starting-extraction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Getting started</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.1-universal-challenges.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Universal challenges</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.2-smd-challenges.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Continuous outcomes between two groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.3-lnOR-challenges.qmd" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Discrete outcomes between two groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./3.4-Zr-challenges.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Continuous predictors</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./4.0-converting-effect-sizes.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Converting between effect sizes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Less common effect sizes</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5.1-variability-between-groups.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Variability between groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5.0-differences-in-magnitude.qmd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Differences in magnitude between two groups</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5.3-single-group-effect-sizes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Single-group effect sizes</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./5.3b-rate-of-change.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rates of change</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Appendix</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./6-escalc-cheatsheet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><code>escalc</code> cheatsheet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./7-simulating-non_gaussian_responses.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulating non-Gaussian data</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://github.com/ejlundgren/effect_size_tutorial/issues" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><i class="bi bi-github"></i> Did we miss something? Submit an issue</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+ <span class="menu-text"><br></span>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="https://cossee.org" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><img src="icons/cossee_logo.png" class="img-fluid" style="width:70.0%"></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99"><h2 id="toc-title"><strong>On this Page</strong></h2>
+   
+  <ul>
+<li>
+<a href="#sec-effect-size-conversion" id="toc-sec-effect-size-conversion" class="nav-link active" data-scroll-target="#sec-effect-size-conversion">Converting between effect sizes</a>
+  <ul>
+<li><a href="#sec-assumptions" id="toc-sec-assumptions" class="nav-link" data-scroll-target="#sec-assumptions">Assumptions</a></li>
+  <li><a href="#unit-of-replication-alignment" id="toc-unit-of-replication-alignment" class="nav-link" data-scroll-target="#unit-of-replication-alignment">Unit of replication alignment</a></li>
+  <li><a href="#sec-helper-function" id="toc-sec-helper-function" class="nav-link" data-scroll-target="#sec-helper-function">Helper function: <code>this_to_that</code></a></li>
+  </ul>
+</li>
+  <li>
+<a href="#smd-lnor" id="toc-smd-lnor" class="nav-link" data-scroll-target="#smd-lnor">SMD ↔︎ lnOR</a>
+  <ul>
+<li><a href="#sec-smd-lnOR" id="toc-sec-smd-lnOR" class="nav-link" data-scroll-target="#sec-smd-lnOR">SMD → lnOR</a></li>
+  <li><a href="#sec-lnOR-smd" id="toc-sec-lnOR-smd" class="nav-link" data-scroll-target="#sec-lnOR-smd">lnOR → SMD</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#smd-z_r" id="toc-smd-z_r" class="nav-link" data-scroll-target="#smd-z_r">SMD ↔︎ <span class="math inline">\(Z_r\)</span></a>
+  <ul>
+<li><a href="#sec-smd-Zr" id="toc-sec-smd-Zr" class="nav-link" data-scroll-target="#sec-smd-Zr">SMD → <span class="math inline">\(Z_r\)</span></a></li>
+  <li><a href="#z_r-smd-sec-z_r-smd" id="toc-z_r-smd-sec-z_r-smd" class="nav-link" data-scroll-target="#z_r-smd-sec-z_r-smd"><span class="math inline">\(Z_r\)</span> → SMD {#sec-<span class="math inline">\(Z_r\)</span>-smd}</a></li>
+  <li><a href="#sec-other-summaries" id="toc-sec-other-summaries" class="nav-link" data-scroll-target="#sec-other-summaries">Test statistics, <span class="math inline">\(R^2\)</span> and other summaries</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-lnrom-smd" id="toc-sec-lnrom-smd" class="nav-link" data-scroll-target="#sec-lnrom-smd">lnRoM → SMD</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Converting between effect sizes</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Risky business</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 10, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Key points
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>
+<strong>SMD</strong> (the standardized mean difference) is the common currency that most conversions pass through. Cohen’s <em>d</em> is the uncorrected estimate of SMD and Hedges’ <em>g</em> is its bias-corrected estimate.</li>
+<li>Every conversion makes an assumption about the underlying data.</li>
+<li>Be sure to run sensitivity analyses including and excluding converted data to ensure your results are robust.</li>
+<li>Converting <strong>lnRoM</strong> to SMD is one-way only and assumes equal standard deviations in the two groups. We cannot convert SMD back to lnRoM.</li>
+<li>Throughout this chapter we use the Arctic willow warming example from <a href="./2.1-SMD-assumptions.html">our SMD assumptions page</a>: warmed plants (12 g, sd 3, n 20) against control plants (10 g, sd 2, n 20).</li>
+</ul>
+</div>
+</div>
+<section id="sec-effect-size-conversion" class="level1"><h1>Converting between effect sizes</h1>
+<p>Many effect sizes can be inter-converted <span class="citation" data-cites="borenstein2021 Lajeunesse2026-ms">(<a href="#ref-borenstein2021" role="doc-biblioref">Borenstein et al. 2021</a>, <a href="#ref-Lajeunesse2026-ms" role="doc-biblioref">Lajeunesse 2026</a>)</span> These conversions make assumptions and can bias the resulting effect types (see <span class="citation" data-cites="poom2022accuracy">(<a href="#ref-poom2022accuracy" role="doc-biblioref">Poom and Wåhlberg 2022</a>)</span>) and should be carefully used—with sensitivity analyses to ensure that the conversions aren’t unduly influencing results.</p>
+<p>At the same time, especially for questions with limited data, we believe that conversions are an important tool in the meta-analyst toolkit.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-conversion-map" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-conversion-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-conversion-map">flowchart LR
+  LOR["lnOR"] &lt;--&gt; SMD["SMD"]
+  Zr["Zr"] &lt;--&gt; SMD
+  LRM["lnRoM"] --&gt; SMD
+  SMD -.-&gt; LRM
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-conversion-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1— Which effect sizes can be converted to which. Solid arrows are conversions we describe in this chapter; the dashed arrow is a conversion we do not provide. Each arrow carries the assumption it relies on, which is listed in the table below.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<section id="sec-assumptions" class="level2"><h2 class="anchored" data-anchor-id="sec-assumptions">Assumptions</h2>
+<p>Converting effect sizes requires several assumptions. We summarize these in the table below:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 78%">
+</colgroup>
+<thead><tr class="header">
+<th>Conversion</th>
+<th>Assumption</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>lnOR ↔︎ SMD</td>
+<td>Response variable is a discretized version of an underlying continuous variable</td>
+</tr>
+<tr class="even">
+<td>SMD ↔︎ <span class="math inline">\(Z_r\)</span>
+</td>
+<td>Predictor variable is a discretized version of an underlying continuous variable</td>
+</tr>
+<tr class="odd">
+<td>lnOR ↔︎ <span class="math inline">\(Z_r\)</span>
+</td>
+<td>Response and predictor have an underlying continuous reality</td>
+</tr>
+<tr class="even">
+<td>SMD ↔︎ lnRoM</td>
+<td>Homogeneity of variances between groups</td>
+</tr>
+</tbody>
+</table></section><section id="unit-of-replication-alignment" class="level2"><h2 class="anchored" data-anchor-id="unit-of-replication-alignment">Unit of replication alignment</h2>
+<p>In addition to these assumptions, be careful that the data is truly comparable, especially in terms of their units of replication—otherwise the converted effect size will have vastly higher or lower weights in the final meta-analytic model.</p>
+<p>For example, imagine you’re analyzing the effect of an introduced predator on prey abundance. Some studies present abundance correlations of the predator and prey (<span class="math inline">\(Z_r\)</span>), where the unit of replication is the <strong>number of surveys</strong>. Other studies report the presence and absence of prey species on islands with and without the predator (lnOR), for which the unit of replication is <strong>number of islands</strong> (each of which was presumably surveyed many times).</p>
+<p>Both of these study types are relevant to the same question–—the effect of the predator on prey abundance. Likewise, converting betwee these effect sizes does not violate the assumptions in the <a href="#sec-assumptions">table above</a> because presence-absence is a discretized version of abundance. It is thus possible to convert these effect sizes via SMD to include both papers in the same model.</p>
+<p>However, <strong>the units of replication</strong> of these study types are <em>vastly</em> different (study 1 = survey; study 2 = island). This means the <span class="math inline">\(Z_r\)</span> abundance correlations will have more weight than the full-island lnOR responses.</p>
+<p>However, in many other cases, conversions will allow similar data to be compared without comparing different units of replication.</p>
+<p>Given the assumptions and potential biases involved in converting effect sizes, we recommend that you convert minority effect sizes to the dominant effect size in your dataset after confirming that assumptions are met and that the unit of replication for all the effect sizes are equivalent. We then recommend running your models with and without these converted effect sizes, to evaluate whether the inclusion of minority effect sizes alter your results.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Alternative to conversion: reconstruct the underlying data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In some cases, converting between effect sizes can be prevented by reconstructing the underlying data of the author-presented summaries and summarizing these data into the desired analysis effect size, which can align the units of replication between studies.</p>
+<p>See examples for <a href="./3.2-smd-challenges.html#sec-smd-reconstructing-data">SMD-type effect sizes</a>, <a href="3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data">lnOR effect sizes</a>, <a href="./3.4-Zr-challenges.html#sec-single-axis-error-bars"><span class="math inline">\(Z_r\)</span> effect sizes</a>, and for <a href="./7-simulating-non_gaussian_responses.html">non-Gaussian responses</a></p>
+</div>
+</div>
+</section><section id="sec-helper-function" class="level2"><h2 class="anchored" data-anchor-id="sec-helper-function">Helper function: <code>this_to_that</code>
+</h2>
+<p>We have digitized the primary conversion formulas and they are available in our <code>this_to_that()</code> function. Running the function on its own will return a table with the statistics required for each conversion.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">this_to_that</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Effect type name must be specified with 'effect_type' argument
+    and provide necessary variables (as named arguments, e.g., n1 = group1_n or a numeric vector).
+ 
+Returning effect size names &amp; required variables for reference.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   from_effect to_effect  vars_required
+        &lt;char&gt;    &lt;char&gt;         &lt;char&gt;
+1:        lnOR       SMD yi, vi, n1, n2
+2:          Zr       SMD      yi, vi, n
+3:           r       SMD           r, n
+4:         SMD        Zr yi, vi, n1, n2
+5:         SMD      lnOR yi, vi, n1, n2
+6:       lnRoM       SMD yi, vi, n1, n2
+7:          Zr      lnOR      yi, vi, n
+8:        lnOR        Zr     yi, n1, n2</code></pre>
+</div>
+</div>
+<p>To convert an effect size, specify the <code>from</code> effect type and the <code>to</code> effect type, as well as the required statistics. Note that this function also supports full, two-step conversions from <span class="math inline">\(Z_r\)</span> to lnOR and vice versa.</p>
+<p>We’ll now show the math and demonstrate the conversions in <code>R</code>. All of these conversions pass through SMD. Remember that SMD can be estimated two ways: Cohen’s <span class="math inline">\(d\)</span> (uncorrected) and Hedges’ <span class="math inline">\(g\)</span> (<span class="math inline">\(d\)</span> multiplied by the small sample size correction factor <span class="math inline">\(J\)</span>). The formulas below are written for Cohen’s <span class="math inline">\(d\)</span>, and we convert to <span class="math inline">\(g\)</span> where needed. If your data are already Hedges’ <span class="math inline">\(g\)</span>, divide by <span class="math inline">\(J\)</span> first. Luckily, <code>this_to_that()</code> does this for you.</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;J = 1-\frac{3}{4*(n_1 + n_2) - 9}\\
+&amp;d = \frac{m_1-m_2}{sd_{pooled}}\\
+&amp;g = J * d
+\end{aligned}
+\]</span></p>
+<p>For the willow example, the escalc output gives us Hedges’ <span class="math inline">\(g\)</span> and its sampling variance directly:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Arctic willow warming example (Chapter 2.1): warmed plants (group 1) vs control (group 2)</span></span>
+<span><span class="va">m_warm</span> <span class="op">&lt;-</span> <span class="fl">12</span>; <span class="va">sd_warm</span> <span class="op">&lt;-</span> <span class="fl">3</span>; <span class="va">n_warm</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span><span class="va">m_ctrl</span> <span class="op">&lt;-</span> <span class="fl">10</span>; <span class="va">sd_ctrl</span> <span class="op">&lt;-</span> <span class="fl">2</span>; <span class="va">n_ctrl</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
+<span></span>
+<span><span class="va">willow_smd</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     m1i <span class="op">=</span> <span class="va">m_warm</span>, m2i <span class="op">=</span> <span class="va">m_ctrl</span>,</span>
+<span>                     sd1i <span class="op">=</span> <span class="va">sd_warm</span>, sd2i <span class="op">=</span> <span class="va">sd_ctrl</span>,</span>
+<span>                     n1i <span class="op">=</span> <span class="va">n_warm</span>, n2i <span class="op">=</span> <span class="va">n_ctrl</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">willow_rom</span> <span class="op">&lt;-</span> <span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ROM"</span>,</span>
+<span>                     m1i <span class="op">=</span> <span class="va">m_warm</span>, m2i <span class="op">=</span> <span class="va">m_ctrl</span>,</span>
+<span>                     sd1i <span class="op">=</span> <span class="va">sd_warm</span>, sd2i <span class="op">=</span> <span class="va">sd_ctrl</span>,</span>
+<span>                     n1i <span class="op">=</span> <span class="va">n_warm</span>, n2i <span class="op">=</span> <span class="va">n_ctrl</span>,</span>
+<span>                     correct <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>   <span class="co"># uncorrected lnRoM (definition formula)</span></span>
+<span></span>
+<span><span class="va">g_willow</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">willow_smd</span><span class="op">$</span><span class="va">yi</span><span class="op">)</span></span>
+<span><span class="va">vi_g_willow</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">willow_smd</span><span class="op">$</span><span class="va">vi</span><span class="op">)</span></span>
+<span><span class="va">lnrom_willow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">willow_rom</span><span class="op">$</span><span class="va">yi</span><span class="op">)</span></span>
+<span><span class="va">vi_lnrom_willow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">willow_rom</span><span class="op">$</span><span class="va">vi</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>g <span class="op">=</span> <span class="va">g_willow</span>, vi_g <span class="op">=</span> <span class="va">vi_g_willow</span>, lnRoM <span class="op">=</span> <span class="va">lnrom_willow</span>, vi_lnRoM <span class="op">=</span> <span class="va">vi_lnrom_willow</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        g      vi_g     lnRoM  vi_lnRoM 
+0.7688619 0.1073894 0.1823216 0.0051250 </code></pre>
+</div>
+</div>
+<p>The Arctic willow warming example gives Hedges’ <span class="math inline">\(g\)</span> = 0.77 (variance 0.107) and lnRoM = 0.18 (variance 0.0051). We use these values as inputs to the conversions below.</p>
+<p>A quick note on variances. For <span class="math inline">\(g\)</span>, <code>escalc</code> uses an approximate (large-sample) variance formula: <span class="math inline">\(1/n_1 + 1/n_2 + g^2/(2(n_1 + n_2))\)</span>. Our conversions give us Cohen’s <span class="math inline">\(d\)</span> and its variance, <span class="math inline">\(V_d\)</span>. To get to Hedges’ <span class="math inline">\(g\)</span>, we multiply the point estimate by <span class="math inline">\(J\)</span> and the variance by <span class="math inline">\(J^2\)</span>: <span class="math inline">\(g = J d\)</span> and <span class="math inline">\(V_g = J^2 V_d\)</span>. You’ll see this correction in the code below.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Alternative estimators and effect size conversion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As described <a href="./overview.html#sec-alternative-estimators">earlier</a> in this tutorial, there are multiple flavors of estimators for many effect sizes including paired estimators and, for SMD, an estimator that tolerates heteroscedastic data (“SMDH”). To the best of our knowledge, there are no conversion formulas for these alterative estimators.</p>
+<p>This means that if you are converting <span class="math inline">\(Z_r\)</span> effect sizes to add to a meta-analysis that is otherwise composed of SMD-type effect sizes, you won’t be able to use SMDH for the larger dataset.</p>
+<p>Conversely, if you have paired SMD-type data (using <code>SMCRP</code> in <code>escalc</code>, not <code>SMCC</code>) that you wish to convert to add to a meta-analysis of <span class="math inline">\(Z_r\)</span> effect sizes, you’ll have to ignore the paired design.</p>
+</div>
+</div>
+</section></section><section id="smd-lnor" class="level1"><h1>SMD ↔︎ lnOR</h1>
+<section id="sec-smd-lnOR" class="level2"><h2 class="anchored" data-anchor-id="sec-smd-lnOR">SMD → lnOR</h2>
+<p>This conversion assumes that the response variable is continuous (e.g., underlying the binary outcome of the lnOR effect type) and that it has a logistic distribution (similar to a normal distribution).</p>
+<p>If the lnOR data was presence/absence of a species and the SMD data was abundance, we believe this assumption is satisfied, given that presence/absence are the extreme ends of abundance.</p>
+<p>Let <span class="math inline">\(y_{i,\text{lnOR}}\)</span> and <span class="math inline">\(y_{i,d}\)</span> be the point estimate for the lnOR and Cohen’s d effect sizes and <span class="math inline">\(v_{i,\text{lnOR}}\)</span> and <span class="math inline">\(v_{i,d}\)</span> be their sampling variances:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;y_{i,\text{lnOR}} = y_{i,d} * \frac{\pi}{\sqrt{3}} \\
+&amp;v_{i,\text{lnOR}} = v_{i,d} * \frac{\pi^2}{3} \\
+\end{aligned}
+\]</span></p>
+<p>In <code>R</code>, using the willow SMD (Hedges’ <span class="math inline">\(g\)</span>) as input:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">lnor_willow</span> <span class="op">&lt;-</span> <span class="fu">this_to_that</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                                    to <span class="op">=</span> <span class="st">"lnOR"</span>,</span>
+<span>                                    yi <span class="op">=</span> <span class="va">g_willow</span>,</span>
+<span>                                    vi <span class="op">=</span> <span class="va">vi_g_willow</span>,</span>
+<span>                                    n1 <span class="op">=</span> <span class="va">n_warm</span>,</span>
+<span>                                    n2 <span class="op">=</span> <span class="va">n_ctrl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes that the continuous data has a logistic distribution. 
+Please use conversions carefully and conduct sensitivity analyses. 
+Note that the 'vi' is assumed to have been calculated with `metafor::escalc` package defaults (variance of 'd' not 'g') </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">lnor_willow</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   yi_trans  vi_trans
+      &lt;num&gt;     &lt;num&gt;
+1: 1.422861 0.3532968</code></pre>
+</div>
+</div>
+</section><section id="sec-lnOR-smd" class="level2"><h2 class="anchored" data-anchor-id="sec-lnOR-smd">lnOR → SMD</h2>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;y_{i,d} = y_{i,\text{lnOR}} * \frac{\sqrt{3}}{\pi} \\
+&amp;v_{i,d} = v_{i,\text{lnOR}} * \frac{3}{\pi^2} \\
+\end{aligned}
+\]</span></p>
+<p>In <code>R</code>, we convert the lnOR we just calculated back to SMD. The round trip returns the willow <span class="math inline">\(g\)</span> and its variance exactly:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">back_to_smd</span> <span class="op">&lt;-</span> <span class="fu">this_to_that</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"lnOR"</span>,</span>
+<span>                                    to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                                    yi <span class="op">=</span> <span class="va">lnor_willow</span><span class="op">$</span><span class="va">yi_trans</span>,</span>
+<span>                                    vi <span class="op">=</span> <span class="va">lnor_willow</span><span class="op">$</span><span class="va">vi_trans</span>,</span>
+<span>                                    n1 <span class="op">=</span> <span class="va">n_warm</span>,</span>
+<span>                                    n2 <span class="op">=</span> <span class="va">n_ctrl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes that the response variable is a discretized version of a continuous variable 
+with a logistic distribution for each group (which approximates the normal distribution).
+Please use conversions carefully and conduct sensitivity analyses with and without converted data. </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">back_to_smd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    yi_trans  vi_trans
+       &lt;num&gt;     &lt;num&gt;
+1: 0.7688619 0.1073894</code></pre>
+</div>
+</div>
+</section></section><section id="smd-z_r" class="level1"><h1>SMD ↔︎ <span class="math inline">\(Z_r\)</span>
+</h1>
+<section id="sec-smd-Zr" class="level2"><h2 class="anchored" data-anchor-id="sec-smd-Zr">SMD → <span class="math inline">\(Z_r\)</span>
+</h2>
+<p>This conversion assumes that a continuous variable was discretized to form the treatment and control groups of an SMD effect size. This may be the case in some situations (e.g., if treatment and control were based on the presence or absence of an independent variable treatment while the correlation was across a continuous gradient of the same variable).</p>
+<p>To convert from SMD to <span class="math inline">\(Z_r\)</span>, we first convert <span class="math inline">\(d\)</span> to the correlation coefficient <span class="math inline">\(r\)</span> and then to Zr, using a correction factor <span class="math inline">\(a\)</span> for cases where <span class="math inline">\(n_1 \neq n_2\)</span>. Let <span class="math inline">\(y_{i,\text{Zr}}\)</span> and <span class="math inline">\(y_{i,d}\)</span> be the point estimate for <span class="math inline">\(Z_r\)</span> and Cohen’s d:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;a = \frac{(n_1 + n_2)^2}{n_1*n_2} \\
+&amp;r = \frac{y_{i,d}}{\sqrt{y_{i,d}^2 + a}} \\
+&amp;y_{i,\text{Zr}} = atanh(r)\\
+\end{aligned}
+\]</span></p>
+<p>And the sampling variance of <span class="math inline">\(Z_r\)</span> (<span class="math inline">\(v_{i,\text{Zr}}\)</span>): <span class="math display">\[
+\begin{aligned}
+&amp;n = n_1 + n_2 \\
+&amp;v_{i,\text{Zr}} = \frac{1}{(n - 3)} \\
+\end{aligned}
+\]</span></p>
+<p>In <code>R</code>, for the willow example:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zr_willow</span> <span class="op">&lt;-</span> <span class="fu">this_to_that</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                                  to <span class="op">=</span> <span class="st">"Zr"</span>,</span>
+<span>                                  yi <span class="op">=</span> <span class="va">g_willow</span>,</span>
+<span>                                  vi <span class="op">=</span> <span class="va">vi_g_willow</span>,</span>
+<span>                                  n1 <span class="op">=</span> <span class="va">n_warm</span>,</span>
+<span>                                  n2 <span class="op">=</span> <span class="va">n_ctrl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes a continuous variable was dichotomized to create the treatment and control groups. 
+Note that the 'vi' is assumed to have been calculated with 'metafor::escalc' defaults (variance of 'd' not 'g'). 
+Like usual, be careful :) </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">zr_willow</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    yi_trans   vi_trans
+       &lt;num&gt;      &lt;num&gt;
+1: 0.3828135 0.02702703</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Instead of converting SMD to <span class="math inline">\(Z_r\)</span>, it may be preferable to calculate a <em>biserial</em> correlation coefficient directly from the same summary statistics used for SMD, and convert this (<span class="math inline">\(r_b\)</span>) to <span class="math inline">\(Z_r\)</span>. This can be done in <code>escalc</code> directly with <code>measure = "ZBIS"</code>, which calculates the biserial correlation coefficient and converts it to <span class="math inline">\(Z_r\)</span>. Why bother? The formula above gives a <em>point-biserial</em> correlation. When the two groups are an artificial split of a continuous variable (the assumption in the table above), the comparable correlation is the biserial <span class="math inline">\(r_b\)</span>. The point-biserial version is only for <em>naturally</em> discrete groups (e.g., male versus female). <span class="citation" data-cites="Jacobs2017-cv">Jacobs and Viechtbauer (<a href="#ref-Jacobs2017-cv" role="doc-biblioref">2017</a>)</span> advised against comparing it with correlations from two continuous variables (<span class="math inline">\(r\)</span>) or from an artificially split variable (<span class="math inline">\(r_b\)</span>), so don’t pool them without a moderator.</p>
+<p>Note that the sampling variance from <code>escalc</code> for ZBIS is not <span class="math inline">\(1/(n-3)\)</span>. The Fisher z transformation does not stabilize the variance of biserial or point-biserial correlations, so flag these rows and run a sensitivity analysis.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">escalc</span><span class="op">(</span>measure <span class="op">=</span> <span class="st">"ZBIS"</span>,</span>
+<span>       m1i <span class="op">=</span> <span class="fl">10</span>, m2i <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>       sd1i <span class="op">=</span> <span class="fl">1.5</span>, sd2i <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>       n1i <span class="op">=</span> <span class="fl">15</span>, n2i <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      yi     vi 
+1 1.1788 0.1135 </code></pre>
+</div>
+</div>
+</div>
+</div>
+</section><section id="z_r-smd-sec-z_r-smd" class="level2"><h2 class="anchored" data-anchor-id="z_r-smd-sec-z_r-smd">
+<span class="math inline">\(Z_r\)</span> → SMD {#sec-<span class="math inline">\(Z_r\)</span>-smd}</h2>
+<p>First, convert the point estimate of <span class="math inline">\(Z_r\)</span> (<span class="math inline">\(y_{i,\text{Zr}}\)</span>) to the correlation coefficient <span class="math inline">\(r\)</span> and calculate the variance of <span class="math inline">\(r\)</span> (<span class="math inline">\(v_{i,r}\)</span>): <span class="math display">\[
+\begin{aligned}
+&amp;r = tanh(y_{i,\text{Zr}}) \\
+&amp;v_{i,r} = \frac{(1-r^2)^2}{(n-1)}
+\end{aligned}
+\]</span></p>
+<p>Then calculate the point estimate (<span class="math inline">\(y_{i,d}\)</span>) and variance (<span class="math inline">\(v_{i,d}\)</span>) of Cohen’s d:</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;y_{i,d} = \frac{2*r}{\sqrt{1-r^2}} \\
+&amp;v_{i,d} = \frac{4*v_{i,r}}{(1-r^2)^3} \\
+\end{aligned}
+\]</span></p>
+<p>The helper returns the point estimate as Hedges’ <span class="math inline">\(g\)</span> and the variance as the variance of <span class="math inline">\(d\)</span>. We correct the variance to the variance of <span class="math inline">\(g\)</span> with <span class="math inline">\(J^2\)</span> (see the note above).</p>
+<p>In <code>R</code>, we convert the willow <span class="math inline">\(Z_r\)</span> back to SMD. The result is close to the original <span class="math inline">\(g\)</span>; the small difference comes from the small-sample correction, which depends on the sample size passed to the function:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">back_to_smd_from_zr</span> <span class="op">&lt;-</span> <span class="fu">this_to_that</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"Zr"</span>,</span>
+<span>                                            to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                                            yi <span class="op">=</span> <span class="va">zr_willow</span><span class="op">$</span><span class="va">yi_trans</span>,</span>
+<span>                                            vi <span class="op">=</span> <span class="va">zr_willow</span><span class="op">$</span><span class="va">vi_trans</span>,</span>
+<span>                                            n <span class="op">=</span> <span class="va">n_warm</span> <span class="op">+</span> <span class="va">n_ctrl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'yi' is assumed to be 'Zr' (r-to-z transformed correlation coefficient). 
+It may be preferable to supply 'r' and 'n' instead. To do so specify 'r' in the 'from' argument and provide a vector of correlation coefficients named 'r'. 
+This conversion assumes that the underlying data was continuous with a bivariate normal distribution, with the two groups created by dichotomozing one of the two variables. 
+Please use conversions carefully and conduct sensitivity analyses </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">J_willow</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">-</span> <span class="fl">3</span> <span class="op">/</span> <span class="op">(</span><span class="fl">4</span> <span class="op">*</span> <span class="op">(</span><span class="va">n_warm</span> <span class="op">+</span> <span class="va">n_ctrl</span><span class="op">)</span> <span class="op">-</span> <span class="fl">9</span><span class="op">)</span></span>
+<span><span class="va">back_to_smd_from_zr</span><span class="op">[</span>, <span class="va">vi_trans_g</span> <span class="op">:=</span> <span class="va">J_willow</span><span class="op">^</span><span class="fl">2</span> <span class="op">*</span> <span class="va">vi_trans</span><span class="op">]</span></span>
+<span><span class="va">back_to_smd_from_zr</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    yi_trans  vi_trans vi_trans_g
+       &lt;num&gt;     &lt;num&gt;      &lt;num&gt;
+1: 0.7768933 0.1183432  0.1136875</code></pre>
+</div>
+</div>
+<p>Note you can also calculate this directly from <span class="math inline">\(r\)</span> if preferred. Here we use the same willow correlation:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">r_willow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Hyperbolic.html">tanh</a></span><span class="op">(</span><span class="va">zr_willow</span><span class="op">$</span><span class="va">yi_trans</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">this_to_that</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"r"</span>,</span>
+<span>                     to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                     r <span class="op">=</span> <span class="va">r_willow</span>,</span>
+<span>                     vi <span class="op">=</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">r_willow</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span> <span class="op">/</span> <span class="op">(</span><span class="va">n_warm</span> <span class="op">+</span> <span class="va">n_ctrl</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>                     n <span class="op">=</span> <span class="va">n_warm</span> <span class="op">+</span> <span class="va">n_ctrl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'r' directly provided.
+This conversion assumes that the underlying data was continuous with a bivariate normal distribution, 
+with the two groups created by dichotomozing one of the two variables. 
+Please use conversions carefully and conduct sensitivity analyses </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    yi_trans  vi_trans
+       &lt;num&gt;     &lt;num&gt;
+1: 0.7768933 0.1183432</code></pre>
+</div>
+</div>
+</section><section id="sec-other-summaries" class="level2"><h2 class="anchored" data-anchor-id="sec-other-summaries">Test statistics, <span class="math inline">\(R^2\)</span> and other summaries</h2>
+<p>Papers often report a test statistic or a model summary rather than a correlation. The table below gives the conversions to a correlation coefficient <span class="math inline">\(r\)</span> that we recommend. Each one is exact only for the model stated in the middle column.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th>Reported statistic</th>
+<th>Conversion to <span class="math inline">\(r\)</span>
+</th>
+<th>Notes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>
+<span class="math inline">\(t\)</span> from a simple regression or two-group test</td>
+<td>
+<span class="math inline">\(r = \frac{t}{\sqrt{t^2 + df}}\)</span>, with <span class="math inline">\(df = n - 2\)</span>
+</td>
+<td>Sign taken from <span class="math inline">\(t\)</span>.</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(F(1, df_{error})\)</span></td>
+<td><span class="math inline">\(r = \sqrt{\frac{F}{F + df_{error}}}\)</span></td>
+<td>Only for one numerator degree of freedom. Take the sign from the slope.</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(R^2\)</span></td>
+<td><span class="math inline">\(r = \sqrt{R^2}\)</span></td>
+<td>Only for a single-predictor model. Take the sign from the slope.</td>
+</tr>
+<tr class="even">
+<td>Standardized slope (<span class="math inline">\(b\)</span>)</td>
+<td><span class="math inline">\(r = b \frac{s_x}{s_y}\)</span></td>
+<td>Only for a single predictor.</td>
+</tr>
+<tr class="odd">
+<td>
+<span class="math inline">\(\chi^2\)</span> from a <span class="math inline">\(2 \times 2\)</span> table</td>
+<td><span class="math inline">\(\phi = \sqrt{\frac{\chi^2}{N}}\)</span></td>
+<td>This is phi, a different estimand. Flag it.</td>
+</tr>
+<tr class="even">
+<td>
+<span class="math inline">\(t\)</span> for one predictor in a multiple regression</td>
+<td>
+<span class="math inline">\(r_p = \frac{t}{\sqrt{t^2 + df}}\)</span>, with <span class="math inline">\(df = n - k - 1\)</span>
+</td>
+<td>This is a partial correlation, not a simple correlation. Use <code>escalc("ZPCOR")</code> with the number of predictors <span class="math inline">\(m = k\)</span> to get the variance.</td>
+</tr>
+</tbody>
+</table>
+<p>For example, a two-group <span class="math inline">\(t\)</span> of 2.5 with 18 degrees of freedom gives <span class="math inline">\(r\)</span> = 0.51.</p>
+</section></section><section id="sec-lnrom-smd" class="level1"><h1>lnRoM → SMD</h1>
+<p>Imagine you’re running an SMD meta-analysis (maybe because of negative values, dimensionality, or other concerns). Then you find a study that only reports lnRoM (log-transformed ratio of means) and its sampling variance or standard error. Luckily, if the two groups have equal standard deviations, lnRoM can be converted to SMD <span class="citation" data-cites="Lajeunesse2026-ms">(<a href="#ref-Lajeunesse2026-ms" role="doc-biblioref">Lajeunesse 2026</a>)</span>.</p>
+<p>This only works one way: we provide lnRoM → SMD, but not SMD → lnRoM. This allows the extraction of data published as effect sizes into a common currency and can also support secondary meta-analyses (e.g., meta-meta-analyses) by converting to the universal solvent of SMD.</p>
+<p>The conversion depends on three assumptions:</p>
+<ol type="1">
+<li>
+<strong>Equal standard deviations.</strong> The variance of group 1 is similar to the variance of group 2 (homoscedasticity). This may or may not be met in ecological data.</li>
+<li>
+<strong>Additive effect.</strong> SMD represents linear-scale effects as a difference between means, whereas lnRoM represents multiplicative effects, e.g., where treatment effects scale proportionally to baseline levels. When the effect is multiplicative, the converted SMD is an approximation.</li>
+<li>
+<strong>Hedges’ correction after converting.</strong> We convert to Cohen’s <span class="math inline">\(d\)</span> first and apply the Hedges’ correction <span class="math inline">\(J\)</span> afterwards, to give <span class="math inline">\(g\)</span>.</li>
+</ol>
+<p>As with all conversions, sensitivity analyses are critical to make sure these assumptions are not unduly influencing your results.</p>
+<p>Note that converting SMD to lnRoM remains unresolved.</p>
+<p>As with the other conversions, we’ll relay the math to convert between Cohen’s d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, <code>this_to_that</code> automatically converts Cohen’s d to Hedges’ g (the bias-corrected estimator of SMD).</p>
+<p>Let <span class="math inline">\(yi_{ROM}\)</span> and <span class="math inline">\(yi_{d}\)</span> be the point estimates of lnRoM and SMD (after converting Hedges’ g to Cohen’s d) and <span class="math inline">\(vi_{ROM}\)</span> and <span class="math inline">\(vi_{d}\)</span> be their sampling variance estimates. Finally, let <span class="math inline">\(n_1\)</span> and <span class="math inline">\(n_2\)</span> be the numerator and denominator of lnRoM (e.g., the treatment and control groups respectively):</p>
+<p><span class="math display">\[
+\begin{aligned}
+yi_d = (yi_{ROM} - 1) * \sqrt{\frac{n_1/yi_{ROM}^2 + n_2}{n_1 n_2 vi_{ROM}}}
+\end{aligned}
+\]</span></p>
+<p>The sampling variance is estimated as follows. Note that this estimator is the default used by <code>escalc</code> as it is less biased and is thus the final estimated variance for SMD:</p>
+<p><span class="math display">\[
+\begin{aligned}
+vi_{d} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}
+\end{aligned}
+\]</span> The variance <span class="math inline">\(v_{i,g}\)</span> is the large-sample estimator used by <code>escalc</code> for SMD, applied to the converted <span class="math inline">\(g\)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">conv_willow</span> <span class="op">&lt;-</span> <span class="fu">this_to_that</span><span class="op">(</span>from <span class="op">=</span> <span class="st">"lnRoM"</span>, to <span class="op">=</span> <span class="st">"SMD"</span>,</span>
+<span>                                   yi <span class="op">=</span> <span class="va">lnrom_willow</span>, vi <span class="op">=</span> <span class="va">vi_lnrom_willow</span>,</span>
+<span>                                   n1 <span class="op">=</span> <span class="va">n_warm</span>, n2 <span class="op">=</span> <span class="va">n_ctrl</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This conversion assumes that lnRoM point estimates and variance were calculated from the uncorrected estimators (returned by escalc with corrected = FALSE).
+This conversion assumes equal variances (e.g., homoscedasticity) between groups. 
+Also note that n1 is taken as the treatment group and n2 as the control group. </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">conv_willow</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    yi_trans  vi_trans
+       &lt;num&gt;     &lt;num&gt;
+1: 0.7969971 0.1082656</code></pre>
+</div>
+</div>
+<p>Converting the willow lnRoM gives Hedges’ <span class="math inline">\(g\)</span> = 0.80 (variance 0.108). The escalc value from the raw summaries is 0.77. The two differ because the standard deviations (3 and 2) are not equal, so the equal-SD assumption is not met.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Next
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Next:</strong> <a href="./5.1-variability-between-groups.html">Variability between groups</a>, which uses the willow warming example to compare means and variability.</p>
+</div>
+</div>
+
+
+<!-- -->
+
+
+</section><div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-borenstein2021" class="csl-entry" role="listitem">
+Borenstein, M., L. V. Hedges, J. Higgins, and H. R. Rothstein. 2021. Introduction to meta-analysis. 2nd edition. John Wiley &amp; Sons, Nashville, TN.
+</div>
+<div id="ref-Jacobs2017-cv" class="csl-entry" role="listitem">
+Jacobs, P., and W. Viechtbauer. 2017. <a href="https://doi.org/10.1002/jrsm.1218">Estimation of the biserial correlation and its sampling variance for use in meta-analysis</a>. Research Synthesis Methods 8:161–180.
+</div>
+<div id="ref-Lajeunesse2026-ms" class="csl-entry" role="listitem">
+Lajeunesse, M. J. 2026. Converting and constructing effect sizes with the response ratio. Ecol. Lett. 29:e70335.
+</div>
+<div id="ref-poom2022accuracy" class="csl-entry" role="listitem">
+Poom, L., and A. af Wåhlberg. 2022. Accuracy of conversion formula for effect sizes: A monte carlo simulation. Research Synthesis Methods 13:508–519.
+</div>
+</div></section></div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Converting between effect sizes"</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Risky business"</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> today</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 6</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-float: true</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: true</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-title: "**On this Page**"</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">    output-file: "4.0-converting-effect-sizes.html"</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="co">    # embed-resources: true</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">    # code-fold: true</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="co">    # number-sections: false</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="co">    # bibliography: ./bib/ref.bib</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="co">    fontsize: "10"</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="co">    mainfont: "Helvetica"</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: "Fira Code"</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="co">    # fontcolor: ""</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a><span class="co">    page-layout: article</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a><span class="co">    df_print: paged</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a><span class="co">    grid:</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="co">      margin-width: 250px</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a><span class="an">crossref:</span></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-title: Figure     # (default is "Figure")</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-title: Table     # (default is "Table")</span></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a><span class="co">  title-delim: "—"     # (default is ":")</span></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a><span class="co">  fig-prefix: Fig.     # (default is "Figure")</span></span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a><span class="co">  tbl-prefix: Table.   # (default is "Table")</span></span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a><span class="an">editor_options:</span><span class="co"> </span></span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a><span class="co">  chunk_output_type: console</span></span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a><span class="co">  tidy: true</span></span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a><span class="an">csl:</span><span class="co"> ecology.csl</span></span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"effit"</span>)) {</span>
+<span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a>  pak<span class="sc">::</span><span class="fu">pak</span>(<span class="st">"ejlundgren/effit"</span>)</span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"effit"</span>)</span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggplot2"</span>)</span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"data.table"</span>)</span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"ggpattern"</span>)</span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"patchwork"</span>)</span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"metafor"</span>)</span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"dplyr"</span>)</span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom"</span>)</span>
+<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"broom.mixed"</span>)</span>
+<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"simplermarkdown"</span>)</span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"crayon"</span>)</span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a>:::callout-tip</span>
+<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Key points</span></span>
+<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**SMD** (the standardized mean difference) is the common currency that most conversions pass through. Cohen's *d* is the uncorrected estimate of SMD and Hedges' *g* is its bias-corrected estimate.</span>
+<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every conversion makes an assumption about the underlying data.</span>
+<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Be sure to run sensitivity analyses including and excluding converted data to ensure your results are robust.</span>
+<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Converting **lnRoM** to SMD is one-way only and assumes equal standard deviations in the two groups. We cannot convert SMD back to lnRoM.</span>
+<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Throughout this chapter we use the Arctic willow warming example from <span class="co">[</span><span class="ot">our SMD assumptions page</span><span class="co">](2.1-SMD-assumptions.qmd)</span>: warmed plants (12 g, sd 3, n 20) against control plants (10 g, sd 2, n 20).</span>
+<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a><span class="fu"># Converting between effect sizes {#sec-effect-size-conversion}</span></span>
+<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a>Many effect sizes can be inter-converted <span class="co">[</span><span class="ot">@borenstein2021; @Lajeunesse2026-ms</span><span class="co">]</span> These conversions make assumptions and can bias the resulting effect types (see <span class="co">[</span><span class="ot">@poom2022accuracy</span><span class="co">]</span>) and should be carefully used—with sensitivity analyses to ensure that the conversions aren't unduly influencing results. </span>
+<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-89"><a href="#cb31-89" aria-hidden="true" tabindex="-1"></a>At the same time, especially for questions with limited data, we believe that conversions are an important tool in the meta-analyst toolkit.</span>
+<span id="cb31-90"><a href="#cb31-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a>%%| label: fig-conversion-<span class="fu">map</span></span>
+<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a>%%| fig-cap: <span class="ot">"</span><span class="st">Which effect sizes can be converted to which. Solid arrows are conversions we describe in this chapter; the dashed arrow is a conversion we do not provide. Each arrow carries the assumption it relies on, which is listed in the table below.</span><span class="ot">"</span></span>
+<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a>%%| fig-alt: <span class="ot">"</span><span class="st">Flowchart with SMD in the center. lnOR and </span><span class="dt">$Z_r</span><span class="st">$ connect to SMD in both directions. lnRoM has a solid one-way arrow to SMD, labeled as assuming equal standard deviations, and a dashed arrow back from SMD to lnRoM, labeled as not provided.</span><span class="ot">"</span></span>
+<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a>flowchart LR</span>
+<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>  LOR[<span class="ot">"</span><span class="st">lnOR</span><span class="ot">"</span>] &lt;--&gt; SMD[<span class="ot">"</span><span class="st">SMD</span><span class="ot">"</span>]</span>
+<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a>  Zr[<span class="ot">"</span><span class="st">Zr</span><span class="ot">"</span>] &lt;--&gt; SMD</span>
+<span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a>  LRM[<span class="ot">"</span><span class="st">lnRoM</span><span class="ot">"</span>] --&gt; SMD</span>
+<span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a>  SMD -.-&gt; LRM</span>
+<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a><span class="fu">## Assumptions {#sec-assumptions}</span></span>
+<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a>Converting effect sizes requires several assumptions. We summarize these in the table below: </span>
+<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Conversion  <span class="pp">|</span> Assumption                                    <span class="pp">|</span></span>
+<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a><span class="pp">|-------------|-----------------------------------------------|</span></span>
+<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnOR ↔ SMD  <span class="pp">|</span>Response variable is a discretized version of an underlying continuous variable  <span class="pp">|</span></span>
+<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SMD ↔ $Z_r$    <span class="pp">|</span>Predictor variable is a discretized version of an underlying continuous variable <span class="pp">|</span></span>
+<span id="cb31-113"><a href="#cb31-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> lnOR ↔ $Z_r$   <span class="pp">|</span>Response and predictor have an underlying continuous reality <span class="pp">|</span> </span>
+<span id="cb31-114"><a href="#cb31-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> SMD ↔ lnRoM <span class="pp">|</span>Homogeneity of variances between groups <span class="pp">|</span></span>
+<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Unit of replication alignment</span></span>
+<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a>In addition to these assumptions, be careful that the data is truly comparable, especially in terms of their units of replication---otherwise the converted effect size will have vastly higher or lower weights in the final meta-analytic model. </span>
+<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a>For example, imagine you're analyzing the effect of an introduced predator on prey abundance. Some studies present abundance correlations of the predator and prey ($Z_r$), where the unit of replication is the **number of surveys**. Other studies report the presence and absence of prey species on islands with and without the predator (lnOR), for which the unit of replication is **number of islands** (each of which was presumably surveyed many times).</span>
+<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>Both of these study types are relevant to the same question--—the effect of the predator on prey abundance. Likewise, converting betwee these effect sizes does not violate the assumptions in the <span class="co">[</span><span class="ot">table above</span><span class="co">](#sec-assumptions)</span> because presence-absence is a discretized version of abundance. It is thus possible to convert these effect sizes via SMD to include both papers in the same model.</span>
+<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>However, **the units of replication** of these study types are *vastly* different (study 1 = survey; study 2 = island). This means the $Z_r$ abundance correlations will have more weight than the full-island lnOR responses.</span>
+<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a>However, in many other cases, conversions will allow similar data to be compared without comparing different units of replication. </span>
+<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a>Given the assumptions and potential biases involved in converting effect sizes, we recommend that you convert minority effect sizes to the dominant effect size in your dataset after confirming that assumptions are met and that the unit of replication for all the effect sizes are equivalent. We then recommend running your models with and without these converted effect sizes, to evaluate whether the inclusion of minority effect sizes alter your results.</span>
+<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a>####### Alternative to conversion: reconstruct the underlying data {#sec-callout-reconstructing-data}</span>
+<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a>In some cases, converting between effect sizes can be prevented by reconstructing the underlying data of the author-presented summaries and summarizing these data into the desired analysis effect size, which can align the units of replication between studies. </span>
+<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a>See examples for <span class="co">[</span><span class="ot">SMD-type effect sizes</span><span class="co">](3.2-smd-challenges.qmd#sec-smd-reconstructing-data)</span>, <span class="co">[</span><span class="ot">lnOR effect sizes</span><span class="co">](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data)</span>, <span class="co">[</span><span class="ot">$Z_r$ effect sizes</span><span class="co">](3.4-Zr-challenges.qmd#sec-single-axis-error-bars)</span>, and for <span class="co">[</span><span class="ot">non-Gaussian responses</span><span class="co">](7-simulating-non-gaussian-responses.qmd)</span></span>
+<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb31-136"><a href="#cb31-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-137"><a href="#cb31-137" aria-hidden="true" tabindex="-1"></a><span class="fu">## Helper function: `this_to_that` {#sec-helper-function}</span></span>
+<span id="cb31-138"><a href="#cb31-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-139"><a href="#cb31-139" aria-hidden="true" tabindex="-1"></a>We have digitized the primary conversion formulas and they are available in our <span class="in">`this_to_that()`</span> function. Running the function on its own will return a table with the statistics required for each conversion.</span>
+<span id="cb31-140"><a href="#cb31-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-143"><a href="#cb31-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-144"><a href="#cb31-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-145"><a href="#cb31-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-146"><a href="#cb31-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-147"><a href="#cb31-147" aria-hidden="true" tabindex="-1"></a><span class="fu">this_to_that</span>()</span>
+<span id="cb31-148"><a href="#cb31-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-149"><a href="#cb31-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-150"><a href="#cb31-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-151"><a href="#cb31-151" aria-hidden="true" tabindex="-1"></a>To convert an effect size, specify the <span class="in">`from`</span> effect type and the <span class="in">`to`</span> effect type, as well as the required statistics. Note that this function also supports full, two-step conversions from $Z_r$ to lnOR and vice versa.</span>
+<span id="cb31-152"><a href="#cb31-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-153"><a href="#cb31-153" aria-hidden="true" tabindex="-1"></a>We'll now show the math and demonstrate the conversions in <span class="in">`R`</span>. All of these conversions pass through SMD. Remember that SMD can be estimated two ways: Cohen's $d$ (uncorrected) and Hedges' $g$ ($d$ multiplied by the small sample size correction factor $J$). The formulas below are written for Cohen's $d$, and we convert to $g$ where needed. If your data are already Hedges' $g$, divide by $J$ first. Luckily, <span class="in">`this_to_that()`</span> does this for you.</span>
+<span id="cb31-154"><a href="#cb31-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-155"><a href="#cb31-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-156"><a href="#cb31-156" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-157"><a href="#cb31-157" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-158"><a href="#cb31-158" aria-hidden="true" tabindex="-1"></a>&amp;J = 1-\frac{3}{4*(n_1 + n_2) - 9}<span class="sc">\\</span></span>
+<span id="cb31-159"><a href="#cb31-159" aria-hidden="true" tabindex="-1"></a>&amp;d = \frac{m_1-m_2}{sd_{pooled}}<span class="sc">\\</span></span>
+<span id="cb31-160"><a href="#cb31-160" aria-hidden="true" tabindex="-1"></a>&amp;g = J * d</span>
+<span id="cb31-161"><a href="#cb31-161" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-162"><a href="#cb31-162" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-163"><a href="#cb31-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-164"><a href="#cb31-164" aria-hidden="true" tabindex="-1"></a>For the willow example, the escalc output gives us Hedges' $g$ and its sampling variance directly:</span>
+<span id="cb31-165"><a href="#cb31-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-168"><a href="#cb31-168" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-169"><a href="#cb31-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-170"><a href="#cb31-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-171"><a href="#cb31-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-172"><a href="#cb31-172" aria-hidden="true" tabindex="-1"></a><span class="co"># Arctic willow warming example (Chapter 2.1): warmed plants (group 1) vs control (group 2)</span></span>
+<span id="cb31-173"><a href="#cb31-173" aria-hidden="true" tabindex="-1"></a>m_warm <span class="ot">&lt;-</span> <span class="dv">12</span>; sd_warm <span class="ot">&lt;-</span> <span class="dv">3</span>; n_warm <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb31-174"><a href="#cb31-174" aria-hidden="true" tabindex="-1"></a>m_ctrl <span class="ot">&lt;-</span> <span class="dv">10</span>; sd_ctrl <span class="ot">&lt;-</span> <span class="dv">2</span>; n_ctrl <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb31-175"><a href="#cb31-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-176"><a href="#cb31-176" aria-hidden="true" tabindex="-1"></a>willow_smd <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-177"><a href="#cb31-177" aria-hidden="true" tabindex="-1"></a>                     <span class="at">m1i =</span> m_warm, <span class="at">m2i =</span> m_ctrl,</span>
+<span id="cb31-178"><a href="#cb31-178" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sd1i =</span> sd_warm, <span class="at">sd2i =</span> sd_ctrl,</span>
+<span id="cb31-179"><a href="#cb31-179" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1i =</span> n_warm, <span class="at">n2i =</span> n_ctrl)</span>
+<span id="cb31-180"><a href="#cb31-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-181"><a href="#cb31-181" aria-hidden="true" tabindex="-1"></a>willow_rom <span class="ot">&lt;-</span> <span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ROM"</span>,</span>
+<span id="cb31-182"><a href="#cb31-182" aria-hidden="true" tabindex="-1"></a>                     <span class="at">m1i =</span> m_warm, <span class="at">m2i =</span> m_ctrl,</span>
+<span id="cb31-183"><a href="#cb31-183" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sd1i =</span> sd_warm, <span class="at">sd2i =</span> sd_ctrl,</span>
+<span id="cb31-184"><a href="#cb31-184" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n1i =</span> n_warm, <span class="at">n2i =</span> n_ctrl,</span>
+<span id="cb31-185"><a href="#cb31-185" aria-hidden="true" tabindex="-1"></a>                     <span class="at">correct =</span> <span class="cn">FALSE</span>)   <span class="co"># uncorrected lnRoM (definition formula)</span></span>
+<span id="cb31-186"><a href="#cb31-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-187"><a href="#cb31-187" aria-hidden="true" tabindex="-1"></a>g_willow     <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(willow_smd<span class="sc">$</span>yi)</span>
+<span id="cb31-188"><a href="#cb31-188" aria-hidden="true" tabindex="-1"></a>vi_g_willow  <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(willow_smd<span class="sc">$</span>vi)</span>
+<span id="cb31-189"><a href="#cb31-189" aria-hidden="true" tabindex="-1"></a>lnrom_willow <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(willow_rom<span class="sc">$</span>yi)</span>
+<span id="cb31-190"><a href="#cb31-190" aria-hidden="true" tabindex="-1"></a>vi_lnrom_willow <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(willow_rom<span class="sc">$</span>vi)</span>
+<span id="cb31-191"><a href="#cb31-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-192"><a href="#cb31-192" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">g =</span> g_willow, <span class="at">vi_g =</span> vi_g_willow, <span class="at">lnRoM =</span> lnrom_willow, <span class="at">vi_lnRoM =</span> vi_lnrom_willow)</span>
+<span id="cb31-193"><a href="#cb31-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-194"><a href="#cb31-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-195"><a href="#cb31-195" aria-hidden="true" tabindex="-1"></a>The Arctic willow warming example gives Hedges' $g$ = <span class="in">`r sprintf('%.2f', g_willow)`</span> (variance <span class="in">`r sprintf('%.3f', vi_g_willow)`</span>) and lnRoM = <span class="in">`r sprintf('%.2f', lnrom_willow)`</span> (variance <span class="in">`r sprintf('%.4f', vi_lnrom_willow)`</span>). We use these values as inputs to the conversions below.</span>
+<span id="cb31-196"><a href="#cb31-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-197"><a href="#cb31-197" aria-hidden="true" tabindex="-1"></a>A quick note on variances. For $g$, <span class="in">`escalc`</span> uses an approximate (large-sample) variance formula: $1/n_1 + 1/n_2 + g^2/(2(n_1 + n_2))$. Our conversions give us Cohen's $d$ and its variance, $V_d$. To get to Hedges' $g$, we multiply the point estimate by $J$ and the variance by $J^2$: $g = J d$ and $V_g = J^2 V_d$. You'll see this correction in the code below.</span>
+<span id="cb31-198"><a href="#cb31-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-199"><a href="#cb31-199" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb31-200"><a href="#cb31-200" aria-hidden="true" tabindex="-1"></a>####### Alternative estimators and effect size conversion {#sec-alternative-estimators}</span>
+<span id="cb31-201"><a href="#cb31-201" aria-hidden="true" tabindex="-1"></a>As described <span class="co">[</span><span class="ot">earlier</span><span class="co">](1-effect-size-overview.qmd#sec-alternative-estimators)</span> in this tutorial, there are multiple flavors of estimators for many effect sizes including paired estimators and, for SMD, an estimator that tolerates heteroscedastic data ("SMDH"). To the best of our knowledge, there are no conversion formulas for these alterative estimators. </span>
+<span id="cb31-202"><a href="#cb31-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-203"><a href="#cb31-203" aria-hidden="true" tabindex="-1"></a>This means that if you are converting $Z_r$ effect sizes to add to a meta-analysis that is otherwise composed of SMD-type effect sizes, you won't be able to use SMDH for the larger dataset. </span>
+<span id="cb31-204"><a href="#cb31-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-205"><a href="#cb31-205" aria-hidden="true" tabindex="-1"></a>Conversely, if you have paired SMD-type data (using <span class="in">`SMCRP`</span> in <span class="in">`escalc`</span>, not <span class="in">`SMCC`</span>) that you wish to convert to add to a meta-analysis of $Z_r$ effect sizes, you'll have to ignore the paired design.</span>
+<span id="cb31-206"><a href="#cb31-206" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb31-207"><a href="#cb31-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-208"><a href="#cb31-208" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ lnOR</span></span>
+<span id="cb31-209"><a href="#cb31-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-210"><a href="#cb31-210" aria-hidden="true" tabindex="-1"></a><span class="fu">## SMD → lnOR {#sec-smd-lnOR}</span></span>
+<span id="cb31-211"><a href="#cb31-211" aria-hidden="true" tabindex="-1"></a>This conversion assumes that the response variable is continuous (e.g., underlying the binary outcome of the lnOR effect type) and that it has a logistic distribution (similar to a normal distribution).</span>
+<span id="cb31-212"><a href="#cb31-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-213"><a href="#cb31-213" aria-hidden="true" tabindex="-1"></a>If the lnOR data was presence/absence of a species and the SMD data was abundance, we believe this assumption is satisfied, given that presence/absence are the extreme ends of abundance.</span>
+<span id="cb31-214"><a href="#cb31-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-215"><a href="#cb31-215" aria-hidden="true" tabindex="-1"></a>Let $y_{i,\text{lnOR}}$ and $y_{i,d}$ be the point estimate for the lnOR and Cohen's d effect sizes and $v_{i,\text{lnOR}}$ and $v_{i,d}$ be their sampling variances:</span>
+<span id="cb31-216"><a href="#cb31-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-217"><a href="#cb31-217" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-218"><a href="#cb31-218" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-219"><a href="#cb31-219" aria-hidden="true" tabindex="-1"></a>&amp;y_{i,\text{lnOR}} = y_{i,d} * \frac{\pi}{\sqrt{3}} <span class="sc">\\</span></span>
+<span id="cb31-220"><a href="#cb31-220" aria-hidden="true" tabindex="-1"></a>&amp;v_{i,\text{lnOR}} = v_{i,d} * \frac{\pi^2}{3} <span class="sc">\\</span></span>
+<span id="cb31-221"><a href="#cb31-221" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-222"><a href="#cb31-222" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-223"><a href="#cb31-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-224"><a href="#cb31-224" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span>, using the willow SMD (Hedges' $g$) as input:</span>
+<span id="cb31-225"><a href="#cb31-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-228"><a href="#cb31-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-229"><a href="#cb31-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-230"><a href="#cb31-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-231"><a href="#cb31-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb31-232"><a href="#cb31-232" aria-hidden="true" tabindex="-1"></a>lnor_willow <span class="ot">&lt;-</span> <span class="fu">this_to_that</span>(<span class="at">from =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-233"><a href="#cb31-233" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">to =</span> <span class="st">"lnOR"</span>,</span>
+<span id="cb31-234"><a href="#cb31-234" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">yi =</span> g_willow,</span>
+<span id="cb31-235"><a href="#cb31-235" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">vi =</span> vi_g_willow,</span>
+<span id="cb31-236"><a href="#cb31-236" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">n1 =</span> n_warm,</span>
+<span id="cb31-237"><a href="#cb31-237" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">n2 =</span> n_ctrl)</span>
+<span id="cb31-238"><a href="#cb31-238" aria-hidden="true" tabindex="-1"></a>lnor_willow</span>
+<span id="cb31-239"><a href="#cb31-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-240"><a href="#cb31-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-241"><a href="#cb31-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## lnOR → SMD {#sec-lnOR-smd}</span></span>
+<span id="cb31-242"><a href="#cb31-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-243"><a href="#cb31-243" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-244"><a href="#cb31-244" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-245"><a href="#cb31-245" aria-hidden="true" tabindex="-1"></a>&amp;y_{i,d} = y_{i,\text{lnOR}} * \frac{\sqrt{3}}{\pi} <span class="sc">\\</span></span>
+<span id="cb31-246"><a href="#cb31-246" aria-hidden="true" tabindex="-1"></a>&amp;v_{i,d} = v_{i,\text{lnOR}} * \frac{3}{\pi^2} <span class="sc">\\</span></span>
+<span id="cb31-247"><a href="#cb31-247" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-248"><a href="#cb31-248" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-249"><a href="#cb31-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-250"><a href="#cb31-250" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span>, we convert the lnOR we just calculated back to SMD. The round trip returns the willow $g$ and its variance exactly:</span>
+<span id="cb31-251"><a href="#cb31-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-254"><a href="#cb31-254" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-255"><a href="#cb31-255" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-256"><a href="#cb31-256" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-257"><a href="#cb31-257" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb31-258"><a href="#cb31-258" aria-hidden="true" tabindex="-1"></a>back_to_smd <span class="ot">&lt;-</span> <span class="fu">this_to_that</span>(<span class="at">from =</span> <span class="st">"lnOR"</span>,</span>
+<span id="cb31-259"><a href="#cb31-259" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-260"><a href="#cb31-260" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">yi =</span> lnor_willow<span class="sc">$</span>yi_trans,</span>
+<span id="cb31-261"><a href="#cb31-261" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">vi =</span> lnor_willow<span class="sc">$</span>vi_trans,</span>
+<span id="cb31-262"><a href="#cb31-262" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">n1 =</span> n_warm,</span>
+<span id="cb31-263"><a href="#cb31-263" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">n2 =</span> n_ctrl)</span>
+<span id="cb31-264"><a href="#cb31-264" aria-hidden="true" tabindex="-1"></a>back_to_smd</span>
+<span id="cb31-265"><a href="#cb31-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-266"><a href="#cb31-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-267"><a href="#cb31-267" aria-hidden="true" tabindex="-1"></a><span class="fu"># SMD ↔ $Z_r$</span></span>
+<span id="cb31-268"><a href="#cb31-268" aria-hidden="true" tabindex="-1"></a><span class="fu">## SMD → $Z_r$ {#sec-smd-Zr}</span></span>
+<span id="cb31-269"><a href="#cb31-269" aria-hidden="true" tabindex="-1"></a>This conversion assumes that a continuous variable was discretized to form the treatment and control groups of an SMD effect size. This may be the case in some situations (e.g., if treatment and control were based on the presence or absence of an independent variable treatment while the correlation was across a continuous gradient of the same variable).</span>
+<span id="cb31-270"><a href="#cb31-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-271"><a href="#cb31-271" aria-hidden="true" tabindex="-1"></a>To convert from SMD to $Z_r$, we first convert $d$ to the correlation coefficient $r$ and then to Zr, using a correction factor $a$ for cases where $n_1 \neq n_2$. Let $y_{i,\text{Zr}}$ and $y_{i,d}$ be the point estimate for $Z_r$ and Cohen's d:</span>
+<span id="cb31-272"><a href="#cb31-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-273"><a href="#cb31-273" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-274"><a href="#cb31-274" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-275"><a href="#cb31-275" aria-hidden="true" tabindex="-1"></a>&amp;a = \frac{(n_1 + n_2)^2}{n_1*n_2} <span class="sc">\\</span></span>
+<span id="cb31-276"><a href="#cb31-276" aria-hidden="true" tabindex="-1"></a>&amp;r = \frac{y_{i,d}}{\sqrt{y_{i,d}^2 + a}} <span class="sc">\\</span></span>
+<span id="cb31-277"><a href="#cb31-277" aria-hidden="true" tabindex="-1"></a>&amp;y_{i,\text{Zr}} = atanh(r)<span class="sc">\\</span></span>
+<span id="cb31-278"><a href="#cb31-278" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-279"><a href="#cb31-279" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-280"><a href="#cb31-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-281"><a href="#cb31-281" aria-hidden="true" tabindex="-1"></a>And the sampling variance of $Z_r$ ($v_{i,\text{Zr}}$):</span>
+<span id="cb31-282"><a href="#cb31-282" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-283"><a href="#cb31-283" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-284"><a href="#cb31-284" aria-hidden="true" tabindex="-1"></a>&amp;n = n_1 + n_2 <span class="sc">\\</span></span>
+<span id="cb31-285"><a href="#cb31-285" aria-hidden="true" tabindex="-1"></a>&amp;v_{i,\text{Zr}} = \frac{1}{(n - 3)} <span class="sc">\\</span></span>
+<span id="cb31-286"><a href="#cb31-286" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-287"><a href="#cb31-287" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-288"><a href="#cb31-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-289"><a href="#cb31-289" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span>, for the willow example:</span>
+<span id="cb31-292"><a href="#cb31-292" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-293"><a href="#cb31-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-294"><a href="#cb31-294" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-295"><a href="#cb31-295" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb31-296"><a href="#cb31-296" aria-hidden="true" tabindex="-1"></a>zr_willow <span class="ot">&lt;-</span> <span class="fu">this_to_that</span>(<span class="at">from =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-297"><a href="#cb31-297" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">to =</span> <span class="st">"Zr"</span>,</span>
+<span id="cb31-298"><a href="#cb31-298" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">yi =</span> g_willow,</span>
+<span id="cb31-299"><a href="#cb31-299" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">vi =</span> vi_g_willow,</span>
+<span id="cb31-300"><a href="#cb31-300" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">n1 =</span> n_warm,</span>
+<span id="cb31-301"><a href="#cb31-301" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">n2 =</span> n_ctrl)</span>
+<span id="cb31-302"><a href="#cb31-302" aria-hidden="true" tabindex="-1"></a>zr_willow</span>
+<span id="cb31-303"><a href="#cb31-303" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-304"><a href="#cb31-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-305"><a href="#cb31-305" aria-hidden="true" tabindex="-1"></a>:::callout-important</span>
+<span id="cb31-306"><a href="#cb31-306" aria-hidden="true" tabindex="-1"></a>Instead of converting SMD to $Z_r$, it may be preferable to calculate a *biserial* correlation coefficient directly from the same summary statistics used for SMD, and convert this ($r_b$) to $Z_r$. This can be done in `escalc` directly with `measure = "ZBIS"`, which calculates the biserial correlation coefficient and converts it to $Z_r$. Why bother? The formula above gives a *point-biserial* correlation. When the two groups are an artificial split of a continuous variable (the assumption in the table above), the comparable correlation is the biserial $r_b$. The point-biserial version is only for *naturally* discrete groups (e.g., male versus female). @Jacobs2017-cv advised against comparing it with correlations from two continuous variables ($r$) or from an artificially split variable ($r_b$), so don't pool them without a moderator.</span>
+<span id="cb31-307"><a href="#cb31-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-308"><a href="#cb31-308" aria-hidden="true" tabindex="-1"></a>Note that the sampling variance from <span class="in">`escalc`</span> for ZBIS is not $1/(n-3)$. The Fisher z transformation does not stabilize the variance of biserial or point-biserial correlations, so flag these rows and run a sensitivity analysis.</span>
+<span id="cb31-309"><a href="#cb31-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-312"><a href="#cb31-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-313"><a href="#cb31-313" aria-hidden="true" tabindex="-1"></a><span class="fu">escalc</span>(<span class="at">measure =</span> <span class="st">"ZBIS"</span>,</span>
+<span id="cb31-314"><a href="#cb31-314" aria-hidden="true" tabindex="-1"></a>       <span class="at">m1i =</span> <span class="dv">10</span>, <span class="at">m2i =</span> <span class="dv">7</span>,</span>
+<span id="cb31-315"><a href="#cb31-315" aria-hidden="true" tabindex="-1"></a>       <span class="at">sd1i =</span> <span class="fl">1.5</span>, <span class="at">sd2i =</span> <span class="dv">2</span>,</span>
+<span id="cb31-316"><a href="#cb31-316" aria-hidden="true" tabindex="-1"></a>       <span class="at">n1i =</span> <span class="dv">15</span>, <span class="at">n2i =</span> <span class="dv">15</span>)</span>
+<span id="cb31-317"><a href="#cb31-317" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-318"><a href="#cb31-318" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb31-319"><a href="#cb31-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-320"><a href="#cb31-320" aria-hidden="true" tabindex="-1"></a><span class="fu">## $Z_r$ → SMD {#sec-$Z_r$-smd}</span></span>
+<span id="cb31-321"><a href="#cb31-321" aria-hidden="true" tabindex="-1"></a>First, convert the point estimate of $Z_r$ ($y_{i,\text{Zr}}$) to the correlation coefficient $r$ and calculate the variance of $r$ ($v_{i,r}$):</span>
+<span id="cb31-322"><a href="#cb31-322" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-323"><a href="#cb31-323" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-324"><a href="#cb31-324" aria-hidden="true" tabindex="-1"></a>&amp;r = tanh(y_{i,\text{Zr}}) <span class="sc">\\</span></span>
+<span id="cb31-325"><a href="#cb31-325" aria-hidden="true" tabindex="-1"></a>&amp;v_{i,r} = \frac{(1-r^2)^2}{(n-1)}</span>
+<span id="cb31-326"><a href="#cb31-326" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-327"><a href="#cb31-327" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-328"><a href="#cb31-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-329"><a href="#cb31-329" aria-hidden="true" tabindex="-1"></a>Then calculate the point estimate ($y_{i,d}$) and variance ($v_{i,d}$) of Cohen's d:</span>
+<span id="cb31-330"><a href="#cb31-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-331"><a href="#cb31-331" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-332"><a href="#cb31-332" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-333"><a href="#cb31-333" aria-hidden="true" tabindex="-1"></a>&amp;y_{i,d} = \frac{2*r}{\sqrt{1-r^2}} <span class="sc">\\</span></span>
+<span id="cb31-334"><a href="#cb31-334" aria-hidden="true" tabindex="-1"></a>&amp;v_{i,d} = \frac{4*v_{i,r}}{(1-r^2)^3} <span class="sc">\\</span></span>
+<span id="cb31-335"><a href="#cb31-335" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-336"><a href="#cb31-336" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-337"><a href="#cb31-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-338"><a href="#cb31-338" aria-hidden="true" tabindex="-1"></a>The helper returns the point estimate as Hedges' $g$ and the variance as the variance of $d$. We correct the variance to the variance of $g$ with $J^2$ (see the note above).</span>
+<span id="cb31-339"><a href="#cb31-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-340"><a href="#cb31-340" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span>, we convert the willow $Z_r$ back to SMD. The result is close to the original $g$; the small difference comes from the small-sample correction, which depends on the sample size passed to the function:</span>
+<span id="cb31-343"><a href="#cb31-343" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-344"><a href="#cb31-344" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-345"><a href="#cb31-345" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-346"><a href="#cb31-346" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb31-347"><a href="#cb31-347" aria-hidden="true" tabindex="-1"></a>back_to_smd_from_zr <span class="ot">&lt;-</span> <span class="fu">this_to_that</span>(<span class="at">from =</span> <span class="st">"Zr"</span>,</span>
+<span id="cb31-348"><a href="#cb31-348" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-349"><a href="#cb31-349" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">yi =</span> zr_willow<span class="sc">$</span>yi_trans,</span>
+<span id="cb31-350"><a href="#cb31-350" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">vi =</span> zr_willow<span class="sc">$</span>vi_trans,</span>
+<span id="cb31-351"><a href="#cb31-351" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">n =</span> n_warm <span class="sc">+</span> n_ctrl)</span>
+<span id="cb31-352"><a href="#cb31-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-353"><a href="#cb31-353" aria-hidden="true" tabindex="-1"></a>J_willow <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="dv">3</span> <span class="sc">/</span> (<span class="dv">4</span> <span class="sc">*</span> (n_warm <span class="sc">+</span> n_ctrl) <span class="sc">-</span> <span class="dv">9</span>)</span>
+<span id="cb31-354"><a href="#cb31-354" aria-hidden="true" tabindex="-1"></a>back_to_smd_from_zr[, vi_trans_g <span class="sc">:</span><span class="er">=</span> J_willow<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> vi_trans]</span>
+<span id="cb31-355"><a href="#cb31-355" aria-hidden="true" tabindex="-1"></a>back_to_smd_from_zr</span>
+<span id="cb31-356"><a href="#cb31-356" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-357"><a href="#cb31-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-358"><a href="#cb31-358" aria-hidden="true" tabindex="-1"></a>Note you can also calculate this directly from $r$ if preferred. Here we use the same willow correlation:</span>
+<span id="cb31-359"><a href="#cb31-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-362"><a href="#cb31-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-363"><a href="#cb31-363" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb31-364"><a href="#cb31-364" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb31-365"><a href="#cb31-365" aria-hidden="true" tabindex="-1"></a><span class="co">#| out-width: "70%"</span></span>
+<span id="cb31-366"><a href="#cb31-366" aria-hidden="true" tabindex="-1"></a>r_willow <span class="ot">&lt;-</span> <span class="fu">tanh</span>(zr_willow<span class="sc">$</span>yi_trans)</span>
+<span id="cb31-367"><a href="#cb31-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-368"><a href="#cb31-368" aria-hidden="true" tabindex="-1"></a><span class="fu">this_to_that</span>(<span class="at">from =</span> <span class="st">"r"</span>,</span>
+<span id="cb31-369"><a href="#cb31-369" aria-hidden="true" tabindex="-1"></a>                     <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-370"><a href="#cb31-370" aria-hidden="true" tabindex="-1"></a>                     <span class="at">r =</span> r_willow,</span>
+<span id="cb31-371"><a href="#cb31-371" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vi =</span> (<span class="dv">1</span> <span class="sc">-</span> r_willow<span class="sc">^</span><span class="dv">2</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (n_warm <span class="sc">+</span> n_ctrl <span class="sc">-</span> <span class="dv">1</span>),</span>
+<span id="cb31-372"><a href="#cb31-372" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n =</span> n_warm <span class="sc">+</span> n_ctrl)</span>
+<span id="cb31-373"><a href="#cb31-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-374"><a href="#cb31-374" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-375"><a href="#cb31-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-376"><a href="#cb31-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-377"><a href="#cb31-377" aria-hidden="true" tabindex="-1"></a><span class="fu">## Test statistics, $R^2$ and other summaries {#sec-other-summaries}</span></span>
+<span id="cb31-378"><a href="#cb31-378" aria-hidden="true" tabindex="-1"></a>Papers often report a test statistic or a model summary rather than a correlation. The table below gives the conversions to a correlation coefficient $r$ that we recommend. Each one is exact only for the model stated in the middle column.</span>
+<span id="cb31-379"><a href="#cb31-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-380"><a href="#cb31-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Reported statistic <span class="pp">|</span> Conversion to $r$ <span class="pp">|</span> Notes <span class="pp">|</span></span>
+<span id="cb31-381"><a href="#cb31-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb31-382"><a href="#cb31-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $t$ from a simple regression or two-group test <span class="pp">|</span> $r = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - 2$ <span class="pp">|</span> Sign taken from $t$. <span class="pp">|</span></span>
+<span id="cb31-383"><a href="#cb31-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $F(1, df_{error})$ <span class="pp">|</span> $r = \sqrt{\frac{F}{F + df_{error}}}$ <span class="pp">|</span> Only for one numerator degree of freedom. Take the sign from the slope. <span class="pp">|</span></span>
+<span id="cb31-384"><a href="#cb31-384" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $R^2$ <span class="pp">|</span> $r = \sqrt{R^2}$ <span class="pp">|</span> Only for a single-predictor model. Take the sign from the slope. <span class="pp">|</span></span>
+<span id="cb31-385"><a href="#cb31-385" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Standardized slope ($b$) <span class="pp">|</span> $r = b \frac{s_x}{s_y}$ <span class="pp">|</span> Only for a single predictor. <span class="pp">|</span></span>
+<span id="cb31-386"><a href="#cb31-386" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\chi^2$ from a $2 \times 2$ table <span class="pp">|</span> $\phi = \sqrt{\frac{\chi^2}{N}}$ <span class="pp">|</span> This is phi, a different estimand. Flag it. <span class="pp">|</span></span>
+<span id="cb31-387"><a href="#cb31-387" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $t$ for one predictor in a multiple regression <span class="pp">|</span> $r_p = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - k - 1$ <span class="pp">|</span> This is a partial correlation, not a simple correlation. Use <span class="in">`escalc("ZPCOR")`</span> with the number of predictors $m = k$ to get the variance. <span class="pp">|</span></span>
+<span id="cb31-388"><a href="#cb31-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-389"><a href="#cb31-389" aria-hidden="true" tabindex="-1"></a>For example, a two-group $t$ of 2.5 with 18 degrees of freedom gives $r$ = <span class="in">`r sprintf('%.2f', 2.5 / sqrt(2.5^2 + 18))`</span>.</span>
+<span id="cb31-390"><a href="#cb31-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-391"><a href="#cb31-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-392"><a href="#cb31-392" aria-hidden="true" tabindex="-1"></a><span class="fu"># lnRoM → SMD {#sec-lnrom-smd}</span></span>
+<span id="cb31-393"><a href="#cb31-393" aria-hidden="true" tabindex="-1"></a>Imagine you're running an SMD meta-analysis (maybe because of negative values, dimensionality, or other concerns). Then you find a study that only reports lnRoM (log-transformed ratio of means) and its sampling variance or standard error. Luckily, if the two groups have equal standard deviations, lnRoM can be converted to SMD <span class="co">[</span><span class="ot">@Lajeunesse2026-ms</span><span class="co">]</span>. </span>
+<span id="cb31-394"><a href="#cb31-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-395"><a href="#cb31-395" aria-hidden="true" tabindex="-1"></a>This only works one way: we provide lnRoM → SMD, but not SMD → lnRoM. This allows the extraction of data published as effect sizes into a common currency and can also support secondary meta-analyses (e.g., meta-meta-analyses) by converting to the universal solvent of SMD.</span>
+<span id="cb31-396"><a href="#cb31-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-397"><a href="#cb31-397" aria-hidden="true" tabindex="-1"></a>The conversion depends on three assumptions:</span>
+<span id="cb31-398"><a href="#cb31-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-399"><a href="#cb31-399" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Equal standard deviations.** The variance of group 1 is similar to the variance of group 2 (homoscedasticity). This may or may not be met in ecological data.</span>
+<span id="cb31-400"><a href="#cb31-400" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Additive effect.** SMD represents linear-scale effects as a difference between means, whereas lnRoM represents multiplicative effects, e.g., where treatment effects scale proportionally to baseline levels. When the effect is multiplicative, the converted SMD is an approximation.</span>
+<span id="cb31-401"><a href="#cb31-401" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Hedges' correction after converting.** We convert to Cohen's $d$ first and apply the Hedges' correction $J$ afterwards, to give $g$.</span>
+<span id="cb31-402"><a href="#cb31-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-403"><a href="#cb31-403" aria-hidden="true" tabindex="-1"></a>As with all conversions, sensitivity analyses are critical to make sure these assumptions are not unduly influencing your results.</span>
+<span id="cb31-404"><a href="#cb31-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-405"><a href="#cb31-405" aria-hidden="true" tabindex="-1"></a>Note that converting SMD to lnRoM remains unresolved.</span>
+<span id="cb31-406"><a href="#cb31-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-407"><a href="#cb31-407" aria-hidden="true" tabindex="-1"></a>As with the other conversions, we'll relay the math to convert between Cohen's d (the uncorrected estimator of SMD) and the uncorrected version of lnRoM. Our function, <span class="in">`this_to_that`</span> automatically converts Cohen's d to Hedges' g (the bias-corrected estimator of SMD).</span>
+<span id="cb31-408"><a href="#cb31-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-409"><a href="#cb31-409" aria-hidden="true" tabindex="-1"></a>Let $yi_{ROM}$ and $yi_{d}$ be the point estimates of lnRoM and SMD (after converting Hedges' g to Cohen's d) and $vi_{ROM}$ and $vi_{d}$ be their sampling variance estimates. Finally, let $n_1$ and $n_2$ be the numerator and denominator of lnRoM (e.g., the treatment and control groups respectively):</span>
+<span id="cb31-410"><a href="#cb31-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-411"><a href="#cb31-411" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-412"><a href="#cb31-412" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-413"><a href="#cb31-413" aria-hidden="true" tabindex="-1"></a>yi_d = (yi_{ROM} - 1) * \sqrt{\frac{n_1/yi_{ROM}^2 + n_2}{n_1 n_2 vi_{ROM}}}</span>
+<span id="cb31-414"><a href="#cb31-414" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-415"><a href="#cb31-415" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-416"><a href="#cb31-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-417"><a href="#cb31-417" aria-hidden="true" tabindex="-1"></a>The sampling variance is estimated as follows. Note that this estimator is the default used by <span class="in">`escalc`</span> as it is less biased and is thus the final estimated variance for SMD:</span>
+<span id="cb31-418"><a href="#cb31-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-419"><a href="#cb31-419" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-420"><a href="#cb31-420" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb31-421"><a href="#cb31-421" aria-hidden="true" tabindex="-1"></a>vi_{d} = \frac{1}{n_1} + \frac{1}{n_2} + \frac{yi_d^2}{2(n_1 + n_2)}</span>
+<span id="cb31-422"><a href="#cb31-422" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb31-423"><a href="#cb31-423" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb31-424"><a href="#cb31-424" aria-hidden="true" tabindex="-1"></a>The variance $v_{i,g}$ is the large-sample estimator used by <span class="in">`escalc`</span> for SMD, applied to the converted $g$.</span>
+<span id="cb31-425"><a href="#cb31-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-428"><a href="#cb31-428" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb31-429"><a href="#cb31-429" aria-hidden="true" tabindex="-1"></a>conv_willow <span class="ot">&lt;-</span> <span class="fu">this_to_that</span>(<span class="at">from =</span> <span class="st">"lnRoM"</span>, <span class="at">to =</span> <span class="st">"SMD"</span>,</span>
+<span id="cb31-430"><a href="#cb31-430" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">yi =</span> lnrom_willow, <span class="at">vi =</span> vi_lnrom_willow,</span>
+<span id="cb31-431"><a href="#cb31-431" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">n1 =</span> n_warm, <span class="at">n2 =</span> n_ctrl)</span>
+<span id="cb31-432"><a href="#cb31-432" aria-hidden="true" tabindex="-1"></a>conv_willow</span>
+<span id="cb31-433"><a href="#cb31-433" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb31-434"><a href="#cb31-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-435"><a href="#cb31-435" aria-hidden="true" tabindex="-1"></a>Converting the willow lnRoM gives Hedges' $g$ = <span class="in">`r sprintf('%.2f', conv_willow$yi_trans)`</span> (variance <span class="in">`r sprintf('%.3f', conv_willow$vi_trans)`</span>). The escalc value from the raw summaries is <span class="in">`r sprintf('%.2f', g_willow)`</span>. The two differ because the standard deviations (<span class="in">`r sd_warm`</span> and <span class="in">`r sd_ctrl`</span>) are not equal, so the equal-SD assumption is not met. </span>
+<span id="cb31-436"><a href="#cb31-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-437"><a href="#cb31-437" aria-hidden="true" tabindex="-1"></a>:::callout-tip</span>
+<span id="cb31-438"><a href="#cb31-438" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Next</span></span>
+<span id="cb31-439"><a href="#cb31-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-440"><a href="#cb31-440" aria-hidden="true" tabindex="-1"></a>**Next:** <span class="co">[</span><span class="ot">Variability between groups</span><span class="co">](5.1-variability-between-groups.qmd)</span>, which uses the willow warming example to compare means and variability.</span>
+<span id="cb31-441"><a href="#cb31-441" aria-hidden="true" tabindex="-1"></a>:::</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>

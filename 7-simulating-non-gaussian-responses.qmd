@@ -370,11 +370,14 @@ $$\begin{aligned}
 & \beta = (1-m) \, ab \\
 \end{aligned}$$
 
-If $\rho \le 0$, the reported $sd$ is not larger than the binomial $sd$, so the Beta-Binomial cannot be used and you should use `rbinom` instead. In R:
+If $\rho \le 0$, the reported $sd$ is not larger than the binomial $sd$, so the Beta-Binomial cannot be used and you should use `rbinom` instead. In `R` we'll use the `rbbinom` function from the package `extraDistr`.
 
 ```{r}
 #| eval: true
 #| echo: true
+
+library("extraDistr")
+
 n_individuals = 10
 mean_proportion = 0.4
 sd = 0.25      # must be larger than the binomial sd, sqrt(0.4 * 0.6 / 10) = 0.155
@@ -405,6 +408,7 @@ This vector gives the number of individuals with the outcome in each trial, whil
 check <- rbbinom(n = 1e5, size = n_individuals, alpha = alpha, beta = beta) / n_individuals
 
 c(mean = mean(check), sd = sd(check))
+
 ```
 
 The simulated mean is `r fmt(mean(check))` and the simulated standard deviation is `r fmt(sd(check))`, against the target values of `r fmt(mean_proportion)` and `r fmt(sd)`.

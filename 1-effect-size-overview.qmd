@@ -143,11 +143,11 @@ Finally, it is also possible to formulate custom effect sizes that may help simp
 
 The dominant function used to calculate effect sizes and sampling variance in `R` is the function `escalc` in the package `metafor` [@Viechtbauer2010-uq]. `escalc` takes effect-size-specific summary statistics and a variable specifying the effect size type (specified with the `measure` argument).
 
-At certain points we will also use our own custom function, `eff_size` **(currently called eff_size but eff_this could be funny...)** which can do most of what `escalc` can do but also a few niche things that `escalc` currently doesn't support.
+At certain points we will also use our own custom function, `eff_this` **(currently called eff_this but eff_this could be funny...)** which can do most of what `escalc` can do but also a few niche things that `escalc` currently doesn't support.
 
-To start, we'll clean the environment and we will install a custom package, `metatools`, that we developed to go alongside this tutorial. `metatools` contains the function `eff_size` and a function for converting between effect sizes (`convert_effect_sizes`, see our tutorial [here](4-converting-effect-sizes.qmd)). 
+To start, we'll clean the environment and we will install a custom package, `effit`, that we developed to go alongside this tutorial. `effit` contains the function `eff_this` to calculate effect sizes and a function for converting between effect sizes (`this_to_that`, see our tutorial [here](4-converting-effect-sizes.qmd)). 
 
-We'll install `metatools` with `pak::pak` and we'll load `metafor`, the workhorse of meta-analysis in R:
+We'll install `effit` with `pak::pak` and we'll load `metafor`, the workhorse of meta-analysis in R:
 
 ```{r}
 #| eval: true
@@ -156,11 +156,11 @@ We'll install `metatools` with `pak::pak` and we'll load `metafor`, the workhors
 
 rm(list = ls())
 
-if(!requireNamespace("metatools")) {
-  pak::pak("ejlundgren/metatools")
+if(!requireNamespace("effit")) {
+  pak::pak("ejlundgren/effit")
 }
 
-library("metatools")
+library("effit")
 library("metafor")
 
 # Also load dplyr for some data stuff down the line:
@@ -198,22 +198,22 @@ willow_rom
 
 The lnRoM is `r round(willow_rom$yi, 2)`, which is the log of the ratio of means, $ln(12/10)$.
 
-In `eff_size`, this is similar except that the argument names are slightly different (`x` instead of `m` for the means and no `i`)
+In `eff_this`, this is similar except that the argument names are slightly different (`x` instead of `m` for the means and no `i`)
 
 ```{r}
 #| eval: true
 #| echo: true
 #| out-width: "70%"
 
-eff_size(effect_type = "SMD",
+eff_this(effect_type = "SMD",
          x1 = 12, x2 = 10, 
          sd1 = 3, sd2 = 2,
          n1 = 20, n2 = 20)
 ```
 
-`eff_size` is useful in some cases. Primarily because `eff_size` has built in functionality to calculate [**lnM**](5.2-differences-in-magnitude.qmd) with a fancy bootstrapping method, which we'll discuss later. 
+`eff_this` is useful in some cases. Primarily because `eff_this` has built in functionality to calculate [**lnM**](5.2-differences-in-magnitude.qmd) with a fancy bootstrapping method, which we'll discuss later. 
 
-`eff_size` also, by switching `default_formulas = FALSE`, returns multiple estimators of the same effect size. 
+`eff_this` also, by switching `default_formulas = FALSE`, returns multiple estimators of the same effect size. 
 
 Now, you may be wondering: what is an estimator? Why are there multiple estimators for the same effect size? 
 
@@ -457,7 +457,7 @@ escalc(m1i = 10, m2i = 6,
 
 
 :::{.callout-note collapse="true"}
-##### Click here to see our custom function `metatools::eff_size`
+##### Click here to see our custom function `effit::eff_this`
 Our function, `eff_this`, is similar to `escalc` but provides a little bit more control because it returns the definition formula estimates as well as derived second-order estimates if you set `default_formulas=FALSE`---and it returns the exact formulas used. Run the function to see the potential supported formulas and their inputs.
 
 ```{r}
@@ -465,7 +465,7 @@ Our function, `eff_this`, is similar to `escalc` but provides a little bit more 
 #| echo: true
 #| out-width: "70%"
 
-eff_size()
+eff_this()
 
 ```
 
@@ -475,7 +475,7 @@ You can also look at the documentation:
 #| echo: true
 #| out-width: "70%"
 
-?eff_size
+?eff_this
 
 ```
 
@@ -484,7 +484,7 @@ Now let's calculate SMD:
 ```{r}
 #| out-width: "70%"
 
-eff_size(x1 = 10, x2 = 6,
+eff_this(x1 = 10, x2 = 6,
        sd1 = 1.5, sd2 = 1.5,
        n1 = 15, n2 = 15,
        default_formulas = FALSE,
@@ -494,9 +494,9 @@ eff_size(x1 = 10, x2 = 6,
 
 `yi_first` and `vi_first` are the definition formulas (@eq-cohens-d and @eq-hedges-g) and the `_second` variables are the bias-corrected estimates (in this case Hedges' g). If you select `default_formulas = TRUE`, then this function will return those thought to be most stable and the least biased (e.g., the same estimates that `escalc` returns).
 
-You'll see in future sections that certain data types may require alternative estimators, which are provided within `eff_size`. For example, `escalc` returns the bias-corrected lnRoM point estimate by default [@Lajeunesse2015-gw]. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as `yi_second` and `yi_first`, respectively, by `eff_size`. See [here](2.1-SMD-assumptions.qmd) for a fuller discussion.
+You'll see in future sections that certain data types may require alternative estimators, which are provided within `eff_this`. For example, `escalc` returns the bias-corrected lnRoM point estimate by default [@Lajeunesse2015-gw]. If the assumptions behind that correction are doubtful, you can compare it with the uncorrected point estimate as a sensitivity analysis. The two versions are returned as `yi_second` and `yi_first`, respectively, by `eff_this`. See [here](2.1-SMD-assumptions.qmd) for a fuller discussion.
 
-The most important reason to use `eff_size` is to calculate **lnM**---which requires SAFE bootstrapping. This is discussed in the [lnM page](5.2-differences-in-magnitude.qmd)
+The most important reason to use `eff_this` is to calculate **lnM**---which requires SAFE bootstrapping. This is discussed in the [lnM page](5.2-differences-in-magnitude.qmd)
 :::
 
 ## Alternative estimators {#sec-alternative-estimators}
