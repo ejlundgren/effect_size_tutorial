@@ -52,8 +52,8 @@ csl: ecology.csl
 
 rm(list = ls())
 
-if(!requireNamespace("effit")) {
-  pak::pak("ejlundgren/effit")
+if (!requireNamespace("effit")) {
+    pak::pak("ejlundgren/effit")
 }
 library("effit")
 
@@ -67,7 +67,6 @@ library("broom")
 library("broom.mixed")
 library("simplermarkdown")
 library("crayon")
-
 ```
 
 ::: callout-note
@@ -83,18 +82,19 @@ $Z_r$ describes correlations between a continuous predictor variable and a (gene
 
 $Z_r$ type data often takes the form of a scatterplot but other formats exist (e.g., matrices, time series, and model estimates). We'll go through these examples in turn, along with solutions and limitations for extracting $Z_r$ type data. We'll start, however, by describing how to structure a database for $Z_r$ type effect sizes.
 
-## Database design
+## Database design {#sec-introduction}
 In general, $Z_r$ effect size extractions require a long-format database for data entry, where each row is one of the points in the corresponding analysis. This is because you will most likely be extracting individual points from scatterplot figures, instead of directly reported correlation coefficients ($r$). 
 
 This dataset will then be summarized in `R` to derive $r$ (using `cor.test`) and sample size ($n$), producing a derived dataset with a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
 
 Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). These can be entered into the same raw dataset or into a separate tab.
 
-:::callout-important
-######## Types of directly reported correlations
-The $Z_r$ effect size is based on a transformation of Pearson's correlation coefficient ($r$). However, there are other correlation types. Spearman correlation is used for non-parametric correlation tests, Kendall for XXXXX, biserial for an artificially discretized predictor variable, and point-biserial for a truly discretized predictor variable.
+::: {.callout-important}
+##### Types of directly reported correlations
+The standard $Z_r$ effect size (`measure = "ZCOR"` in `escalc`) is Fisher's $z$-transformation of **Pearson's correlation coefficient ($r$)**. However, primary studies sometimes report other correlation types that require conversion or dedicated estimators before pooling:
 
-Of these, it appears that all but point-biserial can be used to calculate $Z_r$ without adjustment [@Jacobs2017-cv]. `escalc` has measure arguments directly designed to convert biserial correlations to $Z_r$ (`measure = "ZBIS"`).
+- **Spearman's $\rho$ ($r_s$)** and **Kendall's $\tau$** are non-parametric rank correlations based on rank order or concordant/discordant pairs rather than raw values. Do not pass $\rho$ or $\tau$ directly into `escalc(measure = "ZCOR")`; first convert them to a Pearson-equivalent $r$ using $r \approx 2\sin(\pi \rho / 6)$ [@Rupinski1996-rd] or $r \approx \sin(\pi \tau / 2)$ [@Kendall1948-rk], as detailed in [Chapter 2.3](2.3-Zr-assumptions.qmd#handling-ranked-correlations-spearmans-rho-and-kendalls-tau).
+- **Biserial ($r_b$)** and **point-biserial ($r_{pb}$)** correlations measure the association between a continuous variable and a binary variable—either an artificially dichotomized continuous variable ($r_b$) or a naturally binary variable ($r_{pb}$). Applying Fisher's $z$ directly to $r_b$ or $r_{pb}$ does **not** stabilize the sampling variance to $1/(n - 3)$, and $r_{pb}$ is bounded below $\pm 1$ so it should not be pooled directly with continuous $r$ or $r_b$ without adjustment [@Jacobs2017-cv]. When group means and SDs are reported, `escalc` provides dedicated estimators (`measure = "ZBIS"` and `measure = "ZPB"`) with appropriate sampling variances, or you can convert between SMD, $\ln\text{OR}$, and $Z_r$ (see [Chapter 4](4-converting-effect-sizes.qmd#sec-smd-Zr) and [Chapter 6](6-escalc-cheatsheet.qmd#sec-zr-options)).
 :::
 
 Your dataset may look like this, with the first correlation (`corr_1`) represented as raw data extracted from a scatterplot and the second correlation (`corr_2`) entered directly as the correlation coefficient and sample size:
@@ -103,14 +103,15 @@ Your dataset may look like this, with the first correlation (`corr_1`) represent
 #| echo: false
 #| eval: true
 #| out-width: "70%"
-dat <- data.table(correlation_id = c(rep("corr_1", 5), "corr_2"),
-                  x = c(rnorm(n = 5, mean = 3, sd = 1), NA),
-                  r = c(rep(NA, 5), 0.31),
-                  n = c(rep(NA, 5), 30))
+dat <- data.table(
+    correlation_id = c(rep("corr_1", 5), "corr_2"),
+    x = c(rnorm(n = 5, mean = 3, sd = 1), NA),
+    r = c(rep(NA, 5), 0.31),
+    n = c(rep(NA, 5), 30)
+)
 dat[!is.na(x), y := x * 1.5 + rnorm(n = 5, mean = 0, sd = 1)]
 setcolorder(dat, c("correlation_id", "x", "y", "r", "n"))
 knitr::kable(dat)
-
 ```
 
 This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. We offer a helper function `get_r` that allows you to do this more succinctly:
@@ -120,34 +121,41 @@ This will then be summarized in `R` to calculate the correlation coefficient $r$
 #| eval: true
 #| out-width: "70%"
 
-get_r <- function(x, y){
-  out <- cor.test(x, y)
-  return(out$estimate)
+get_r <- function(x, y) {
+    out <- cor.test(x, y)
+    return(out$estimate)
 }
 
 # Summarize the raw correlation data:
 dat.summarized <- dat %>%
-  filter(!is.na(x)) %>%
-  group_by(correlation_id) %>%
-  summarize(r = get_r(x, y),
-            n = n())
+    filter(!is.na(x)) %>%
+    group_by(correlation_id) %>%
+    summarize(
+        r = get_r(x, y),
+        n = n()
+    )
 
 # Bind with the already summarized correlation data:
-dat.final <- rbind(dat.summarized,
-                   dat %>% 
-                     filter(!is.na(r)) %>%
-                     select(-x, -y))
+dat.final <- rbind(
+    dat.summarized,
+    dat %>%
+        filter(!is.na(r)) %>%
+        select(-x, -y)
+)
 
 # Now calculate Zr:
-dat.summarized <- escalc(measure = "ZCOR",
-                         ri = r, ni = n,
-                         data = dat.final)
+dat.summarized <- escalc(
+    measure = "ZCOR",
+    ri = r, ni = n,
+    data = dat.final
+)
 
 knitr::kable(dat.summarized)
-
 ```
 
-You may also note [below](#sec-error-bars) that there are methods to utilize mean ±error data in correlation coefficients. These would require additional columns and additional steps in `R`. 
+In the resulting table above, `escalc` appends two columns to your dataset: **`yi`**, which is the $Z_r$ point estimate ($Z_r = \text{atanh}(r)$), and **`vi`**, which is its sampling variance ($v_i = \frac{1}{n - 3}$; see [Chapter 2.3](2.3-Zr-assumptions.qmd) for the underlying formulas).
+
+You may also note [below](#sec-error-bars) that there are methods to utilize mean ± error data in correlation coefficients. These would require additional columns and additional steps in `R`. 
 
 Feel free to download our database template, here: 
 
@@ -156,14 +164,15 @@ Feel free to download our database template, here:
 
 library("downloadthis")
 
-download_file(path = "data/template_dataset.xlsx",
-                output_name = "database_template",
-                output_extension = ".xlsx",
-                button_label = "Download template dataset",
-                button_type = "primary", # Controls styling 
-                has_icon = TRUE,
-                icon = "fa fa-save")
-
+download_file(
+    path = "data/template_dataset.xlsx",
+    output_name = "database_template",
+    output_extension = ".xlsx",
+    button_label = "Download template dataset",
+    button_type = "primary", # Controls styling
+    has_icon = TRUE,
+    icon = "fa fa-save"
+)
 ```
 
 <br>
@@ -183,18 +192,21 @@ This is the simplest type of correlation figure. In this case, you'd calibrate t
 x <- rnorm(n = 50, mean = 7, sd = 1.2)
 y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
 
-dat <- data.table(x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
-                  n = 10)
+dat <- data.table(
+    x = x, y = y, sd = abs(rnorm(n = 50, mean = 0, sd = .5)),
+    n = 10
+)
 
-ggplot(data = dat, aes(x = x, y = y))+
-  geom_smooth(method = "lm", color = "hotpink")+
-  geom_point(size = 3, shape = 21, fill = "grey50")+
-  xlab("x")+
-  ylab("y")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = dat, aes(x = x, y = y)) +
+    geom_smooth(method = "lm", color = "hotpink") +
+    geom_point(size = 3, shape = 21, fill = "grey50") +
+    xlab("x") +
+    ylab("y") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
 
@@ -213,23 +225,28 @@ But what if there is an ugly cluster of overlapping points?
 x <- rnorm(n = 50, mean = 7, sd = 1.2)
 y <- x * 1.3 + rnorm(n = 50, mean = 0, sd = 1)
 
-dat <- data.table(x = x, y = y, sd = runif(n = 50, min = 0.25, max = 0.5),
-                  n = 10)
+dat <- data.table(
+    x = x, y = y, sd = runif(n = 50, min = 0.25, max = 0.5),
+    n = 10
+)
 dat.sub <- dat[rep(5, 12), ]
 dat.sub$x <- jitter(dat.sub$x, amount = .05)
 dat.sub$y <- jitter(dat.sub$y, amount = .05)
 
-ggplot(data = dat, aes(x = x, y = y))+
-  geom_smooth(method = "lm", color = "black")+
-  geom_point(size = 3, shape = 21, fill = "grey50")+
-  geom_point(data = dat.sub, aes(x = x, y = y), fill = "hotpink",
-             shape = 21, size = 3)+
-  xlab("x")+
-  ylab("y")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = dat, aes(x = x, y = y)) +
+    geom_smooth(method = "lm", color = "black") +
+    geom_point(size = 3, shape = 21, fill = "grey50") +
+    geom_point(
+        data = dat.sub, aes(x = x, y = y), fill = "hotpink",
+        shape = 21, size = 3
+    ) +
+    xlab("x") +
+    ylab("y") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
 If the total number of points is reported for the study, you can duplicate the values of the pink points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall $Z_r$ estimate more conservative—e.g., less weight in the model). 
@@ -249,16 +266,17 @@ But what do you do if each point is actually a mean±SD?
 #| eval: true
 #| out-width: "70%"
 
-ggplot(data = dat, aes(x = x, y = y))+
-  geom_smooth(method = "lm", color = "hotpink")+
-  geom_errorbar(width = .25, aes(ymin = y-sd, ymax = y+sd))+
-  geom_point(size = 3, shape = 21, fill = "grey50")+
-  xlab("x")+
-  ylab("mean y±SD per site")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = dat, aes(x = x, y = y)) +
+    geom_smooth(method = "lm", color = "hotpink") +
+    geom_errorbar(width = .25, aes(ymin = y - sd, ymax = y + sd)) +
+    geom_point(size = 3, shape = 21, fill = "grey50") +
+    xlab("x") +
+    ylab("mean y±SD per site") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
 Let's imagine that each point is a site. Most researchers likely ignore the $SD$ and calculate $Z_r$ from the site means and number of sites, as follows:
@@ -270,11 +288,12 @@ Let's imagine that each point is a site. Most researchers likely ignore the $SD$
 head(dat)
 
 out_site <- cor.test(dat$x, dat$y)
-site_mean_estimates <- escalc(measure = "ZCOR",
-                               ri = out_site$estimate,
-                               ni = nrow(dat))
+site_mean_estimates <- escalc(
+    measure = "ZCOR",
+    ri = out_site$estimate,
+    ni = nrow(dat)
+)
 site_mean_estimates
-
 ```
 
 However, calculating $Z_r$ this way treats *site* as the **unit of replication**. If the other studies in your dataset also treat *site* as the unit of replication, this is the best approach. However, if the rest of your data uses individuals or plots as the unit of replication you will end up with misaligned units of replication. 
@@ -285,11 +304,11 @@ An alternative approach is to simulate the underlying data behind each site-leve
 
 2. Extract the means and error and convert error to $SD$
 
-3. Use these statistics to draw random samples of of the data underlying each point from the appropriate statistical distribution (with the length of this sample equal to the internal sample size). 
+3. Use these statistics to draw random samples of the data underlying each point from the appropriate statistical distribution (with the length of this sample equal to the internal sample size). 
 
 Note that this process can align the unit of replication of this data with the rest of your dataset. However, it also introduces a different issue: the individual observations are not equally independent (i.e., they're clustered within each point). Luckily, there is a way to correct for this, which we'll demonstrate below.
 
-Here we'll use `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](#sec-$Z_r$-reconstructing-proportion-data) for a worked example with a $Z_r$-type effect size and the binomial distribution)
+Here we'll use `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a $Z_r$-type effect size and the binomial distribution)
 
 ::: callout-warning
 Note that reconstructing underlying data is an experimental method. Use carefully.
@@ -302,7 +321,6 @@ The first few rows of our extracted data looks like this, with an internal sampl
 #| eval: true
 
 knitr::kable(head(dat))
-
 ```
 
 In a loop, we draw data for each site:
@@ -313,18 +331,21 @@ In a loop, we draw data for each site:
 
 y_expanded <- list()
 
-for(i in 1:nrow(dat)){
-  y_expanded[[i]] <- data.table(y = rnorm(mean = dat$y[i],
-                                          sd = dat$sd[i],
-                                          n = dat$n[i]),
-                                x = dat$x[i])
+for (i in 1:nrow(dat)) {
+    y_expanded[[i]] <- data.table(
+        y = rnorm(
+            mean = dat$y[i],
+            sd = dat$sd[i],
+            n = dat$n[i]
+        ),
+        x = dat$x[i]
+    )
 }
 y_expanded <- rbindlist(y_expanded)
 
 nrow(y_expanded)
 
 knitr::kable(head(y_expanded))
-
 ```
 
 ::: callout-warning
@@ -338,16 +359,19 @@ If you were to plot this reconstructed data, it would look like this:
 #| eval: true
 #| out-width: "70%"
 
-ggplot(data = y_expanded, aes(x = x, y = y))+
-  geom_jitter(size = 3, shape = 21, fill = "grey50",
-              alpha = 0.5)+
-  geom_smooth(method = "lm", color = "hotpink")+
-  xlab("x")+
-  ylab("y")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = y_expanded, aes(x = x, y = y)) +
+    geom_jitter(
+        size = 3, shape = 21, fill = "grey50",
+        alpha = 0.5
+    ) +
+    geom_smooth(method = "lm", color = "hotpink") +
+    xlab("x") +
+    ylab("y") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
 In this example, each point had an internal sample size of 10 measurements. The reconstructed dataset therefore has 500 rows (50 sites times 10 measurements), but these rows are not fully independent. All measurements *within* a site share the site's x value and the associated spatial or temporal clustering.
@@ -363,13 +387,12 @@ We shrink the sample size with a *design effect* (see [here](3.3-lnOR-challenges
 out <- cor.test(y_expanded$x, y_expanded$y)
 
 fit <- lm(y ~ x, data = dat)
-s2_w <- mean(dat$sd^2)                                    # within-site variance
-s2_b <- max(var(resid(fit)) - s2_w / mean(dat$n), 0)      # between-site variance
+s2_w <- mean(dat$sd^2) # within-site variance
+s2_b <- max(var(resid(fit)) - s2_w / mean(dat$n), 0) # between-site variance
 icc <- s2_b / (s2_b + s2_w)
 n_eff <- nrow(y_expanded) / (1 + (mean(dat$n) - 1) * icc) # effective n
 
 n_eff
-
 ```
 
 The effective sample size became `r round(n_eff)`---much closer to the number of sites (50) than the total number of observations (500). If the standard deviations around each point had been larger, then effective sample size would be larger and further approach the number of individual measurements.
@@ -385,9 +408,11 @@ r
 But instead of using 500 as our sample size in our call to `escalc`, we use our estimate of effective sample size:
 
 ```{r}
-escalc(measure = "ZCOR",
-       ri = out$estimate,
-       ni = n_eff)
+escalc(
+    measure = "ZCOR",
+    ri = out$estimate,
+    ni = n_eff
+)
 ```
 
 Compare this to our site-level $Z_r$ estimates (n=50), that ignored the error bars:
@@ -416,17 +441,18 @@ setnames(dat, "sd", "y_sd")
 
 dat[, x_n := 20]
 
-ggplot(data = dat[sample(25)], aes(x = x, y = y))+
-  geom_smooth(method = "lm", color = "hotpink")+
-  geom_point(size = 3, shape = 21, fill = "grey50")+
-  geom_errorbar(width = .25, aes(ymin = y-y_sd, ymax = y+y_sd))+
-  geom_errorbarh(aes(xmin = x-x_sd, xmax = x+x_sd), height = .25)+
-  xlab("x")+
-  ylab("y")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = dat[sample(25)], aes(x = x, y = y)) +
+    geom_smooth(method = "lm", color = "hotpink") +
+    geom_point(size = 3, shape = 21, fill = "grey50") +
+    geom_errorbar(width = .25, aes(ymin = y - y_sd, ymax = y + y_sd)) +
+    geom_errorbarh(aes(xmin = x - x_sd, xmax = x + x_sd), height = .25) +
+    xlab("x") +
+    ylab("y") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
 In this case, the safest bet is likely to use the data as is, tagging the unit of replication as being site-level instead of measurement-level. 
@@ -455,29 +481,32 @@ r <- 0.5
 
 xy_expanded <- list()
 
-for(i in 1:nrow(dat)){
-  # Create the correlation matrix between x and y:
-  sig <- matrix(
-                c(dat$x_sd[i]^2,
-                  r * dat$x_sd[i] * dat$y_sd[i],
-                  r * dat$x_sd[i] * dat$y_sd[i],
-                  dat$y_sd[i]^2),
-                nrow = 2, ncol = 2, byrow = TRUE
-              )
-  
-  # Draw from the multivariate normal distribution
-  xy_expanded[[i]] <- mvrnorm(n = dat$n[i], 
-                              mu = c(x = dat$x[i], 
-                                     y = dat$y[i]), 
-                              Sigma = sig) |>
-    as.data.frame()
+for (i in 1:nrow(dat)) {
+    # Create the correlation matrix between x and y:
+    sig <- matrix(
+        c(
+            dat$x_sd[i]^2,
+            r * dat$x_sd[i] * dat$y_sd[i],
+            r * dat$x_sd[i] * dat$y_sd[i],
+            dat$y_sd[i]^2
+        ),
+        nrow = 2, ncol = 2, byrow = TRUE
+    )
+
+    # Draw from the multivariate normal distribution
+    xy_expanded[[i]] <- mvrnorm(
+        n = dat$n[i],
+        mu = c(
+            x = dat$x[i],
+            y = dat$y[i]
+        ),
+        Sigma = sig
+    ) |>
+        as.data.frame()
 }
 xy_expanded <- rbindlist(xy_expanded)
 
 knitr::kable(head(xy_expanded))
-
-
-
 ```
 
 Our dataset went from 50 rows (one per point in the figure above) to 500 rows, given an internal N of 10 per point.
@@ -491,7 +520,7 @@ However, if you do take this approach, the next step would be to calculate ICC a
 # Time series {#sec-time-series}
 Some observational type studies, especially in ecology, present multiple time series, which may include the two continuous variables you wish to correlate.
 
-Imagine we have data for a bird. The great tit (*Parus major*), including its laying date (day of year) and mean April temperature over 30 years. We simulated these data for illustration, with the correlation fixed at r = -0.55 so the example can be reproduced:
+Our running example is the great tit (*Parus major*): laying date (day of year) against mean April temperature over 30 years. We simulated these data for illustration, with the correlation fixed at $r = -0.55$ so the example can be reproduced:
 
 ```{r}
 #| eval: true
@@ -506,29 +535,11 @@ z1 <- as.numeric(scale(rnorm(n_years)))
 z2 <- as.numeric(scale(resid(lm(rnorm(n_years) ~ z1))))
 z_laying <- r_target * z1 + sqrt(1 - r_target^2) * z2
 
-tit <- data.table(year = years,
-                  april_temp = 9 + 1.2 * z1,           # mean April temperature (degrees C)
-                  laying_date = 120 + 4 * z_laying)    # laying date (day of year)
-```
-
-Our running example is the great tit (*Parus major*): laying date (day of year) against mean April temperature over 30 years. We simulated these data for illustration, with the correlation fixed at r = -0.55 so the example can be reproduced:
-
-```{r}
-#| eval: true
-#| echo: true
-
-n_years <- 30
-years <- 1996:2025
-
-# Simulated: April temperature and laying date with a fixed correlation of -0.55
-r_target <- -0.55
-z1 <- as.numeric(scale(rnorm(n_years)))
-z2 <- as.numeric(scale(resid(lm(rnorm(n_years) ~ z1))))
-z_laying <- r_target * z1 + sqrt(1 - r_target^2) * z2
-
-tit <- data.table(year = years,
-                  april_temp = 9 + 1.2 * z1,           # mean April temperature (degrees C)
-                  laying_date = 120 + 4 * z_laying)    # laying date (day of year)
+tit <- data.table(
+    year = years,
+    april_temp = 9 + 1.2 * z1, # mean April temperature (degrees C)
+    laying_date = 120 + 4 * z_laying
+) # laying date (day of year)
 ```
 
 ```{r}
@@ -539,23 +550,27 @@ tit <- data.table(year = years,
 #| echo: false
 #| out-width: "70%"
 
-p1 <- ggplot(data = tit, aes(x = year, y = laying_date))+
-  geom_path()+
-  geom_point(size = 3)+
-  xlab("Year")+
-  ylab("Laying date")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
+p1 <- ggplot(data = tit, aes(x = year, y = laying_date)) +
+    geom_path() +
+    geom_point(size = 3) +
+    xlab("Year") +
+    ylab("Laying date") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 
-p2 <- ggplot(data = tit, aes(x = year, y = april_temp))+
-  geom_path()+
-  geom_point(size = 3)+
-  xlab("Year")+
-  ylab("April temperature (degrees C)")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
+p2 <- ggplot(data = tit, aes(x = year, y = april_temp)) +
+    geom_path() +
+    geom_point(size = 3) +
+    xlab("Year") +
+    ylab("April temperature (degrees C)") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 
 p1 / p2
 ```
@@ -568,10 +583,9 @@ If the interval between measurements is identical (on x-axis), then these figure
 #| echo: false
 
 knitr::kable(head(tit, 5))
-
 ```
 
-You can then calculate the correlation between `Variable 1` and `Variable 2`, with $n$ equal to the number of measurements.
+You can then calculate the correlation between `april_temp` and `laying_date`, with $n$ equal to the number of measurements (`r nrow(tit)` years).
 
 
 :::callout-important
@@ -602,54 +616,63 @@ x1 <- seq(from = 1995, to = 2005, by = 1)
 x2 <- seq(from = 1995, to = 2005, by = .25)
 
 y1 <- seq(from = 5, to = 15, by = 1)
-y1 <- y1[1:11] 
+y1 <- y1[1:11]
 y1 <- y1 + rnorm(n = 11, mean = 0, sd = .5)
 # plot(x1, y1)
 
 #
 y2 <- seq(from = 100, to = 110, by = .1)
 y2 <- y2[1:length(x2)]
-y2 <- y2 + rnorm(n=length(x2), mean = 0, sd = .5)
+y2 <- y2 + rnorm(n = length(x2), mean = 0, sd = .5)
 # plot(x2, y2)
 
 # slopes2 <- rnorm()
-dt1 <- data.table(x1 = x1,
-                  y1 = y1)
-dt2 <- data.table(x2 = x2,
-                  y2 = rev(y2))
+dt1 <- data.table(
+    x1 = x1,
+    y1 = y1
+)
+dt2 <- data.table(
+    x2 = x2,
+    y2 = rev(y2)
+)
 
-p1 <- ggplot(data = dt1, aes(x = x1, y = y1))+
-  geom_path()+
-  geom_point(size = 3)+
-  xlab("Year")+
-  ylab("Variable 1")+
-  theme_bw()+
-  scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2),
-                     labels = as.integer(seq(from = min(dt1$x1), to=max(dt1$x1), by = 2)))+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
+p1 <- ggplot(data = dt1, aes(x = x1, y = y1)) +
+    geom_path() +
+    geom_point(size = 3) +
+    xlab("Year") +
+    ylab("Variable 1") +
+    theme_bw() +
+    scale_x_continuous(
+        breaks = seq(from = min(dt1$x1), to = max(dt1$x1), by = 2),
+        labels = as.integer(seq(from = min(dt1$x1), to = max(dt1$x1), by = 2))
+    ) +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 # p1
 
 #
 dt2[, date := date_decimal(x2) |> as.Date()]
-p2 <- ggplot(data = dt2, aes(x = date, y = y2))+
-  geom_path()+
-  geom_point(size = 3)+
-  xlab("Year")+
-  ylab("Variable 2")+
-  theme_bw()+
-  # scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2))+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
+p2 <- ggplot(data = dt2, aes(x = date, y = y2)) +
+    geom_path() +
+    geom_point(size = 3) +
+    xlab("Year") +
+    ylab("Variable 2") +
+    theme_bw() +
+    # scale_x_continuous(breaks = seq(from = min(dt1$x1), to=max(dt1$x1), by = 2))+
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 # p2
 
 p1 + p2
-
 ```
 
 What is the best way to line up variable 1 and variable 2 to calculate their correlation? While imputing the missing values in the second panel is one possible approach, it is the least conservative. 
 
-Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occassions where there is data for both series. 
+Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occasions where there is data for both series. 
 
 Aligning the data like this is tricky and will probably require manual merging based on nearest value in a spreadsheet software (e.g., Excel) after calibrating both the x and y axes.
 
@@ -662,35 +685,38 @@ However, other studies report mortality in relationship to the *abundance* of th
 
 ```{r}
 #| label: fig-nest-abundance
-#| fig-cap: "Simulated nest outcome (1 = fledged, 0 = failed) against predator abundance, one point per nest. The probability of fledging declines with abundance. Points are jittered vertically; n is given in the text."
-#| fig-alt: "Points at 0 (failed) and 1 (fledged) plotted against predator abundance on the horizontal axis. Fledged points are more common at low abundance and failed points at high abundance."
+#| fig-cap: "Simulated nest outcome (1 = fledged, 0 = failed) against predator abundance, one point per nest. The probability of fledging declines with predator abundance. Points are jittered vertically for visibility."
+#| fig-alt: "Points at 0 (Failed) and 1 (Fledged) plotted against predator abundance on the horizontal axis. Fledged points are more common at low abundance and failed points at high abundance."
 #| eval: true
 #| echo: false
 #| out-width: "70%"
 
-density = rnorm(n = 50, mean = 5, sd = 5)
+density <- rnorm(n = 50, mean = 5, sd = 5)
 density <- density[density > 0]
-p <- density * 2 + 20
-p <- abs(p/max(p))
-dat <- data.table(living = rbinom(n = length(density), p = p, size = 1),
-                  density)
+p <- plogis(2 - 0.35 * density)
+dat <- data.table(
+    living = rbinom(n = length(density), prob = p, size = 1),
+    density = density
+)
 
-ggplot(data = dat, aes(x = density, y = living))+
-  geom_point(size = 3, alpha = 0.9, shape = 21, fill = "grey50")+
-  scale_y_continuous(breaks = c(0, 1), labels = c("Fledged", "Failed"))+
-  xlab("Predator abundance")+
-  ylab("Nest success")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = dat, aes(x = density, y = living)) +
+    geom_jitter(size = 3, alpha = 0.9, shape = 21, fill = "grey50", height = 0.03, width = 0) +
+    scale_y_continuous(breaks = c(0, 1), labels = c("Failed (0)", "Fledged (1)")) +
+    xlab("Predator abundance") +
+    ylab("Nest outcome") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
-Depending on your meta-analysis question you may want to extract this data and calculate a $Z_r$ correlation effect size, which can then be converted to lnOR (see [here](4-converting-effect-sizes.qmd)) and compared to your other lnOR discrete-predictor effect sizes. To do so, extract each point, which is an individual, and calculate $Z_r$ with the responses as a binary variable of 0 or 1. 
+Depending on your meta-analysis question you may want to extract this data and calculate a $Z_r$ correlation effect size, which can then be converted to $\ln\text{OR}$ (see [Chapter 4](4-converting-effect-sizes.qmd)) and compared to your other $\ln\text{OR}$ discrete-predictor effect sizes. To do so, extract each point (each of which represents a nest, $n = `r nrow(dat)`$) with the response coded as a binary variable of $0$ or $1$.
 
-This [conversion](4-converting-effect-sizes.qmd) is safe because presence/absence is a discretized version of abundance and because the **unit of replication** is the number of nests (or individuals) in both cases and the conversion formulas assume that discrete variables are discretized or extreme ends of a continuous variable (which is true with presence and absence).
+This [conversion](4-converting-effect-sizes.qmd) is reasonable when presence/absence is a discretized version of abundance and when the **unit of replication** is the number of nests (or individuals) in both study types. However, keep two caveats in mind:
 
-Regardless, care is still necessary. It's unclear the extent to which calculating $Z_r$ on binary outcomes can estimate the estimand of lnOR. A potentially safer option is to extract the raw data and fit a logistic regression of nest fate on predator abundance. The coefficient is the lnOR per unit of abundance. However, it's unclear whether this can be compared to other lnOR's in your dataset. **^^This was an idea from Santi but I'm not sure it's comparable**.
+1. **Point-biserial vs. biserial correlations:** Calculating Pearson's $r$ directly between a continuous predictor and a $0/1$ binary outcome yields a *point-biserial correlation* ($r_{pb}$), which is mathematically capped below $\pm 1$ (at most $\approx 0.798$ for a normal predictor under a 50:50 split, and smaller when outcomes are unbalanced; @Jacobs2017-cv). Because raw points are available from the figure, you can also summarize the mean and SD of predator abundance for fledged ($y = 1$) versus failed ($y = 0$) nests and compute a *biserial correlation* (`measure = "ZBIS"` in `escalc`, treating nest survival as an underlying continuous liability thresholded into fledged/failed) or compute SMD and convert to $\ln\text{OR}$ via `this_to_that()`.
+2. **Why not use a logistic regression slope?** You might be tempted to fit a logistic regression of binary nest fate on predator abundance and extract the slope. While that slope is indeed a log odds ratio, it represents the $\ln\text{OR}$ *per one-unit increase in predator abundance* (carrying units of $[\text{abundance}]^{-1}$). Because its magnitude depends entirely on the measurement scale of the predictor (e.g., predators per hectare vs. per $\text{km}^2$), it is an unstandardized regression slope (see [Chapter 5.3b](5.3b-rate-of-change.qmd)) and is **not** directly comparable to dimensionless two-group $\ln\text{OR}$ estimates (predator present vs. absent).
 
 ## Proportion data with a continuous predictor {#sec-proportion-data}
 
@@ -704,26 +730,29 @@ You can imagine similar challenges where instead of 0 or 1 responses, the author
 #| echo: false
 #| out-width: "70%"
 
-temperature <- seq(10, 30, by = 2.5)   # degrees C
-dt <- data.table(temperature = temperature,
-                 proportion_alive = plogis(4 - 0.25 * temperature))
+temperature <- seq(10, 30, by = 2.5) # degrees C
+dt <- data.table(
+    temperature = temperature,
+    proportion_alive = plogis(4 - 0.25 * temperature)
+)
 
-ggplot(data = dt, aes(x = temperature, y = proportion_alive))+
-  geom_path(color = "black", linewidth = 1)+
-  geom_point(fill = "grey80", shape = 21, size = 4)+
-  ylab("Survivorship (proportion alive)")+
-  xlab("Temperature (degrees C)")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
-
+ggplot(data = dt, aes(x = temperature, y = proportion_alive)) +
+    geom_path(color = "black", linewidth = 1) +
+    geom_point(fill = "grey80", shape = 21, size = 4) +
+    ylab("Survivorship (proportion alive)") +
+    xlab("Temperature (degrees C)") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 ```
 
-You can calculate $Z_r$ directly between the predictor (`temperature`, x-axis) and the proportion alive (the y axis), directly. 
+You can calculate $Z_r$ between the predictor (`temperature`, x-axis) and the proportion alive (the y axis), directly. 
 
-However, each location on the x-axis actually represents a *population of individuals*, all of whom were monitored to determine the proportion alive. As such, simply calculating $Z_r$ directly from the proportion ignores population size and treats the number of surveys (or sites) as the *unit of replication*  (n=10). 
+However, each location on the x-axis actually represents a *population of individuals*, all of whom were monitored to determine the proportion alive. As such, simply calculating $Z_r$ directly from the proportion ignores population size and treats the number of temperature treatments (or surveys/sites) as the *unit of replication* ($n = `r nrow(dt)`$). 
 
-This can lead to a serious mismatch with the rest of your dataset---if the rest of your dataset is based the number of individuals as the unit of replication (like [above](#sec-discrete-responses-binary-predictor))
+This can lead to a serious mismatch with the rest of your dataset---if the rest of your dataset is based on the number of individuals as the unit of replication (like [above](#sec-discrete-responses-binary-predictor)).
 
 To deal with this, the best option would be to convert the proportion data to binary response data based on the total number of individuals in each x-axis treatment---if this can be reconstructed from author reported summaries. 
 
@@ -741,10 +770,11 @@ dt[, number_dead := 15 - number_alive]
 head(dt)
 
 # Now melt dataset:
-dt.mlt <- melt(dt, 
-               measure.vars = c("number_alive", "number_dead"),
-               variable.name = "status", 
-               value.name = "n_individuals")
+dt.mlt <- melt(dt,
+    measure.vars = c("number_alive", "number_dead"),
+    variable.name = "status",
+    value.name = "n_individuals"
+)
 head(dt.mlt)
 
 # Now expand dataset to a binary response dataset:
@@ -757,8 +787,10 @@ dt.expanded$status <- NULL
 
 nrow(dt.expanded)
 
-knitr::kable(rbind(head(dt.expanded, 3),
-                   tail(dt.expanded, 3)))
+knitr::kable(rbind(
+    head(dt.expanded, 3),
+    tail(dt.expanded, 3)
+))
 ```
 
 We have now expanded this dataset from `r nrow(dt)` rows (one per temperature treatment) to `r nrow(dt.expanded)` rows (one per individual), and we have shifted the *unit of replication* from number of temperature treatments to number of individuals.
@@ -767,14 +799,16 @@ We can now calculate a correlation coefficient and $Z_r$ effect size:
 ```{r}
 res <- cor.test(dt.expanded$living, dt.expanded$temperature)
 
-escalc(measure = "ZCOR",
-       ni = nrow(dt.expanded),
-       ri = res$estimate) |> unlist() 
+escalc(
+    measure = "ZCOR",
+    ni = nrow(dt.expanded),
+    ri = res$estimate
+) |> unlist()
 ```
 
 This can be converted to lnOR for comparability. Note that since the individuals within each temperature treatment might be correlated, treat this reconstruction with some degree of caution and be sure that this data does not unduly influence your results.
 
-## Mean±SD proportion data with continuous predictor {#sec-$Z_r$-reconstructing-proportion-data}
+## Mean±SD proportion data with continuous predictor {#sec-zr-reconstructing-proportion-data}
 
 
 Now let's look at a similar situation, except the figure is presenting mean±SD mortality across **separate trials** within each temperature treatment.
@@ -788,25 +822,29 @@ Now let's look at a similar situation, except the figure is presenting mean±SD 
 #| out-width: "70%"
 
 x <- seq(10, 30, by = 5)
-dt <- data.table(temperature = x,
-                 proportion_alive = c(0.7, 0.65, 0.4, 0.38, 0.27))
+dt <- data.table(
+    temperature = x,
+    proportion_alive = c(0.7, 0.65, 0.4, 0.38, 0.27)
+)
 dt[, sd := abs(rnorm(n = .N, mean = .05, sd = .01))]
 
-ggplot(data = dt)+
-  geom_point(aes(x = temperature, y = proportion_alive),
-            fill = "grey80",
-            shape = 21,
-            size = 3)+
-  geom_errorbar(aes(x = temperature, ymin = proportion_alive-sd, ymax = proportion_alive+sd))+
-  ylab("Survivorship (mean proportion alive ±SD)")+
-  xlab("Temperature (degrees C)")+
-  theme_bw()+
-  theme(panel.grid = element_blank(),
-        legend.position = "none")
+ggplot(data = dt) +
+    geom_point(aes(x = temperature, y = proportion_alive),
+        fill = "grey80",
+        shape = 21,
+        size = 3
+    ) +
+    geom_errorbar(aes(x = temperature, ymin = proportion_alive - sd, ymax = proportion_alive + sd)) +
+    ylab("Survivorship (mean proportion alive ±SD)") +
+    xlab("Temperature (degrees C)") +
+    theme_bw() +
+    theme(
+        panel.grid = element_blank(),
+        legend.position = "none"
+    )
 
 dt[, n_individuals := 20]
 dt[, n_trials := 3]
-
 ```
 
 The default in this situation is to calculate $Z_r$ on the treatment means, with a site/experiment level unit of replication, with n equal to the number of temperature treatments (`r nrow(dt)`). This may be difficult to compare to effect sizes (presumably lnOR) calculated with individual-level unit of replication.
@@ -816,12 +854,6 @@ This may be a situation that calls single-group effect sizes that use temperatur
 :::
 
 However, if we want our **unit of replication** to be based on the number of individuals, we could alternatively reconstruct the underlying distributions behind each of these summarized trials. This will allow us to calculate a correlation across individuals for the binary response of being alive or dead, instead of across the mean per trial. 
-
-::: callout-note
-A similar data structure could occur with discrete outcomes per **plot** instead of **individuals** with the number of **sites/islands** interchangeable with the number of **trials**.
-
-An example would be the number of plots occupied by a species (the discrete outcome) per study site (the trial), which are sampled across some continuous gradient of interest.
-:::
 
 To do this, we use the binomial or beta-binomial distribution instead of the normal distribution. The design effect (see [3.3](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data)) corrects the sample size for the clustering of individuals within trials. To do so we need to determine, from the text, the number of individuals and the number of trials (or sites, plots, etc) that the mean±sd were calculated from.
 
@@ -843,14 +875,14 @@ To understand whether to use the binomial or beta-binomial distribution, we chec
 #| eval: true
 #| out-width: "70%"
 
-theoretical_sd <- sqrt((dt$proportion_alive * (1 - dt$proportion_alive))/(dt$n_individuals))
+theoretical_sd <- sqrt((dt$proportion_alive * (1 - dt$proportion_alive)) / (dt$n_individuals))
 
 nrow(dt[sd > theoretical_sd])
 ```
 
-It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution. Here we use fixed (deterministic) counts rather than random draws: the number alive in each treatment is `round(proportion_alive * N)`, where N is the total number of individuals in that treatment (`n_individuals * n_trials`). W
+It looks like the reported standard deviations are all less than or equal to the theoretical standard deviation of the binomial family. So we can use the binomial distribution. Here we use fixed (deterministic) counts rather than random draws: the number alive in each treatment is `round(proportion_alive * N)`, where N is the total number of individuals in that treatment (`n_individuals * n_trials`).
 
-hy not random draws? They add simulation noise about as large as the sampling error itself, and they give a different answer every time you run the code. See [here](7-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
+Why not random draws? They add simulation noise about as large as the sampling error itself, and they give a different answer every time you run the code. See [here](7-simulating-non-gaussian-responses.qmd) for the equations and a fuller description, as well as how to generate data for beta-binomial distributed data (when $sd_{reported} > sd_{theoretical}$).
 
 ::: callout-warning
 Note that reconstructing underlying data is an experimental method. Use carefully.
@@ -861,13 +893,13 @@ Note that reconstructing underlying data is an experimental method. Use carefull
 #| eval: true
 #| out-width: "70%"
 
-dt[, n_total := n_individuals * n_trials]                 # individuals per treatment
-dt[, n_alive := round(proportion_alive * n_total)]        # deterministic counts
+dt[, n_total := n_individuals * n_trials] # individuals per treatment
+dt[, n_alive := round(proportion_alive * n_total)] # deterministic counts
 dt[, n_dead := n_total - n_alive]
 
 # Design effect from the reported SD (within-trial clustering), floored at 0:
 dt[, rho := pmax((n_individuals * sd^2 / (proportion_alive * (1 - proportion_alive)) - 1) /
-                   (n_individuals - 1), 0)]
+    (n_individuals - 1), 0)]
 dt[, deff := 1 + (n_individuals - 1) * rho]
 dt[, .(temperature, n_total, n_alive, n_dead, rho, deff)]
 ```
@@ -880,18 +912,21 @@ Now we expand the counts to one row per individual with a binary outcome of livi
 #| out-width: "70%"
 
 long <- melt(dt,
-             id.vars = "temperature",
-             measure.vars = c("n_alive", "n_dead"),
-             variable.name = "status",
-             value.name = "count")
+    id.vars = "temperature",
+    measure.vars = c("n_alive", "n_dead"),
+    variable.name = "status",
+    value.name = "count"
+)
 long[, living := as.integer(status == "n_alive")]
 
 final_dat <- long[rep(seq_len(nrow(long)), long$count), .(temperature, living)]
 
 nrow(final_dat)
 
-knitr::kable(rbind(head(final_dat, 5),
-                   tail(final_dat, 5)))
+knitr::kable(rbind(
+    head(final_dat, 5),
+    tail(final_dat, 5)
+))
 ```
 
 This final dataset has `r nrow(final_dat)` rows, one for each individual, with number of individuals as the nominal unit of replication. Because individuals within a trial are correlated, we divide the sample size by the mean design effect (`r round(mean(dt$deff), 2)`) before calculating Zr:
@@ -903,10 +938,11 @@ This final dataset has `r nrow(final_dat)` rows, one for each individual, with n
 
 res <- cor.test(final_dat$living, final_dat$temperature)
 
-escalc(measure = "ZCOR",
-       ri = res$estimate,
-       ni = nrow(final_dat) / mean(dt$deff))
-
+escalc(
+    measure = "ZCOR",
+    ri = res$estimate,
+    ni = nrow(final_dat) / mean(dt$deff)
+)
 ```
 
 </details>
@@ -918,31 +954,52 @@ Some types of correlations are more complicated because they are based on pairwi
 
 For instance, correlations between pair-wise behaviors. An example would be the relationship between grooming behavior and defense, which was meta-analyzed by @Schino2007-pr. Is grooming adaptive because it leads to mutual defense with grooming partners?
 
-With data like this, you might have a directed matrix of grooming between individuals, and a second matrix of defense between the same individuals. Here we simulate 10 individuals, with defense correlated with grooming:
+With data like this, you might have a directed matrix of grooming between individuals (e.g., seconds spent grooming per hour of observation), and a second matrix of coalitionary defense (e.g., number of support events) between the exact same individuals. Here we simulate $N = 10$ individuals (`Ind_1` through `Ind_10`), where rows represent the **actor** (the individual initiating the behavior) and columns represent the **recipient** (the partner receiving the behavior):
 
 ```{r}
 #| eval: true
 #| echo: true
 
 n_ind <- 10
-groom <- matrix(runif(n_ind^2, min = 1, max = 100), nrow = n_ind)
+ind_names <- paste0("Ind_", seq_len(n_ind))
+
+groom <- matrix(
+    runif(n_ind^2, min = 1, max = 100),
+    nrow = n_ind,
+    dimnames = list(Actor = paste0("Actor: ", ind_names),
+                    Recipient = paste0("Recipient: ", ind_names))
+)
 diag(groom) <- NA
 
 defend <- groom + matrix(rnorm(n_ind^2, mean = 0, sd = 15), nrow = n_ind)
+dimnames(defend) <- dimnames(groom)
 diag(defend) <- NA
 
-knitr::kable(round(groom[1:4, 1:4], 1))
+knitr::kable(
+    round(groom[1:4, 1:4], 1),
+    caption = "First 4 individuals of the directed grooming matrix (e.g., grooming duration in seconds/hour from each row actor to each column recipient)."
+)
 ```
 
-Each off-diagonal cell is a directed dyad. Because the grooming matrix is directed, we use both triangles, so every off-diagonal value enters the calculation. We melt the two matrices into vectors of aligned dyads:
+In the table above, each off-diagonal cell $(i, j)$ represents a **directed dyad**: the value in row `Actor: Ind_1` and column `Recipient: Ind_2` (`r round(groom[1, 2], 1)`) is how much `Ind_1` groomed `Ind_2`, whereas row `Actor: Ind_2` and column `Recipient: Ind_1` (`r round(groom[2, 1], 1)`) is how much `Ind_2` groomed `Ind_1` back. The diagonal cells (`NA`) are empty because an individual does not groom itself in a dyadic interaction.
+
+Because the behaviors are directed ($i \to j$ differs from $j \to i$), both the upper and lower triangles carry information, so every off-diagonal cell ($N(N - 1) = 90$ directed dyads) enters the calculation. We align and melt the two matrices into a table of directed dyads:
 
 ```{r}
 #| eval: true
 #| echo: true
 
+grid_ids <- expand.grid(actor = ind_names, recipient = ind_names, stringsAsFactors = FALSE)
 keep <- !is.na(groom)
-dyads <- data.table(grooming = groom[keep], defence = defend[keep])
+
+dyads <- data.table(
+    actor = grid_ids$actor[keep],
+    recipient = grid_ids$recipient[keep],
+    grooming = round(groom[keep], 1),
+    defence = round(defend[keep], 1)
+)
 nrow(dyads)
+knitr::kable(head(dyads, 5))
 ```
 
 Now calculate Kendall's correlation across the dyads and convert it to a Pearson-equivalent r with $r = \sin(\pi\tau/2)$ before calculating Zr. The sample size is the number of individuals, not the number of dyads:
@@ -954,31 +1011,37 @@ Now calculate Kendall's correlation across the dyads and convert it to a Pearson
 tau <- cor(dyads$grooming, dyads$defence, method = "kendall")
 r_matrix <- sin(pi * tau / 2)
 
-escalc(measure = "ZCOR",
-       ri = r_matrix,
-       ni = n_ind)
+escalc(
+    measure = "ZCOR",
+    ri = r_matrix,
+    ni = n_ind
+)
 ```
 
-The dyads share individuals, so they are not independent, and the standard error above is only a first approximation. If the paper reports a Mantel or QAP test (permutation tests built for matrix correlations), you can use its p-value to back-calculate a standard error. 
+The dyads share individuals, so they are not independent, and the standard error above is only a first approximation. If the paper reports a Mantel or QAP test (permutation tests built for matrix correlations), you can use its $p$-value to back-calculate an approximate standard error.
 
-You may also see `rcalc` suggested for non-independent correlations. It's meant for a different problem: several correlations measured on the same individuals (see [2.3](2.3-Zr-assumptions.qmd)). It doesn't fix the non-independence of dyads within a single matrix.
+::: {.callout-note}
+##### Dyadic interaction matrices vs. multi-trait correlation matrices (`rcalc`)
+Do not confuse dyadic interaction matrices (like the $N \times N$ grooming and defense matrices above, which yield a *single* correlation between two behaviors across pairs of individuals) with a **multi-trait correlation matrix** (a $p \times p$ table reporting correlations among several traits measured on the same $n$ individuals).
+
+When you extract multiple correlation coefficients from the same sample of individuals in a multi-trait correlation matrix, those effect sizes are statistically dependent because they share the same subjects. For that problem, `metafor::rcalc()` calculates the variance–covariance matrix among the extracted correlation coefficients to pass into `rma.mv()`, or you can pair multilevel random effects with robust variance estimation (see [Chapter 2.3](2.3-Zr-assumptions.qmd#pairwise-correlation-matrices-the-melting-trap)). `rcalc()` does not, however, solve the dyadic non-independence within a single pairwise interaction matrix.
+:::
 
 # Model estimates {#sec-model-estimates}
 
-Correlations are often reported as test statistics rather than as r. You can convert these to r, and then to Zr, with the following relations (see [Chapter 4](4-converting-effect-sizes.qmd) for the full set of conversions):
+Correlations are often reported as test statistics or regression outputs rather than as $r$. You can convert these to $r$, and then to $Z_r$, with the following relations (see [Chapter 4](4-converting-effect-sizes.qmd#sec-other-summaries) for the full set of conversions):
 
-| Reported statistic | Conversion to r | Notes |
+| Reported statistic | Conversion to $r$ | Notes |
 |---|---|---|
-| t (simple regression or two-group t, df = n - 2) | $r = \frac{t}{\sqrt{t^2 + df}}$ | Sign follows the t statistic. |
-| F(1, df_error) | $r = \sqrt{\frac{F}{F + df_{error}}}$ | Only for a single numerator degree of freedom; take the sign from the slope. |
-| R-squared | $|r| = \sqrt{R^2}$ | Only for a single-predictor model; take the sign from the slope. |
-| Standardized slope or unstandardized slope | $r = b\, s_x / s_y$ | Needs the standard deviations of both variables. |
-| Chi-square (2 x 2 table, phi) | $\phi = \sqrt{\chi^2_1 / N}$ | A different estimand from Pearson r; flag it. |
-| t for one predictor in a multiple regression | $r_p = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - k - 1$ | This is a **partial** correlation, so use `ZPCOR` (below). |
+| $t$ (simple linear regression or two-group $t$, $df = n - 2$) | $r = \frac{t}{\sqrt{t^2 + df}}$ | Sign follows the $t$ statistic (or regression slope). |
+| $F(1, df_{\text{error}})$ | $r = \pm\sqrt{\frac{F}{F + df_{\text{error}}}}$ | Only valid for a single numerator degree of freedom ($df_1 = 1$, where $F = t^2$); take the sign from the slope. |
+| Unadjusted $R^2$ (simple linear regression) | $r = \pm\sqrt{R^2}$ | **Only** for a single-predictor linear model ($k = 1$); take the sign from the slope. Never use total model $R^2$ from a multiple regression. |
+| Unstandardized slope ($b$, simple regression) | $r = b\, \frac{s_x}{s_y}$ | Requires the sample SDs of both $x$ and $y$ (or compute $t = b / \text{SE}_b$ if the standard error of $b$ is reported). |
+| Standardized slope ($\beta$, simple regression) | $r = \beta$ | In a simple linear regression where both $x$ and $y$ are standardized to unit SD, the standardized slope equals Pearson's $r$. |
+| $\chi^2$ ($2 \times 2$ contingency table, $\phi$) | $\phi = \pm\sqrt{\chi^2_1 / N}$ | Only for $df = 1$; yields the $\phi$ coefficient (equivalent to Pearson's $r$ on two binary variables, a different estimand from continuous $r$). Flag it. |
+| $t$ for one predictor in a multiple regression | $r_p = \frac{t}{\sqrt{t^2 + df}}$, with $df = n - m - 1$ | Yields a **partial** correlation ($r_p$), where $m$ is the total number of predictors in the model; use `measure = "ZPCOR"` (below). |
 
-**I don't think the R2 is correct.... or the multiple regression?**
-
-For a simple regression or two-group t, the conversion gives r directly:
+For a simple linear regression or two-group $t$-test, the conversion gives Pearson's $r$ directly, which you can pass to `escalc(measure = "ZCOR")`:
 
 ```{r}
 #| eval: true
@@ -988,14 +1051,14 @@ t_val <- 2.5
 df_t <- 28
 r_t <- t_val / sqrt(t_val^2 + df_t)
 
-# F(1, df) gives the same r, with the sign taken from the slope
+# F(1, df) gives the same magnitude of r, with the sign taken from the slope
 F_val <- t_val^2
 r_F <- sqrt(F_val / (F_val + df_t))
 
 escalc(measure = "ZCOR", ri = r_t, ni = df_t + 2)
 ```
 
-For a predictor in a multiple regression, the t statistic gives a partial correlation. Use `ZPCOR` with the number of predictors (`mi`):
+For a predictor in an ordinary **multiple linear regression**, the $t$-statistic gives a **partial correlation** ($r_p$). Use `measure = "ZPCOR"` in `escalc`, passing the $t$-statistic (`ti`), the sample size (`ni`), and the total number of predictors in the model (`mi`, not counting the intercept). `escalc` computes $Z_{r_p} = \text{atanh}(r_p)$ along with the adjusted sampling variance $v_{Z_{r_p}} = \frac{1}{n - m - 3}$, which accounts for the degrees of freedom lost to the other $m - 1$ covariates [@Aloe2013-pt]:
 
 ```{r}
 #| eval: true
@@ -1004,10 +1067,14 @@ For a predictor in a multiple regression, the t statistic gives a partial correl
 escalc(measure = "ZPCOR", ti = 2.5, ni = 32, mi = 2)
 ```
 
-....
+::: {.callout-warning}
+##### Watch out for $R^2$ and multiple regression models
+1. **Why total $R^2$ from a multiple regression cannot be converted to $r$:** In a simple linear regression with a single continuous predictor, $R^2 = r^2$, so $|r| = \sqrt{R^2}$ is exact. In a multiple regression ($m > 1$ predictors), however, the model $R^2$ measures the proportion of variance explained by *all predictors combined*, not your focal predictor. Taking $\sqrt{R^2}$ from a multiple regression will overestimate your effect size and has no valid direction. Even in a simple regression, if a paper only reports *adjusted* $R^2$ ($R^2_{\text{adj}}$), first un-adjust it via $R^2 = 1 - (1 - R^2_{\text{adj}})\frac{n - 1}{n - 2}$ before taking the square root.
+2. **Partial correlations (`ZPCOR`) vs. bivariate correlations (`ZCOR`):** A partial correlation measures the association between $x$ and $y$ *after holding the other covariates in that model constant*. As discussed in [Chapter 2.3](2.3-Zr-assumptions.qmd#not-all-correlations-are-comparable), its value depends on which covariates the authors chose to include (and will shrink toward zero if a mediator or collinear variable was controlled for). Moreover, `ZPCOR` assumes an ordinary linear model—not a generalized linear model (GLM) or linear mixed-effects model (LMM), where residual degrees of freedom and variance components behave differently. Always flag partial correlations in your database and run sensitivity analyses with and without them.
+:::
 
-# NOTES/Questions:
+::: {.callout-tip}
+#### Next
 
-"For meta-analyses involving multiple (dependent) correlation coefficients extracted from the same sample, see also the rcalc function." \<- from `escalc` documentation
-
-`rcalc`: "Function to calculate the variance-covariance matrix of correlation coefficients computed based on the same sample of subjects." Ooof. This is another dimension of complexity....Is this what should be used for the Matrices??
+**Next:** [Converting between effect sizes](4-converting-effect-sizes.qmd) for converting between $Z_r$, SMD, and $\ln\text{OR}$.
+:::
