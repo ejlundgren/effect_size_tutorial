@@ -1,0 +1,674 @@
+---
+title: "Discrete outcomes between two groups: lnOR and lnRR"
+subtitle: "Some things are just black and white"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: right
+    toc-depth: 6
+    toc-float: true
+    toc-expand: true
+    toc-title: "**On this Page**"
+    output-file: "3.3-lnOR-challenges.html"
+    # embed-resources: true
+    # code-fold: true
+    code-link: true
+    code-tools: true
+    # number-sections: false
+    # bibliography: ./bib/ref.bib
+    fontsize: "10"
+    mainfont: "Helvetica"
+    monofont: "Fira Code"
+    # fontcolor: ""
+    page-layout: article
+    code-overflow: wrap
+    df_print: paged
+    theme: cosmo
+    code-line-numbers: false
+    grid:
+      margin-width: 250px
+crossref:
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: "—"     # (default is ":")
+  fig-prefix: Fig.     # (default is "Figure")
+  tbl-prefix: Table.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+execute:
+  warning: false
+  message: false
+  tidy: true
+bibliography: references.bib
+csl: ecology.csl
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+rm(list = ls())
+
+if(!requireNamespace("metatools")) {
+  pak::pak("ejlundgren/metatools")
+}
+library("metatools")
+
+library("ggplot2")
+library("data.table")
+library("ggpattern")
+library("patchwork")
+library("metafor")
+library("dplyr")
+library("broom")
+library("broom.mixed")
+library("simplermarkdown")
+library("crayon")
+
+```
+
+
+Many outcomes in ecology take one of two states. An animal is alive or dead, a nest fledges or fails, a plant is eaten or it is not.
+
+Where such an outcome is compared between two groups, the effect size is the log odds ratio (lnOR) or the log risk ratio (lnRR). Both are calculated from a 2×2 table of counts: the number of individuals in each group that did, and did not, experience the outcome. Papers seldom report that table directly. More often they give a proportion and a sample size, a bar with an error bar, or a curve, and the counts have to be recovered. This page describes how to do so for the forms in which the data usually appear.
+
+Where the predictor is continuous, discrete outcomes can instead be analyzed with [Zr effect sizes](2.3-Zr-assumptions.qmd).
+
+# Database design 
+
+We recommend a *wide* extraction database, with one column for each cell of the 2×2 table.
+
+Suppose that you are meta-analyzing the effect of introduced predators on the breeding success of birds, and that the articles report the proportion of monitored nests that fledged on islands with and without predators. Each comparison corresponds to a contingency table:
+
+|                  | Fledged | Failed |
+|------------------|---------|--------|
+| Predator present | $a$     | $b$    |
+| Predator absent  | $c$     | $d$    |
+
+The database then needs four columns, one for each cell. Below, `fledged_predators_present`, `failed_predators_present`, `fledged_predators_absent` and `failed_predators_absent` hold $a$, $b$, $c$ and $d$, which are the arguments `ai`, `bi`, `ci` and `di` of `metafor::escalc()`. A real database would also carry an article ID, an effect size ID and other columns, which are omitted here.
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+dat <- data.table(fledged_predators_present = 9,
+                  failed_predators_present = 21,
+                  fledged_predators_absent = 15,
+                  failed_predators_absent = 15)
+knitr::kable(dat)
+
+```
+
+A template database can be downloaded here:
+
+```{r}
+#| echo: false
+
+library("downloadthis")
+
+download_file(path = "data/template_dataset.xlsx",
+                output_name = "database_template",
+                output_extension = ".xlsx",
+                button_label = "Download template dataset",
+                button_type = "primary", # Controls styling 
+                has_icon = TRUE,
+                icon = "fa fa-save")
+
+```
+
+<br>
+The sections that follow take the common ways of reporting these data in turn, beginning with the simplest.
+
+# The easy cases {#sec-simple-cases}
+
+Some data need little work. The simplest are papers that report the four counts themselves, which can be entered as they stand.
+
+## Proportion or % data with total population {#sec-proportions}
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+# Simple:
+dt <- data.table(mean = c(15, 31), 
+                 group = c("Control", "Treatment"))
+# dt <- 
+ggplot(data = dt,
+       aes(x = group, y = mean, fill = group))+
+  geom_col()+
+  scale_fill_manual(NULL,
+                    values = c("Control" = "dodgerblue2",
+                               "Treatment" = "indianred"))+
+  scale_x_discrete(labels = c("Control" = "Control\n(n = 100 individuals)",
+                              "Treatment" = "Treatment\n(n = 200 individuals)"))+
+  xlab(NULL)+
+  ylab("Mortality rate (% of population)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+Nearly as simple are papers that report the percentage of each group that experienced the outcome, together with the size of each group (which the authors have, with luck, given in the text). Multiply each percentage by its group size to recover the number of individuals with the outcome, and subtract that number from the group size to obtain the number without it. For the figure above:
+
+|           | Mortality | $n$ | Died                   | Survived         |
+|-----------|-----------|-----|------------------------|------------------|
+| Control   | 15%       | 100 | $0.15 \times 100 = 15$ | $100 - 15 = 85$  |
+| Treatment | 31%       | 200 | $0.31 \times 200 = 62$ | $200 - 62 = 138$ |
+
+The products should fall close to whole numbers. Where they do not, either the percentage has been read imprecisely from the figure or the sample size is not the one the authors used, and both are worth checking.
+
+# Missing data {#sec-missing-data}
+## No control group {#sec-no-control}
+
+Some experiments report only the treated group and compare it with a fixed expectation, usually 50%. To calculate lnOR from such a study, the same assumption has to be written into the database: the two control columns are filled with an even split of the treatment group's total. If a study reports only:
+
+|           | Outcome A | Outcome B |
+|-----------|-----------|-----------|
+| Treatment | 35        | 15        |
+
+the row total is $35 + 15 = 50$, and each control cell becomes $0.5 \times 50 = 25$:
+
+|           | Outcome A | Outcome B |
+|-----------|-----------|-----------|
+| Treatment | 35        | 15        |
+| Control   | 25        | 25        |
+
+The control row here is an assumption and not an observation. Effect sizes built in this way should be flagged so that they can be removed in a sensitivity analysis, or else excluded under your *a priori* criteria.
+
+## No sample size {#sec-no-sample-size}
+
+lnOR and lnRR are calculated from counts, so a proportion without its sample size cannot be used. If the sample size is not given elsewhere in the paper and cannot be obtained from the authors, the study has to be excluded. The one partial exception, in which proportions are reported repeatedly through time, is described under [Aggregating multiple measurements](#sec-aggregating-multiple-measurements).
+
+# Other cases {#sec-misc}
+## Aggregating multiple measurements {#sec-aggregating-multiple-measurements}
+
+Some studies report a response, such as annual mortality, in each of several years before and after an intervention (the eradication of a predator, say, or a change in management policy). The best approach is to sum across years within each period.
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+dat <- data.table(year = 1990:1999,
+                  treatment = c(rep("Pre", 4), 
+                                rep("Post", 6)))
+# dat
+
+dat[, total_individuals := c(150, 131, 160, 171, 153, 158, 111, 95, 98, 101)]
+dat[, number_deceased := c(5, 8, 4, 7, 11, 13, 12, 18, 15, 17)]
+dat[, mortality_rate := round(number_deceased / total_individuals, 2)]
+dat$treatment <- factor(dat$treatment, levels = c("Pre", "Post"))
+
+ggplot(data = dat, aes(x = year, y = mortality_rate, fill = treatment))+
+  geom_col()+
+  scale_fill_manual(NULL,
+                    values = c("Pre" = "dodgerblue2",
+                               "Post" = "indianred"),
+                    labels = c("Pre" = "Pre-treatment",
+                               "Post" = "Post-treatment"))+ 
+  xlab(NULL)+
+  ylab("Mortality rate")+
+  scale_x_continuous(breaks = 1990:1999)+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "bottom")
+
+
+```
+
+For each year, multiply the mortality rate by the number of individuals monitored (which is, with luck, reported) to obtain the number that died. The extracted data would look like this:
+
+```{r}
+#| eval: true
+#| echo: false
+
+knitr::kable(dat)
+
+```
+
+Then sum `total_individuals` and `number_deceased` within each period, and obtain the number living (`number_living`) by subtraction:
+
+```{r}
+#| eval: true
+#| echo: true
+
+dat.sum <- dat %>% 
+  group_by(treatment) %>%
+  summarize(total_individuals = sum(total_individuals),
+            number_deceased = sum(number_deceased)) %>%
+  mutate(number_living = total_individuals - number_deceased)
+
+knitr::kable(dat.sum)
+
+```
+
+Once the table is cast wide by `treatment`, the columns `number_deceased` and `number_living` supply the contingency table needed to calculate lnOR:
+
+```{r}
+#| eval: true
+#| echo: true
+library("tidyr")
+
+dat.sum |>
+  pivot_wider(names_from = "treatment",
+              values_from = c("total_individuals", 
+                              "number_deceased", 
+                              "number_living") )  |>
+  knitr::kable()
+
+```
+
+Where the number of individuals is not reported, the counts cannot be recovered. The best remaining option is to treat each year as a replicate: calculate the mean ± SD of the annual proportions in each period and use these to calculate an SMD. Because the values are proportions, they should be transformed first (see [here](3.2-smd-challenges.qmd#sec-proportion-data-with-error)).
+
+The unit of replication in the resulting effect size is the *year* and not the individual. It should not be compared directly with lnOR type data in which individuals are the unit of replication.
+
+## Survivorship curves {#sec-survivorship-curves}
+
+```{r}
+#| eval: true
+#| echo: false
+#| out-width: "70%"
+
+# >>> Survivorship --------------------------------------------------------
+
+set.seed(42)
+
+n_start <- 200   # individuals per group at the start of the experiment
+times <- 0:15
+
+# Simulate a time of death for every individual in each group
+death_time <- list("Group 1" = rweibull(n_start, shape = 1.5, scale = 12),
+                   "Group 2" = rweibull(n_start, shape = 1.5, scale = 6))
+
+# Proportion of each group still alive at each time point
+surv <- rbindlist(lapply(names(death_time), function(g) {
+  data.table(group = g,
+             time = times,
+             p_alive = sapply(times, function(t) mean(death_time[[g]] > t)))
+}))
+
+ggplot(data = surv, aes(x = time, y = p_alive, group = group))+
+  geom_path(aes(color = group),
+            linewidth = 2)+
+  geom_point(aes(fill = group),
+             shape = 21,
+             size = 3)+
+  scale_color_manual(NULL,
+                     values = c("Group 1" = "dodgerblue",
+                                "Group 2" = "indianred"))+
+  scale_fill_manual(NULL,
+                    values = c("Group 1" = "dodgerblue",
+                               "Group 2" = "indianred"))+
+  scale_x_continuous(breaks = seq(0, 15, by = 3))+
+  scale_y_continuous(limits = c(0, 1))+
+  ylab("Survivorship (proportion alive)")+
+  xlab("Time")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+```
+
+A survivorship curve shows the proportion of each group still alive at successive times. To build a contingency table from it, choose a time point, read off the proportion alive in each group ($p_1$ and $p_2$), and multiply each by the number of individuals in that group at the start of the experiment ($n_1$ and $n_2$). This gives the number alive ($a$ and $c$). The number dead ($b$ and $d$) is found by subtracting the number alive from the starting number. At time 6 in the figure above, with `r n_start` individuals in each group at the start:
+
+```{r}
+#| eval: true
+#| echo: false
+
+surv_t <- surv[time == 6]
+surv_t[, group := c("Group 1 (blue)", "Group 2 (red)")]
+surv_t[, p_alive := round(p_alive, 2)]   # as read from the figure
+surv_t[, n := n_start]
+surv_t[, alive := round(p_alive * n)]
+surv_t[, dead := n - alive]
+
+knitr::kable(surv_t,
+             col.names = c("", "Time", "Proportion alive ($p$)",
+                           "N at start ($n$)", "Alive ($a$, $c$)",
+                           "Dead ($b$, $d$)"))
+```
+
+This arithmetic assumes that every individual was followed to the chosen time point. If individuals were lost or removed before then (censored), the curve is no longer a simple proportion of the starting number, and the data are better treated as time-to-event data (see [here](2.2-lnOR-assumptions.qmd#sec-time-to-event)).
+
+A survivorship curve yields as many effect sizes as it has time points, and these are not independent of one another. The difficulty is the usual one with time series and can arise with any effect size. We recommend extracting the data for every time point and using random effects to control for temporal autocorrelation in the meta-analytic model (see [here](3.1-universal-challenges.qmd#sec-proportion-data-with-error)). The alternative is to analyze a single time point from each curve. If you do this, fix the rule for choosing it in advance (the final time point, for example), because choosing the time point at which the groups differ most selects for large effects.
+
+## Mean±error discrete outcomes {#sec-lnOR-reconstructing-data}
+
+Discrete outcomes are sometimes summarized as a mean ± error across trials, sites or islands. A paper might, for example, monitor nests on several islands, calculate the proportion that fledged on each, and report the mean and standard error of those proportions for each treatment.
+
+Data in this form lend themselves naturally to SMD/lnRoM/Zmu type [effect sizes](2.1-SMD-assumptions.qmd). The sample size behind the mean ± error is, however, the number of islands and not the number of nests. If individuals (or nests) are the unit of replication in the rest of your dataset, an effect size calculated in this way will carry far less weight in your models than the others, and should be analyzed separately.
+
+```{r}
+#| echo: false
+#| eval: true
+#| out-width: "70%"
+
+# Simple:
+dt <- data.table(mean = c(0.15, 0.31), 
+                 group = c("Control", "Treatment"),
+                 se = c(0.05, 0.09))
+# dt <- 
+ggplot(data = dt,
+       aes(x = group, y = mean, fill = group, ymin = mean-se,
+           ymax = mean+se))+
+  geom_col()+
+  geom_errorbar(width = 0.5)+
+  scale_fill_manual(NULL,
+                    values = c("Control" = "dodgerblue2",
+                               "Treatment" = "indianred"))+  
+  xlab(NULL)+
+  ylab("Mean fledging rate across islands (± standard error)")+
+  theme_bw()+
+  theme(panel.grid = element_blank(),
+        legend.position = "none")
+
+```
+
+Note also that the figure presents the standard error and not the standard deviation. Converting one to the other requires the sample size that the authors used to calculate the standard error, which is again the number of trials, sites or islands.
+
+The alternative is to reconstruct the counts and calculate an lnOR type effect size with individuals as the unit of replication. This is done by simulating the binomial or beta-binomial distribution that lies *behind* the mean ± SD summary, and it requires four pieces of information:
+
+1)  the number of sites used to calculate the standard error;
+
+2)  the number of individuals monitored at each site (or the total across all sites, divided by the number of sites);
+
+3)  the mean proportion reported by the authors;
+
+4)  the standard deviation reported by the authors (or converted from their standard error).
+
+::: callout-warning
+Reconstructing the underlying data in this way is an experimental method. Use it carefully.
+:::
+
+To work through the example, suppose that the figure above comes from a paper reporting nest fledging rates on 10 islands where rats were poisoned (the treatment) and on 10 islands where they were left alone (the control). Thirty nests were monitored on each island, or 300 per treatment. We add these numbers to the `data.table` extracted from the figure and convert the standard error ($se$) to a standard deviation ($sd$):
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+dt[, n_sites := 10]      # islands per treatment
+dt[, n_per_site := 30]   # nests monitored on each island
+
+dt[, sd := se * sqrt(n_sites)]
+
+knitr::kable(dt)
+
+```
+
+Next, we check whether the reported standard deviation is larger than a binomial distribution would produce. If every nest on every island had the same probability of fledging, the standard deviation of the island proportions would be $sd_{theoretical} = \sqrt{p(1-p)/n}$, where $p$ is the mean proportion and $n$ is the number of nests per island. A reported standard deviation greater than $sd_{theoretical}$ indicates overdispersion, and we use the beta-binomial distribution. Otherwise we use the binomial distribution:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+sd_theoretical <- sqrt((dt$mean * (1 - dt$mean))/(dt$n_per_site))
+
+any(dt$sd > sd_theoretical)
+
+```
+
+The reported standard deviations exceed the theoretical ones, so these data are beta-binomial and not truly binomial. (For data that are not overdispersed, see [here](7-simulating-non-gaussian-responses.qmd#sec-binomial) and [here](3.4-Zr-challenges.qmd#sec-zr-reconstructing-proportion-data) for how to draw from the binomial distribution.)
+
+We draw from the beta-binomial distribution with the `R` package `extraDistr` [@extradistr]. The distribution is described by two shape parameters, $\alpha$ ("alpha") and $\beta$ ("beta"), which are calculated from the mean and the variance ($Var = sd^2$) by way of an intermediate variable `r`. See [here](7-simulating-non-gaussian-responses.qmd#sec-beta-binomial) for the formulas. We add all of these to each row of `dt`:
+
+```{r}
+#| eval: true
+#| echo: true
+#| out-width: "70%"
+
+library("extraDistr")
+
+dt[, var := sd^2]
+dt[, r := (mean * (1 - mean) / var) - 1]
+dt[, alpha := mean * r]
+dt[, beta := (1 - mean) * r]
+
+knitr::kable(dt[, .(group, mean, sd, var, r, alpha, beta)], digits = 3)
+
+```
+
+A single draw from the beta-binomial distribution returns a vector with one element for each site, each giving the number of nests that fledged there. For the first row of `dt` (the control):
+
+```{r}
+set.seed(2026)   # the draws are random, so set a seed to make them reproducible
+
+rbbinom(n = dt$n_sites[1],
+        size = dt$n_per_site[1],
+        alpha = dt$alpha[1], 
+        beta = dt$beta[1])
+
+```
+
+The sum of this vector is the total number of nests that fledged across all sites in that treatment. The full workflow repeats the draw for each row of the extracted data (here only two) and stores the sum:
+
+```{r}
+for(i in 1:nrow(dt)){
+  fledged_per_site <- rbbinom(n = dt$n_sites[i],
+                              size = dt$n_per_site[i],
+                              alpha = dt$alpha[i], 
+                              beta = dt$beta[i])
+  dt[i, n_fledged := sum(fledged_per_site)]
+}
+
+# Now calculate the total number of nests and the number that failed:
+dt[, total_individuals := n_per_site * n_sites]
+dt[, n_failed := total_individuals - n_fledged]
+
+knitr::kable(dt[, .(group, n_sites, n_per_site, total_individuals, 
+                    n_fledged, n_failed)])
+
+```
+
+The columns `n_fledged` and `n_failed` are the ingredients for lnOR or lnRR. The sample size has risen from 10 per treatment (the number of sites) to 300 per treatment (the number of nests), and the unit of replication is now comparable with that of the other effect sizes in an lnOR meta-analysis built on individuals.
+
+
+## LC50 and related metrics {#sec-lc50}
+
+Many laboratory toxicity studies report an **LC50** (median lethal concentration): the concentration of a substance estimated to kill 50% of exposed individuals over a fixed exposure period (e.g., 96-h LC50). The LC50 is estimated by fitting a dose-response model, often log-logistic or probit, to the proportion of individuals surviving at each test concentration, and reading off the concentration at which the fitted curve crosses 50%.
+
+A typical figure looks like this:
+
+```{r}
+library(drc)
+library(ggplot2)
+set.seed(1)
+
+# Simulate data
+conc <- rep(c(0, 1, 2, 4, 8, 16, 32), each = 3)
+n <- 20
+p_dead <- 1 / (1 + exp(-2 * (log(conc) - log(6))))   # true LC50 = 6
+dat <- data.frame(conc, n, surv = (n - rbinom(length(conc), n, p_dead)) / n)
+
+# Fit model and get LC50
+fit <- drm(surv ~ conc, weights = n, data = dat, fct = LL.2(), type = "binomial")
+lc50 <- ED(fit, 50, interval = "delta")[1]
+
+# Predicted curve with 95% CI
+newdat <- data.frame(conc = exp(seq(log(0.5), log(32), length.out = 100)))
+pred <- predict(fit, newdata = newdat, interval = "confidence")
+newdat <- cbind(newdat, fit = pred[, 1], lwr = pred[, 2], upr = pred[, 3])
+
+# Controls can't sit at 0 on a log axis, so plot them at 0.5
+dat$conc_plot <- ifelse(dat$conc == 0, 0.5, dat$conc)
+
+ggplot() +
+  geom_ribbon(data = newdat, aes(conc, ymin = lwr, ymax = upr), fill = "grey80") +
+  geom_line(data = newdat, aes(conc, fit), linewidth = 1) +
+  geom_point(data = dat, aes(conc_plot, surv), size = 2, alpha = 0.7) +
+  geom_vline(xintercept = lc50, linetype = "dashed") +
+  scale_x_log10(breaks = c(0.5, 1, 2, 4, 8, 16, 32),
+                labels = c("Control", 1, 2, 4, 8, 16, 32)) +
+  labs(x = "Concentration (mg/L)", y = "Proportion surviving",
+       subtitle = paste0("LC50 = ", round(lc50, 2), " mg/L")) +
+  theme_classic()
+```
+
+The points are individual replicates, the solid line is the fitted dose-response curve with its 95% confidence interval (grey band), and the dashed line marks the estimated LC50.
+
+Several closely related metrics are estimated and interpreted in the same way:
+
+- **EC50** (median effective concentration): the concentration producing a specified non-lethal effect (e.g., immobilization, reduced growth or reproduction) in 50% of individuals, or a 50% reduction in a continuous response.
+- **LD50** (median lethal dose): as LC50, but expressed as an administered dose (e.g., mg/kg body weight) and not as an environmental concentration.
+- **LT50** (median lethal temperature): the temperature at which 50% of individuals die, commonly used in thermal tolerance studies and estimated by fitting the same type of curve with temperature on the x-axis. In toxicology, LT50 is also used for median lethal *time* (the exposure duration at which 50% of individuals have died), so check how each study defines it.
+- **ET50** (median effective time): the exposure time at which 50% of individuals show the specified effect, i.e., the time-based equivalent of EC50.
+
+Other percentiles (e.g., LC10, EC20) are also common, particularly where the interest is in low-effect thresholds.
+
+These metrics are already summaries of a dose-, temperature- or time-response curve. They are not contrasts between a treatment and a control group, and there is no established way of converting them to lnOR or lnRR. If your dataset contains many of them, consider meta-analyzing the metric itself (e.g., on the log scale). Survivorship curves and other raw data from the remaining studies can then be converted to the same metric (LC50, say), and the sampling variance can either be derived from a formula or simulated with SAFE.
+
+[Single-group proportion effect sizes](5.3-single-group-effect-sizes.qmd), especially probit-transformed proportions, may also be able to describe data of this kind, but the results may be difficult to compare with the other effect sizes in your dataset.
+
+# Model estimates {#sec-model-estimates}
+
+Some studies report a logistic regression in place of the counts. Where the model is a logistic regression (a binomial GLM with a logit link) and the predictor is the two-level treatment, the *unstandardized* coefficient for the treatment is itself the lnOR, and the square of its standard error is the sampling variance. No conversion is needed:
+
+```{r}
+# e.g., a reported treatment coefficient of 0.85 with a standard error of 0.32
+yi <- 0.85
+vi <- 0.32^2
+```
+
+Three things should be checked before such an estimate is combined with lnORs calculated from 2×2 tables:
+
+- **Direction.** Establish which treatment level is the reference and which outcome is modeled as the "success". Reversing either flips the sign of the coefficient.
+- **Adjustment.** A coefficient from a model that includes covariates or random effects is conditional on them. It tends to lie further from zero than the unadjusted lnOR from a 2×2 table, even where the covariates are balanced between treatments, so these estimates should be flagged for a sensitivity analysis.
+- **Link function.** Coefficients from probit or complementary log-log models are not lnORs.
+
+The factor of 1.81 that is sometimes quoted in this context ($\pi/\sqrt{3}$) does a different job. It converts a standardized mean difference to an lnOR ($lnOR = d \times \pi/\sqrt{3}$, with $Var(lnOR) = Var(d) \times \pi^2/3$), which is useful where some studies measure an outcome on a continuous scale and others report it as two states [@chinn2000]. It should not be applied to a logistic regression coefficient.
+
+# Zero cells {#sec-zero-cells}
+
+When any cell of the 2×2 table is zero, the odds ratio and its variance cannot be calculated. The conventional remedy is a continuity correction: 0.5 is added to every cell of the studies affected, and to those studies only [@sweeting2004]. Studies with no events in either group provide no information about the odds ratio and are excluded.
+
+`escalc()` applies the 0.5 correction by default. We nevertheless set the arguments explicitly below, so that the decision is visible in the code and is not left to the software.
+
+Continuity corrections can bias the odds ratio towards 1, particularly where events are rare or group sizes are unbalanced. The analysis should therefore be repeated without the studies that needed a correction, as a sensitivity analysis. Where zero cells are common because the event itself is very rare, methods that need no correction are preferable (see [here](2.2-lnOR-assumptions.qmd#sec-choosing)).
+
+## A simulated example
+
+To illustrate, we simulate 15 studies comparing an exposed group with a control group. The outcome is rare, with a risk of 3% in the control group and a true odds ratio of 2. Group sizes range from 30 to 200 individuals per group. One study is set to have no events in the exposed group, and one to have no events in either group.
+
+```{r}
+#| label: simulate-data
+set.seed(2026)
+
+k <- 15                                        # number of studies
+
+dat <- data.frame(
+  study = paste("Study", 1:k),
+  n1i   = sample(30:200, k, replace = TRUE),   # exposed group size
+  n2i   = sample(30:200, k, replace = TRUE)    # control group size
+)
+
+# Rare outcome: ~3% risk in controls, true OR of 2
+p_control <- 0.03
+true_or   <- 2
+p_exposed <- (true_or * p_control) / (1 - p_control + true_or * p_control)
+
+dat$ai <- rbinom(k, dat$n1i, p_exposed)        # events, exposed
+dat$ci <- rbinom(k, dat$n2i, p_control)        # events, control
+
+# Guarantee one single-zero study and one double-zero study
+dat$ai[2] <- 0
+dat$ai[5] <- 0
+dat$ci[5] <- 0
+
+# Non-events
+dat$bi <- dat$n1i - dat$ai
+dat$di <- dat$n2i - dat$ci
+
+knitr::kable(dat[, c("study", "ai", "bi", "n1i", "ci", "di", "n2i")])
+```
+
+We first flag the studies with at least one zero cell, and separate those with no events in either group (which are excluded) from the remainder (which receive the correction):
+
+```{r}
+#| label: flag-zeros
+
+# Studies with at least one zero cell
+dat$zero_cell   <- with(dat, ai == 0 | bi == 0 | ci == 0 | di == 0)
+
+# Studies with zero events in both groups
+dat$double_zero <- with(dat, ai == 0 & ci == 0)
+
+# Studies that receive the 0.5 correction (zero cell, but not double-zero)
+dat$corrected   <- dat$zero_cell & !dat$double_zero
+
+n_corrected   <- sum(dat$corrected)
+n_double_zero <- sum(dat$double_zero)
+```
+
+## Main analysis
+
+The main analysis adds 0.5 to every cell of the studies with a zero cell (`add = 1/2, to = "only0"`) and drops the studies with no events in either group (`drop00 = TRUE`):
+
+```{r}
+#| label: main-analysis
+es_main <- escalc(measure = "OR",
+                  ai = ai, bi = bi, ci = ci, di = di,
+                  data = dat,
+                  add = 1/2, to = "only0",
+                  drop00 = TRUE)
+
+res_main <- rma(yi, vi, data = es_main, method = "REML")
+res_main
+```
+
+```{r}
+#| label: forest-main
+#| fig-height: 6
+forest(res_main, slab = dat$study, atransf = exp,
+       xlab = "Odds ratio (log scale)",
+       header = c("Study", "OR [95% CI]"))
+```
+
+## Sensitivity analysis
+
+The sensitivity analysis excludes every study with a zero cell, so that no correction is applied at all:
+
+```{r}
+#| label: sensitivity-analysis
+es_sens <- escalc(measure = "OR",
+                  ai = ai, bi = bi, ci = ci, di = di,
+                  data = dat,
+                  subset = !zero_cell)
+
+res_sens <- rma(yi, vi, data = es_sens, method = "REML")
+res_sens
+```
+
+## Comparison
+
+```{r}
+#| label: comparison
+comparison <- data.frame(
+  analysis = c("Main (0.5 added to zero-cell studies)",
+               "Sensitivity (zero-cell studies excluded)"),
+  k     = c(res_main$k, res_sens$k),
+  OR    = exp(c(res_main$beta,  res_sens$beta)),
+  ci.lb = exp(c(res_main$ci.lb, res_sens$ci.lb)),
+  ci.ub = exp(c(res_main$ci.ub, res_sens$ci.ub)),
+  I2    = c(res_main$I2, res_sens$I2)
+)
+
+knitr::kable(comparison, digits = 2,
+             col.names = c("Analysis", "k", "OR", "Lower 95% CI",
+                           "Upper 95% CI", "I² (%)"))
+```
+
+In this example, the 0.5 correction was applied to `r n_corrected` studies with a zero cell. The number of studies excluded for having no events in either group was `r n_double_zero`. The pooled odds ratio was `r round(exp(res_main$beta), 2)` (95% CI `r round(exp(res_main$ci.lb), 2)` to `r round(exp(res_main$ci.ub), 2)`) in the main analysis and `r round(exp(res_sens$beta), 2)` (95% CI `r round(exp(res_sens$ci.lb), 2)` to `r round(exp(res_sens$ci.ub), 2)`) once the corrected studies were excluded. Where the two estimates agree, the correction has had little influence on the result. Where they differ, both should be reported.
+
+# References
+
+::: {#refs}
+Chinn, S. 2000. A simple method for converting an odds ratio to effect size for use in meta-analysis. Statistics in Medicine 19:3127–3131.
+
+Sweeting, M. J., A. J. Sutton, and P. C. Lambert. 2004. What to add to nothing? Use and avoidance of continuity corrections in meta-analysis of sparse data. Statistics in Medicine 23:1351–1375.
+
+Wolodzko, T. 2023. extraDistr: additional univariate and multivariate distributions. R package version 1.10.0. <https://CRAN.R-project.org/package=extraDistr>.
+:::

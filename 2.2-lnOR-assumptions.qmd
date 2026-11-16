@@ -52,31 +52,19 @@ if (!requireNamespace("metafor", quietly = TRUE)) {
 library("metafor")
 library("dplyr")
 library("tidyr")
-library("ggplot2")
 
 ```
 
-:::callout-tip
-#### Key points
-- lnOR (log odds ratio) and lnRR (log risk ratio) describe discrete binary outcomes between two groups (i.e., experiment vs control)
-- Odds ratios (OR) compare odds of a binary outcome occurring between two groups
-- Risk ratios (RR) compare risks of the outcome. The two are close only when the event is rare.
-- Odds are not risk. The same OR can mean a small or a large change in risk, depending on how common the event is in the control group.
-- Zero cells need a continuity correction, which is applied automatically by `escalc`. For studies with no events in either group, we recommend `drop00 = TRUE` in `escalc`.
-- If the event in question is very rare, consider directly modeling outcomes with `rma.glmm()`, which does not require continuity correction.
-- Do not use lnOR or lnRR for binary outcomes that can occur **multiple** times per individual (or plot or site). Use incident rate ratio estimands for this type of 'event count' data.
-:::
+Sometimes the world is black and white. Individuals live or die, organisms are present or absent, and vegetation plots burn or do not.
 
-Sometimes the world is just black and white. Individuals live or die. Organisms are present or absent. Vegetation plots burn or don't burn.
-
-Dichotomous data is often organized as the counts in a 2×2 table. In ecology, this usually compares an exposed (or managed) group with a control group, across an outcome with two states (e.g., mortality vs. survival, or presence vs. absence):
+Effect sizes for dichotomous data are calculated from the counts in a 2×2 table. In ecology, the table usually compares an exposed (or managed) group with a control group across an outcome with two states, such as mortality and survival, or presence and absence:
 
 |                                          | **Target Event (e.g., Mortality)** | **Non-Event (e.g., Survival)** | **Total** |
 | ---------------------------------------- | ---------------------------------- | ------------------------------ | --------- |
 | **Exposed (e.g., Pollutant / Stressor)** | a                                  | b                              | a + b     |
 | **Control (e.g., Ambient Conditions)**   | c                                  | d                              | c + d     |
 
-We'll use a running example throughout. Imag
+The following example is used throughout:
 
 ```{r}
 #| eval: true
@@ -85,118 +73,79 @@ We'll use a running example throughout. Imag
 # 2x2 tables for amphibian chytrid infection in two wetlands
 dat_dichotomous <- data.frame(
   site = c("Wetland A", "Wetland B"),
-  ai = c(15, 20), # Infected in a warmed mesocosm (exposure treatment)
-  bi = c(85, 30), # Uninfected in a warmed mesocosm (exposure treatment)
-  ci = c(10, 15), # Infected in the ambient mesocosm (control treatment)
-  di = c(90, 35)  # Uninfected in the ambient mesocosm (control treatment)
+  ai = c(15, 20), # Infected, exposed (warmed mesocosm)
+  bi = c(85, 30), # Uninfected, exposed (warmed mesocosm)
+  ci = c(10, 15), # Infected, control (ambient)
+  di = c(90, 35)  # Uninfected, control (ambient)
 )
 
 knitr::kable(dat_dichotomous)
 ```
-Each experiment compares infection in warmed mesocosms (the exposed group) with ambient controls (the control group). Experiment 1 has `r dat_dichotomous$ai[1] + dat_dichotomous$bi[1]` individuals in each group, and Experiment 2 has `r dat_dichotomous$ai[2] + dat_dichotomous$bi[2]`.
 
-We'll cover the two main effect sizes for these data: the log odds ratio (**lnOR**) and the log risk ratio (**lnRR**)
+This page covers the three main effect sizes for such data: the log odds ratio (**lnOR**), the log risk ratio (**lnRR**), and the risk difference (**RD**).
 
 :::callout-important
-If the event can happen *multiple times* to the *same* individual (e.g., the number of times a plot burns or a bird breeds), use incidence rate ratios (see [Multiple events per individual](#sec-other-binary-outcomes)). If you're interested in *when* the event happened, not just whether it did (e.g., days until nest predation), use hazard ratios (see [Time-to-event data](#sec-time-to-event)).
+These three effect sizes are for events that can happen only once to each individual. If the event can happen *multiple times* to the *same* individual (e.g., the number of times a plot burns or a bird breeds), use incidence rate ratios (see [Multiple events per individual](#sec-other-binary-outcomes)). If the interest is in *when* the event happened, and not only in whether it did (e.g., days until nest predation), use hazard ratios (see [Time-to-event data](#sec-time-to-event)).
 :::
 
 # Log odds ratio (lnOR)
 
-The **odds** of an event are the chance that it happens divided by the chance that it does not. For example, if 20 out of 100 individuals die, the odds of death are 20 to 80, or `r 20 / 80`. The **odds ratio (OR)** divides the odds of the event in the exposed group (group 1, the treatment) by the odds in the control group (group 2). An OR of 1 means the odds are the same in both groups.
+The odds ratio (OR) compares the odds of the event in the exposed group with the odds in the control group. The odds are the probability that the event happens divided by the probability that it does not, and they range from 0 to infinity. An OR of 1 means that the odds are the same in both groups. In terms of the cells of the 2×2 table:
 
-The math is below. Here $a$ and $b$ are the number of individuals in the exposed group who did and did not have the event, and $c$ and $d$ are the same counts for the control group. In other words, $a$ is the exposed group with the event.
+$$
+OR = \frac{a \times d}{b \times c}
+$${#eq-OR}
 
-$$\begin{aligned}
-&OR=\frac{a \times d}{b \times c} \\
-\end{aligned}$${#eq-OR}
+ORs are not analyzed directly in a meta-analysis, because they are bounded at 0 and are not normally distributed. An OR of 0.5 and an OR of 2 are effects of equal size in opposite directions, yet they do not lie at the same distance from 1. The log transformation removes this asymmetry: lnOR is centered on 0 and ranges from $-\infty$ to $\infty$.
 
-ORs are not analyzed directly in a meta-analysis because they are bounded at 0 and are not normally distributed. For example, an OR of 0.5 and an OR of 2 are equal and opposite effects, but they are not the same distance from 1. Log transforming fixes this: lnOR is centered on 0 and ranges from $-\infty$ to $\infty$.
-
-$$\begin{aligned}
-&lnOR = \ln(OR)\\
-\end{aligned}$${#eq-lnOR}
+$$
+lnOR = \ln(OR)
+$${#eq-lnOR}
 
 ## Calculating lnOR
 
-Let's calculate lnOR for our example data with `escalc` in `metafor`:
+All of the effect sizes on this page can be calculated with `escalc()` in the `metafor` package [@viechtbauer2010]:
 
 ```{r}
-# Calculate lnOR for each experiment with escalc
-dat_or <- escalc(measure = "OR",
-                 ai = ai, bi = bi,
-                 ci = ci, di = di,
+dat_or <- escalc(measure = "OR", 
+                 ai = ai, bi = bi, 
+                 ci = ci, di = di, 
                  data = dat_dichotomous)
 dat_or
 ```
 
-
 ## Interpreting lnOR
 
-To interpret lnOR (including a pooled model estimate ± confidence intervals), exponentiate it ($e^{lnOR}$) to convert it back to an OR. Let's take our 
+To interpret an lnOR (or a pooled estimate and its confidence interval), exponentiate it ($e^{lnOR}$) to return to the OR. For Wetland A:
 
 ```{r}
 or_a <- exp(dat_or$yi[1])
-round(or_a, 1)
+or_a
 ```
 
 - **OR = 1:** Equal odds of the event in both groups (e.g., the stressor has no effect on the odds of infection).
 - **OR > 1:** Higher odds of the event in the exposed group.
 - **OR < 1:** Lower odds of the event in the exposed group.
 
-There are several ways to describe an OR of `r round(or_a, 2)` in plain English, which are more or less comfortable based on whether OR is ≥ 1 or < 1.
+An OR of `r round(or_a, 2)` can be described in plain English in several ways:
 
-1. If OR is ≥ 1, convert to percent change, using $100 \times (OR - 1)$:
+1. As a percentage change, using $100 \times (OR - 1)$:
 
 > The odds of infection were `r round(100 * (or_a - 1))`% higher in the exposed group than in the control group.
 
-2. You can also write in terms of multiples by rounding the odds ratio:
+2. As a multiple:
 
 > The exposed group had `r round(or_a, 2)` times the odds of infection of the control group.
 
-3. If the OR value is < 1, it might be easier to write from the control group's perspective, using $1/OR$:
+3. From the control group's perspective, using $1/OR$:
 
-> The control group had `r round(1 / or_a, 2)` times the odds of infection than the exposed group.
+> The control group had `r round(1 / or_a, 2)` times the odds of infection of the exposed group.
 
-4. Similarly, when the OR is below 1, you can use $100 \times (1 - OR)$ to get the percentage decrease.
-
-> The control group had `r round(100 * (1 - or_a), 2)`% reduction in the odds of infection.
-
-Avoid describing an OR as "times more likely": that describes risk, not odds (see [Choosing an effect size](#sec-choosing)).
-
-::: {.callout-note collapse="true"}
-#### Click to understand why odds are not risk
-
-Halving the odds is not the same as halving the risk. The change in risk depends on the baseline risk, $p_0$, which is the risk in the control group. Given an OR and a baseline risk, the risk in the exposed group is:
-
-$$p_1 = \frac{OR \times p_0}{1 - p_0 + OR \times p_0}$$
-
-The table below shows an OR of 0.5 at three different baseline risks:
-
-```{r}
-#| echo: false
-
-# Use an OR of 0.5 and three baseline risks, the same values quoted in the text
-or_fixed <- 0.5
-p0_table <- c(0.05, 0.30, 0.60)
-p1_table <- or_fixed * p0_table / (1 - p0_table + or_fixed * p0_table)
-rr_table <- p1_table / p0_table
-
-risk_table <- data.frame(
-  `Baseline (control) risk` = paste0(100 * p0_table, "%"),
-  `Risk in exposed group` = paste0(round(100 * p1_table, 1), "%"),
-  `Risk ratio (RR)` = round(rr_table, 2),
-  check.names = FALSE
-)
-knitr::kable(risk_table)
-```
-
-With a 5% baseline risk, an OR of `r or_fixed` lowers the risk from 5% to `r round(100 * p1_table[1], 1)`%, a relative drop of about the same size as the drop in odds. With a 60% baseline risk, the same OR only lowers the risk from 60% to `r round(100 * p1_table[3], 1)`%, an RR of `r round(rr_table[3], 2)`.
-:::
+Where the OR is below 1, $100 \times (1 - OR)$ gives the percentage decrease. An OR should not be described as "times more likely", since that phrase describes risk and not odds (see [Choosing an effect size](#sec-choosing)).
 
 ## Sampling variance
 
-Variance for the OR is calculated on a natural logarithmic scale:
+The variance of lnOR is:
 
 $$
 Var(lnOR) = \frac{1}{a} + \frac{1}{b} + \frac{1}{c} + \frac{1}{d}
@@ -204,7 +153,7 @@ $${#eq-lnOR-var}
 
 ## Continuity correction
 
-As you can see in @eq-lnOR and @eq-lnOR-var, if any cell ($a$, $b$, $c$, or $d$) is 0 (e.g., no individuals were infected in the control group), lnOR and its variance can't be calculated ($\frac{x}{0}=\infty$. By default, `escalc()` adds 0.5 to every cell of any table that contains a 0:
+As @eq-OR and @eq-lnOR-var show, lnOR and its variance cannot be calculated if any cell ($a$, $b$, $c$, or $d$) is 0 (if, for example, no individuals were infected in the control group). By default, `escalc()` adds 0.5 to every cell of any table that contains a 0 [@sweeting2004]:
 
 ```{r}
 escalc(measure = "OR",
@@ -212,13 +161,13 @@ escalc(measure = "OR",
        ci = 0, di = 5)
 ```
 
-If there are no events (or only events) in *both* groups, the study gives no information about the OR and should be left out [@higgins2024]. You can do this by adding `drop00 = TRUE` in `escalc()` or you can manually exclude those data points. 
+The correction can bias the OR towards 1, and its influence on the pooled result should be checked in a sensitivity analysis (a worked example is given [here](3.3-lnOR-challenges.qmd#sec-zero-cells)).
 
-We discuss other methods for rare events and many 0 cells [below.](#sec-rare-events)
+If there are no events (or only events) in *both* groups, the study provides no information about the OR and should be left out [@higgins2024]. Setting `drop00 = TRUE` in `escalc()` does this.
 
 # Log risk ratio (lnRR)
 
-The Risk Ratio (RR), or relative risk, compares the probability (risk) of an event in the exposed group with the risk in the control group.Each risk is the number of individuals with the outcome divided by the total number of individuals in that group.
+The risk ratio (RR), or relative risk, compares the risk of the event in the exposed group with the risk in the control group. Risk is the proportion of individuals that experience the event:
 
 $$
 \begin{aligned}
@@ -228,9 +177,9 @@ $$
 \end{aligned}
 $${#eq-RR}
 
-The RR is interpreted much like the OR, but it compares probabilities directly, which makes it easier to explain. It also has a ceiling. Because a risk cannot be larger than 1, $RR = p_1/p_0$ can never be larger than $1/p_0$, where $p_0$ is the control risk. For example, if half of the controls experience the event, the RR cannot be larger than `r 1 / 0.5`. This ceiling matters most when the event is common, and it is one reason lnRR can vary across studies with different baseline risks. The OR has no such ceiling.
+An RR of 1 means that the risk is the same in both groups. Because a risk cannot exceed 100%, the RR has a ceiling set by the control group risk (CGR): it cannot be greater than $1/CGR$. If 50% of control individuals die, for example, the exposed group can be at most twice as likely to die, and the RR cannot exceed 2 [@deeks2002]. The consequences are taken up under [Choosing an effect size](#sec-choosing).
 
-As with the OR, the RR is log transformed for meta-analysis so that it is centered on 0 and approximately normal:
+Like the OR, the RR is log transformed for meta-analysis, so that it is centered on 0 and approximately normal:
 
 $$
 lnRR = \ln(RR)
@@ -248,44 +197,34 @@ dat_rr
 
 ## Interpreting lnRR
 
-To interpret these effect sizes (and the final model estimates), you first convert lnRR to RR by exponentiating ($e^{lnRR}$):
+As with lnOR, exponentiate lnRR ($e^{lnRR}$) to return to the RR. For Wetland A:
 
 ```{r}
 rr_a <- exp(dat_rr$yi[1])
 rr_a
 ```
 
-For Experiment 1, the lnRR is `r round(dat_rr$yi[1], 3)`, which is an RR of `r round(exp(dat_rr$yi[1]), 2)`.
+- **RR = 1:** Equal risk of the event in both groups (e.g., the stressor has no effect on the risk of infection).
+- **RR > 1:** Higher risk of the event in the exposed group.
+- **RR < 1:** Lower risk of the event in the exposed group.
 
-Interpret RR as follows:
+An RR of `r round(rr_a, 2)` can be described in plain English in two ways:
 
-- **RR = 1:** Equal risk (or probability) between the comparison groups (e.g., a stressor has no effect on overall mortality risk).
+1. As a percentage change, using $100 \times (RR - 1)$:
 
-- **RR > 1:** Higher risk (or probability) of the event in the exposed group.
+> Infection was `r round(100 * (rr_a - 1))`% more likely in the exposed group than in the control group.
 
-- **RR < 1:** Lower risk (or probability) of the event in the exposed group.
+Where the RR is below 1, $100 \times (1 - RR)$ gives the percentage decrease, which is known as the [relative risk reduction](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-15#section-15-4).
 
-In plain English, you can write the RR for Experiment 1 in two ways:
+2. As a multiple:
 
-There are two ways to describe an RR of `r round(rr_a, 2)` in plain English:
+> The exposed group was `r round(rr_a, 2)` times as likely to be infected as the control group.
 
-1. Subtract 1 from the RR and multiply by 100 to get the relative change in risk: $100 \times (RR - 1)$. A positive value means higher risk in the exposed group, and a negative value means lower risk. When RR is below 1, $100 \times (1 - RR)$ is called the [Relative Risk Reduction](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-15#section-15-4).
-
-> The outcome is `r round(100 * (exp(dat_rr$yi[1]) - 1))`% *more likely* in the exposed group than in the control group.
-
-When the RR is below 1, use $100 \times (1 - RR)$ to get the percentage decrease. This is called the [relative risk reduction](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-15#section-15-4).
-
-2. You can also report the RR directly, which is easier to interpret than the OR.
-
-> The exposed group was `r round(exp(dat_rr$yi[1]), 2)` times as likely to experience the outcome as the control group.
-
-:::callout-note
-Notice that the OR for Wetland A (`r round(or_a, 2)`) is further from 1 than the RR (`r round(rr_a, 2)`). This gap grows as the event becomes more common.
-:::
+Note that the OR for Wetland A (`r round(or_a, 2)`) lies further from 1 than the RR (`r round(rr_a, 2)`). The gap widens as the event becomes more common.
 
 ## Sampling variance
 
-Like lnOR, lnRR variance is calculated on the log scale:
+The variance of lnRR is:
 
 $$
 Var(lnRR) = \frac{1}{a} - \frac{1}{a + b} + \frac{1}{c} - \frac{1}{c + d}
@@ -293,182 +232,181 @@ $${#eq-lnRR-var}
 
 ## Continuity correction
 
-lnRR breaks down when $a$ or $c$ equals 0, so it also needs a continuity correction. Like lnOR, `escalc` adds 0.5 to all four cells of the affected table, not only the affected group, so $n_1$ and $n_2$ each increase by 1. The same advice about studies with no events in either group applies here: set `drop00 = TRUE` unless you have a good reason to keep them.
+lnRR cannot be calculated when $a$ or $c$ is 0. As with lnOR, `escalc()` by default adds 0.5 to every cell of any table that contains a 0.
+
+# Risk difference (RD)
+
+The risk difference (RD) is the difference in risk between the exposed and control groups. Where lnOR and lnRR describe *relative* change, the RD describes *absolute* change: how many more (or fewer) individuals per 100 experience the event. It is therefore the measure to use when the ecological benefit of an intervention has to be weighed against its cost (see Example 3 below).
+
+$$
+\begin{aligned}
+&n_1 = a + b\\
+&n_2 = c + d\\
+&RD = \frac{a}{n_1} - \frac{c}{n_2}
+\end{aligned}
+$${#eq-RD}
+
+Unlike the OR and RR, the RD is not log transformed. It already ranges from −1 to 1 and is centered on 0.
+
+## Calculating RD
+
+```{r}
+dat_rd <- escalc(measure = "RD", 
+                 ai = ai, bi = bi, 
+                 ci = ci, di = di, 
+                 data = dat_dichotomous)
+dat_rd
+```
+
+## Interpreting RD
+
+- **RD = 0:** Equal risk of the event in both groups.
+- **RD > 0:** Higher risk of the event in the exposed group.
+- **RD < 0:** Lower risk of the event in the exposed group (also called the absolute risk reduction).
+
+```{r}
+rd_a <- dat_rd$yi[1]
+```
+
+In plain English, the RD of `r round(rd_a, 2)` for Wetland A can be written as:
+
+> Infection was `r round(100 * rd_a)` percentage points higher in the exposed group than in the control group (`r round(100 * rd_a)` more infected individuals per 100).
+
+The distinction from the RR is worth marking. Infection was `r round(100 * (rr_a - 1))`% *more likely* in the exposed group (the relative change), but only `r round(100 * rd_a)` *percentage points* higher (the absolute change).
+
+## Sampling variance
+
+Because the RD is not log transformed, its variance is calculated on the raw scale:
+
+$$
+Var(RD) = \frac{a \times b}{(a + b)^3} + \frac{c \times d}{(c + d)^3}
+$${#eq-RD-var}
 
 :::callout-important
 #### Defining the target event
 
-You must clearly define your target event. It is easy to accidentally swap **success** with **failure**, or **fledged** with **failed**. Switching the target event (analyzing non-events instead of events) affects each effect size differently:
+The target event must be defined clearly, because it is easy to exchange **success** with **failure**, or **fledged** with **failed**, during extraction. Switching the target event (analyzing non-events in place of events) affects each effect size differently:
 
-- **OR:** The new estimate becomes the exact reciprocal ($1/x$). In the 30% baseline example above, a mortality OR of `r or_fixed` becomes a survival OR of `r 1 / or_fixed`.
+- **lnOR:** The sign flips (the OR becomes its reciprocal, $1/OR$).
+- **RD:** The sign flips.
+- **lnRR:** The estimate, its precision, and its statistical significance can all change, in ways that are hard to predict [@deeks2002; @higgins2024].
 
-- **RR:** The estimate changes and is not simply the reciprocal. Its precision and significance can also change, sometimes substantially, which is a [troubling](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3) mathematical property of RR. In the same 30% example, the mortality RR is `r round(rr_table[2], 2)`, but the survival RR is `r round((1 - p1_table[2]) / (1 - p0_table[2]), 2)`.
-
-*Best practice:* Define the less common outcome as the target event. This reduces errors and heterogeneity between studies [@higgins2024]. Give your columns informative names to reduce data entry errors and utilize reproducible, trackable extraction practices, such as provided by the `R` package `metaDigitise`. We also recommend color-coding your columns in your spreadsheet to reduce confusion.
+*Best practice:* Define the less common outcome as the target event, which reduces errors and heterogeneity between studies [@higgins2024]. Informative column names reduce data entry errors, and color-coding the columns of the spreadsheet reduces confusion further.
 :::
 
-# When to use lnOR or lnRR {#sec-choosing}
+# Choosing an effect size {#sec-choosing}
 
-Start with your study design. If studies sampled by outcome (like the beetle example below), only the OR can be calculated, so the choice is made for you. If you can calculate risks, all three effect sizes are possible, and the choice comes down to a trade-off between statistical properties and interpretation.
+Start with the study design. If the studies sampled by outcome (as in the beetle example below), only the OR can be calculated and the choice is made for you. If risks can be calculated, all three effect sizes are available, and the choice is a trade-off between statistical properties and ease of interpretation [@deeks2002].
 
 **The case for lnOR**
 
-- **It has no ceiling.** The RR is capped by the control group risk: if 50% of controls die, the exposed group can be at most twice as likely to die (RR ≤ 2). This means the same RR can be possible in one study and impossible in another with a higher baseline risk. The OR has no such cap.
-- **It is symmetric.** If you swap the target event (e.g., survival instead of mortality), lnOR simply changes sign. lnRR changes in value, precision, and sometimes significance (see *Defining the target event* above).
-- **It matches logistic regression.** Many studies report logistic regression coefficients, which are lnORs, so these can be combined directly with 2×2 data.
+- **It has no ceiling.** The RR is capped by the control group risk: if 50% of controls die, the exposed group can be at most twice as likely to die (RR ≤ 2). The same RR can therefore be possible in one study and impossible in another with a higher baseline risk. The OR has no such cap.
+- **It is symmetric.** If the target event is swapped (e.g., survival for mortality), lnOR simply changes sign. lnRR changes in value, in precision, and sometimes in significance (see *Defining the target event* above).
+- **It matches logistic regression.** Many studies report logistic regression coefficients, which are themselves lnORs and can be combined directly with 2×2 data (see [here](3.3-lnOR-challenges.qmd#sec-model-estimates)).
 
 **The case for lnRR**
 
 - **It is easier to understand.** "1.5 times as likely" is clearer to most readers than "1.5 times the odds".
-- **It is not exaggerated when events are common.** When events are common (above about 10%), the OR is further from 1 than the RR, and readers often misread an OR as an RR, overstating the effect.
+- **It is not exaggerated when events are common.** The OR always lies further from 1 than the RR, and the gap becomes appreciable once the event is common (above about 10%). Readers often take an OR for an RR, and so overstate the effect [@davies1998].
 
-**When events are rare** (below about 10%), the OR and RR are nearly identical, and the choice between them matters little. However, continuity corrections can bias your results. See [below](#sec-rare-events) for discussion of other approaches.
+**The case for RD**
 
-**Our recommendation:** Run the meta-analysis on lnOR and lnRR to ensure that your results don't depend on this choice. If your estimates are similar, then convert the lnRR results to plain english for easier interpretability.
+- **It shows practical impact.** "15 more patches colonized per 100" is what a manager needs to know in order to judge whether an intervention is worth its cost.
+- **But it is less consistent across studies.** The RD depends heavily on baseline risk, which often differs between sites and populations [@deeks2002]. It can also give impossible values when applied to other populations: an RD of −0.10 applied to a population with a 7% baseline risk predicts a risk of −3% [@higgins2024].
+
+**When events are rare** (below about 10%), the OR and RR are nearly identical, and the choice between them matters little.
+
+**Our recommendation:** Run the meta-analysis on lnOR, then convert the pooled result to an RR and an RD for reporting, using a realistic control group risk (CGR) [@zhang1998; @higgins2024]:
+
+$$
+\begin{aligned}
+&RR = \frac{OR}{1 - CGR + (CGR \times OR)}\\
+&RD = CGR \times (RR - 1)
+\end{aligned}
+$$
+
+To check that the conclusions do not depend on this choice, repeat the analysis with lnRR and report whether the two agree.
 
 :::callout-note
-#### Rare events{#sec-rare-events}
+#### Rare events
 
-When events are very rare, the standard approach (calculating effect sizes with `escalc()` and pooling them with `rma.v()`) can give biased results. The continuity corrections and variance formulas it relies on were designed for larger counts. Based on simulation studies summarized in the [Cochrane Handbook](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-3):
+When events are very rare, the standard approach (calculating effect sizes with `escalc()` and pooling them with `rma()`) can give biased results, because the continuity corrections and variance formulas on which it relies were designed for larger counts. The simulation studies [@sweeting2004; @bradburn2007] summarized in the [Cochrane Handbook](https://www.cochrane.org/authors/handbooks-and-manuals/handbook/current/chapter-10#section-10-4-4) support the following:
 
-- **Event risks below 1%:** If the group sizes are similar within studies and effects are not very large, use Peto's odds ratio. This method can be applied either by calculating odds ratio effect sizes with the PETO method (`escalc(measure = "PETO")`) and analyzing with `rma(yi, vi, method = "EE")` or inputting your cell counts (`ai`, `bi`, `ci`, `di`) directly into the model with `rma.peto()`, which will produce identical results. 
+- **Event risks below 1%:** Use the Peto odds ratio [@yusuf1985] (`rma.peto()`), provided that group sizes are similar within studies and effects are not very large.
+- **Event risks above 1%, very large effects, or very unequal group sizes:** Use the Mantel–Haenszel odds ratio [@mantel1959] (`rma.mh()`, whose pooled estimate needs no continuity correction) or a logistic regression model (`rma.glmm()`).
 
-- **Event risks above 1%, very large effects, or unequal group sizes:** Use the Mantel–Haenszel odds ratio (`rma.mh()`, which needs no continuity correction) or a logistic regression model (`rma.glmm()`). As with `rma.peto()`, you submit your cell counts directly to `rma.glmm()`. This method directly models the outcomes without applying continuity corrections:
+Peto and Mantel–Haenszel are common-effect methods and do not estimate heterogeneity. Cochrane's view is that with sparse data, establishing whether there is any effect at all matters more than modeling heterogeneity. `rma.glmm()` can include random effects where they are needed.
 
-```{r}
-#| eval: false
-#| echo: true
-res.glmm <- rma.glmm(ai=ai, bi=bi, ci=ci, di=di, 
-                     measure="OR", 
-                     data=dat)
-```
-
-Peto and Mantel–Haenszel are common-effect methods, so they don't estimate heterogeneity and don't allow you to control for non-independence structures in your data. Cochrane's view is that with sparse data, finding out whether there is any effect at all matters more than modeling heterogeneity. 
-
-However, in ecology, where heterogeneity is king, we recommend using `rma.glmm()` in most cases, which can handle random effects. 
-
-If you are dealing with very rare events (<1%), we recommend doing both `rma.peto()` and `rma.glmm()` and reporting the results of both approaches.
+`escalc(measure = "PETO")` calculates a Peto odds ratio for each study. Pooling these with a common-effect model (`rma(yi, vi, method = "EE")`) reproduces `rma.peto()` only if the default continuity correction is switched off (`add = 0`). Left at its default, `escalc()` adds 0.5 to the cells of any study with a zero, which the Peto method does not need. A random-effects model (the `rma()` default) is not the Peto method that Cochrane recommends.
 :::
 
+:::callout-note
+#### Paired or longitudinal outcome data
 
-### Applied ecological examples: matching the effect size to study design
+Where the same individuals are scored under both conditions (before and after a treatment, say), or where individuals are matched in pairs, the two groups are not independent and the variance formulas above no longer apply. `escalc()` provides measures for these designs. They take a *paired* 2×2 table, in which the cells count the individuals (or pairs) that experienced the event under both conditions (`ai`), under the first only (`bi`), under the second only (`ci`), and under neither (`di`).
 
-The discussion so far has concerned the interpretatibility of lnOR and lnRR but the primary study designs you encounter add further limitations. We'll give a couple examples to help think this through.
+The marginal measures (`"MPOR"`, `"MPRR"`, and `"MPRD"`) estimate the same quantities as the OR, RR, and RD from two independent groups, with sampling variances that allow for the pairing, and can be combined with them in a single meta-analysis. The conditional odds ratio (`"MPORC"`) is a different quantity and should not be mixed with ORs from unpaired designs [@curtin2002; @elbourne2002; @zou2007].
+:::
 
-**Example 1**
+## Applied ecological examples: matching the effect size to your study design
 
-You cannot calculate the proportion of each group that experienced the event → OR only
+The effect size to use depends on two things: what the study design allows you to calculate, and what you want to say about the result.
 
-Example: Testing whether horns deter bird predation in beetles. Researchers collect the remains of the killed beetles (cases) and sample living beetles from the same area (controls), then compare how often the large-horn phenotype occurs in each group.
+**Example 1: The proportion of each group that experienced the event cannot be calculated → OR only**
 
-Why is OR needed?
+*Example:* Testing whether large horns protect beetles from bird predation. Researchers collect the remains of killed beetles (cases) and sample living beetles from the same area (controls), then compare how common large horns are in each group.
 
-The number of living and dead beetles in the dataset reflects sampling effort, not how often beetles actually get eaten.
+**Why only the OR?**
 
-Without the true number of beetles at risk, you can't calculate the risk of being eaten, so there is no RR. The OR still works, because it comes out the same whether you sample by outcome (dead vs. alive) or by exposure (large vs. small horns).
+The researchers decide how many killed and living beetles to collect. If they collect 100 of each, half of the sample is "killed", whatever the real predation rate may be. The data therefore say nothing about the risk of being killed, and the RR and RD cannot be calculated. The OR can, because it takes the same value whether horn size is compared between killed and living beetles or survival is compared between large- and small-horned beetles.
 
-**Example 2**
+**Example 2: The proportions can be calculated, and you want to say how many times higher or lower the risk is → RR**
 
-You can calculate the proportion of each group that experienced the event, and want to say how many times higher or lower it is → RR
+*Example:* A two-year experiment tracking 1,000 oak seedlings inside deer exclosures and 1,000 in open plots, with mortality as the target event.
 
-Example: A two-year field experiment tracking 1,000 oak seedlings inside deer exclosures and 1,000 in adjacent open plots, with mortality as the target event.
+**Why the RR?**
 
-```{r}
-#| echo: false
+Every seedling is counted at planting, so the true risk of dying is known for each treatment. If 35% die in open plots and 14% in exclosures, the RR is 0.40: exclosures cut the risk of mortality by 60%. The OR for the same data is 0.30, which readers could mistake for a cut of 70%. Where an event is common, the OR makes the effect look larger than it is.
 
-# Oak seedling example: 35% mortality in open plots, and an RR of 0.40 inside exclosures
-p0_oak <- 0.35
-rr_oak <- 0.40
-p1_oak <- rr_oak * p0_oak
-or_oak <- (p1_oak / (1 - p1_oak)) / (p0_oak / (1 - p0_oak))
-```
+**Example 3: The proportions can be calculated, and you want to say how many more or fewer events occurred → RD alongside RR**
 
-All seedlings are counted at planting, so mortality risk is observed directly in each treatment. The RR gives the proportional change in mortality (e.g., "exclosures reduce mortality risk by `r round(100 * (1 - rr_oak))`%") and is comparable across studies. 
+*Example:* Comparing butterfly colonization between isolated habitat fragments and fragments linked by a corridor: 20% of isolated and 35% of connected patches are colonized over the study period.
 
-Because mortality is common in open plots (`r round(100 * p0_oak)`%), the OR would be much smaller than the RR (`r sprintf("%.2f", or_oak)` vs. `r sprintf("%.2f", rr_oak)`). If it were reported as a relative risk, it would overstate the effect of exclosures, reading as a `r round(100 * (1 - or_oak))`% reduction instead of `r round(100 * (1 - rr_oak))`%.
+**Why add the RD?**
 
-### Comparing odds ratio and risk ratio
+The RR (1.75) says that connected patches are 75% more likely to be colonized. The RD (0.15) says how many extra patches that amounts to: about 15 per 100 connected, or one extra colonization for roughly every 7 patches connected. The same RR could represent a much smaller gain if colonization were rarer (4% against 7% is still an RR of 1.75, but only 3 extra patches per 100). The RD is the figure needed to judge whether corridors are worth their cost.
+
+## Comparing the three effect sizes
 
 | Effect size | What it compares | Scale | Main strength | Main limitation |
 |---|---|---|---|---|
-| **OR** | Odds between groups | Relative | Useful for case-control studies and logistic regression | Less intuitive and can exaggerate relative effects for common events |
-| **RR** | Probability between groups | Relative | Direct and intuitive interpretation of relative risk | Requires known risks and depends on baseline risk |
+| **OR** | Odds between groups | Relative | Works for case-control designs and matches logistic regression | Less intuitive and can exaggerate relative effects for common events |
+| **RR** | Risk between groups | Relative | Direct and intuitive interpretation | Requires known risks and is capped by baseline risk |
+| **RD** | Difference in risk | Absolute | Directly communicates ecological impact | Less comparable across populations with different baseline risks |
 
-The relationship between these two measures can be summarized simply:
+In short:
 
-- **OR vs. RR:** Both describe relative effects, but the OR is based on odds and the RR is based on probability. They are approximately equivalent only when the outcome is rare.
-
-@fig-or-rr-control-risk shows this directly. We hold the RR at 0.40 (as in the oak seedling example) and calculate the matching OR for each control-group risk.
-
-```{r}
-#| label: fig-or-rr-control-risk
-#| echo: true
-#| fig-width: 7
-#| fig-height: 4.5
-#| fig-cap: "Odds ratio (OR, solid orange line) and risk ratio (RR, dashed blue line) for the same exposure, plotted against the control-group risk. The RR is fixed at 0.40, the oak seedling example. The OR moves away from the RR as the control risk rises. The shaded band marks rare events (control risk of 10% or less), where the two measures are close. The vertical axis uses a log scale."
-#| fig-alt: "Line plot. The horizontal axis is control-group risk from 0 to 90 percent, and the vertical axis is effect size on a log scale. A dashed blue line for the RR stays flat at 0.40. A solid orange line for the OR starts near 0.40 at low control risk and falls to about 0.06 at 90 percent. A shaded band on the left marks control risk of 10 percent or less, where the two lines nearly overlap."
-
-# Plot the OR and the RR for the same exposure across a range of control risks.
-rr_fixed <- 0.40
-p0_grid <- seq(0.01, 0.90, by = 0.01)
-p1_grid <- rr_fixed * p0_grid
-or_grid <- (p1_grid / (1 - p1_grid)) / (p0_grid / (1 - p0_grid))
-
-plot_df <- rbind(
-  data.frame(p0 = p0_grid, value = or_grid, measure = "OR (odds ratio)"),
-  data.frame(p0 = p0_grid, value = rr_fixed, measure = "RR (risk ratio)")
-)
-
-oak_point <- data.frame(p0 = p0_oak, value = or_oak, measure = "OR (odds ratio)")
-
-ggplot(plot_df, aes(x = p0, y = value, colour = measure, linetype = measure)) +
-  annotate("rect", xmin = 0, xmax = 0.10, ymin = 0.05, ymax = 1,
-           fill = "grey85", alpha = 0.6) +
-  annotate("text", x = 0.05, y = 0.07, label = "rare events", size = 3.3) +
-  geom_line(linewidth = 1) +
-  geom_point(data = oak_point, size = 3, show.legend = FALSE) +
-  annotate("text", x = p0_oak + 0.03, y = or_oak,
-           label = sprintf("Oak seedlings: 35%% open-plot\nmortality, OR %.2f vs RR %.2f",
-                           or_oak, rr_fixed),
-           hjust = 0, size = 3.3) +
-  scale_colour_manual(values = c("OR (odds ratio)" = "#D55E00",
-                                 "RR (risk ratio)" = "#0072B2")) +
-  scale_linetype_manual(values = c("OR (odds ratio)" = "solid",
-                                   "RR (risk ratio)" = "dashed")) +
-  scale_y_log10(limits = c(0.05, 1), breaks = c(0.05, 0.1, 0.25, 0.5, 1)) +
-  scale_x_continuous(labels = function(x) paste0(100 * x, "%"),
-                     limits = c(0, 0.9)) +
-  labs(x = "Control-group risk", y = "Effect size (log scale)",
-       colour = NULL, linetype = NULL) +
-  theme_minimal(base_size = 11) +
-  theme(legend.position = "bottom")
-```
-
-<!-- :::callout-note -->
-<!-- #### Paired or longitudinal outcome data -->
-
-<!-- Is this provided by the matched pairs contingency tables in `escalc`? If so, can they be compared to unpaired estimators or does the entire meta-analysis need to focus on these alone? -->
-<!-- ::: -->
+- **OR vs. RR:** Both describe relative effects, but the OR is based on odds and the RR on risk. They are approximately equal only when the event is rare.
+- **RR vs. RD:** Both are based on risk, but the RR describes proportional change and the RD absolute change.
+- **OR vs. RD:** The OR describes relative change on the odds scale, and the RD absolute change. The same OR can produce very different RDs, depending on baseline risk.
 
 # Multiple events per individual {#sec-other-binary-outcomes}
 
-lnOR and lnRR are the most commonly used effect sizes for binary outcomes that can occur only a single time per individual (or plot or site). You can only die once.
+lnOR, lnRR, and RD are for events that can happen only once to each individual. You can only die once.
 
-Some events can happen to the same individual many times: infections, fires in a plot, breeding attempts. For these, the data are the number of events relative to how long individuals were monitored. These are called count or person-time data (a term borrowed from medicine; here the "persons" might be birds or vegetation plots).
+Other events can happen to the same individual many times: infections, fires in a plot, breeding attempts. For these, the data are the number of events relative to the length of time for which individuals were monitored. They are known as count or person-time data (a term borrowed from medicine; here the "persons" may be birds or vegetation plots).
 
-There is no direct odds ratio for repeated events, because odds need a count of individuals that did and did not experience the event. You could record whether each individual had the event at least once, but this throws away information and depends on how long individuals were monitored. Count data should not be analyzed with lnOR, lnRR, or RD [@higgins2024].
+There is no direct odds ratio for repeated events, because odds require a count of the individuals that did and did not experience the event. It is possible to record whether each individual experienced the event at least once, but this discards information and depends on how long individuals were monitored. Count data should not be analyzed with lnOR, lnRR, or RD [@higgins2024].
 
-The three main **estimands** are the **log incidence rate ratio**, **incidence rate difference**, and **square-root transformed incidence rate difference**.
+`escalc()` offers three effect sizes for these data:
 
 - **Log incidence rate ratio** (`measure = "IRR"`): the relative difference in event rates. This is the most commonly used [@higgins2024].
 - **Incidence rate difference** (`measure = "IRD"`): the absolute difference in event rates.
-- **Square root transformed incidence rate difference** (`measure = "IRSD"`): a transformed version of the IRD with more stable variance.
+- **Square root transformed incidence rate difference** (`measure = "IRSD"`): a transformed version of the IRD with a more stable variance [@bagos2009].
 
-The same reasons we prefer ratio measures for 2×2 data apply here, so we recommend the IRR.
+The reasons for preferring ratio measures for 2×2 data apply here as well, and we recommend the IRR, with the IRD to describe absolute impact.
 
-All three require the number of events in each group (`x1i`, `x2i`) and the total person-time in each group (`t1i`, `t2i`), which is the total time monitored across all individuals. 
-
-The data might look like this:
+All three need the number of events in each group (`x1i`, `x2i`) and the total person-time in each group (`t1i`, `t2i`), which is the time monitored summed across all individuals. The data might look like this:
 
 ```{r}
 #| echo: false
@@ -487,7 +425,7 @@ dat <- dat %>%
 knitr::kable(dat)
 ```
 
-Make sure time units are the same across studies (e.g., convert months to years) before calculating.
+Time units must be the same across studies (e.g., months converted to years) before the effect sizes are calculated.
 
 Then make the data wide:
 
@@ -511,19 +449,19 @@ out <- escalc(measure = "IRR",
 knitr::kable(out)
 ```
 
-These effect sizes are less common in ecology and evolution, so we don't cover them further here.
+These effect sizes are uncommon in ecology and evolution, and we do not cover them further here.
 
 # Time-to-event data {#sec-time-to-event}
 
-Sometimes what matters is not *whether* an event happened, but *when*. How long until a radio-collared deer dies? How many days until a nest is predated? How long until a seed germinates?
+Sometimes what matters is not *whether* an event happened but *when*. How long does a radio-collared deer survive? How many days pass before a nest is predated, or a seed germinates?
 
-These are time-to-event data (also called survival data). Each individual contributes two pieces of information: how long it was followed, and whether the event happened by the end of that time.
+These are time-to-event data (also called survival data). Each individual contributes two pieces of information: how long it was followed, and whether the event had happened by the end of that time.
 
-The complication is **censoring**. Some individuals are followed without the event happening: the study ends, a collar fails, or an animal leaves the study area. We know they survived *at least* that long, but not how long they would have survived. These individuals still carry useful information, so they shouldn't be thrown out.
+The complication is **censoring**. Some individuals are followed without the event ever being observed, because the study ends, a collar fails, or the animal leaves the study area. They are known to have survived *at least* that long, but not how long they would have survived. Such individuals still carry useful information and should not be discarded.
 
 ## What time-to-event data look like
 
-A 2×2 table only records *whether* each individual had the event. Time-to-event data also record *when*. At the individual level, each row is one individual, with how long it was followed and whether the event happened:
+A 2×2 table records only *whether* each individual experienced the event. Time-to-event data also record *when*. At the level of the individual, each row gives the time for which that individual was followed and whether the event happened:
 
 | **Nest** | **Group** | **Days followed** | **Event** |
 | -------- | --------- | ----------------- | --------- |
@@ -532,7 +470,7 @@ A 2×2 table only records *whether* each individual had the event. Time-to-event
 | 3 | Unfenced | 5 | 1 (predated) |
 | 4 | Unfenced | 18 | 0 (nest lost track of) |
 
-Rows with a 0 are censored: we know the nest survived at least that long, but not what happened after.
+Rows with a 0 are censored: the nest is known to have survived at least that long, but its fate afterwards is unknown.
 
 Summed by group, the closest match to the 2×2 table at the top of this page is:
 
@@ -541,49 +479,49 @@ Summed by group, the closest match to the 2×2 table at the top of this page is:
 | **Exposed (e.g., Fenced)**               | a          | b            | a + b     | $T_1$                  |
 | **Control (e.g., Unfenced)**             | c          | d            | c + d     | $T_2$                  |
 
-The new column, total time at risk, is the days followed added up across all individuals in the group. Dividing events by time at risk gives an event rate for each group ($a/T_1$ and $c/T_2$), and the ratio of the two rates estimates the hazard ratio (introduced below):
+The new column, total time at risk, is the number of days followed, summed across all individuals in the group. Dividing the events by the time at risk gives an event rate for each group ($a/T_1$ and $c/T_2$), and the ratio of the two rates estimates the hazard ratio (introduced below):
 
 $$
 HR \approx \frac{a / T_1}{c / T_2}
 $$
 
-This is the same calculation as the incidence rate ratio in [Multiple events per individual](#sec-other-binary-outcomes), so you can use `escalc(measure = "IRR")` with `x1i = a`, `x2i = c`, `t1i = T1`, and `t2i = T2`.
+This is the same calculation as the incidence rate ratio in [Multiple events per individual](#sec-other-binary-outcomes), and `escalc(measure = "IRR")` can be used with `x1i = a`, `x2i = c`, `t1i = T1`, and `t2i = T2`.
 
-The catch is that this only gives the true HR if the hazard stays roughly constant over the study. If risk changes over time (e.g., nest predation peaks at hatching), the summary table loses that information, and an HR from a Cox model or log-rank test will be more accurate. Papers also rarely report total time at risk, so in practice you'll usually extract a reported HR instead (see [Getting hazard ratios from studies](#sec-getting-hr)).
+The approximation holds only if the hazard stays roughly constant over the study. If risk changes through time (nest predation may peak at hatching, for example), the summary table loses that information, and an HR from a Cox model or a log-rank test will be more accurate. Papers also seldom report total time at risk, so in practice a reported HR is usually extracted instead (see [Getting hazard ratios from studies](#sec-getting-hr)).
 
 :::callout-important
 #### Don't use mean time-to-event
 
-It can be tempting to compare average survival time between groups, as you would for any continuous outcome (e.g., with lnRR or SMD). Don't. You can only measure survival time for individuals that had the event during the study. Those still alive at the end don't have a death date, so they get left out. Leaving them out skews the average, because the individuals left out are the ones that lived longest.
+It is tempting to compare mean survival time between groups, as one would for any continuous outcome (e.g., with lnRR or SMD). This should be avoided. Survival time is known only for the individuals that experienced the event during the study. Those still alive at the end have no date of death and are left out of the mean, and they are the individuals that lived longest.
 
-For example, if a study ends after 30 days, every animal that survived past day 30 is missing from the average. The group that survived best loses the most animals from the calculation, so the comparison can make it look worse than it is.
+If a study ends after 30 days, for example, every animal that survived beyond day 30 is missing from the mean. The group that survived best loses the most animals from the calculation, and the comparison can make that group look worse than it is.
 :::
 
 ## The hazard ratio
 
-The standard effect size for time-to-event data is the **hazard ratio (HR)**. The hazard is the risk of the event happening at a given moment, among individuals that haven't experienced it yet. The HR compares this between groups:
+The standard effect size for time-to-event data is the **hazard ratio (HR)**. The hazard is the risk that the event happens at a given moment, among the individuals that have not yet experienced it. The HR compares this risk between groups:
 
 - **HR = 1:** The event happens at the same rate in both groups.
 - **HR > 1:** The event happens sooner (or more often at any given time) in the exposed group.
 - **HR < 1:** The event happens later (or less often at any given time) in the exposed group.
 
-Most analyses assume the HR stays constant over the study period, even if the hazard itself rises and falls (e.g., nest predation peaks at hatching). This is called the **proportional hazards assumption**. If the effect clearly changes over time (e.g., a treatment protects seedlings in the first month but not after), a single HR can be misleading.
+Most analyses assume that the HR stays constant over the study period, even though the hazard itself may rise and fall (as when nest predation peaks at hatching). This is the **proportional hazards assumption** [@cox1972]. If the effect clearly changes through time (a treatment that protects seedlings in their first month but not afterwards, say), a single HR can mislead.
 
-As with the OR and RR, HRs are log transformed for meta-analysis.
+Like the OR and RR, HRs are log transformed for meta-analysis.
 
-In plain English, an HR of 0.60 for nest predation in fenced vs. unfenced plots means:
+In plain English, an HR of 0.60 for nest predation in fenced compared with unfenced plots means:
 
 > At any point during the nesting period, nests in fenced plots were predated at 60% of the rate of nests in unfenced plots (a 40% lower hazard).
 
-Note that this is *not* the same as "40% fewer nests were predated". The HR describes the rate at which events happen, not the final proportion.
+This is *not* the same as "40% fewer nests were predated". The HR describes the rate at which events happen, not the final proportion.
 
 ## Getting hazard ratios from studies {#sec-getting-hr}
 
-`escalc()` can't calculate HRs from summary data, because an HR needs the individual survival times. The ideal is to obtain the raw data from study authors and reanalyze it yourself, so every study is analyzed the same way. In practice, you will usually have to work from what the papers report, which often isn't the statistic you need [@higgins2024].
+`escalc()` cannot calculate an HR from the usual summary data, because an HR depends on the individual survival times. The ideal is to obtain the raw data from the study authors and reanalyze them, so that every study is analyzed in the same way. In practice, one usually has to work from what the papers report, which is often not the statistic that is needed [@higgins2024].
 
-There are three ways to get an HR from a published study. For practical, step-by-step guidance on all three, see @tierney2007.
+There are three ways of obtaining an HR from a published study. For practical, step-by-step guidance on all three, see @tierney2007.
 
-**1. Extract the reported HR and its uncertainty.** Studies that use a Cox proportional hazards model (or another survival regression) report an HR, usually with a 95% CI. You can convert these to lnHR and its standard error:
+**1. Extract the reported HR and its uncertainty.** Studies that fit a Cox proportional hazards model (or another survival regression) report an HR, usually with a 95% CI. These can be converted to lnHR and its standard error:
 
 $$
 \begin{aligned}
@@ -616,7 +554,7 @@ res_hr
 predict(res_hr, transf = exp)
 ```
 
-If a study reports an HR with an exact P value but no CI, you can recover the standard error from the P value [@higgins2024]:
+If a study reports an HR with an exact P value but no CI, the standard error can be recovered from the P value [@higgins2024]:
 
 $$
 SE(lnHR) = \frac{|lnHR|}{z}, \qquad z = \Phi^{-1}(1 - P/2)
@@ -627,30 +565,68 @@ $$
 abs(log(0.70)) / qnorm(1 - 0.03 / 2)
 ```
 
-This only works with exact P values. "P < 0.05" or "NS" doesn't give you enough information.
+This works only with exact P values. "P < 0.05" or "NS" does not provide enough information.
 
-**2. Estimate it from a log-rank test.** Many studies compare survival curves with a log-rank test rather than a Cox model. If you know the observed number of events in the exposed group (O), the number expected if the exposure had no effect (E), and the variance of the log-rank statistic (V), then [@simmonds2011]:
+**2. Estimate it from a log-rank test.** Many studies compare survival curves with a log-rank test and not a Cox model. If the observed number of events in the exposed group ($O$), the number expected if the exposure had no effect ($E$), and the variance of the log-rank statistic ($V$) are known, then [@simmonds2011]:
 
 $$
 lnHR \approx \frac{O - E}{V}, \qquad SE(lnHR) = \frac{1}{\sqrt{V}}
 $$
 
-This is the same calculation as the Peto odds ratio, applied to survival data. Studies rarely report O, E, and V directly, but they can often be worked out from the reported P value, the number of events in each group, and the survival curves [@parmar1998; @williamson2002]. These methods involve several assumptions, so it's worth involving a statistician.
+This is the same calculation as the Peto odds ratio, applied to survival data. Studies seldom report $O$, $E$, and $V$ directly, but they can often be worked out from the reported P value, the number of events in each group, and the survival curves [@parmar1998; @williamson2002]. These methods rest on several assumptions, and the help of a statistician is worth having.
 
-The same calculation can be done on grouped data. For example, a nest study might report how many nests were predated each week and how many were still active at the end of each week. A log-rank analysis of these counts gives O, E, and V, but because the data are grouped, the HR is only approximate (this grouped estimate is sometimes called a log odds ratio in older literature, e.g., @ebctcg1990). Censored individuals need careful handling, and when the intervals are long relative to the study (e.g., yearly checks in a three-year study), methods for interval-censored survival are more appropriate [@collett1994].
+The same calculation can be made on grouped data. A nest study might, for example, report how many nests were predated in each week and how many were still active at the end of it. A log-rank analysis of these counts gives $O$, $E$, and $V$, but because the data are grouped, the HR is only approximate (the grouped estimate is sometimes called a log odds ratio in the older literature, e.g., @ebctcg1990). Censored individuals need careful handling, and where the intervals are long relative to the study (yearly checks in a three-year study, for example), methods for interval-censored survival are more appropriate [@collett1994].
 
-**3. Reconstruct it from a Kaplan–Meier curve.** If a study only shows a survival curve, you can digitize the curve and reconstruct approximate individual data [@guyot2012]. This lets you estimate the HR yourself, and also opens up other analyses of the survival data. It takes more work, so it's best kept for studies that can't be included any other way.
+**3. Reconstruct it from a Kaplan–Meier curve.** If a study shows only a survival curve, the curve can be digitized and approximate individual data reconstructed from it [@guyot2012]. The HR can then be estimated directly, and other analyses of the survival data become possible. The method takes more work, and is best kept for studies that cannot be included in any other way.
 
 ## Converting to a 2×2 table instead
 
-If every individual was followed for at least a fixed time (say 30 days), and studies report how many in each group had experienced the event by then, you can build a 2×2 table and use lnOR, lnRR, or RD as usual. This only works if no individuals were censored before that time point. It also throws away information about *when* events happened, so it's best used when most studies report outcomes this way.
+If every individual was followed for at least a fixed time (30 days, say), and the studies report how many individuals in each group had experienced the event by then, a 2×2 table can be built and lnOR, lnRR, or RD used as usual (see [here](3.3-lnOR-challenges.qmd#sec-survivorship-curves)). This is valid only if no individuals were censored before that time point. It also discards the information about *when* events happened, and is best used where most studies report outcomes in this way.
 
-Don't mix HRs with ORs or RRs in the same meta-analysis. They measure different things and only give similar values when events are rare.
+HRs should not be mixed with ORs or RRs in the same meta-analysis. They measure different things and give similar values only when events are rare.
 
-:::callout-tip
-#### Next
+# References
 
-**Next:** to read about effect sizes for two continuous measures of association: [$Z_r$ effect size interpretation and assumptions](2.3-Zr-assumptions.qmd), which asks the same questions for correlation effect sizes.
+::: {#refs}
+Bagos PG, Nikolopoulos GK (2009). Mixed-effects Poisson regression models for meta-analysis of follow-up studies with constant or varying durations. *The International Journal of Biostatistics* 5(1).
 
-Alternatively, if you're ready to wade into how to extract lnOR type effect sizes go [here](2.2-lnOR-assumptions.qmd)
+Bradburn MJ, Deeks JJ, Berlin JA, Localio AR (2007). Much ado about nothing: a comparison of the performance of meta-analytical methods with rare events. *Statistics in Medicine* 26:53–77.
+
+Collett D (1994). *Modelling Survival Data in Medical Research*. Chapman & Hall, London.
+
+Cox DR (1972). Regression models and life-tables. *Journal of the Royal Statistical Society: Series B* 34:187–220.
+
+Curtin F, Elbourne D, Altman DG (2002). Meta-analysis combining parallel and cross-over clinical trials. II: Binary outcomes. *Statistics in Medicine* 21:2145–2159.
+
+Davies HTO, Crombie IK, Tavakoli M (1998). When can odds ratios mislead? *BMJ* 316:989–991.
+
+Deeks JJ (2002). Issues in the selection of a summary statistic for meta-analysis of clinical trials with binary outcomes. *Statistics in Medicine* 21:1575–1600.
+
+Early Breast Cancer Trialists' Collaborative Group (1990). *Treatment of Early Breast Cancer. Volume 1: Worldwide Evidence 1985–1990*. Oxford University Press, Oxford.
+
+Elbourne DR, Altman DG, Higgins JPT, Curtin F, Worthington HV, Vail A (2002). Meta-analyses involving cross-over trials: methodological issues. *International Journal of Epidemiology* 31:140–149.
+
+Guyot P, Ades AE, Ouwens MJNM, Welton NJ (2012). Enhanced secondary analysis of survival data: reconstructing the data from published Kaplan-Meier survival curves. *BMC Medical Research Methodology* 12:9.
+
+Higgins JPT, Thomas J, Chandler J, Cumpston M, Li T, Page MJ, Welch VA (eds) (2024). *Cochrane Handbook for Systematic Reviews of Interventions*, version 6.5. Cochrane. https://www.cochrane.org/handbook
+
+Mantel N, Haenszel W (1959). Statistical aspects of the analysis of data from retrospective studies of disease. *Journal of the National Cancer Institute* 22:719–748.
+
+Parmar MKB, Torri V, Stewart L (1998). Extracting summary statistics to perform meta-analyses of the published literature for survival endpoints. *Statistics in Medicine* 17:2815–2834.
+
+Simmonds MC, Tierney J, Bowden J, Higgins JPT (2011). Meta-analysis of time-to-event data: a comparison of two-stage methods. *Research Synthesis Methods* 2:139–149.
+
+Sweeting MJ, Sutton AJ, Lambert PC (2004). What to add to nothing? Use and avoidance of continuity corrections in meta-analysis of sparse data. *Statistics in Medicine* 23:1351–1375.
+
+Tierney JF, Stewart LA, Ghersi D, Burdett S, Sydes MR (2007). Practical methods for incorporating summary time-to-event data into meta-analysis. *Trials* 8:16.
+
+Viechtbauer W (2010). Conducting meta-analyses in R with the metafor package. *Journal of Statistical Software* 36(3):1–48.
+
+Williamson PR, Smith CT, Hutton JL, Marson AG (2002). Aggregate data meta-analysis with time-to-event outcomes. *Statistics in Medicine* 21:3337–3351.
+
+Yusuf S, Peto R, Lewis J, Collins R, Sleight P (1985). Beta blockade during and after myocardial infarction: an overview of the randomized trials. *Progress in Cardiovascular Diseases* 27:335–371.
+
+Zhang J, Yu KF (1998). What's the relative risk? A method of correcting the odds ratio in cohort studies of common outcomes. *JAMA* 280:1690–1691.
+
+Zou GY (2007). One relative risk versus two odds ratios: implications for meta-analyses involving paired and unpaired binary data. *Clinical Trials* 4:25–31.
 :::
