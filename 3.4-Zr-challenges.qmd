@@ -73,8 +73,8 @@ library("crayon")
 ##### Key points
 
 - $Z_r$ is the Fisher's z transformation of Pearson's $r$. Only Pearson's r goes into `escalc` directly; convert other correlation types first.
-- Many $Z_r$ type data presentation formats include error bars. These can create issues with unit of replication. Data reconstruction techniques are possible but should be used with caution
-- Other data types include relationships between continuous predictors and discrete responses, which require care but can be estimated with $Z_r$ and converted to lnOR
+- Many $Z_r$ type data presentation formats include error bars. These can create issues with unit of replication. Data reconstruction techniques are possible but should be used with caution.
+- Other data types include relationships between continuous predictors and discrete responses, which require care but can be estimated with $Z_r$ and converted to lnOR.
 - Calculating $Z_r$ from non-independent correlation data, such as from pairwise matrices, requires additional care but is also described in detail.
 :::
 
@@ -87,7 +87,7 @@ In general, $Z_r$ effect size extractions require a long-format database for dat
 
 This dataset will then be summarized in `R` to derive $r$ (using `cor.test`) and sample size ($n$), producing a derived dataset with a single row per unique correlation. Be sure to have clear ID columns to help with summarization. Alternatively, you can calculate $r$ and $n$ while extracting data but this may lead to clunkiness in your workflow.
 
-Note that some studies (though rarely in our experience) will report the raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). These can be entered into the same raw dataset or into a separate tab.
+Note that some studies (though rarely in our experience) will report raw correlation coefficients ($r$) and sample size ($n$), which will require a simpler data entry format (1 row per correlation coefficient). These can be entered into the same raw dataset or into a separate tab.
 
 ::: {.callout-important}
 ##### Types of directly reported correlations
@@ -114,7 +114,7 @@ setcolorder(dat, c("correlation_id", "x", "y", "r", "n"))
 knitr::kable(dat)
 ```
 
-This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. We offer a helper function `get_r` that allows you to do this more succinctly:
+This will then be summarized in `R` to calculate the correlation coefficient $r$ and sample size. We use a helper function `get_r` that allows you to do this more succinctly:
 
 ```{r}
 #| echo: true
@@ -127,9 +127,9 @@ get_r <- function(x, y) {
 }
 
 # Summarize the raw correlation data:
-dat.summarized <- dat %>%
-    filter(!is.na(x)) %>%
-    group_by(correlation_id) %>%
+dat.summarized <- dat |>
+    filter(!is.na(x)) |>
+    group_by(correlation_id) |>
     summarize(
         r = get_r(x, y),
         n = n()
@@ -138,9 +138,9 @@ dat.summarized <- dat %>%
 # Bind with the already summarized correlation data:
 dat.final <- rbind(
     dat.summarized,
-    dat %>%
-        filter(!is.na(r)) %>%
-        select(-x, -y)
+    dat |>
+        filter(!is.na(r)) |>
+        dplyr::select(-x, -y)
 )
 
 # Now calculate Zr:
@@ -249,7 +249,7 @@ ggplot(data = dat, aes(x = x, y = y)) +
     )
 ```
 
-If the total number of points is reported for the study, you can duplicate the values of the pink points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall $Z_r$ estimate more conservative—e.g., less weight in the model). 
+If the total number of points is reported for the study, you can duplicate the values of the pink points as many times as it takes to match the total sample size. Otherwise, you'll just have to digitize as many as you can and use a sample size that may be less than the real sample size (which makes the overall $Z_r$ estimate more conservative---e.g., less weight in the model). 
 
 In the figure above, we could safely eyeball 5 separate points (though in reality there are 12).
 
@@ -306,7 +306,7 @@ An alternative approach is to simulate the underlying data behind each site-leve
 
 3. Use these statistics to draw random samples of the data underlying each point from the appropriate statistical distribution (with the length of this sample equal to the internal sample size). 
 
-Note that this process can align the unit of replication of this data with the rest of your dataset. However, it also introduces a different issue: the individual observations are not equally independent (i.e., they're clustered within each point). Luckily, there is a way to correct for this, which we'll demonstrate below.
+Note that this process can align the unit of replication of this data with the rest of your dataset. However, it also introduces a different issue: the individual observations are not equally independent (i.e., they're clustered within each site). Luckily, there is a way to correct for this, which we'll demonstrate below.
 
 Here we'll use `rnorm` to draw normally distributed data for each point. Note that it is also possible to draw data from other distributions (see [here](7-simulating-non-gaussian-responses.qmd) and [here](#sec-zr-reconstructing-proportion-data) for a worked example with a $Z_r$-type effect size and the binomial distribution)
 
@@ -374,11 +374,11 @@ ggplot(data = y_expanded, aes(x = x, y = y)) +
     )
 ```
 
-In this example, each point had an internal sample size of 10 measurements. The reconstructed dataset therefore has 500 rows (50 sites times 10 measurements), but these rows are not fully independent. All measurements *within* a site share the site's x value and the associated spatial or temporal clustering.
+In this example, each point had an internal sample size of 10 measurements. The reconstructed dataset therefore has 500 rows (50 sites times 10 measurements), but these rows are not fully independent. All measurements *within* a site share the site's `x` value and the associated spatial or temporal clustering.
 
 So how do we deal with the non-independence among these simulated observations?
 
-We shrink the sample size with a *design effect* (see [here](3.3-lnOR-challenges.qmd#sec-lnOR-reconstructing-data)) by calculating the **intraclass correlation** (ICC). This describes the amount of variation *between* sites rather than *within* sites. We estimate it from the scatter of the site means around the regression line and from the within-site SDs:
+We shrink the sample size with a *design effect* by calculating the **intraclass correlation** (ICC). This describes the amount of variation *between* sites rather than *within* sites. We estimate it from the scatter of the site means around the regression line and from the within-site SDs:
 
 ```{r}
 #| echo: true
@@ -444,7 +444,8 @@ dat[, x_n := 20]
 ggplot(data = dat[sample(25)], aes(x = x, y = y)) +
     geom_smooth(method = "lm", color = "hotpink") +
     geom_point(size = 3, shape = 21, fill = "grey50") +
-    geom_errorbar(width = .25, aes(ymin = y - y_sd, ymax = y + y_sd)) +
+    geom_errorbar(width = .25, 
+                  aes(ymin = y - y_sd, ymax = y + y_sd)) +
     geom_errorbarh(aes(xmin = x - x_sd, xmax = x + x_sd), height = .25) +
     xlab("x") +
     ylab("y") +
@@ -463,7 +464,8 @@ However, it is possible to simulate the data underlying these bivariate distribu
 <summary>Click here to see a full demonstration</summary>
 
 In the table below, you'll see the extracted mean values for the x and y variables (`x`, `y`), their standard deviations (`x_sd`, `y_sd`), and their internal sample sizes (`x_n` and `y_n`), which differ. 
-To draw from a bivariate distribution we need to use a single sample size. To be conservative, we'll use whichever sample size is smallest. We'll then use `mvrnorm` in the `R` package `MASS`.
+
+To draw from a bivariate distribution we need to use a single sample size. To be conservative, we'll use whichever sample size is smallest. We'll then use `mvrnorm` in the `R` package `MASS`. This assumes that the underlying data generating process for both the `x` and `y` variable are normally distributed. Bivariate distributions require a parameter `rho`, which describes the correlation between the two variables. This is rarely known or reported. Just as with paired data, we'll set `rho` to 0.5 or 0.8. Here we'll use 0.5:
 
 ```{r}
 #| echo: true
@@ -573,8 +575,8 @@ p2 <- ggplot(data = tit, aes(x = year, y = april_temp)) +
     )
 
 p1 / p2
-```
 
+```
 
 If the interval between measurements is identical (on x-axis), then these figures are straightforward to extract. You simply extract each point from each figure and then copy and paste the resulting columns next to each other so that they look like this:
 
@@ -587,11 +589,10 @@ knitr::kable(head(tit, 5))
 
 You can then calculate the correlation between `april_temp` and `laying_date`, with $n$ equal to the number of measurements (`r nrow(tit)` years).
 
-
 :::callout-important
 Note that in time series data, the correlation coefficient is calculated across temporal measurements and thus has a different internal non-independence structure than correlations calculated across independent sites, plots or individuals.
 
-Consecutive years tend to resemble each other (autocorrelation), so n = `r nrow(tit)` years carries less information than `r nrow(tit)` independent sites would. Record this effect size as a time series, and consider using an effective sample size instead, as described by Pyper and Peterman [@Pyper1998-ts] and in [2.3](2.3-Zr-assumptions.qmd). One optional extra step: if both series simply trend in the same direction over time, and that trend isn't your question, remove it first. Detrend or first-difference both series, then correlate them and use the effective n. This example uses the raw n to show the basic calculation.
+Consecutive years tend to resemble each other (autocorrelation), so n = `r nrow(tit)` years carries less information than `r nrow(tit)` independent sites would. Record this effect size as a time series, and consider using an effective sample size instead, as described by Pyper and Peterman [@Pyper1998-ts] and [here](2.3-Zr-assumptions.qmd). One optional extra step: if both series simply trend in the same direction over time, and that trend isn't your question, remove it first. Detrend or first-difference both series, then correlate them and use the effective n. This example uses the raw n to show the basic calculation.
 
 As previously [mentioned](3.1-universal-challenges.qmd#sec-callout-internal-non-independence), we recommend recording whether your effect sizes are summarized across *time*, *space/individuals*, or *both* throughout your meta-analysis.
 :::
@@ -674,7 +675,7 @@ What is the best way to line up variable 1 and variable 2 to calculate their cor
 
 Instead, we recommend taking the average of the most frequently sampled variable to align with the less frequently sampled variable. Alternatively, you can filter the data (after aligning by the shared x-axis) to just those occasions where there is data for both series. 
 
-Aligning the data like this is tricky and will probably require manual merging based on nearest value in a spreadsheet software (e.g., Excel) after calibrating both the x and y axes.
+Aligning the data like this is tricky and will probably require manual merging based on nearest value in a spreadsheet software (e.g., Excel) after calibrating both the x and y axes in your extraction software.
 
 # Discrete responses {#sec-discrete-responses}
 ## Discrete responses with a continuous predictor {#sec-discrete-responses-binary-predictor}
@@ -715,7 +716,8 @@ Depending on your meta-analysis question you may want to extract this data and c
 
 This [conversion](4-converting-effect-sizes.qmd) is reasonable when presence/absence is a discretized version of abundance and when the **unit of replication** is the number of nests (or individuals) in both study types. However, keep two caveats in mind:
 
-1. **Point-biserial vs. biserial correlations:** Calculating Pearson's $r$ directly between a continuous predictor and a $0/1$ binary outcome yields a *point-biserial correlation* ($r_{pb}$), which is mathematically capped below $\pm 1$ (at most $\approx 0.798$ for a normal predictor under a 50:50 split, and smaller when outcomes are unbalanced; @Jacobs2017-cv). Because raw points are available from the figure, you can also summarize the mean and SD of predator abundance for fledged ($y = 1$) versus failed ($y = 0$) nests and compute a *biserial correlation* (`measure = "ZBIS"` in `escalc`, treating nest survival as an underlying continuous liability thresholded into fledged/failed) or compute SMD and convert to $\ln\text{OR}$ via `this_to_that()`.
+1. **Point-biserial vs. biserial correlations:** Calculating Pearson's $r$ directly between a continuous predictor and a $0/1$ binary outcome yields a *point-biserial correlation* ($r_{pb}$), which is mathematically capped below $\pm 1$ (at most $\approx 0.798$ for a normal predictor under a 50:50 split, and smaller when outcomes are unbalanced; @Jacobs2017-cv). Because raw points are available from the figure, you can also summarize the mean and SD of predator abundance for fledged ($y = 1$) versus failed ($y = 0$) nests and compute a *biserial correlation* (`measure = "ZBIS"` in `escalc`, treating nest survival as an underlying continuous liability thresholded into fledged/failed) or compute SMD and convert to $\ln\text{OR}$ with our conversion function `this_to_that()` (see [here](4-converting-effect-sizes.qmd)).
+
 2. **Why not use a logistic regression slope?** You might be tempted to fit a logistic regression of binary nest fate on predator abundance and extract the slope. While that slope is indeed a log odds ratio, it represents the $\ln\text{OR}$ *per one-unit increase in predator abundance* (carrying units of $[\text{abundance}]^{-1}$). Because its magnitude depends entirely on the measurement scale of the predictor (e.g., predators per hectare vs. per $\text{km}^2$), it is an unstandardized regression slope (see [Chapter 5.3b](5.3b-rate-of-change.qmd)) and is **not** directly comparable to dimensionless two-group $\ln\text{OR}$ estimates (predator present vs. absent).
 
 ## Proportion data with a continuous predictor {#sec-proportion-data}
@@ -810,7 +812,6 @@ This can be converted to lnOR for comparability. Note that since the individuals
 
 ## Mean±SD proportion data with continuous predictor {#sec-zr-reconstructing-proportion-data}
 
-
 Now let's look at a similar situation, except the figure is presenting mean±SD mortality across **separate trials** within each temperature treatment.
 
 ```{r}
@@ -845,12 +846,13 @@ ggplot(data = dt) +
 
 dt[, n_individuals := 20]
 dt[, n_trials := 3]
+
 ```
 
-The default in this situation is to calculate $Z_r$ on the treatment means, with a site/experiment level unit of replication, with n equal to the number of temperature treatments (`r nrow(dt)`). This may be difficult to compare to effect sizes (presumably lnOR) calculated with individual-level unit of replication.
+The default in this situation is to calculate $Z_r$ on the treatment means, with a site/experiment level unit of replication, with $n$ equal to the number of temperature treatments (`r nrow(dt)`). This may be difficult to compare to effect sizes (presumably lnOR) calculated with individual-level unit of replication.
 
 :::callout-note
-This may be a situation that calls single-group effect sizes that use temperature as a moderator in a metaregression. See our page [here](5.3-single-group-effect-sizes.qmd).
+This may be a situation that calls for single-group effect sizes, using temperature as a moderator in a metaregression. See our page [here](5.3-single-group-effect-sizes.qmd).
 :::
 
 However, if we want our **unit of replication** to be based on the number of individuals, we could alternatively reconstruct the underlying distributions behind each of these summarized trials. This will allow us to calculate a correlation across individuals for the binary response of being alive or dead, instead of across the mean per trial. 
@@ -943,6 +945,7 @@ escalc(
     ri = res$estimate,
     ni = nrow(final_dat) / mean(dt$deff)
 )
+
 ```
 
 </details>
@@ -952,7 +955,7 @@ escalc(
 
 Some types of correlations are more complicated because they are based on pairwise matrices that describe relationships between individuals. As such, each value is not independent because the same individuals engaged with other individuals. 
 
-For instance, correlations between pair-wise behaviors. An example would be the relationship between grooming behavior and defense, which was meta-analyzed by @Schino2007-pr. Is grooming adaptive because it leads to mutual defense with grooming partners?
+For example, imagine analyzing the relationship between grooming behavior and defense (see a meta-analysis on this question by @Schino2007-pr). Is grooming adaptive because it leads to mutual defense with grooming partners?
 
 With data like this, you might have a directed matrix of grooming between individuals (e.g., seconds spent grooming per hour of observation), and a second matrix of coalitionary defense (e.g., number of support events) between the exact same individuals. Here we simulate $N = 10$ individuals (`Ind_1` through `Ind_10`), where rows represent the **actor** (the individual initiating the behavior) and columns represent the **recipient** (the partner receiving the behavior):
 
@@ -961,7 +964,8 @@ With data like this, you might have a directed matrix of grooming between indivi
 #| echo: true
 
 n_ind <- 10
-ind_names <- paste0("Ind_", seq_len(n_ind))
+ind_names <- c("Ed", "Santiago", "Kyle", "Erick", "Ayumi", "Christine", "Sage", 
+               "Losia", "Josh", "Shinichi")
 
 groom <- matrix(
     runif(n_ind^2, min = 1, max = 100),
@@ -981,7 +985,7 @@ knitr::kable(
 )
 ```
 
-In the table above, each off-diagonal cell $(i, j)$ represents a **directed dyad**: the value in row `Actor: Ind_1` and column `Recipient: Ind_2` (`r round(groom[1, 2], 1)`) is how much `Ind_1` groomed `Ind_2`, whereas row `Actor: Ind_2` and column `Recipient: Ind_1` (`r round(groom[2, 1], 1)`) is how much `Ind_2` groomed `Ind_1` back. The diagonal cells (`NA`) are empty because an individual does not groom itself in a dyadic interaction.
+In the table above, each off-diagonal cell $(i, j)$ represents a **directed dyad**: the value in row `Actor: Ed` and column `Recipient: Santiago` (`r round(groom[1, 2], 1)`) is how much `Ed` groomed `Santiago`, whereas row `Actor: Santiago` and column `Recipient: Ed` (`r round(groom[2, 1], 1)`) is how much `Santiago` groomed `Ed` back. The diagonal cells (`NA`) are empty because an individual does not groom itself in a dyadic interaction.
 
 Because the behaviors are directed ($i \to j$ differs from $j \to i$), both the upper and lower triangles carry information, so every off-diagonal cell ($N(N - 1) = 90$ directed dyads) enters the calculation. We align and melt the two matrices into a table of directed dyads:
 
@@ -1058,7 +1062,9 @@ r_F <- sqrt(F_val / (F_val + df_t))
 escalc(measure = "ZCOR", ri = r_t, ni = df_t + 2)
 ```
 
-For a predictor in an ordinary **multiple linear regression**, the $t$-statistic gives a **partial correlation** ($r_p$). Use `measure = "ZPCOR"` in `escalc`, passing the $t$-statistic (`ti`), the sample size (`ni`), and the total number of predictors in the model (`mi`, not counting the intercept). `escalc` computes $Z_{r_p} = \text{atanh}(r_p)$ along with the adjusted sampling variance $v_{Z_{r_p}} = \frac{1}{n - m - 3}$, which accounts for the degrees of freedom lost to the other $m - 1$ covariates [@Aloe2013-pt]:
+For a predictor in an ordinary **multiple linear regression**, the $t$-statistic gives a **partial correlation** ($r_p$). Use `measure = "ZPCOR"` in `escalc`, passing the $t$-statistic (`ti`), the sample size (`ni`), and the total number of predictors in the model (`mi`, not counting the intercept). `escalc` computes $Z_{r_p} = \text{atanh}(r_p)$ along with the adjusted sampling variance $v_{Z_{r_p}} = \frac{1}{n - m - 3}$, which accounts for the degrees of freedom lost to the other $m - 1$ covariates [@Aloe2013-pt].
+
+Note that these conversions can only be used with statistics from regular old linear models **not** mixed effect models with random effects.
 
 ```{r}
 #| eval: true
